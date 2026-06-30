@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin.css">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 /* Floating save bar */
 .save-bar {
@@ -255,40 +258,62 @@ let selectedPack   = 100;
 let _shortUrl      = '';
 let _longUrl       = '';
 
-// ── Helpers: Unicode-safe base64 (kept for possible fallback) ──
+// ── Helpers: Unicode-safe base64 (kept for local fallback preview) ──
 function toB64(str) {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/gi,
     (_, p1) => String.fromCharCode(parseInt(p1, 16))
   ));
 }
 
-// ── JSONBlob helpers (short URL + live counter) ──
-async function saveToBlob(data) {
-  const res = await fetch('https://jsonblob.com/api/jsonBlob', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(data)
-  });
-  if (!res.ok) throw new Error('blob create failed');
-  const location = res.headers.get('Location') || '';
-  // Location: https://jsonblob.com/api/jsonBlob/BLOB_ID
-  return location.split('/').pop();
+// ── Firebase configuration ──
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",
+  authDomain:        "invit-mar.firebaseapp.com",
+  projectId:         "invit-mar",
+  storageBucket:     "invit-mar.firebasestorage.app",
+  messagingSenderId: "654872438284",
+  appId:             "1:654872438284:web:c11d6f3cdff82bf35ff029",
+  measurementId:     "G-ZBMGME0PR2"
+};
+
+let _fbApp = null, _db = null;
+function initFirebase() {
+  if (_fbApp) return;
+  _fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+  _db    = firebase.firestore();
 }
 
-async function getBlobData(blobId) {
-  const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
-    headers: { 'Accept': 'application/json' }
-  });
-  if (!res.ok) throw new Error('blob read failed');
-  return res.json();
+// ── Personalised Slug Builder: e.g. mortadha-mariam-2026 ──
+function buildInvSlug(groomFr, brideFr) {
+  const clean = s => (s || 'invite')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  const g = clean(groomFr).split('-')[0];
+  const b = clean(brideFr).split('-')[0];
+  const year = 2026;
+  return `${g}-${b}-${year}`;
 }
 
-async function updateBlob(blobId, data) {
-  await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+// ── Firebase Firestore operations ──
+async function saveInvitationToFirebase(slug, cfg, pack) {
+  initFirebase();
+  await _db.collection('invitations').doc(slug).set({
+    config:  cfg,
+    count:   0,
+    pack:    pack,
+    created: firebase.firestore.FieldValue.serverTimestamp()
   });
+}
+
+// Real-time counter watcher (returns unsubscribe function)
+const _fbListeners = {};
+function watchInvitation(slug, callback) {
+  if (_fbListeners[slug]) _fbListeners[slug](); // unsubscribe previous
+  initFirebase();
+  _fbListeners[slug] = _db.collection('invitations').doc(slug)
+    .onSnapshot(doc => { if (doc.exists) callback(doc.data()); }, err => console.error(err));
 }
 
 // ── Auth ──
@@ -479,14 +504,18 @@ function selectPack(el) {
 }
 
 // ── Generate Link (stores config on JSONBlob → short URL) ──
+// ── Generate Link (Firebase → short personalized URL) ──
 async function generateLink() {
   saveAll();
 
   const cfg = buildConfig();
-  cfg.ps  = selectedPack;
-  cfg.id  = genId();
+  cfg.ps = selectedPack;
 
-  // Build base URL (Vercel production or current host)
+  // Build personalized slug from Latin names
+  const invSlug = buildInvSlug(val('groomFr'), val('brideFr'));
+  cfg.id = invSlug;
+
+  // Build base URL
   const prodUrl = val('prodUrlInput');
   let base;
   if (prodUrl) {
@@ -499,65 +528,47 @@ async function generateLink() {
     base = window.location.href.replace('admin.html', INVITATION_FILE);
   }
 
-  const isLocal = base.startsWith('file:');
+  const isLocal    = base.startsWith('file:');
   const shortUrlEl = document.getElementById('shortUrl');
   document.getElementById('linkOutputBox').classList.add('visible');
-  document.getElementById('linkOutputBox').scrollIntoView({behavior:'smooth', block:'center'});
+  document.getElementById('linkOutputBox').scrollIntoView({ behavior:'smooth', block:'center' });
 
   if (isLocal) {
-    // Local file mode: embed config in URL (LZ-like base64)
     const b64 = toB64(JSON.stringify(cfg));
     _longUrl = _shortUrl = base + '?c=' + b64;
     document.getElementById('generatedUrl').textContent = _longUrl;
-    document.getElementById('linkIdDisplay').textContent = cfg.id;
-    document.getElementById('packDisplay').textContent = selectedPack;
-    shortUrlEl.innerHTML = `<div style="font-size:0.85rem;color:#e67e22">
-      ⚠️ وضع محلي — افتح <code>index.html</code> مباشرة للمعاينة.</div>`;
-  } else {
-    shortUrlEl.textContent = '⏳ جاري حفظ البيانات...';
-    let blobId = null;
-    try {
-      // Save config + counter to JSONBlob
-      blobId = await saveToBlob({ config: cfg, count: 0, pack: selectedPack });
-    } catch(e) {
-      console.warn('JSONBlob failed, falling back to base64 URL', e);
-    }
-
-    let inviteUrl;
-    if (blobId) {
-      // Short URL: only the blob ID in the query string
-      inviteUrl = base + '?b=' + blobId;
-    } else {
-      // Fallback: embed config in URL via base64
-      const b64 = toB64(JSON.stringify(cfg));
-      inviteUrl = base + '?c=' + b64;
-    }
-
-    _longUrl = _shortUrl = inviteUrl;
-    document.getElementById('generatedUrl').textContent = inviteUrl;
-    document.getElementById('linkIdDisplay').textContent = cfg.id;
-    document.getElementById('packDisplay').textContent = selectedPack;
-    shortUrlEl.textContent = inviteUrl;
-
-    // Save history with blobId for counter tracking
-    const hist = getHistory();
-    hist.unshift({ id:cfg.id, blobId, ps:selectedPack, created:new Date().toISOString(), url:inviteUrl });
-    localStorage.setItem('weddingLinkHistory', JSON.stringify(hist));
-    renderLinksHistory();
-    showToast('🎉 تم إنشاء الرابط!');
+    document.getElementById('linkIdDisplay').textContent = invSlug;
+    document.getElementById('packDisplay').textContent   = selectedPack;
+    shortUrlEl.innerHTML = `<div style="font-size:0.85rem;color:#e67e22">⚠️ وضع محلي — افتح <code>index.html</code> مباشرة للمعاينة.</div>`;
     return;
   }
 
-  // Local fallback history save
-  const hist = getHistory();
-  hist.unshift({ id:cfg.id, blobId:null, ps:selectedPack, created:new Date().toISOString(), url:_longUrl });
-  localStorage.setItem('weddingLinkHistory', JSON.stringify(hist));
-  renderLinksHistory();
-  showToast('🎉 تم إنشاء الرابط!');
-}
+  shortUrlEl.textContent = '⏳ جاري الحفظ على Firebase...';
 
-function genId() {
-  return Date.now().toString(36).toUpperCase().slice(-5) + Math.random().toString(36).slice(2,5).toUpperCase();
+  try {
+    await saveInvitationToFirebase(invSlug, cfg, selectedPack);
+
+    const inviteUrl = `${base}?inv=${invSlug}`;
+    _longUrl = _shortUrl = inviteUrl;
+
+    document.getElementById('generatedUrl').textContent = inviteUrl;
+    document.getElementById('linkIdDisplay').textContent = invSlug;
+    document.getElementById('packDisplay').textContent   = selectedPack;
+    shortUrlEl.textContent = inviteUrl;
+
+    // Save to local history
+    const hist = getHistory();
+    const filtered = hist.filter(h => h.id !== invSlug);
+    filtered.unshift({ id:invSlug, ps:selectedPack, created:new Date().toISOString(), url:inviteUrl });
+    localStorage.setItem('weddingLinkHistory', JSON.stringify(filtered));
+    renderLinksHistory();
+    showToast('🎉 تم إنشاء الرابط!');
+
+  } catch(e) {
+    console.error('Firebase save failed:', e);
+    shortUrlEl.textContent = '❌ فشل الحفظ — ' + e.message;
+    showToast('❌ خطأ في Firebase: ' + e.message);
+  }
 }
 
 // ── Link actions ──
@@ -580,52 +591,58 @@ function renderLinksHistory() {
     c.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:20px">لا توجد روابط بعد</div>';
     return;
   }
+
   c.innerHTML = hist.map(h => `
-    <div class="link-history-item">
+    <div class="link-history-item" id="lhi-${h.id}">
       <div class="lh-info">
-        <div class="lh-pack">📦 ${h.ps} مشاركة</div>
-        <div id="rem-${h.id}" style="font-size:0.78rem;color:var(--text-muted);margin:3px 0">
-          ${h.blobId ? '⏳ اضغط لتحديث الرصيد' : ''}
-        </div>
+        <div class="lh-pack">📦 ${h.ps} مشاركة &nbsp;·&nbsp; <span style="font-family:monospace;font-size:0.78rem;color:var(--gold)">${h.id}</span></div>
+        <div id="ctr-${h.id}" style="margin:5px 0;font-size:0.8rem;color:var(--text-muted)">⏳ جاري تحميل الرصيد...</div>
         <div class="lh-date">${new Date(h.created).toLocaleString('ar-TN')}</div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-        <button class="btn btn-outline" style="padding:5px 10px;font-size:0.72rem" onclick="quickCopy('${h.url||h.short||h.long}')">📋</button>
-        ${h.blobId ? `<button class="btn btn-ghost" style="padding:5px 10px;font-size:0.72rem" onclick="checkRemaining('${h.id}','${h.blobId}',${h.ps})">🔄 رصيد</button>` : ''}
-        <button class="btn btn-ghost"   style="padding:5px 10px;font-size:0.72rem" onclick="deleteLink('${h.id}')">🗑️</button>
+        <button class="btn btn-outline" style="padding:5px 10px;font-size:0.72rem" onclick="quickCopy('${h.url}')">📋 نسخ</button>
+        <button class="btn btn-ghost"   style="padding:5px 10px;font-size:0.72rem" onclick="shareHistLink('${h.url}')">💬 واتساب</button>
+        <button class="btn btn-ghost"   style="padding:5px 10px;font-size:0.72rem;color:#e74c3c" onclick="deleteLink('${h.id}')">🗑️</button>
       </div>
     </div>`).join('');
+
+  // Attach real-time Firebase listeners for each link to show the counter in real time
+  hist.forEach(h => {
+    watchInvitation(h.id, data => updateCounter(h.id, data));
+  });
 }
 
-async function checkRemaining(id, blobId, packSize) {
-  const el = document.getElementById('rem-' + id);
-  el.innerHTML = '⏳ جاري التحقق...';
-  try {
-    const data = await getBlobData(blobId);
-    const used = data.count || 0;
-    const remaining = Math.max(0, packSize - used);
-    const pct = Math.round((used / packSize) * 100);
-    const color = remaining === 0 ? '#e74c3c' : remaining < packSize * 0.2 ? '#f39c12' : '#2ecc71';
-    el.innerHTML = `
-      <div style="font-size:0.78rem">
-        📊 فُتح: <strong>${used}</strong> / ${packSize}
-        &nbsp;| متبقي: <strong style="color:${color}">${remaining}</strong>
-        <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:4px">
-          <div style="width:${pct}%;height:4px;background:${color};border-radius:2px;transition:width 0.5s"></div>
-        </div>
-      </div>`;
-  } catch(e) {
-    el.innerHTML = '<span style="color:#e74c3c">❌ تعذّر التحقق</span>';
-  }
+function updateCounter(slug, data) {
+  const el = document.getElementById('ctr-' + slug);
+  if (!el) return;
+  const used      = data.count || 0;
+  const pack      = data.pack  || 100;
+  const remaining = Math.max(0, pack - used);
+  const pct       = Math.min(100, Math.round((used / pack) * 100));
+  const color     = remaining === 0 ? '#e74c3c' : remaining < pack * 0.2 ? '#f39c12' : '#2ecc71';
+  el.innerHTML = `
+    <div>
+      👁 فُتح: <strong>${used}</strong> / ${pack} &nbsp;|&nbsp; متبقي: <strong style="color:${color}">${remaining}</strong>
+      <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:3px;margin-top:4px;overflow:hidden">
+        <div style="width:${pct}%;height:5px;background:${color};border-radius:3px;transition:width 0.6s ease"></div>
+      </div>
+    </div>`;
 }
 
-function quickCopy(url) { navigator.clipboard.writeText(url).then(()=>showToast('📋 تم النسخ!')); }
+function shareHistLink(url) {
+  const msg = encodeURIComponent('🌹 دعوة زفاف\n\n' + url);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function quickCopy(url) { navigator.clipboard.writeText(url).then(() => showToast('📋 تم النسخ!')); }
 function deleteLink(id) {
-  localStorage.setItem('weddingLinkHistory', JSON.stringify(getHistory().filter(h=>h.id!==id)));
+  if (_fbListeners[id]) { _fbListeners[id](); delete _fbListeners[id]; }
+  localStorage.setItem('weddingLinkHistory', JSON.stringify(getHistory().filter(h => h.id !== id)));
   renderLinksHistory(); showToast('🗑️ تم الحذف');
 }
 function clearHistory() {
   if (!confirm('حذف جميع الروابط؟')) return;
+  Object.keys(_fbListeners).forEach(k => { _fbListeners[k](); delete _fbListeners[k]; });
   localStorage.removeItem('weddingLinkHistory');
   renderLinksHistory(); showToast('🗑️ تم المسح');
 }
@@ -634,7 +651,7 @@ function clearHistory() {
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 </script>
 </body>

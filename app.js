@@ -4,7 +4,7 @@
    WEDDING INVITATION — app.js
    ─────────────────────────────────────────────────────────────────
    Modules:
-   0. URL Config Loader  ← reads ?c= param, applies to DOM, tracks pack
+   0. Firebase Init + URL Config Loader  ← reads ?inv= / ?b= / ?c=
    1. Envelope Open
    2. Intro Petals
    3. Heart Analog Clock
@@ -17,14 +17,31 @@
 
 let _weddingDateTime = '2026-07-12T15:30:00';
 
+/* ──────────────────────────────────────────────
+   Firebase config (shared with admin.html)
+──────────────────────────────────────────────── */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",
+  authDomain:        "invit-mar.firebaseapp.com",
+  projectId:         "invit-mar",
+  storageBucket:     "invit-mar.firebasestorage.app",
+  messagingSenderId: "654872438284",
+  appId:             "1:654872438284:web:c11d6f3cdff82bf35ff029"
+};
+
+let _fbApp = null, _db = null;
+function initFirebase() {
+  if (_fbApp) return;
+  _fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+  _db    = firebase.firestore();
+}
+
 /* ────────────────────────────────────────────────
    0. URL CONFIG LOADER
-   Reads ?c=BASE64 → JSON (compact keys) → applies to DOM
-   Runs after DOMContentLoaded so all elements are available
+   Priority: ?inv= (Firebase slug) → ?b= (JSONBlob) → ?c= (base64)
 ──────────────────────────────────────────────── */
 
 function fromB64(str) {
-  // Unicode-safe base64 decode (mirrors admin toB64)
   return decodeURIComponent(
     Array.from(atob(str), c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join('')
   );
@@ -32,9 +49,6 @@ function fromB64(str) {
 
 /**
  * Maps compact config keys → data-cfg attribute values.
- * Compact key schema (must match admin.html buildConfig):
- *   ga=groomAr  ba=brideAr  gf=groomFather  gm=groomMother
- *   bf=brideFather  bm=brideMother  wd=weddingDate  wdd=weddingDateDisplay
  */
 function applyConfigToDOM(cfg) {
   const MAP = {
@@ -55,57 +69,66 @@ function applyConfigToDOM(cfg) {
 
 function loadConfigFromURL() {
   const params  = new URLSearchParams(window.location.search);
-  const blobId  = params.get('b');   // short JSONBlob-based link
-  let   encoded = params.get('c');   // old base64 fallback
+  const invSlug = params.get('inv');   // Firebase personalized slug
+  const blobId  = params.get('b');     // JSONBlob ID (legacy)
+  let   encoded = params.get('c');     // base64 (legacy)
 
-  if (blobId) {
-    // ── JSONBlob path: fetch config + counter ──
-    fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
-      headers: { 'Accept': 'application/json' }
-    })
-    .then(r => {
-      if (!r.ok) throw new Error('blob not found');
-      return r.json();
-    })
-    .then(data => {
-      const cfg   = data.config;
-      const count = (data.count || 0) + 1; // this visit counts
-      const pack  = data.pack || cfg.ps || 9999;
+  if (invSlug) {
+    /* ── Firebase path ── */
+    initFirebase();
+    _db.collection('invitations').doc(invSlug).get()
+      .then(doc => {
+        if (!doc.exists) {
+          console.warn('[InvitApp] Invitation not found:', invSlug);
+          return;
+        }
+        const data  = doc.data();
+        const cfg   = data.config;
+        const count = data.count || 0;
+        const pack  = data.pack  || 9999;
 
-      // Check expiry BEFORE showing invitation
-      if (count > pack) {
-        showPackExpired();
-        return;
-      }
+        if (count >= pack) {
+          showPackExpired();
+          return;
+        }
 
-      // Apply config to DOM
-      if (cfg.wd) _weddingDateTime = cfg.wd;
-      applyConfigToDOM(cfg);
-      if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
+        /* Apply config */
+        if (cfg.wd) _weddingDateTime = cfg.wd;
+        applyConfigToDOM(cfg);
+        if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
 
-      // Increment counter on JSONBlob (fire-and-forget)
-      fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
-        method:  'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ ...data, count })
-      }).catch(() => {});
-    })
-    .catch(err => {
-      console.warn('[InvitApp] JSONBlob fetch failed:', err);
-      // Fail-open: show invitation with default values
-    });
+        /* Atomic counter increment */
+        _db.collection('invitations').doc(invSlug).update({
+          count: firebase.firestore.FieldValue.increment(1)
+        }).catch(e => console.warn('[InvitApp] Counter increment failed:', e));
+      })
+      .catch(err => console.warn('[InvitApp] Firebase fetch failed:', err));
+
+  } else if (blobId) {
+    /* ── JSONBlob fallback ── */
+    fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, { headers: { Accept: 'application/json' } })
+      .then(r => r.ok ? r.json() : Promise.reject('blob 404'))
+      .then(data => {
+        const cfg   = data.config;
+        const count = (data.count || 0) + 1;
+        const pack  = data.pack || cfg.ps || 9999;
+        if (count > pack) { showPackExpired(); return; }
+        if (cfg.wd) _weddingDateTime = cfg.wd;
+        applyConfigToDOM(cfg);
+        if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
+        fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, count })
+        }).catch(() => {});
+      })
+      .catch(e => console.warn('[InvitApp] JSONBlob fetch failed:', e));
 
   } else if (encoded) {
-    // ── base64 / LZString path ──
-    // Restore + characters (URLSearchParams converts them to spaces)
+    /* ── Base64 fallback ── */
     encoded = encoded.replace(/ /g, '+');
     let cfg;
-    try {
-      cfg = JSON.parse(fromB64(encoded));
-    } catch (e) {
-      console.warn('[InvitApp] Could not parse config from URL:', e);
-      return;
-    }
+    try { cfg = JSON.parse(fromB64(encoded)); }
+    catch (e) { console.warn('[InvitApp] base64 decode failed:', e); return; }
     if (cfg.wd) _weddingDateTime = cfg.wd;
     applyConfigToDOM(cfg);
     if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
