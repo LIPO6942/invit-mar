@@ -199,9 +199,9 @@
       <div class="card link-output-box" id="linkOutputBox">
         <div class="card-title">🎉 الرابط جاهز!</div>
 
-        <!-- Short URL (primary) -->
-        <div class="link-section-label">🟢 الرابط المختصر (للمشاركة)</div>
-        <div class="short-link-url" id="shortUrl">جاري التقصير…</div>
+        <!-- Invitation URL -->
+        <div class="link-section-label">🟢 رابط الدعوة (جاهز للمشاركة)</div>
+        <div class="short-link-url" id="shortUrl" style="font-size:0.78rem">جاري التوليد…</div>
 
         <!-- Long URL (secondary, hidden by default) -->
         <details style="margin-bottom:10px">
@@ -449,34 +449,8 @@ function selectPack(el) {
   selectedPack = parseInt(el.dataset.pack);
 }
 
-// ── JSONP is.gd URL Shortener (Bypasses CORS completely) ──
-function shortenWithIsGd(url) {
-  return new Promise((resolve, reject) => {
-    const callbackName = 'isgd_cb_' + Math.random().toString(36).slice(2, 10);
-    
-    window[callbackName] = function(data) {
-      document.body.removeChild(script);
-      delete window[callbackName];
-      if (data && data.shorturl) {
-        resolve(data.shorturl);
-      } else {
-        reject(new Error(data.errormessage || 'Shortening failed'));
-      }
-    };
-    
-    const script = document.createElement('script');
-    script.src = `https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}&callback=${callbackName}`;
-    script.onerror = function() {
-      document.body.removeChild(script);
-      delete window[callbackName];
-      reject(new Error('Network error'));
-    };
-    document.body.appendChild(script);
-  });
-}
-
-// ── Generate Link ──
-async function generateLink() {
+// ── Generate Link (no external shortener — direct URL works on WhatsApp) ──
+function generateLink() {
   // Auto-save first
   saveAll();
 
@@ -485,8 +459,8 @@ async function generateLink() {
   cfg.id  = genId();
 
   // Encode: compact JSON → unicode-safe base64
-  const json    = JSON.stringify(cfg);
-  const b64     = toB64(json);
+  const json = JSON.stringify(cfg);
+  const b64  = toB64(json);
   
   // Build the base invitation URL
   const prodUrl = val('prodUrlInput');
@@ -508,51 +482,33 @@ async function generateLink() {
   }
 
   _longUrl = base + '?c=' + b64;
+  _shortUrl = _longUrl; // No shortener — use full URL directly
 
-  // Determine if it is a local file URL
   const isLocal = _longUrl.startsWith('file:');
+  const shortUrlEl = document.getElementById('shortUrl');
 
-  // Show output box
+  // Populate output box
   document.getElementById('generatedUrl').textContent = _longUrl;
   document.getElementById('linkIdDisplay').textContent = cfg.id;
   document.getElementById('packDisplay').textContent   = selectedPack;
-  
-  const shortUrlEl = document.getElementById('shortUrl');
   document.getElementById('linkOutputBox').classList.add('visible');
-  document.getElementById('linkOutputBox').scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('linkOutputBox').scrollIntoView({behavior:'smooth', block:'center'});
 
   if (isLocal) {
-    _shortUrl = _longUrl;
     shortUrlEl.innerHTML = `
-      <div style="font-size:0.85rem; line-height:1.6; color:#e67e22; text-align:right;">
-        ⚠️ <strong>تنبيه للمعاينة المحلية:</strong> أنت تقوم بتوليد رابط لملف محلي (file://). 
-        المتصفحات ومواقع تقصير الروابط تمنع فتح الملفات المحلية لأسباب أمنية.
+      <div style="font-size:0.85rem;line-height:1.6;color:#e67e22;text-align:right;">
+        ⚠️ <strong>تنبيه للمعاينة المحلية:</strong> أنت تعمل محلياً (file://).
         <br>
-        <span style="color:#2ecc71">💡 حل ممتاز:</span> لا تحتاج لنسخ روابط طويلة للتجربة محلياً! فقط افتح ملف <code>index.html</code> مباشرة في المتصفح وسيقرأ التعديلات تلقائياً من الذاكرة المحلية (localStorage).
-        <br>
-        <span style="color:#faf5ef">الرابط الكامل للمعاينة المحلية:</span>
-        <div style="font-size:0.75rem; word-break:break-all; background:rgba(0,0,0,0.3); padding:8px; border-radius:6px; margin-top:5px; font-family:monospace; direction:ltr; text-align:left;">${_longUrl}</div>
+        <span style="color:#2ecc71">💡 حل:</span> افتح <code>index.html</code> مباشرة في المتصفح وسيقرأ التعديلات تلقائياً من الذاكرة المحلية.
       </div>
     `;
   } else {
-    shortUrlEl.textContent = '⏳ جاري تقصير الرابط…';
-    _shortUrl = _longUrl; // fallback
-
-    try {
-      const short = await shortenWithIsGd(_longUrl);
-      _shortUrl = short;
-    } catch(err) {
-      console.warn('is.gd failed:', err);
-      // Fallback: use long URL directly if shortening fails, no TinyURL
-      _shortUrl = _longUrl;
-    }
-    
-    shortUrlEl.textContent = _shortUrl;
+    shortUrlEl.textContent = _longUrl;
   }
 
   // Save to history
   const hist = getHistory();
-  hist.unshift({ id:cfg.id, ps:selectedPack, created:new Date().toISOString(), short:_shortUrl, long:_longUrl });
+  hist.unshift({ id:cfg.id, ps:selectedPack, created:new Date().toISOString(), short:_longUrl, long:_longUrl });
   localStorage.setItem('weddingLinkHistory', JSON.stringify(hist));
   renderLinksHistory();
   showToast('🎉 تم إنشاء الرابط!');
