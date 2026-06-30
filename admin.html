@@ -173,6 +173,16 @@
       <div class="page-title">🔗 إنشاء رابط الدعوة</div>
       <div class="page-subtitle">احفظ أولاً ثم اختر الباقة وأنشئ الرابط</div>
 
+      <!-- Production URL configuration -->
+      <div class="card">
+        <div class="card-title">🌐 رابط الموقع المرفوع على الإنترنت</div>
+        <div class="field" style="margin-top:10px">
+          <label>أدخل رابط موقعك المرفوع على Vercel أو Netlify لتوليد روابط قصيرة تعمل على الموبايل:</label>
+          <input id="prodUrlInput" type="text" placeholder="https://your-app.vercel.app" dir="ltr" style="font-family:monospace; font-size:0.95rem; width:100%; border:1px solid var(--border); padding:10px; border-radius:6px; background:rgba(0,0,0,0.2); color:white;">
+          <small style="color:var(--text-muted); display:block; margin-top:6px; font-size:0.76rem">إذا تركته فارغاً، سيتم استخدام العنوان الحالي للمتصفح تلقائياً.</small>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-title">📦 اختر الباقة</div>
         <div class="pack-selector">
@@ -324,6 +334,7 @@ function val(id) {
 function saveAll() {
   const cfg = buildConfig();
   localStorage.setItem('weddingAdminConfig', JSON.stringify(cfg));
+  localStorage.setItem('weddingAdminProdUrl', val('prodUrlInput'));
   const now = new Date().toLocaleTimeString('ar-TN');
   document.getElementById('lastSavedLabel').textContent = 'آخر حفظ: ' + now;
   showToast('✅ تم حفظ جميع البيانات');
@@ -331,6 +342,10 @@ function saveAll() {
 
 function loadSaved() {
   const raw = localStorage.getItem('weddingAdminConfig');
+  const savedProdUrl = localStorage.getItem('weddingAdminProdUrl');
+  if (savedProdUrl) {
+    set('prodUrlInput', savedProdUrl);
+  }
   if (!raw) return;
   try {
     const c = JSON.parse(raw);
@@ -447,11 +462,31 @@ async function generateLink() {
   const json    = JSON.stringify(cfg);
   const b64     = toB64(json);
   
-  // Build the invitation URL
-  const base = window.location.href.replace('admin.html', INVITATION_FILE);
+  // Build the base invitation URL
+  // If user entered a production URL, use that. Otherwise use current window host.
+  const prodUrl = val('prodUrlInput');
+  let base;
+  if (prodUrl) {
+    // Standardize URL to end with index.html
+    let cleanProd = prodUrl.trim();
+    if (!cleanProd.startsWith('http://') && !cleanProd.startsWith('https://')) {
+      cleanProd = 'https://' + cleanProd;
+    }
+    if (cleanProd.endsWith('/')) {
+      base = cleanProd + INVITATION_FILE;
+    } else if (cleanProd.endsWith(INVITATION_FILE)) {
+      base = cleanProd;
+    } else {
+      base = cleanProd + '/' + INVITATION_FILE;
+    }
+  } else {
+    base = window.location.href.replace('admin.html', INVITATION_FILE);
+  }
+
   _longUrl = base + '?c=' + b64;
 
-  const isLocalFile = window.location.protocol === 'file:';
+  // Determine if it is a local file URL
+  const isLocal = _longUrl.startsWith('file:');
 
   // Show output box
   document.getElementById('generatedUrl').textContent = _longUrl;
@@ -462,12 +497,12 @@ async function generateLink() {
   document.getElementById('linkOutputBox').classList.add('visible');
   document.getElementById('linkOutputBox').scrollIntoView({behavior:'smooth',block:'center'});
 
-  if (isLocalFile) {
+  if (isLocal) {
     _shortUrl = _longUrl;
     shortUrlEl.innerHTML = `
       <div style="font-size:0.85rem; line-height:1.6; color:#e67e22; text-align:right;">
-        ⚠️ <strong>تنبيه للمعاينة المحلية:</strong> أنت تقوم بتشغيل الملف محلياً (file://). 
-        مواقع تقصير الروابط لا تدعم الروابط المحلية. 
+        ⚠️ <strong>تنبيه للمعاينة المحلية:</strong> أنت تقوم بتوليد رابط لملف محلي (file://). 
+        المتصفحات ومواقع تقصير الروابط تمنع فتح الملفات المحلية لأسباب أمنية.
         <br>
         <span style="color:#2ecc71">💡 حل ممتاز:</span> لا تحتاج لنسخ روابط طويلة للتجربة محلياً! فقط افتح ملف <code>index.html</code> مباشرة في المتصفح وسيقرأ التعديلات تلقائياً من الذاكرة المحلية (localStorage).
         <br>
@@ -478,15 +513,29 @@ async function generateLink() {
   } else {
     shortUrlEl.textContent = '⏳ جاري تقصير الرابط…';
     _shortUrl = _longUrl; // fallback
+
+    // 1. Try is.gd (Instant redirect, no preview delay)
     try {
-      const res = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(_longUrl));
+      const res = await fetch('https://is.gd/create.php?format=simple&url=' + encodeURIComponent(_longUrl));
       if (res.ok) {
         const text = (await res.text()).trim();
         if (text.startsWith('http')) {
           _shortUrl = text;
         }
       }
-    } catch(e) { /* fail silently, use long URL */ }
+    } catch(e1) {
+      // 2. Fallback to TinyURL if is.gd fails (e.g. CORS block)
+      try {
+        const res = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(_longUrl));
+        if (res.ok) {
+          const text = (await res.text()).trim();
+          if (text.startsWith('http')) {
+            _shortUrl = text;
+          }
+        }
+      } catch(e2) { /* fail silently, use long URL */ }
+    }
+    
     shortUrlEl.textContent = _shortUrl;
   }
 

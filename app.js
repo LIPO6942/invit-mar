@@ -55,11 +55,13 @@ function applyConfigToDOM(cfg) {
 
 function loadConfigFromURL() {
   const params  = new URLSearchParams(window.location.search);
-  const encoded = params.get('c');
+  let encoded = params.get('c');
 
   let cfg;
   if (encoded) {
     try {
+      // Restore '+' characters because URLSearchParams converts them to spaces
+      encoded = encoded.replace(/ /g, '+');
       cfg = JSON.parse(fromB64(encoded));
     } catch (e) {
       console.warn('[InvitApp] Could not parse config from URL:', e);
