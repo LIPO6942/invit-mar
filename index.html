@@ -12,6 +12,20 @@
 </head>
 <body>
 
+<!-- SVG filter to remove black background from generated golden assets -->
+<svg width="0" height="0" style="position: absolute; width: 0; height: 0;">
+  <defs>
+    <filter id="remove-black-mask">
+      <feColorMatrix type="matrix" values="
+        1 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        1.5 1.5 1.5 0 -0.1
+      "/>
+    </filter>
+  </defs>
+</svg>
+
 <!-- ══════════════════════════════════════════
      ENVELOPE SECTION
 ══════════════════════════════════════════ -->
@@ -357,50 +371,9 @@
         <path d="M20,180 C-4,162 15,140 30,158 Z" fill="#c9a84c" opacity="0.4"/>
       </svg>
       <!-- Motif 2: Vintage (Ornamental frame) -->
-      <svg class="panel-vintage" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
-        <!-- Outer ornate frame line -->
-        <path d="M12,12 L12,588" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
-        <path d="M18,18 L18,582" stroke="#c9a84c" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.6"/>
-
-        <!-- Top ornate baroque corner (Acanthus leaves & scrollwork) -->
-        <path d="M12,12 C40,12 65,24 65,48 C65,70 42,75 25,65 C12,56 12,42 12,30" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-        <path d="M12,24 C24,24 38,32 38,44 C38,56 24,54 18,48" stroke="#c9a84c" stroke-width="1" opacity="0.75"/>
-        <path d="M12,12 L12,48 C16,42 22,38 30,38 C38,38 34,22 12,12 Z" fill="#c9a84c" opacity="0.5"/>
-        <path d="M48,22 C44,28 32,32 32,38" stroke="#c9a84c" stroke-width="1" opacity="0.8"/>
-        <!-- Small decorative leaf details -->
-        <path d="M56,12 C62,18 58,26 50,28" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <path d="M12,56 C18,62 26,58 28,50" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="58" cy="36" r="2.5" fill="#c9a84c" opacity="0.8"/>
-
-        <!-- Bottom ornate baroque corner (Acanthus leaves & scrollwork, mirrored vertically) -->
-        <path d="M12,588 C40,588 65,576 65,552 C65,530 42,525 25,535 C12,544 12,558 12,570" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-        <path d="M12,576 C24,576 38,568 38,556 C38,544 24,546 18,552" stroke="#c9a84c" stroke-width="1" opacity="0.75"/>
-        <path d="M12,588 L12,552 C16,558 22,562 30,562 C38,562 34,578 12,588 Z" fill="#c9a84c" opacity="0.5"/>
-        <path d="M48,578 C44,572 32,568 32,562" stroke="#c9a84c" stroke-width="1" opacity="0.8"/>
-        <path d="M56,588 C62,582 58,574 50,572" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <path d="M12,544 C18,538 26,542 28,550" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="58" cy="564" r="2.5" fill="#c9a84c" opacity="0.8"/>
-
-        <!-- Side vine flourishes -->
-        <path d="M12,180 C24,185 32,195 24,210 C18,220 12,215 12,205" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-        <path d="M12,190 C18,190 22,198 18,205" fill="#c9a84c" opacity="0.4"/>
-        <path d="M12,420 C24,415 32,405 24,390 C18,380 12,385 12,395" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-        <path d="M12,410 C18,410 22,402 18,395" fill="#c9a84c" opacity="0.4"/>
-
-        <!-- Central majestic Cartouche/Medallion scrollwork -->
-        <path d="M12,300 C35,270 58,260 58,300 C58,340 35,330 12,300" stroke="#c9a84c" stroke-width="1.8" opacity="0.95"/>
-        <path d="M12,280 C24,285 30,290 38,285 C46,280 48,290 48,300 C48,310 46,320 38,315 C30,310 24,315 12,320" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-        <path d="M58,300 C68,295 68,305 58,300 Z" fill="#c9a84c" opacity="0.75"/>
-        <circle cx="48" cy="300" r="4" fill="#c9a84c"/>
-        <circle cx="34" cy="280" r="2" fill="#c9a84c"/>
-        <circle cx="34" cy="320" r="2" fill="#c9a84c"/>
-        <path d="M22,290 Q34,290 30,300 Q34,310 22,310 Z" fill="#c9a84c" opacity="0.5"/>
-
-        <!-- Intricate lace detail near the open/inner edge (right side of panel, x = 185 to 198) -->
-        <path d="M190,40 Q193,300 190,560" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.55"/>
-        <line x1="195" y1="40" x2="195" y2="560" stroke="#c9a84c" stroke-width="1.2" stroke-dasharray="6,6" opacity="0.8"/>
-        <path d="M195,40 C187,46 187,54 195,60 C187,66 187,74 195,80 C187,86 187,94 195,100 C187,106 187,114 195,120 C187,126 187,134 195,140 C187,146 187,154 195,150 C187,156 187,164 195,170 C187,176 187,184 195,190 C187,196 187,204 195,210 C187,216 187,224 195,220 C187,226 187,234 195,240 C187,246 187,254 195,250 C187,256 187,264 195,270 C187,276 187,284 195,290 C187,296 187,304 195,300 C187,306 187,314 195,310 C187,316 187,324 195,320 C187,326 187,334 195,330 C187,336 187,344 195,340 C187,346 187,354 195,350 C187,356 187,364 195,360 C187,366 187,374 195,370 C187,376 187,384 195,380 C187,386 187,394 195,390 C187,396 187,404 195,400 C187,406 187,414 195,410 C187,416 187,424 195,420 C187,426 187,434 195,430 C187,436 187,444 195,440 C187,446 187,454 195,450 C187,456 187,464 195,460 C187,466 187,474 195,470 C187,476 187,484 195,480 C187,486 187,494 195,490 C187,496 187,504 195,500 C187,506 187,514 195,510 C187,516 187,524 195,520 C187,526 187,534 195,530 C187,536 187,544 195,540 C187,546 187,554 195,550 C187,556 187,564 195,560" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-      </svg>
+      <div class="panel-vintage" style="display:none; position:absolute; inset:0; pointer-events:none;">
+        <img src="assets/vintage_baroque_frame.png" class="panel-vintage-img" alt="Vintage Frame">
+      </div>
     </div>
 
     <div class="env-panel right-panel" id="rightPanel">
@@ -423,50 +396,9 @@
         <path d="M20,180 C-4,162 15,140 30,158 Z" fill="#c9a84c" opacity="0.4"/>
       </svg>
       <!-- Motif 2: Vintage (Ornamental frame, Mirrored) -->
-      <svg class="panel-vintage" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1); display:none">
-        <!-- Outer ornate frame line -->
-        <path d="M12,12 L12,588" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
-        <path d="M18,18 L18,582" stroke="#c9a84c" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.6"/>
-
-        <!-- Top ornate baroque corner (Acanthus leaves & scrollwork) -->
-        <path d="M12,12 C40,12 65,24 65,48 C65,70 42,75 25,65 C12,56 12,42 12,30" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-        <path d="M12,24 C24,24 38,32 38,44 C38,56 24,54 18,48" stroke="#c9a84c" stroke-width="1" opacity="0.75"/>
-        <path d="M12,12 L12,48 C16,42 22,38 30,38 C38,38 34,22 12,12 Z" fill="#c9a84c" opacity="0.5"/>
-        <path d="M48,22 C44,28 32,32 32,38" stroke="#c9a84c" stroke-width="1" opacity="0.8"/>
-        <!-- Small decorative leaf details -->
-        <path d="M56,12 C62,18 58,26 50,28" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <path d="M12,56 C18,62 26,58 28,50" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="58" cy="36" r="2.5" fill="#c9a84c" opacity="0.8"/>
-
-        <!-- Bottom ornate baroque corner (Acanthus leaves & scrollwork, mirrored vertically) -->
-        <path d="M12,588 C40,588 65,576 65,552 C65,530 42,525 25,535 C12,544 12,558 12,570" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-        <path d="M12,576 C24,576 38,568 38,556 C38,544 24,546 18,552" stroke="#c9a84c" stroke-width="1" opacity="0.75"/>
-        <path d="M12,588 L12,552 C16,558 22,562 30,562 C38,562 34,578 12,588 Z" fill="#c9a84c" opacity="0.5"/>
-        <path d="M48,578 C44,572 32,568 32,562" stroke="#c9a84c" stroke-width="1" opacity="0.8"/>
-        <path d="M56,588 C62,582 58,574 50,572" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <path d="M12,544 C18,538 26,542 28,550" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="58" cy="564" r="2.5" fill="#c9a84c" opacity="0.8"/>
-
-        <!-- Side vine flourishes -->
-        <path d="M12,180 C24,185 32,195 24,210 C18,220 12,215 12,205" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-        <path d="M12,190 C18,190 22,198 18,205" fill="#c9a84c" opacity="0.4"/>
-        <path d="M12,420 C24,415 32,405 24,390 C18,380 12,385 12,395" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-        <path d="M12,410 C18,410 22,402 18,395" fill="#c9a84c" opacity="0.4"/>
-
-        <!-- Central majestic Cartouche/Medallion scrollwork -->
-        <path d="M12,300 C35,270 58,260 58,300 C58,340 35,330 12,300" stroke="#c9a84c" stroke-width="1.8" opacity="0.95"/>
-        <path d="M12,280 C24,285 30,290 38,285 C46,280 48,290 48,300 C48,310 46,320 38,315 C30,310 24,315 12,320" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-        <path d="M58,300 C68,295 68,305 58,300 Z" fill="#c9a84c" opacity="0.75"/>
-        <circle cx="48" cy="300" r="4" fill="#c9a84c"/>
-        <circle cx="34" cy="280" r="2" fill="#c9a84c"/>
-        <circle cx="34" cy="320" r="2" fill="#c9a84c"/>
-        <path d="M22,290 Q34,290 30,300 Q34,310 22,310 Z" fill="#c9a84c" opacity="0.5"/>
-
-        <!-- Intricate lace detail near the open/inner edge (right side of panel, x = 185 to 198) -->
-        <path d="M190,40 Q193,300 190,560" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.55"/>
-        <line x1="195" y1="40" x2="195" y2="560" stroke="#c9a84c" stroke-width="1.2" stroke-dasharray="6,6" opacity="0.8"/>
-        <path d="M195,40 C187,46 187,54 195,60 C187,66 187,74 195,80 C187,86 187,94 195,100 C187,106 187,114 195,120 C187,126 187,134 195,140 C187,146 187,154 195,150 C187,156 187,164 195,170 C187,176 187,184 195,190 C187,196 187,204 195,210 C187,216 187,224 195,220 C187,226 187,234 195,240 C187,246 187,254 195,250 C187,256 187,264 195,270 C187,276 187,284 195,290 C187,296 187,304 195,300 C187,306 187,314 195,310 C187,316 187,324 195,320 C187,326 187,334 195,330 C187,336 187,344 195,340 C187,346 187,354 195,350 C187,356 187,364 195,360 C187,366 187,374 195,370 C187,376 187,384 195,380 C187,386 187,394 195,390 C187,396 187,404 195,400 C187,406 187,414 195,410 C187,416 187,424 195,420 C187,426 187,434 195,430 C187,436 187,444 195,440 C187,446 187,454 195,450 C187,456 187,464 195,460 C187,466 187,474 195,470 C187,476 187,484 195,480 C187,486 187,494 195,490 C187,496 187,504 195,500 C187,506 187,514 195,510 C187,516 187,524 195,520 C187,526 187,534 195,530 C187,536 187,544 195,540 C187,546 187,554 195,550 C187,556 187,564 195,560" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-      </svg>
+      <div class="panel-vintage" style="display:none; position:absolute; inset:0; pointer-events:none; transform:scaleX(-1);">
+        <img src="assets/vintage_baroque_frame.png" class="panel-vintage-img" alt="Vintage Frame">
+      </div>
     </div>
 
     <!-- ─── Gold Seal ─── -->
@@ -486,91 +418,11 @@
       </div>
 
       <div class="seal" id="seal" onclick="openEnvelopeNow()">
-        <svg class="seal-svg" viewBox="0 0 200 200">
-          <!-- Outer rings -->
-          <circle cx="100" cy="100" r="96" fill="url(#sealOuter)"/>
-          <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
-          <circle cx="100" cy="100" r="82" fill="url(#sealInner)"/>
-          <circle cx="100" cy="100" r="76" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
-          
-          <!-- Seal Symbol 1: Heart -->
-          <g id="seal-symbol-heart">
-            <path d="M100,136 C68,108 60,80 78,64 C90,52 100,65 100,65 C100,65 110,52 122,64 C140,80 132,108 100,136 Z"
-                  fill="none" stroke="rgba(255,248,220,0.9)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M98,130 C76,108 72,86 84,72 C90,65 98,70 98,70"
-                  fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
-          </g>
-
-          <!-- Seal Symbol 2: Intertwined Rings -->
-          <g id="seal-symbol-rings" style="display:none">
-            <circle cx="85"  cy="100" r="22" fill="none" stroke="rgba(255,248,220,0.9)" stroke-width="4"/>
-            <rect x="79" y="74" width="12" height="6" fill="rgba(255,248,220,0.9)" transform="rotate(-15 85 100)"/>
-            <circle cx="115" cy="100" r="22" fill="none" stroke="rgba(255,248,220,0.9)" stroke-width="4"/>
-            <rect x="109" y="74" width="12" height="6" fill="rgba(255,248,220,0.9)" transform="rotate(15 115 100)"/>
-          </g>
-
-          <!-- Seal Symbol 3: Initials Monogram -->
-          <g id="seal-symbol-monogram" style="display:none">
-            <!-- Decorative borders/wreath for initials monogram -->
-            <circle cx="100" cy="100" r="54" fill="none" stroke="rgba(255,248,220,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
-            <path d="M100,38 C105,38 108,42 108,46 C108,50 102,56 100,58 C98,56 92,50 92,46 C92,42 95,38 100,38 Z" fill="rgba(255,248,220,0.85)"/>
-            <path d="M100,162 C105,162 108,158 108,154 C108,150 102,144 100,142 C98,144 92,150 92,154 C92,158 95,162 100,162 Z" fill="rgba(255,248,220,0.85)"/>
-            <path d="M60,70 Q46,100 60,130" fill="none" stroke="rgba(255,248,220,0.7)" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M140,70 Q154,100 140,130" fill="none" stroke="rgba(255,248,220,0.7)" stroke-width="1.5" stroke-linecap="round"/>
-            <!-- Embossed initials text using gold text gradient -->
-            <text x="100" y="112" font-family="'Playfair Display', 'Amiri', serif" font-style="italic" font-size="28" font-weight="bold" fill="url(#sealTextGrad)" text-anchor="middle" id="seal-monogram-text" letter-spacing="1">M &amp; M</text>
-          </g>
-
-          <!-- Seal Symbol 4: Bismillah / Islamic Ornament -->
-          <g id="seal-symbol-bismillah" style="display:none">
-            <!-- Elegant Islamic Octagram / Star border -->
-            <path d="M100,32 L116,48 L138,48 L142,70 L158,86 L150,108 L150,130 L134,146 L120,162 L98,154 L76,154 L72,132 L56,116 L64,94 L64,72 L80,56 Z" 
-                  fill="none" stroke="rgba(255,248,220,0.4)" stroke-width="1.2" transform="rotate(11.25 100 100)"/>
-            <path d="M100,32 L116,48 L138,48 L142,70 L158,86 L150,108 L150,130 L134,146 L120,162 L98,154 L76,154 L72,132 L56,116 L64,94 L64,72 L80,56 Z" 
-                  fill="none" stroke="rgba(255,248,220,0.2)" stroke-width="0.8" transform="rotate(33.75 100 100)"/>
-            <circle cx="100" cy="100" r="56" fill="none" stroke="rgba(255,248,220,0.35)" stroke-width="1" stroke-dasharray="3,3"/>
-            
-            <!-- Highly detailed Bismillah calligraphy script -->
-            <g transform="translate(62, 70) scale(0.38)" fill="url(#sealTextGrad)">
-              <!-- Seen, Meem, Allah strokes -->
-              <path d="M12,45 C25,40 28,15 32,5 C38,-10 48,-5 48,15 C48,35 38,50 30,62 C22,74 12,78 6,70 C0,62 2,50 12,45 Z"/>
-              <path d="M48,20 Q65,0 78,25 T108,25" fill="none" stroke="url(#sealTextGrad)" stroke-width="7" stroke-linecap="round"/>
-              <path d="M106,-8 L106,55" stroke="url(#sealTextGrad)" stroke-width="7" stroke-linecap="round"/>
-              <path d="M120,-12 Q120,30 125,55" fill="none" stroke="url(#sealTextGrad)" stroke-width="6.5" stroke-linecap="round"/>
-              <path d="M125,20 Q142,20 142,38 T130,58" fill="none" stroke="url(#sealTextGrad)" stroke-width="6.5" stroke-linecap="round"/>
-              <path d="M142,8 Q152,18 147,30" fill="none" stroke="url(#sealTextGrad)" stroke-width="5" stroke-linecap="round"/>
-              <!-- Accent marks -->
-              <path d="M82,-2 L92,6" stroke="url(#sealTextGrad)" stroke-width="4.5" stroke-linecap="round"/>
-              <path d="M128,-22 L138,-14" stroke="url(#sealTextGrad)" stroke-width="4.5" stroke-linecap="round"/>
-              <!-- Dots -->
-              <circle cx="118" cy="65" r="4.5"/>
-              <circle cx="28" cy="74" r="4.5"/>
-              <circle cx="38" cy="74" r="4.5"/>
-            </g>
-          </g>
-          
-          <!-- Center pin -->
-          <circle cx="100" cy="100" r="5" fill="rgba(255,248,220,0.7)"/>
-          <defs>
-            <radialGradient id="sealOuter" cx="40%" cy="35%">
-              <stop offset="0%"   stop-color="#FCF6BA"/>
-              <stop offset="45%"  stop-color="#BF953F"/>
-              <stop offset="100%" stop-color="#7a4a00"/>
-            </radialGradient>
-            <radialGradient id="sealInner" cx="40%" cy="35%">
-              <stop offset="0%"   stop-color="#e8cc7a"/>
-              <stop offset="60%"  stop-color="#B38728"/>
-              <stop offset="100%" stop-color="#6a3800"/>
-            </radialGradient>
-            <!-- Gold metallic linear gradient for monogram initials -->
-            <linearGradient id="sealTextGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%"   stop-color="#FFFFFF"/>
-              <stop offset="35%"  stop-color="#FFFDF0"/>
-              <stop offset="70%"  stop-color="#E5C158"/>
-              <stop offset="100%" stop-color="#885A00"/>
-            </linearGradient>
-          </defs>
-        </svg>
+        <!-- 3D Wax Seal Image (dynamically swapped by JS) -->
+        <img id="seal-3d-img" src="assets/heart_wax_seal.png" alt="Seal">
+        
+        <!-- Monogram overlay text (displayed only when monogram is selected) -->
+        <div id="seal-3d-monogram-text" class="font-amiri" style="display:none;">M &amp; M</div>
       </div>
       <!-- Curved text SVG around the seal -->
       <svg class="seal-text-svg" viewBox="0 0 200 200">

@@ -783,22 +783,26 @@ function applyEnvelopeDesign(cfg) {
 
   // ── Seal symbol (es: 'heart' | 'rings' | 'monogram' | 'bismillah') ──
   const seal = cfg.es || 'heart';
-  const SEALS = ['heart', 'rings', 'monogram', 'bismillah'];
-  SEALS.forEach(s => {
-    const el = document.getElementById('seal-symbol-' + s);
-    if (el) el.style.display = (s === seal) ? '' : 'none';
-  });
+  const sealImg = document.getElementById('seal-3d-img');
+  const sealMonoText = document.getElementById('seal-3d-monogram-text');
 
-  // Update monogram initials if seal is monogram
-  if (seal === 'monogram') {
-    const monoEl = document.getElementById('seal-monogram-text');
-    if (monoEl) {
-      const isFr = cfg.la === 'fr';
-      const groomName = isFr ? (cfg.gf2 || cfg.ga) : cfg.ga;
-      const brideName = isFr ? (cfg.bf2 || cfg.ba) : cfg.ba;
-      const g = (groomName || '').trim().charAt(0).toUpperCase();
-      const b = (brideName || '').trim().charAt(0).toUpperCase();
-      monoEl.textContent = g && b ? `${g} & ${b}` : 'M & M';
+  if (sealImg) {
+    if (seal === 'monogram') {
+      sealImg.src = 'assets/monogram_wax_seal_bg.png';
+      if (sealMonoText) {
+        sealMonoText.style.display = 'flex';
+        const isFr = cfg.la === 'fr';
+        const groomName = isFr ? (cfg.gf2 || cfg.ga) : cfg.ga;
+        const brideName = isFr ? (cfg.bf2 || cfg.ba) : cfg.ba;
+        const g = (groomName || '').trim().charAt(0).toUpperCase();
+        const b = (brideName || '').trim().charAt(0).toUpperCase();
+        sealMonoText.textContent = g && b ? `${g} & ${b}` : 'M & M';
+      }
+    } else {
+      sealImg.src = `assets/${seal}_wax_seal.png`;
+      if (sealMonoText) {
+        sealMonoText.style.display = 'none';
+      }
     }
   }
 }
