@@ -285,8 +285,11 @@
         <div class="card-title">💌 كلمة مرور قائمة المدعوين (للعروسين)</div>
         <div class="field" style="margin-top:10px">
           <label>كلمة المرور التي سيستخدمها العروسان للدخول إلى صفحة إدارة قائمة مدعويهم:</label>
-          <input id="couplePwdInput" type="text" placeholder="مثال: mariage2026" dir="ltr"
-            style="font-size:0.95rem; width:100%; border:1px solid rgba(201,168,76,0.4); padding:10px; border-radius:6px; background:rgba(0,0,0,0.2); color:white; font-family:monospace;">
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <input id="couplePwdInput" type="text" placeholder="مثال: mariage2026" dir="ltr"
+              style="font-size:0.95rem; flex:1; border:1px solid rgba(201,168,76,0.4); padding:10px; border-radius:6px; background:rgba(0,0,0,0.2); color:white; font-family:monospace;">
+            <button class="btn btn-outline" type="button" style="border-color:var(--gold);color:var(--gold);padding:0 15px;font-size:0.85rem;" onclick="document.getElementById('couplePwdInput').value = Math.floor(100000 + Math.random() * 900000).toString(); showToast('🎲 تم توليد كلمة مرور!')">🎲 توليد</button>
+          </div>
           <small style="color:var(--text-muted); display:block; margin-top:6px; font-size:0.76rem">
             ⓘ شارك هذه الكلمة مع العروسين ليتمكنوا من إضافة أسماء مدعويهم الـ 150+ وتوليد روابط شخصية لكل واحد منهم عبر WhatsApp.
           </small>
@@ -306,38 +309,54 @@
       </div>
 
       <!-- Output box -->
-      <div class="card link-output-box" id="linkOutputBox">
-        <div class="card-title">🎉 الرابط جاهز!</div>
+      <div class="card link-output-box" id="linkOutputBox" style="border: 2px solid var(--gold); background: rgba(201,168,76,0.02); padding: 20px;">
+        <div class="card-title" style="font-size: 1.2rem; color: var(--gold-light); text-align: center; margin-bottom: 15px;">🎉 تم إنشاء الروابط بنجاح!</div>
 
-        <!-- Invitation URL -->
-        <div class="link-section-label">🟢 رابط الدعوة العام (للمشاركة العادية)</div>
-        <div class="short-link-url" id="shortUrl" style="font-size:0.78rem">جاري التوليد…</div>
-
-        <!-- Long URL (secondary, hidden by default) -->
-        <details style="margin-bottom:10px">
-          <summary style="font-size:0.75rem;color:var(--text-muted);cursor:pointer;padding:4px 0">عرض الرابط الكامل ▾</summary>
-          <div class="link-url" id="generatedUrl" style="margin-top:6px"></div>
-        </details>
-
-        <!-- Guests Manager Link -->
-        <div style="background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:12px 14px;margin-bottom:12px">
-          <div class="link-section-label" style="margin-bottom:6px">💌 رابط إدارة المدعوين (للعروسين فقط)</div>
-          <div class="short-link-url" id="guestsUrl" style="font-size:0.72rem;color:#c9a84c;background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.3)">جاري التوليد…</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:6px">🔑 كلمة المرور: <span id="guestsPwdDisplay" style="color:#c9a84c;font-family:monospace;font-weight:700"></span></div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;border-color:#c9a84c;color:#c9a84c" onclick="copyGuestsLink()">📋 نسخ رابط الإدارة</button>
-            <button class="btn btn-ghost"   style="padding:4px 10px;font-size:0.76rem" onclick="openGuestsLink()">🔗 فتح</button>
+        <!-- Section 1: Invitation (Guests) -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+          <div class="link-section-label" style="font-weight: 700; color: #2ecc71; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>🟢</span> رابط الدعوة العام للضيوف (Invitation)
+          </div>
+          <div class="short-link-url" id="shortUrl" style="font-family: monospace; font-size: 0.76rem; color: #fff; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; word-break: break-all; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1);">جاري التوليد…</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-primary" style="flex:1; padding:8px; font-size:0.8rem;" onclick="copyShortLink()">📋 نسخ رابط الدعوة</button>
+            <button class="btn btn-outline" style="flex:1; padding:8px; font-size:0.8rem;" onclick="shareWhatsApp()">💬 مشاركة واتساب</button>
+            <button class="btn btn-ghost" style="padding:8px 12px; font-size:0.8rem;" onclick="openShortLink()">🔗 فتح</button>
           </div>
         </div>
 
-        <div class="link-actions">
-          <button class="btn btn-primary" onclick="copyShortLink()">📋 نسخ الرابط</button>
-          <button class="btn btn-outline" onclick="shareWhatsApp()">💬 واتساب</button>
-          <button class="btn btn-ghost"   onclick="openShortLink()">🔗 فتح</button>
+        <!-- Section 2: Management (Couple) -->
+        <div style="background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.25); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+          <div class="link-section-label" style="font-weight: 700; color: var(--gold); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>👑</span> لوحة تحكم وإدارة المدعوين للعروسين (Management)
+          </div>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 8px;">
+            شارك هذا الرابط وكلمة المرور مع العروسين ليتمكna من إدارة قائمة مدعويهم وإضافة أسمائهم بأنفسهم.
+          </div>
+          <div class="short-link-url" id="guestsUrl" style="font-family: monospace; font-size: 0.74rem; color: #e8cc7a; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; word-break: break-all; margin-bottom: 8px; border: 1px solid rgba(201,168,76,0.2);">جاري التوليد…</div>
+          
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+            <span style="font-size:0.75rem; color:var(--text-muted)">🔑 كلمة مرور الدخول للعميل:</span>
+            <span id="guestsPwdDisplay" style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #fff; background: rgba(201,168,76,0.2); padding: 3px 12px; border-radius: 6px; letter-spacing: 1px;"></span>
+            <button onclick="navigator.clipboard.writeText(document.getElementById('guestsPwdDisplay').textContent).then(() => showToast('📋 تم نسخ كلمة المرور!'))" style="background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.25); color:var(--gold); border-radius:5px; padding:2px 8px; font-size:0.68rem; cursor:pointer;">نسخ</button>
+          </div>
+
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-primary" style="flex:1.5; min-width:120px; background:linear-gradient(135deg,#c9a84c,#e8cc7a); color:#1a1000; border:none; padding:9px; font-size:0.8rem; font-weight:700;" onclick="copyGuestsLink()">📋 نسخ رابط الإدارة</button>
+            <button class="btn btn-outline" style="flex:1.5; min-width:120px; border-color:#25d366; color:#25d366; padding:9px; font-size:0.8rem;" onclick="shareGuestsLink(_guestsUrl, document.getElementById('guestsPwdDisplay').textContent, val('guestNameInput') || val('groomAr'))">💬 إرسال واتساب للعميل</button>
+            <button class="btn btn-ghost" style="padding:9px 12px; font-size:0.8rem;" onclick="openGuestsLink()">🔗 فتح</button>
+          </div>
         </div>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:0.76rem;color:var(--text-muted)">
-          معرّف الرابط: <span id="linkIdDisplay" style="color:var(--gold);font-family:monospace"></span> ·
-          الباقة: <span id="packDisplay" style="color:var(--gold);font-weight:700"></span> مشاركة
+
+        <!-- Long URL (collapsed) -->
+        <details style="margin-bottom:10px">
+          <summary style="font-size:0.72rem;color:var(--text-muted);cursor:pointer;padding:4px 0">عرض الرابط الكامل (Full URL) ▾</summary>
+          <div class="link-url" id="generatedUrl" style="margin-top:6px; font-size:0.7rem;"></div>
+        </details>
+
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.74rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+          <div>معرّف الدعوة: <span id="linkIdDisplay" style="color:var(--gold);font-family:monospace"></span></div>
+          <div>الباقة: <span id="packDisplay" style="color:var(--gold);font-weight:700"></span> مشاركة</div>
         </div>
       </div>
 
@@ -772,6 +791,13 @@ async function generateLink() {
     base = window.location.href.replace('admin.html', INVITATION_FILE);
   }
 
+  // Auto-generate password if blank
+  let finalPwd = couplePwd.trim();
+  if (!finalPwd) {
+    finalPwd = Math.floor(100000 + Math.random() * 900000).toString();
+    document.getElementById('couplePwdInput').value = finalPwd;
+  }
+
   const shortUrlEl = document.getElementById('shortUrl');
   document.getElementById('linkOutputBox').classList.add('visible');
   document.getElementById('linkOutputBox').scrollIntoView({ behavior:'smooth', block:'center' });
@@ -779,7 +805,7 @@ async function generateLink() {
   shortUrlEl.textContent = '⏳ جاري الحفظ على Firebase...';
 
   try {
-    await saveInvitationToFirebase(invSlug, cfg, selectedPack, guestName, couplePwd);
+    await saveInvitationToFirebase(invSlug, cfg, selectedPack, guestName, finalPwd);
 
     const inviteUrl  = `${base}?inv=${invSlug}`;
     const guestsBase = base.replace('index.html', 'guests.html').replace(INVITATION_FILE, 'guests.html');
@@ -794,7 +820,7 @@ async function generateLink() {
 
     // Guests manager link
     document.getElementById('guestsUrl').textContent         = guestsLink;
-    document.getElementById('guestsPwdDisplay').textContent  = couplePwd || '(لم يتم تعيينها)';
+    document.getElementById('guestsPwdDisplay').textContent  = finalPwd;
 
     // Reset guest name field for next guest
     const gInput = document.getElementById('guestNameInput');
@@ -821,37 +847,31 @@ function shareWhatsApp()  {
 }
 function openShortLink() { window.open(_shortUrl, '_blank'); }
 
-// ── History (Firestore-based) ──
 async function renderLinksHistory() {
   const c = document.getElementById('links-history');
   if (!c) return;
-  c.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:20px"><span class="spinner"></span> جاري تحميل الروابط من السيرفر...</div>';
-
+  c.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:20px"><span class="spinner"></span> جاري تحميل الروابط...</div>';
   try {
     initFirebase();
     const querySnapshot = await _db.collection('invitations').get();
     const hist = [];
-    
     querySnapshot.forEach(doc => {
       const data = doc.data();
       hist.push({
-        id: doc.id,
-        ps: data.pack || 100,
-        guestName: data.guestName || 'عام',
-        created: data.created ? (data.created.toDate ? data.created.toDate().toISOString() : new Date(data.created).toISOString()) : new Date().toISOString(),
-        wishes: data.wishes || []
+        id:             doc.id,
+        ps:             data.pack || 100,
+        guestName:      data.guestName || 'عام',
+        couplePassword: data.couplePassword || '',
+        guestsUsed:     Array.isArray(data.guests) ? data.guests.length : 0,
+        created:        data.created ? (data.created.toDate ? data.created.toDate().toISOString() : new Date(data.created).toISOString()) : new Date().toISOString(),
+        wishes:         data.wishes || []
       });
     });
-
-    // Sort by created date descending
     hist.sort((a, b) => new Date(b.created) - new Date(a.created));
-
     if (!hist.length) {
       c.innerHTML = '<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:20px">لا توجد روابط بعد</div>';
       return;
     }
-
-    // Build the base URL for the links
     const prodUrl = val('prodUrlInput');
     let base;
     if (prodUrl) {
@@ -863,51 +883,177 @@ async function renderLinksHistory() {
     } else {
       base = window.location.href.replace('admin.html', INVITATION_FILE);
     }
+    const guestsBase = base.replace('index.html','guests.html').replace(INVITATION_FILE,'guests.html');
 
     c.innerHTML = hist.map(h => {
-      const url = `${base}?inv=${h.id}`;
-      
+      const invUrl    = base + '?inv=' + h.id;
+      const guestsUrl = guestsBase + '?inv=' + h.id;
+      const packPct   = h.ps > 0 ? Math.min(100, Math.round((h.guestsUsed / h.ps) * 100)) : 0;
+      const packFull  = h.guestsUsed >= h.ps;
+      const packColor = packFull ? '#e74c3c' : h.guestsUsed > h.ps * 0.8 ? '#f39c12' : '#2ecc71';
+
       let wishesHTML = '';
       if (h.wishes && h.wishes.length > 0) {
-        wishesHTML = `
-        <details style="margin-top:10px;background:rgba(255,255,255,0.04);border-radius:6px;padding:8px 12px;border:1px solid rgba(255,255,255,0.05)">
-          <summary style="font-size:0.75rem;color:var(--gold-light);cursor:pointer;user-select:none">💬 عرض التهاني (${h.wishes.length}) ▾</summary>
-          <div style="margin-top:6px;font-size:0.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:8px">
-            ${h.wishes.map(w => {
-              const targetText = w.target === 'groom' ? '🤵 العريس' : w.target === 'bride' ? '👰 العروسة' : '💑 كلاهما';
-              const targetColor = w.target === 'groom' ? '#3498db' : w.target === 'bride' ? '#e74c3c' : '#2ecc71';
-              return `
-              <div style="border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:6px">
-                <strong>${w.name}</strong> <span style="font-size:0.68rem;color:${targetColor};background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:4px;margin-right:6px">${targetText}</span>: "${w.message}"
-                <span style="font-size:0.65rem;display:block;color:rgba(255,255,255,0.3);margin-top:2px">📅 ${new Date(w.timestamp).toLocaleString('ar-TN')}</span>
-              </div>
-              `;
-            }).join('')}
-          </div>
-        </details>`;
+        wishesHTML = '<details style="margin-top:8px;background:rgba(255,255,255,0.03);border-radius:6px;padding:8px 12px;border:1px solid rgba(255,255,255,0.05)">'
+          + '<summary style="font-size:0.75rem;color:var(--gold-light);cursor:pointer">💬 التهاني (' + h.wishes.length + ') ▾</summary>'
+          + '<div style="margin-top:6px;font-size:0.78rem;color:var(--text-muted);display:flex;flex-direction:column;gap:6px">'
+          + h.wishes.map(w => {
+              const tc = w.target==='groom'?'#3498db':w.target==='bride'?'#e74c3c':'#2ecc71';
+              const tl = w.target==='groom'?'🤵 العريس':w.target==='bride'?'👰 العروسة':'💑 كلاهما';
+              return '<div style="border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:5px"><strong>'+w.name+'</strong> <span style="color:'+tc+';font-size:0.68rem">'+tl+'</span>: "'+w.message+'"</div>';
+            }).join('')
+          + '</div></details>';
       }
 
-      return `
-      <div class="link-history-item" id="lhi-${h.id}">
-        <div class="lh-info" style="width:100%">
-          <div class="lh-pack" style="font-weight:700;color:var(--gold-light)">👤 الضيف: ${h.guestName}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">معرّف الرابط: <span style="font-family:monospace;color:var(--gold)">${h.id}</span> · باقة: ${h.ps} مشاركة</div>
-          <div id="ctr-${h.id}" style="margin:6px 0;font-size:0.8rem;color:var(--text-muted)">⏳ جاري تحميل الرصيد...</div>
-          <div class="lh-date" style="font-size:0.7rem;color:rgba(255,255,255,0.4)">📅 ${new Date(h.created).toLocaleString('ar-TN')}</div>
-          ${wishesHTML}
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px;width:100%">
-          <button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem" onclick="quickCopy('${url}')" title="رابط الضيف">📋 رابط الضيف</button>
-          <button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;border-color:#3498db;color:#3498db" onclick="quickCopy('${url}&view=groom')" title="نسخ رابط العريس">🤵 رابط العريس</button>
-          <button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;border-color:#e74c3c;color:#e74c3c" onclick="quickCopy('${url}&view=bride')" title="نسخ رابط العروسة">👰 رابط العروسة</button>
-          <button class="btn btn-ghost"   style="padding:4px 8px;font-size:0.72rem" onclick="shareHistLink('${url}')">💬 واتساب</button>
-          <button class="btn btn-ghost"   style="padding:4px 8px;font-size:0.72rem;color:var(--gold)" onclick="updateLinkConfig('${h.id}')" title="تحديث هذه الدعوة بالبيانات الحالية للنموذج">🔄 تحديث</button>
-          <button class="btn btn-ghost"   style="padding:4px 8px;font-size:0.72rem;color:#e74c3c" onclick="deleteLink('${h.id}')">🗑️</button>
-        </div>
-      </div>`;
+      const pwdBlock = '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">'
+        + '<span style="font-size:0.73rem;color:var(--text-muted)">🔑 كلمة المرور:</span>'
+        + '<input type="text" id="pwd-input-' + h.id + '" value="' + h.couplePassword + '" style="font-family:monospace;font-size:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.35);color:#fff;padding:4px 8px;border-radius:6px;width:110px;text-align:center;direction:ltr;">'
+        + '<button onclick="updateClientPassword(\'' + h.id + '\')" style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.35);color:#2ecc71;border-radius:5px;padding:4px 8px;font-size:0.68rem;cursor:pointer;font-weight:700;">💾 حفظ</button>'
+        + '<button onclick="generateClientPassword(\'' + h.id + '\')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:5px;padding:4px 8px;font-size:0.68rem;cursor:pointer;">🎲 توليد</button>'
+        + '</div>';
+
+      const waShareGuests = '<button onclick="shareGuestsLink(\'' + guestsUrl + '\', document.getElementById(\'pwd-input-' + h.id + '\').value, \'' + h.guestName + '\')" style="background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;border-radius:7px;padding:7px 10px;font-size:0.78rem;cursor:pointer;font-family:\'Amiri\',serif">💬 إرسال واتساب</button>';
+
+      return '<div class="link-history-item" id="lhi-' + h.id + '" style="padding:0;overflow:hidden">'
+        // Header
+        + '<div style="background:rgba(201,168,76,0.07);border-bottom:1px solid rgba(201,168,76,0.14);padding:11px 14px;display:flex;align-items:center;gap:10px">'
+          + '<span style="font-size:1.2rem">👤</span>'
+          + '<div style="flex:1;min-width:0">'
+            + '<div style="font-weight:700;color:var(--gold-light);font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + h.guestName + '</div>'
+            + '<div style="font-size:0.67rem;color:var(--text-muted);font-family:monospace;margin-top:1px">' + h.id + '</div>'
+          + '</div>'
+          + '<div style="font-size:0.67rem;color:rgba(255,255,255,0.3);flex-shrink:0">' + new Date(h.created).toLocaleDateString('ar-TN') + '</div>'
+        + '</div>'
+        + '<div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">'
+          // Pack bar
+          + '<div>'
+            + '<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
+              + '<span style="font-size:0.73rem;color:var(--text-muted)">📦 الباقة</span>'
+              + '<span style="font-size:0.8rem;font-weight:700;color:' + packColor + '">' + h.guestsUsed + ' / ' + h.ps + ' مدعو</span>'
+            + '</div>'
+            + '<div style="background:rgba(255,255,255,0.08);border-radius:20px;height:5px;overflow:hidden">'
+              + '<div style="width:' + packPct + '%;height:100%;background:' + packColor + ';border-radius:20px"></div>'
+            + '</div>'
+          + '</div>'
+          // ═══ GUESTS MANAGEMENT BLOCK ═══
+          + '<div style="background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.28);border-radius:10px;padding:12px 13px">'
+            + '<div style="font-size:0.78rem;color:var(--gold);font-weight:700;margin-bottom:8px">💌 إدارة المدعوين — للعروسين</div>'
+            + '<div style="font-family:monospace;font-size:0.7rem;color:#e8cc7a;background:rgba(0,0,0,0.22);padding:7px 10px;border-radius:7px;word-break:break-all;margin-bottom:9px">' + guestsUrl + '</div>'
+            + pwdBlock
+            + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
+              + '<button onclick="quickCopy(\'' + guestsUrl + '\')" style="flex:1;min-width:100px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:7px;padding:8px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:\'Amiri\',serif">📋 نسخ رابط الإدارة</button>'
+              + '<button onclick="window.open(\'' + guestsUrl + '\',\'_blank\')" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:7px;padding:8px 10px;font-size:0.78rem;cursor:pointer;font-family:\'Amiri\',serif">🔗 فتح</button>'
+              + waShareGuests
+            + '</div>'
+          + '</div>'
+          // Invitation link (collapsed)
+          + '<div id="ctr-' + h.id + '" style="font-size:0.78rem;color:var(--text-muted)">⏳ جاري تحميل الإحصائيات...</div>'
+          + '<details style="background:rgba(255,255,255,0.03);border-radius:8px;padding:8px 12px;border:1px solid rgba(255,255,255,0.06)">'
+            + '<summary style="font-size:0.76rem;color:var(--text-muted);cursor:pointer">🔗 رابط الدعوة العام ▾</summary>'
+            + '<div style="font-family:monospace;font-size:0.69rem;color:#aaa;word-break:break-all;margin:6px 0">' + invUrl + '</div>'
+            + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">'
+              + '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem" onclick="quickCopy(\'' + invUrl + '\')">📋 نسخ</button>'
+              + '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;border-color:#3498db;color:#3498db" onclick="quickCopy(\'' + invUrl + '&view=groom\')">🤵 رابط العريس</button>'
+              + '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;border-color:#e74c3c;color:#e74c3c" onclick="quickCopy(\'' + invUrl + '&view=bride\')">👰 رابط العروسة</button>'
+              + '<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.72rem" onclick="shareHistLink(\'' + invUrl + '\')">💬 واتساب</button>'
+            + '</div>'
+          + '</details>'
+          + wishesHTML
+          // Admin actions
+          + '<div style="display:flex;gap:6px;justify-content:flex-end;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)">'
+            + '<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.72rem;color:var(--gold)" onclick="updateLinkConfig(\'' + h.id + '\')">🔄 تحديث الدعوة</button>'
+            + '<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.72rem;color:#e74c3c" onclick="deleteLink(\'' + h.id + '\')">🗑️ حذف</button>'
+          + '</div>'
+        + '</div>'
+      + '</div>';
     }).join('');
 
-    // Attach real-time Firebase listeners for each link to show the counter in real time
+    hist.forEach(h => {
+      watchInvitation(h.id, data => updateCounter(h.id, data));
+    });
+
+  } catch (err) {
+    console.error('Error fetching invitations:', err);
+    c.innerHTML = '<div style="color:#e74c3c;font-size:0.82rem;text-align:center;padding:20px">❌ فشل تحميل الروابط من السيرفر</div>';
+  }
+}
+
+function updateCounter(slug, data) {
+  const el = document.getElementById('ctr-' + slug);
+  if (!el) return;
+  const used      = data.count || 0;
+  const pack      = data.pack  || 100;
+  const remaining = Math.max(0, pack - used);
+  const pct       = Math.min(100, Math.round((used / pack) * 100));
+  const color     = remaining === 0 ? '#e74c3c' : remaining < pack * 0.2 ? '#f39c12' : '#2ecc71';
+  el.innerHTML = `
+    <div>
+      👁 فُفتح: <strong>${used}</strong> / ${pack} &nbsp;|&nbsp; متبقي: <strong style="color:${color}">${remaining}</strong>
+      <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:3px;margin-top:4px;overflow:hidden">
+        <div style="width:${pct}%;height:5px;background:${color};border-radius:3px;transition:width 0.6s ease"></div>
+      </div>
+    </div>`;
+}
+
+function shareHistLink(url) {
+  const msg = encodeURIComponent('🌹 دعوة زفاف\n\n' + url);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function shareGuestsLink(url, pwd, clientName) {
+  const cleanName = clientName || 'العميل';
+  const msg = encodeURIComponent(`💍 مرحبًا ${cleanName}،\n\nإليك رابط إدارة وتوليد دعوات ضيوفك على واتساب:\n🔗 ${url}\n\n🔑 كلمة المرور الخاصة بك للدخول: ${pwd}\n\nيرجى حفظ هذا الرابط وكلمة المرور لإضافة ضيوفك ومتابعة تأكيدات الحضور.`);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+async function updateClientPassword(id) {
+  const input = document.getElementById('pwd-input-' + id);
+  if (!input) return;
+  const newPwd = input.value.trim();
+  if (!newPwd) {
+    showToast('⚠️ لا يمكن أن تكون كلمة المرور فارغة');
+    return;
+  }
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(id).update({
+      couplePassword: newPwd
+    });
+    showToast('✅ تم تحديث كلمة المرور بنجاح!');
+    await renderLinksHistory();
+  } catch (e) {
+    console.error('Failed to update password:', e);
+    showToast('❌ فشل تحديث كلمة المرور: ' + e.message);
+  }
+}
+
+function generateClientPassword(id) {
+  const input = document.getElementById('pwd-input-' + id);
+  if (!input) return;
+  const randPwd = Math.floor(100000 + Math.random() * 900000).toString();
+  input.value = randPwd;
+  showToast('🎲 تم توليد كلمة مرور جديدة! اضغط حفظ للتأكيد');
+}
+
+function quickCopy(url) { navigator.clipboard.writeText(url).then(() => showToast('📋 تم النسخ!')); }ابط الدعوة العام ▾</summary>'
+            + '<div style="font-family:monospace;font-size:0.69rem;color:#aaa;word-break:break-all;margin:6px 0">' + invUrl + '</div>'
+            + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">'
+              + '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem" onclick="quickCopy(\'' + invUrl + '\')">📋 نسخ</button>'
+              + '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;border-color:#3498db;color:#3498db" onclick="quickCopy(\'' + invUrl + '&view=groom\')">🤵 رابط العريس</button>'
+              + '<button class="btn btn-outline" style="padding:4px 8px;font-size:0.72rem;border-color:#e74c3c;color:#e74c3c" onclick="quickCopy(\'' + invUrl + '&view=bride\')">👰 رابط العروسة</button>'
+              + '<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.72rem" onclick="shareHistLink(\'' + invUrl + '\')">💬 واتساب</button>'
+            + '</div>'
+          + '</details>'
+          + wishesHTML
+          // Admin actions
+          + '<div style="display:flex;gap:6px;justify-content:flex-end;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)">'
+            + '<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.72rem;color:var(--gold)" onclick="updateLinkConfig(\'' + h.id + '\')">🔄 تحديث الدعوة</button>'
+            + '<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.72rem;color:#e74c3c" onclick="deleteLink(\'' + h.id + '\')">🗑️ حذف</button>'
+          + '</div>'
+        + '</div>'
+      + '</div>';
+    }).join('');
+
     hist.forEach(h => {
       watchInvitation(h.id, data => updateCounter(h.id, data));
     });
