@@ -1205,15 +1205,17 @@ function applyLanguage(lang) {
     if (roleLabel && roleTitleEl && roleSubEl) {
       const isGroom = window._pendingRoleView === 'groom';
       if (isFr) {
-        roleTitleEl.textContent = isGroom
-          ? 'Invitation souvenir — pour le marié'
-          : 'Invitation souvenir — pour la mariée';
-        roleSubEl.textContent = '✦ À conserver précieusement ✦';
+        roleLabel.classList.add('ltr');
+        roleTitleEl.textContent = 'Invitation souvenir';
+        roleSubEl.textContent = isGroom
+          ? 'Pour le marié'
+          : 'Pour la mariée';
       } else {
-        roleTitleEl.textContent = isGroom
-          ? 'دعوة خاصة بالعريس للتذكار'
-          : 'دعوة خاصة بالعروسة للتذكار';
-        roleSubEl.textContent = '✦ احتفظ بها ذكرى جميلة ✦';
+        roleLabel.classList.remove('ltr');
+        roleTitleEl.textContent = 'دعوة خاصة';
+        roleSubEl.textContent = isGroom
+          ? 'بالعريس للتذكار'
+          : 'بالعروسة للتذكار';
       }
       roleLabel.style.display = 'flex';
     }
