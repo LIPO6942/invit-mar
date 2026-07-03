@@ -163,22 +163,32 @@ let _fbApp=null,_db=null;
 function initFirebase(){if(_fbApp)return;_fbApp=firebase.initializeApp(FIREBASE_CONFIG);_db=firebase.firestore()}
 let _slug='',_invData=null,_guests=[],_addFormula='ar_couple',_bulkFormula='ar_couple',_filterQ='';
 const FORMULAS=[
-  {value:'ar_couple',label:'إلى السيد ... وحرمه', badge:'b-arc',emoji:'👨‍👩‍👧'},
-  {value:'ar_man',   label:'إلى السيد ...',         badge:'b-arm',emoji:'👔'},
-  {value:'ar_woman', label:'إلى السيدة ...',        badge:'b-arw',emoji:'👗'},
-  {value:'fr_couple',label:'M. et Mme ...',          badge:'b-frc',emoji:'💑'},
-  {value:'fr_man',   label:'Monsieur ...',            badge:'b-frm',emoji:'🤵'},
-  {value:'fr_woman', label:'Madame ...',              badge:'b-frw',emoji:'👰'},
+  {value:'ar_couple',          label:'إلى السيد ... وحرمه',           badge:'b-arc', emoji:'👨‍👩‍👧'},
+  {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', badge:'b-arcc',emoji:'👨‍👩‍👦‍👦'},
+  {value:'ar_man',             label:'إلى السيد ...',              badge:'b-arm', emoji:'👔'},
+  {value:'ar_woman',           label:'إلى السيدة ...',             badge:'b-arw', emoji:'👗'},
+  {value:'ar_friend_m',        label:'إلى عْشيري ...',            badge:'b-afm', emoji:'🤝'},
+  {value:'ar_friend_f',        label:'إلى عْشيرتي ...',           badge:'b-aff', emoji:'👩‍🤝‍👩'},
+  {value:'fr_couple',          label:'M. et Mme ...',            badge:'b-frc', emoji:'💑'},
+  {value:'fr_man',             label:'Monsieur ...',              badge:'b-frm', emoji:'🤵'},
+  {value:'fr_woman',           label:'Madame ...',                badge:'b-frw', emoji:'👰'},
+  {value:'fr_friend_m',        label:'Pour mon Ami ...',          badge:'b-ffm', emoji:'👨‍🤝‍👨'},
+  {value:'fr_friend_f',        label:'Pour mon amie ...',         badge:'b-fff', emoji:'👩‍🤝‍👩'},
 ];
 function formatLabel(name,type){
   switch(type){
-    case'ar_couple':return`إلى السيد ${name} وحرمه`;
-    case'ar_man':   return`إلى السيد ${name}`;
-    case'ar_woman': return`إلى السيدة ${name}`;
-    case'fr_couple':return`Monsieur et Madame ${name}`;
-    case'fr_man':   return`Monsieur ${name}`;
-    case'fr_woman': return`Madame ${name}`;
-    default:        return`إلى السيد ${name} وحرمه`;
+    case'ar_couple':          return`إلى السيد ${name} وحرمه`;
+    case'ar_couple_children': return`إلى السيد ${name} وحرمه وأبنائه`;
+    case'ar_man':             return`إلى السيد ${name}`;
+    case'ar_woman':           return`إلى السيدة ${name}`;
+    case'ar_friend_m':        return`إلى عْشيري ${name}`;
+    case'ar_friend_f':        return`إلى عْشيرتي ${name}`;
+    case'fr_couple':          return`Monsieur et Madame ${name}`;
+    case'fr_man':             return`Monsieur ${name}`;
+    case'fr_woman':           return`Madame ${name}`;
+    case'fr_friend_m':        return`Pour mon Ami ${name}`;
+    case'fr_friend_f':        return`Pour mon amie ${name}`;
+    default:                  return`إلى السيد ${name} وحرمه`;
   }
 }
 function buildGuestLink(name,type){

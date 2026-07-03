@@ -94,6 +94,12 @@ function checkRoleView() {
     // Hide the guestbook — the couple cannot send wishes to themselves
     const gbSection = document.getElementById('guestbook-section');
     if (gbSection) gbSection.style.display = 'none';
+
+    // Show the dedicated bride/groom inscription on the envelope
+    const roleLabel = document.getElementById('role-inscription-banner');
+    if (roleLabel) roleLabel.style.display = 'flex';
+    // Text will be set after language is applied in applyLanguage()
+    window._pendingRoleView = view;
   }
 }
 
@@ -1033,13 +1039,18 @@ function readAndApplyGuestParam() {
   let name = guestName;
   let isLtr = false;
   switch (guestType) {
-    case 'ar_couple': title = 'إلى السيد'; name = `${guestName} وحرمه`; break;
-    case 'ar_man':    title = 'إلى السيد'; name = guestName; break;
-    case 'ar_woman':  title = 'إلى السيدة'; name = guestName; break;
-    case 'fr_couple': title = 'Monsieur & Madame'; name = guestName; isLtr = true; break;
-    case 'fr_man':    title = 'Monsieur'; name = guestName; isLtr = true; break;
-    case 'fr_woman':  title = 'Madame'; name = guestName; isLtr = true; break;
-    default:          title = 'إلى السيد'; name = `${guestName} وحرمه`;
+    case 'ar_couple':          title = 'إلى السيد'; name = `${guestName} وحرمه`; break;
+    case 'ar_couple_children': title = 'إلى السيد'; name = `${guestName} وحرمه وأبنائه`; break;
+    case 'ar_man':             title = 'إلى السيد'; name = guestName; break;
+    case 'ar_woman':           title = 'إلى السيدة'; name = guestName; break;
+    case 'ar_friend_m':        title = 'إلى عْشيري'; name = guestName; break;
+    case 'ar_friend_f':        title = 'إلى عْشيرتي'; name = guestName; break;
+    case 'fr_couple':          title = 'Monsieur & Madame'; name = guestName; isLtr = true; break;
+    case 'fr_man':             title = 'Monsieur'; name = guestName; isLtr = true; break;
+    case 'fr_woman':           title = 'Madame'; name = guestName; isLtr = true; break;
+    case 'fr_friend_m':        title = 'Pour mon Ami'; name = guestName; isLtr = true; break;
+    case 'fr_friend_f':        title = 'Pour mon amie'; name = guestName; isLtr = true; break;
+    default:                   title = 'إلى السيد'; name = `${guestName} وحرمه}`;
   }
 
   const banner  = document.getElementById('guestNameBanner');
@@ -1166,5 +1177,27 @@ function applyLanguage(lang) {
 
   // Render suggestion pills
   renderSuggestions(lang);
+
+  // Apply dedicated role inscription for groom/bride private view
+  if (window._pendingRoleView) {
+    const roleLabel  = document.getElementById('role-inscription-banner');
+    const roleTitleEl = document.getElementById('role-inscription-title');
+    const roleSubEl   = document.getElementById('role-inscription-sub');
+    if (roleLabel && roleTitleEl && roleSubEl) {
+      const isGroom = window._pendingRoleView === 'groom';
+      if (isFr) {
+        roleTitleEl.textContent = isGroom
+          ? 'Invitation souvenir — pour le marié'
+          : 'Invitation souvenir — pour la mariée';
+        roleSubEl.textContent = '✦ À conserver précieusement ✦';
+      } else {
+        roleTitleEl.textContent = isGroom
+          ? 'دعوة خاصة بالعريس للتذكار'
+          : 'دعوة خاصة بالعروسة للتذكار';
+        roleSubEl.textContent = '✦ احتفظ بها ذكرى جميلة ✦';
+      }
+      roleLabel.style.display = 'flex';
+    }
+  }
 }
 
