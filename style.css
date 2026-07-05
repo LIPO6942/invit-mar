@@ -336,10 +336,11 @@ body:not(.env-open) {
   position: absolute;
   width: 280px;
   height: 280px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  transform-origin: 140px 140px;
   animation: rotateSealText 14s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes sealPulse {
@@ -400,7 +401,7 @@ body:not(.env-open) {
   z-index: 19;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   white-space: nowrap;
   pointer-events: none;
   animation: bannerReveal 1.6s cubic-bezier(0.2, 1, 0.4, 1) both 0.5s;
@@ -413,31 +414,52 @@ body:not(.env-open) {
 
 .env-banner-ornament {
   color: #c9a84c;
-  font-size: 1.2rem;
-  opacity: 0.7;
+  font-size: 1.1rem;
+  opacity: 0.85;
   line-height: 1;
+  filter: drop-shadow(0 0 3px rgba(201,168,76,0.6));
 }
 
 .env-banner-names {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  gap: 8px;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* Gold shimmer animation on names */
+@keyframes goldShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 
 .env-banner-groom, .env-banner-bride {
-  background: linear-gradient(135deg, #FCF6BA 0%, #BF953F 50%, #AA771C 100%);
+  background: linear-gradient(
+    105deg,
+    #aa7a1c 0%,
+    #c9930c 20%,
+    #f5e17a 40%,
+    #fff9c4 50%,
+    #f5e17a 60%,
+    #c9930c 80%,
+    #aa7a1c 100%
+  );
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: none;
+  animation: goldShimmer 3s linear infinite;
+  filter: drop-shadow(0 1px 3px rgba(100,60,0,0.4));
 }
 
 .env-banner-amp {
-  color: rgba(201, 168, 76, 0.7);
-  font-size: 0.85rem;
+  color: rgba(201, 168, 76, 0.85);
+  font-size: 1rem;
+  font-weight: 700;
+  filter: drop-shadow(0 0 3px rgba(201,168,76,0.5));
 }
 
 /* Horizontal dividers (dashed golden lines) - enhanced 3D effect */
