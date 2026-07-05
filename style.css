@@ -70,7 +70,7 @@ body {
   font-family: 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif;
   -webkit-font-smoothing: antialiased;
   background: radial-gradient(ellipse at 40% 30%, #6b420f 0%, #3e220a 60%, #241408 100%);
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .font-amiri { font-family: 'Amiri', serif; }
@@ -80,7 +80,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 0;
   background: radial-gradient(ellipse at 50% 40%, #6b420f 0%, #3e220a 60%, #241408 100%);
 }
@@ -89,7 +89,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 430px;
-  min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(ellipse at 50% 30%, rgba(252,246,186,0.18) 0%, transparent 70%),
     radial-gradient(ellipse at 50% 70%, rgba(140,90,30,0.12) 0%, transparent 60%),
@@ -103,7 +103,7 @@ body {
 /* Scroll Guard on Body when envelope is closed */
 body:not(.env-open) {
   overflow: hidden;
-  height: 100vh;
+  height: 100dvh;
   position: fixed;
   width: 100%;
 }
@@ -112,7 +112,7 @@ body:not(.env-open) {
 .env-card {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--cream);
   z-index: 1;
 }
@@ -277,25 +277,25 @@ body:not(.env-open) {
 }
 
 #seal-3d-monogram-text .mono-letter {
-  color: #fce8b3; /* Lighter bright gold for highlights */
+  color: #4e3810; /* Dark gold/bronze wax base color for recessed carving */
   font-weight: 900;
-  /* Multi-layered shadows to give high definition 3D/embossed effect like rings/heart */
+  /* Engraved letterpress effect:
+     - Dark shadow at top-left to simulate depth recess
+     - Bright gold highlight at bottom-right to simulate light catch on cut edges
+  */
   text-shadow: 
-    -1px -1px 0px rgba(255, 255, 255, 0.7), /* sharp top-left bevel highlight */
-    -1px -1px 1px rgba(255, 255, 255, 0.4),
-    1px 1px 0px rgba(50, 30, 5, 0.95),      /* sharp bottom-right bevel shadow */
-    1px 1.5px 1.5px rgba(40, 20, 5, 0.9),    /* depth extrusion */
-    2px 2px 3px rgba(0, 0, 0, 0.75);         /* ambient drop shadow */
+    -1px -1.5px 1.5px rgba(0, 0, 0, 0.95),     /* sharp top-left inner shadow */
+    1.5px 1.5px 1.5px rgba(255, 248, 220, 0.8), /* bright bottom-right gold highlight */
+    0px 0.5px 0.5px rgba(0, 0, 0, 0.4);
 }
 
 #seal-3d-monogram-text .mono-connector {
   font-size: 0.8em;
-  color: #d1ab5a; /* Slightly darker gold/bronze */
-  opacity: 0.95;
+  color: #5b441a; /* Matching darker connector color */
+  opacity: 0.9;
   text-shadow: 
-    -1px -1px 0px rgba(255, 255, 255, 0.4),
-    1px 1px 0px rgba(50, 30, 5, 0.9),
-    1.5px 1.5px 2px rgba(0, 0, 0, 0.7);
+    -1px -1px 1px rgba(0, 0, 0, 0.9),
+    1px 1px 1px rgba(255, 248, 220, 0.7);
   margin: 0 1px;
 }
 
@@ -534,7 +534,7 @@ body:not(.env-open) {
 .w-section {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1347,7 +1347,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 }
 
 /* ── Vintage Motif Image styling ── */
-.panel-vintage-img {
+.panel-vintage {
   width: 100%;
   height: 100%;
   object-fit: fill;
@@ -1361,7 +1361,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   z-index: 3;
   width: 88%;
   max-width: 380px;
-  height: 92vh;
+  height: 92dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
