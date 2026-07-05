@@ -230,8 +230,8 @@ body:not(.env-open) {
 }
 
 .seal {
-  width: 108px;
-  height: 108px;
+  width: 135px;
+  height: 135px;
   cursor: pointer;
   border-radius: 50%;
   /* Rich gold wax background */
@@ -1350,7 +1350,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 .panel-vintage {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: cover;
   mix-blend-mode: multiply;
   opacity: 0.95;
 }
