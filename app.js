@@ -370,8 +370,15 @@ window.toggleMusic = function() {
 window.openEnvelopeNow = function() {
   const inv = document.getElementById('invitation');
   if (!inv || inv.classList.contains('open')) return;
-  inv.classList.add('open');
+
+  // 1. Start the panel slide immediately (2.4s theatrical animation)
   document.body.classList.add('env-open');
+
+  // 2. Delay revealing the content until panels are well into opening
+  //    (~1.3s in: panels are ~54% open, no blank white space visible)
+  setTimeout(() => {
+    inv.classList.add('open');
+  }, 1300);
 
   // Play the actual wedding march MP3 song
   startWeddingMusic();
@@ -379,7 +386,7 @@ window.openEnvelopeNow = function() {
   setTimeout(() => {
     spawnPetals();
     startHeartClock();
-  }, 800);
+  }, 900);
 };
 
 // Secret admin shortcut: triple-tap the closing section to go to admin
