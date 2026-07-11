@@ -2249,27 +2249,32 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 10px 24px;
+  padding: 10px 20px;
   border: 1px solid rgba(201,168,76,0.50);
   border-radius: 10px;
   background: rgba(255,248,235,0.18);
   backdrop-filter: blur(6px);
+  max-width: 280px;
   width: auto;
-  min-width: 180px;
   animation: guestBannerFadeIn 1s ease both;
   margin: 0 auto;
+  text-align: center;
+  direction: rtl;
 }
 .closing-to-label {
-  font-size: 0.78rem;
-  color: rgba(201,168,76,0.85);
+  font-size: 0.75rem;
+  color: rgba(201,168,76,0.90);
   letter-spacing: 1px;
+  text-align: center;
 }
 .closing-guest-name {
-  font-size: clamp(1.1rem, 5vw, 1.5rem);
+  font-size: clamp(0.95rem, 4.5vw, 1.3rem);
   font-weight: 700;
   color: #fff8e8;
   line-height: 1.3;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  text-align: center;
+  word-break: break-word;
 }
 
 .closing-tagline {
@@ -2309,31 +2314,43 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 18px 36px;
-  background: rgba(253, 246, 224, 0.92);
-  border: 1.5px solid rgba(185, 140, 50, 0.55);
-  border-radius: 10px;
+  justify-content: center;
+  gap: 4px;
+  padding: 20px 28px;
+  background: rgba(253, 246, 224, 0.94);
+  /* Double border: inner content + outer gold frame */
+  border: 2px solid rgba(185, 140, 50, 0.60);
+  outline: 6px solid rgba(185, 140, 50, 0.15);
+  border-radius: 8px;
   box-shadow:
-    0 0 0 4px rgba(185,140,50,0.12),
-    0 8px 30px rgba(0,0,0,0.25);
-  backdrop-filter: blur(2px);
-  min-width: 180px;
+    inset 0 0 0 1px rgba(185,140,50,0.20),
+    0 8px 32px rgba(0,0,0,0.30);
+  min-width: 160px;
+  max-width: 230px;
+  /* Force centered text regardless of RTL */
+  direction: rtl;
+  text-align: center;
 }
 
 .closing-board-groom,
 .closing-board-bride {
   font-family: 'Aref Ruqaa Ink', 'Amiri', serif;
-  font-size: clamp(1.2rem, 5.5vw, 1.7rem);
+  font-size: clamp(1.05rem, 5vw, 1.45rem);
   font-weight: 700;
-  color: #2a1500;
-  text-shadow: 0 1px 1px rgba(255,255,255,0.5);
-  line-height: 1.25;
+  color: #3d1a00;
+  text-shadow: none;
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
+  display: block;
 }
 .closing-board-amp {
-  font-size: 0.85rem;
-  color: #8a6030;
-  opacity: 0.85;
+  font-size: 0.80rem;
+  color: var(--gold);
+  opacity: 0.90;
+  display: block;
+  text-align: center;
+  margin: 2px 0;
 }
 
 /* ── Night mode ── */
