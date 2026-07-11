@@ -2226,7 +2226,8 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
 }
 
 /* Guest address card - simplified to elegant borderless text to prevent any clipping */
-.closing-guest-address {
+/* Guest address card - simplified to elegant borderless text to prevent any clipping */
+.closing-guest-box {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2234,21 +2235,27 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   gap: 2px;
   width: 100%;
   max-width: 100%;
-  animation: guestBannerFadeIn 1s ease both;
+  animation: closingGuestFadeInNew 1s ease both;
   margin: 0 auto;
   text-align: center;
   direction: rtl;
 }
-.closing-to-label {
+
+@keyframes closingGuestFadeInNew {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.closing-guest-to {
   font-size: 0.85rem;
   color: var(--brown-mid);
   opacity: 0.8;
   letter-spacing: 1px;
   text-align: center;
 }
-.closing-guest-name {
+.closing-guest-txt {
   font-size: clamp(1.2rem, 5.5vw, 1.60rem);
-  font-weight: 700;
+  font-weight: bold;
   color: var(--brown);
   line-height: 1.35;
   text-align: center;
@@ -2258,6 +2265,7 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   max-width: 250px; /* force line break on long names to avoid screen edge clipping */
   margin: 0 auto;
 }
+
 
 .closing-tagline {
   font-size: clamp(0.95rem, 3.8vw, 1.15rem);
@@ -2298,31 +2306,31 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
 }
 
 /* Lock aspect-ratio to 3:4 so the photo never crops or shifts vertically.
-   This guarantees absolute positioned names align perfectly on all screens. */
-.closing-board-wrap {
+   Framed with a gold border so the easel has a clean left edge and doesn't fade into infinity. */
+.closing-easel-frame {
   position: relative;
   width: 100%;
   max-width: 290px;
   aspect-ratio: 3 / 4;
   margin: 0 auto;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  border-radius: 4px;
+  border: 2px solid rgba(201, 168, 76, 0.55);
+  box-shadow: 0 8px 24px rgba(74,44,10,0.12);
+  border-radius: 8px;
   overflow: hidden;
 }
 
-/* Watercolor vignette fade on all sides of the image. */
-.closing-board-wrap::after {
+/* Soft vertical vignettes only; left/right sides are kept sharp and bordered. */
+.closing-easel-frame::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, var(--cream) 0%, transparent 12%, transparent 88%, var(--cream) 100%),
-    linear-gradient(to bottom, var(--cream) 0%, transparent 12%, transparent 88%, var(--cream) 100%);
+    linear-gradient(to bottom, var(--cream) 0%, transparent 10%, transparent 90%, var(--cream) 100%);
   pointer-events: none;
   z-index: 1;
 }
 
-.closing-hall-img {
+.closing-easel-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2333,10 +2341,10 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
 
 /* Names overlaid directly inside the blank easel cardboard area.
    Locked to invariant coordinates thanks to fixed 3:4 aspect ratio. */
-.closing-board-overlay {
+.closing-easel-txts {
   position: absolute;
-  top: 36%; /* Adjusted higher to accommodate the title line perfectly inside the whiteboard */
-  left: 2%; 
+  top: 36%; 
+  left: -0.5%; /* Shifted left by another 1.5% to align it exactly inside the easel card */
   width: 44%;
   z-index: 2;
   display: flex;
@@ -2348,29 +2356,29 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   text-align: center;
 }
 
-.closing-board-title {
+.closing-easel-header {
   font-family: 'Amiri', serif;
-  font-size: clamp(0.70rem, 3vw, 0.88rem);
-  font-weight: 700;
-  color: #9d7324; /* Dark gold calligraphy */
+  font-size: clamp(0.75rem, 3.2vw, 0.92rem);
+  font-weight: bold; /* Bold dark gold title */
+  color: #9d7324;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 1px rgba(255,255,255,0.45);
   margin-bottom: 2px;
   text-align: center;
 }
 
-.closing-board-groom,
-.closing-board-bride {
+.closing-easel-groom,
+.closing-easel-bride {
   font-family: 'Aref Ruqaa Ink', 'Amiri', serif;
   font-size: clamp(1rem, 4.2vw, 1.35rem);
-  font-weight: 700;
+  font-weight: bold;
   color: #321c0b;
   line-height: 1.15;
   text-shadow: 0 1px 1px rgba(255,255,255,0.4);
   width: 100%;
   display: block;
 }
-.closing-board-amp {
+.closing-easel-amp {
   font-size: 0.70rem;
   color: var(--gold);
   opacity: 0.85;
@@ -2391,9 +2399,9 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   .closing-right {
     flex: 1 1 50%;
   }
-  .closing-board-overlay {
-    top: 36%; /* Adjusted higher to accommodate the title line perfectly inside the whiteboard */
-    left: 3%; 
+  .closing-easel-txts {
+    top: 36%;
+    left: 0.5%; /* Shifted left by another 1.5% to align it exactly inside the easel card */
     width: 44%;
   }
 }
@@ -2407,17 +2415,20 @@ body.night-mode .closing-thanks-ar {
   color: var(--gold-light);
 }
 body.night-mode .closing-thanks-fr { color: #a08060; }
-body.night-mode .closing-guest-name { color: #fff8e8; }
-body.night-mode .closing-hall-img {
+body.night-mode .closing-guest-txt { color: #fff8e8; }
+body.night-mode .closing-easel-photo {
   filter: brightness(0.72) saturate(0.8) contrast(0.95);
 }
-body.night-mode .closing-board-groom,
-body.night-mode .closing-board-bride {
+body.night-mode .closing-easel-groom,
+body.night-mode .closing-easel-bride {
   color: #ebd7b3;
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
-body.night-mode .closing-board-amp {
+body.night-mode .closing-easel-amp {
   color: var(--gold);
+}
+body.night-mode .closing-easel-frame {
+  border-color: rgba(201, 168, 76, 0.35);
 }
 
 

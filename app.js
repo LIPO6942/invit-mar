@@ -1070,7 +1070,7 @@ function applyEnvelopeDesign(cfg) {
   }
 
   // ── Closing Photo (cp): which hall image shows in closing section ──
-  const closingImg = document.querySelector('.closing-hall-img');
+  const closingImg = document.querySelector('.closing-easel-photo');
   if (closingImg) {
     const closingPhoto = cfg.cp || 'wedding_hall_board';
     closingImg.src = `assets/${closingPhoto}.png`;
