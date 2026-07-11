@@ -368,18 +368,29 @@ window.toggleMusic = function() {
 };
 
 window.openEnvelopeNow = function() {
-  const inv = document.getElementById('invitation');
+  const inv  = document.getElementById('invitation');
+  const seal = document.getElementById('seal');
   if (!inv || inv.classList.contains('open')) return;
-  inv.classList.add('open');
-  document.body.classList.add('env-open');
-  
-  // Play the actual wedding march MP3 song
-  startWeddingMusic();
-  
+
+  // 1. Seal tap feedback — compress then pop
+  if (seal) {
+    seal.classList.add('tapping');
+    seal.addEventListener('animationend', () => seal.classList.remove('tapping'), { once: true });
+  }
+
+  // 2. Micro-delay so the tap animation is visible before panels fold
   setTimeout(() => {
-    spawnPetals();
-    startHeartClock();
-  }, 800);
+    inv.classList.add('open');
+    document.body.classList.add('env-open');
+
+    // Play the actual wedding march MP3 song
+    startWeddingMusic();
+
+    setTimeout(() => {
+      spawnPetals();
+      startHeartClock();
+    }, 900);
+  }, 120);
 };
 
 // Secret admin shortcut: triple-tap the closing section to go to admin
@@ -545,7 +556,7 @@ startHeartClock._started = false;
 })();
 
 /* ────────────────────────────────────────────────
-   5. COUNTDOWN TIMER
+   5. COUNTDOWN TIMER — Flip Clock
    Uses _weddingDateTime (overridden by URL config)
 ──────────────────────────────────────────────── */
 (function initCountdown() {
@@ -553,40 +564,103 @@ startHeartClock._started = false;
     return new Date(_weddingDateTime);
   }
 
-  const els = {
-    d: document.getElementById('cd-days'),
-    h: document.getElementById('cd-hours'),
-    m: document.getElementById('cd-mins'),
-    s: document.getElementById('cd-secs'),
-  };
-
   function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
 
-  function flipUpdate(el, newVal) {
-    if (!el) return;
-    const str = pad(newVal);
-    if (el.textContent === str) return;
-    el.style.transition = 'transform 0.1s ease';
-    el.style.transform  = 'scale(0.85)';
+  // Map each flip-card id to its last displayed value
+  const cards = {
+    d: { id: 'flip-days',  prev: null },
+    h: { id: 'flip-hours', prev: null },
+    m: { id: 'flip-mins',  prev: null },
+    s: { id: 'flip-secs',  prev: null },
+  };
+
+  /**
+   * Animate a flip card from oldVal → newVal.
+   * Structure inside .flip-card:
+   *   .flip-top          — upper static half (shows current number)
+   *   .flip-bottom       — lower static half (shows current number)
+   *   .flip-top-anim     — upper animated flap (shows current, folds down)
+   *   .flip-bottom-anim  — lower animated flap (shows next, unfolds up)
+   */
+  function flipCard(cardEl, newStr) {
+    if (!cardEl) return;
+    const topStatic    = cardEl.querySelector('.flip-top span');
+    const botStatic    = cardEl.querySelector('.flip-bottom span');
+    const topAnim      = cardEl.querySelector('.flip-top-anim');
+    const topAnimSpan  = topAnim  ? topAnim.querySelector('span')  : null;
+    const botAnim      = cardEl.querySelector('.flip-bottom-anim');
+    const botAnimSpan  = botAnim  ? botAnim.querySelector('span')  : null;
+    if (!topStatic || !botStatic || !topAnim || !botAnim) return;
+
+    // Step 1: Prepare — set the animated flap to show current value
+    const currentStr = topStatic.textContent;
+    if (currentStr === newStr) return; // nothing changed
+
+    topAnimSpan.textContent = currentStr; // top flap shows OLD value
+    botAnimSpan.textContent = newStr;     // bottom flap will reveal NEW value
+
+    // Step 2: Update static halves immediately
+    // - top static already shows old (will update after fold)
+    // - bottom static already shows new value (visible once botAnim folds away)
+    botStatic.textContent = newStr;
+
+    // Step 3: Remove classes first to reset animation
+    topAnim.classList.remove('flipping');
+    botAnim.classList.remove('flipping');
+
+    // Force reflow to restart CSS animation
+    void topAnim.offsetWidth;
+
+    // Step 4: Trigger the fold-down of top flap
+    topAnim.classList.add('flipping');
+    botAnim.classList.add('flipping');
+
+    // Step 5: After fold-down completes, update top static and hide animated flap
     setTimeout(() => {
-      el.textContent    = str;
-      el.style.transform = 'scale(1)';
-    }, 100);
+      topStatic.textContent = newStr;
+      topAnim.classList.remove('flipping');
+      botAnim.classList.remove('flipping');
+    }, 600); // slightly longer than the CSS animations (0.28 + 0.26 + buffer)
   }
 
   function tick() {
     const diff  = Math.max(0, getTargetDate().getTime() - Date.now());
-    const days  = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const mins  = Math.floor((diff % 3600000)  / 60000);
-    const secs  = Math.floor((diff % 60000)    / 1000);
-    flipUpdate(els.d, days);
-    flipUpdate(els.h, hours);
-    flipUpdate(els.m, mins);
-    flipUpdate(els.s, secs);
+    const vals = {
+      d: Math.floor(diff / 86400000),
+      h: Math.floor((diff % 86400000) / 3600000),
+      m: Math.floor((diff % 3600000)  / 60000),
+      s: Math.floor((diff % 60000)    / 1000),
+    };
+
+    Object.keys(cards).forEach(key => {
+      const c      = cards[key];
+      const newStr = pad(vals[key]);
+      if (c.prev !== newStr) {
+        const cardEl = document.getElementById(c.id);
+        flipCard(cardEl, newStr);
+        c.prev = newStr;
+      }
+    });
   }
 
-  tick();
+  // First tick: populate without animation
+  (function initDisplay() {
+    const diff  = Math.max(0, getTargetDate().getTime() - Date.now());
+    const vals = {
+      d: Math.floor(diff / 86400000),
+      h: Math.floor((diff % 86400000) / 3600000),
+      m: Math.floor((diff % 3600000)  / 60000),
+      s: Math.floor((diff % 60000)    / 1000),
+    };
+    Object.keys(cards).forEach(key => {
+      const newStr = pad(vals[key]);
+      const cardEl = document.getElementById(cards[key].id);
+      if (!cardEl) return;
+      cardEl.querySelectorAll('span').forEach(s => s.textContent = newStr);
+      cards[key].prev = newStr;
+    });
+  })();
+
   setInterval(tick, 1000);
 })();
 
@@ -1384,21 +1458,32 @@ function initDayNightModeIcon() {
 }
 
 window.toggleDayNightMode = function() {
-  const body = document.body;
-  const isNight = body.classList.toggle('night-mode');
-  const sunIcon = document.querySelector('.sun-icon');
+  const body    = document.body;
+  const btn     = document.getElementById('day-night-toggle');
+  const sunIcon  = document.querySelector('.sun-icon');
   const moonIcon = document.querySelector('.moon-icon');
-  
-  if (sunIcon && moonIcon) {
-    if (isNight) {
-      sunIcon.style.display = 'block';
-      moonIcon.style.display = 'none';
-      localStorage.setItem('invitThemeMode', 'night');
-    } else {
-      sunIcon.style.display = 'none';
-      moonIcon.style.display = 'block';
-      localStorage.setItem('invitThemeMode', 'day');
-    }
+
+  // Trigger icon spin animation
+  if (btn) {
+    btn.classList.add('transitioning');
+    setTimeout(() => btn.classList.remove('transitioning'), 460);
   }
+
+  // Short delay so spin starts before mode switches
+  setTimeout(() => {
+    const isNight = body.classList.toggle('night-mode');
+
+    if (sunIcon && moonIcon) {
+      if (isNight) {
+        sunIcon.style.display  = 'block';
+        moonIcon.style.display = 'none';
+        localStorage.setItem('invitThemeMode', 'night');
+      } else {
+        sunIcon.style.display  = 'none';
+        moonIcon.style.display = 'block';
+        localStorage.setItem('invitThemeMode', 'day');
+      }
+    }
+  }, 220); // halfway through the spin, swap icons
 };
 
