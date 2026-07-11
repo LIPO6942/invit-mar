@@ -2230,8 +2230,10 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
-  width: auto; /* Allow natural sizing to ensure perfect centering */
+  width: 100%;
+  max-width: 100%;
   animation: guestBannerFadeIn 1s ease both;
   margin: 0 auto;
   text-align: center;
@@ -2245,11 +2247,16 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   text-align: center;
 }
 .closing-guest-name {
-  font-size: clamp(1.2rem, 5.5vw, 1.65rem);
+  font-size: clamp(1.2rem, 5.5vw, 1.60rem);
   font-weight: 700;
   color: var(--brown);
   line-height: 1.35;
   text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 250px; /* force line break on long names to avoid screen edge clipping */
+  margin: 0 auto;
 }
 
 .closing-tagline {
@@ -2328,8 +2335,8 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
    Locked to invariant coordinates thanks to fixed 3:4 aspect ratio. */
 .closing-board-overlay {
   position: absolute;
-  top: 42%;
-  left: 2%; /* Shifted slightly to the left (from 3%) for perfect centering */
+  top: 36%; /* Adjusted higher to accommodate the title line perfectly inside the whiteboard */
+  left: 2%; 
   width: 44%;
   z-index: 2;
   display: flex;
@@ -2338,6 +2345,17 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   justify-content: center;
   gap: 1px;
   pointer-events: none;
+  text-align: center;
+}
+
+.closing-board-title {
+  font-family: 'Amiri', serif;
+  font-size: clamp(0.70rem, 3vw, 0.88rem);
+  font-weight: 700;
+  color: #9d7324; /* Dark gold calligraphy */
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.45);
+  margin-bottom: 2px;
   text-align: center;
 }
 
@@ -2374,8 +2392,8 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
     flex: 1 1 50%;
   }
   .closing-board-overlay {
-    top: 42%;
-    left: 3%; /* Shifted slightly to the left (from 4%) for perfect centering */
+    top: 36%; /* Adjusted higher to accommodate the title line perfectly inside the whiteboard */
+    left: 3%; 
     width: 44%;
   }
 }
