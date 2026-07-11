@@ -2231,7 +2231,7 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  width: 100%;
+  width: auto; /* Allow natural sizing to ensure perfect centering */
   animation: guestBannerFadeIn 1s ease both;
   margin: 0 auto;
   text-align: center;
@@ -2242,12 +2242,14 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   color: var(--brown-mid);
   opacity: 0.8;
   letter-spacing: 1px;
+  text-align: center;
 }
 .closing-guest-name {
   font-size: clamp(1.2rem, 5.5vw, 1.65rem);
   font-weight: 700;
   color: var(--brown);
   line-height: 1.35;
+  text-align: center;
 }
 
 .closing-tagline {
@@ -2327,7 +2329,7 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
 .closing-board-overlay {
   position: absolute;
   top: 42%;
-  left: 6%;
+  left: 2%; /* Shifted slightly to the left (from 3%) for perfect centering */
   width: 44%;
   z-index: 2;
   display: flex;
@@ -2370,6 +2372,11 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   }
   .closing-right {
     flex: 1 1 50%;
+  }
+  .closing-board-overlay {
+    top: 42%;
+    left: 3%; /* Shifted slightly to the left (from 4%) for perfect centering */
+    width: 44%;
   }
 }
 
