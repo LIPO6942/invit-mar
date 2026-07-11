@@ -122,7 +122,7 @@ body:not(.env-open) {
   visibility: hidden;
   height: 0;
   overflow: hidden;
-  transition: opacity 0.6s ease, visibility 0.6s;
+  transition: opacity 1.0s ease 1.6s, visibility 0s linear 1.6s;
 }
 
 .invitation.open #wedding-content {
@@ -142,7 +142,10 @@ body:not(.env-open) {
   display: flex;
   align-items: stretch;
   overflow: hidden;
-  transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  /* Theatrical slow opening — Expo-out: hesitates, then sweeps gracefully */
+  transition: transform 2.4s cubic-bezier(0.19, 1, 0.22, 1),
+              box-shadow 2.4s ease,
+              opacity    0.8s ease 1.8s;
   box-shadow:
     4px 0 18px rgba(0,0,0,0.28),
     inset -2px 0 6px rgba(0,0,0,0.08);
@@ -2171,4 +2174,205 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
   50%  { transform: rotate(90deg)  scale(0.4);  opacity: 0; }
   51%  { opacity: 0; }
   100% { transform: rotate(180deg) scale(1);    opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════
+   CLOSING SECTION — Tableau personnalisé
+   Split layout: left = remerciement, right = salle de fête
+═══════════════════════════════════════════════ */
+#closing-section {
+  background: linear-gradient(160deg, #fdf3e3 0%, #f5e9d0 50%, #ede0c4 100%);
+  padding: 24px 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  transition: background 0.8s ease;
+}
+
+.closing-ornament-top,
+.closing-ornament-bottom {
+  font-size: 0.78rem;
+  color: var(--gold);
+  letter-spacing: 8px;
+  text-align: center;
+  padding: 6px 0;
+  opacity: 0.7;
+  width: 100%;
+}
+
+/* Two-column split */
+.closing-split {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  min-height: 340px;
+}
+
+/* ─ Left column: thank you text ─ */
+.closing-left {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 14px 18px 18px;
+  text-align: center;
+  gap: 10px;
+}
+
+.closing-shimmer {
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  opacity: 0.5;
+}
+
+/* Guest address card */
+.closing-guest-address {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 10px;
+  background: rgba(255,248,240,0.65);
+  animation: guestBannerFadeIn 1s ease both;
+}
+.closing-to-label {
+  font-size: 0.78rem;
+  color: var(--brown-mid);
+  letter-spacing: 1px;
+}
+.closing-guest-name {
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 700;
+  color: var(--brown);
+  line-height: 1.3;
+}
+
+.closing-tagline {
+  font-size: clamp(0.88rem, 3.5vw, 1.05rem);
+  color: var(--brown);
+  line-height: 1.5;
+}
+
+.closing-heart {
+  font-size: 1.5rem;
+  color: #c0392b;
+  animation: heartbeat 1.8s ease infinite;
+}
+
+.closing-thanks {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.closing-thanks-ar {
+  font-size: clamp(0.78rem, 3vw, 0.92rem);
+  color: var(--brown);
+  line-height: 1.55;
+}
+.closing-thanks-fr {
+  font-size: clamp(0.68rem, 2.5vw, 0.78rem);
+  color: var(--brown-mid);
+  line-height: 1.55;
+  font-style: italic;
+}
+
+.closing-names {
+  font-size: clamp(1.05rem, 4.5vw, 1.3rem);
+  font-weight: 700;
+  color: var(--brown);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+.closing-amp {
+  color: var(--gold);
+  font-size: 0.85em;
+}
+
+/* ─ Right column: hall image + board overlay ─ */
+.closing-right {
+  flex: 0 0 55%;
+  position: relative;
+  overflow: hidden;
+}
+
+.closing-board-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+}
+
+.closing-hall-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: filter 0.8s ease;
+}
+
+/* Names overlaid on the blank board area of the photo
+   Position calibrated to the easel/sign in the Option-A image */
+.closing-board-overlay {
+  position: absolute;
+  /* Approximate board location in wedding_hall_board.png */
+  top: 22%;
+  left: 8%;
+  right: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.closing-board-groom,
+.closing-board-bride {
+  font-size: clamp(0.95rem, 3.5vw, 1.45rem);
+  font-weight: 700;
+  /* Warm dark brown ink, like hand-written on parchment */
+  color: #3d2200;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.45),
+    0 2px 6px rgba(0,0,0,0.12);
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+}
+.closing-board-amp {
+  font-size: 0.75rem;
+  color: #7a5520;
+  opacity: 0.75;
+}
+
+/* ─ Night mode overrides ─ */
+body.night-mode #closing-section {
+  background: linear-gradient(160deg, #120c04 0%, #1a1005 50%, #1e1408 100%);
+}
+body.night-mode .closing-tagline,
+body.night-mode .closing-names,
+body.night-mode .closing-thanks-ar {
+  color: #f5e6c0;
+}
+body.night-mode .closing-thanks-fr { color: #a08060; }
+body.night-mode .closing-guest-name { color: #f5e6c0; }
+body.night-mode .closing-guest-address {
+  background: rgba(30,18,5,0.7);
+  border-color: rgba(201,168,76,0.3);
+}
+body.night-mode .closing-hall-img {
+  filter: brightness(0.82) contrast(0.95);
+}
+body.night-mode .closing-board-groom,
+body.night-mode .closing-board-bride {
+  color: #3d2200;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6), 0 2px 8px rgba(0,0,0,0.2);
 }

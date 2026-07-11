@@ -1062,6 +1062,13 @@ function applyEnvelopeDesign(cfg) {
     heroBg.style.backgroundImage = `url('assets/${hallPhoto}.png')`;
   }
 
+  // ── Closing Photo (cp): which hall image shows in closing section ──
+  const closingImg = document.querySelector('.closing-hall-img');
+  if (closingImg) {
+    const closingPhoto = cfg.cp || 'wedding_hall_board';
+    closingImg.src = `assets/${closingPhoto}.png`;
+  }
+
   // ── Seal symbol (es: 'heart' | 'rings' | 'monogram' | 'bismillah') ──
   // Only apply seal once to prevent it from changing after initial load
   if (!_sealApplied) {
@@ -1263,6 +1270,14 @@ function _applyGuestBanner(guestName, guestType) {
   // Pre-fill guestbook name field
   const gbNameInput = document.getElementById('gb-name');
   if (gbNameInput) gbNameInput.value = name;
+
+  // ── Closing section: show personalised guest address ──
+  const closingAddr  = document.getElementById('closingGuestAddress');
+  const closingGName = document.getElementById('closingGuestName');
+  if (closingAddr && closingGName) {
+    closingGName.textContent = name;
+    closingAddr.style.display = 'flex';
+  }
 
   // Update personalized invitation description text
   _updatePersonalizedInviteDesc();

@@ -241,6 +241,21 @@
           </div>
         </div>
       </div>
+
+      <div class="card">
+        <div class="card-title">🖼️ صورة قسم الختام (Photo de fermeture)</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:10px">تظهر هذه الصورة في القسم الأخير من الدعوة مع أسماء العروسين على اللوحة</div>
+        <div class="photo-selector" style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+          <div class="photo-card closing-photo-card selected" data-closing-photo="wedding_hall_board" onclick="selectClosingPhoto('wedding_hall_board')">
+            <img src="assets/wedding_hall_board.png" alt="Salle classique">
+            <div class="photo-card-label">🏛️ سالة فاخرة + شيفالي</div>
+          </div>
+          <div class="photo-card closing-photo-card" data-closing-photo="wedding_beach_entrance" onclick="selectClosingPhoto('wedding_beach_entrance')">
+            <img src="assets/wedding_beach_entrance.png" alt="Bord de mer">
+            <div class="photo-card-label">🌊 مدخل بحري بوهيمي</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ▸ PAGE 2 — Families -->
@@ -441,11 +456,25 @@ function selectTheme(name) {
 }
 
 /* ── Hall Photo Selector ── */
-window._selectedHallPhoto = 'luxury_wedding_hall';
+window._selectedHallPhoto    = 'luxury_wedding_hall';
+window._selectedClosingPhoto = 'wedding_hall_board';
+
 function selectHallPhoto(name, doSave = true) {
   window._selectedHallPhoto = name;
-  document.querySelectorAll('.photo-card').forEach(card => {
+  document.querySelectorAll('.photo-card:not(.closing-photo-card)').forEach(card => {
     if (card.dataset.photo === name) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
+    }
+  });
+  if (doSave) saveAll();
+}
+
+function selectClosingPhoto(name, doSave = true) {
+  window._selectedClosingPhoto = name;
+  document.querySelectorAll('.closing-photo-card').forEach(card => {
+    if (card.dataset.closingPhoto === name) {
       card.classList.add('selected');
     } else {
       card.classList.remove('selected');
@@ -618,7 +647,8 @@ function buildConfig() {
     ep: val('envPattern'),   // envelope pattern
     es: val('envSeal'),      // envelope seal
     si: val('envSealInitials'), // seal initials
-    hp: window._selectedHallPhoto || 'luxury_wedding_hall', // hall photo
+    hp: window._selectedHallPhoto   || 'luxury_wedding_hall', // hall photo background
+    cp: window._selectedClosingPhoto || 'wedding_hall_board',  // closing section photo
     la: val('invLanguage'),  // invitation language
     ga: val('groomAr'),
     gf2:val('groomFr'),
@@ -695,13 +725,13 @@ function applyConfigToFields(c) {
   }
   
   // Apply hall photo
-  if (c.hp) {
-    selectHallPhoto(c.hp);
-  } else {
-    selectHallPhoto('luxury_wedding_hall');
-  }
+  if (c.hp) selectHallPhoto(c.hp, false);
+  else selectHallPhoto('luxury_wedding_hall', false);
 
-  set('invLanguage',       c.la  || 'ar');
+  // Apply closing photo
+  if (c.cp) selectClosingPhoto(c.cp, false);
+  else selectClosingPhoto('wedding_hall_board', false);
+  set('invLanguage', c.la || 'ar');
   
   if (c.th) {
     window._selectedTheme = c.th;

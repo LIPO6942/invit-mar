@@ -265,17 +265,64 @@
           </div>
         </section>
 
-        <!-- ── CLOSING ── -->
+        <!-- ── CLOSING — Tableau personnalisé ── -->
         <section id="closing-section">
-          <div class="closing-shimmer"></div>
-          <div class="closing-names font-amiri"><span data-cfg="groomAr">مرتضى</span> &amp; <span data-cfg="brideAr">مريم</span></div>
-          <div class="closing-tagline font-amiri" data-tr="closing_tagline">يسعدنا مشاركتكم هذه الفرحة</div>
-          <div class="closing-heart">❤</div>
-          <div class="closing-thanks">
-            <div class="closing-thanks-ar font-amiri">نشكركم جزيل الشكر على حضوركم ومحبتكم</div>
-            <div class="closing-thanks-fr">Nous vous remercions chaleureusement pour votre présence et votre affection.</div>
-          </div>
-          <div class="closing-shimmer" style="margin-top:12px"></div>
+
+          <!-- Gold ornament top -->
+          <div class="closing-ornament-top">✦ ✦ ✦</div>
+
+          <!-- Two-column layout: left = remerciement, right = tableau salle -->
+          <div class="closing-split">
+
+            <!-- ── LEFT : Message de remerciement ── -->
+            <div class="closing-left">
+              <div class="closing-shimmer"></div>
+
+              <!-- Guest name (shown if ?guest= param present) -->
+              <div class="closing-guest-address" id="closingGuestAddress" style="display:none">
+                <div class="closing-to-label font-amiri">إلى</div>
+                <div class="closing-guest-name font-amiri" id="closingGuestName">…</div>
+              </div>
+
+              <div class="closing-tagline font-amiri">يسعدنا مشاركتكم هذه الفرحة</div>
+              <div class="closing-heart">❤</div>
+
+              <div class="closing-thanks">
+                <div class="closing-thanks-ar font-amiri">نشكركم جزيل الشكر على حضوركم ومحبتكم</div>
+                <div class="closing-thanks-fr">Nous vous remercions chaleureusement<br>pour votre présence et votre affection.</div>
+              </div>
+
+              <!-- Couple names below thanks -->
+              <div class="closing-names font-amiri">
+                <span data-cfg="groomAr">مرتضى</span>
+                <span class="closing-amp">&amp;</span>
+                <span data-cfg="brideAr">مريم</span>
+              </div>
+
+              <div class="closing-shimmer" style="margin-top:14px"></div>
+            </div><!-- /closing-left -->
+
+            <!-- ── RIGHT : Salle de fête + noms sur le tableau ── -->
+            <div class="closing-right">
+              <div class="closing-board-wrap">
+                <!-- Photo de la salle de fête avec chevalet vierge -->
+                <img src="assets/wedding_hall_board.png"
+                     alt="Salle de fête"
+                     class="closing-hall-img">
+
+                <!-- Noms des mariés superposés sur le tableau vierge -->
+                <div class="closing-board-overlay font-amiri">
+                  <div class="closing-board-groom" data-cfg="groomNameDisplay">مرتضى</div>
+                  <div class="closing-board-amp">✦</div>
+                  <div class="closing-board-bride" data-cfg="brideNameDisplay">مريم</div>
+                </div>
+              </div>
+            </div><!-- /closing-right -->
+
+          </div><!-- /closing-split -->
+
+          <div class="closing-ornament-bottom">— ✦ —</div>
+
         </section>
 
       </div><!-- /wedding-content -->
