@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>دعوة الزفاف الرقمية - اكتشف التخصيص الفاخر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>دعوة الزفاف الرقمية - المميزات الفاخرة</title>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,26 +12,28 @@
   
   <style>
     :root {
-      --gold: #c9a84c;
-      --gold-light: #f5e6c0;
-      --gold-dark: #8a6000;
-      --cream: #fdf8f0;
-      --ivory: #f9f4e8;
-      --brown: #1a0f05;
-      --brown-mid: #381e0a;
-      --brown-light: #573315;
-      --shadow: 0 15px 45px rgba(0,0,0,0.6);
-      --gold-grad: linear-gradient(135deg, #FCF6BA 0%, #BF953F 50%, #c9a84c 100%);
+      --gold: #b8903c;
+      --gold-light: #f7ebc6;
+      --gold-dark: #876214;
+      --cream: #fffdf9;
+      --ivory: #fcfaf5;
+      --bronze: #4e2f0d;
+      --bronze-light: #7c4c1e;
+      --text: #3c2005;
+      --border: rgba(184, 144, 60, 0.3);
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --shadow: 0 10px 40px rgba(78, 47, 13, 0.08);
+      --gold-grad: linear-gradient(135deg, #FCF6BA 0%, #c9a84c 50%, #8a6010 100%);
       
-      /* Theme Pink (Powder) */
-      --pink-gold: #d48a82;
-      --pink-cream: #fbf1ef;
-      --pink-dark: #3e1814;
+      /* Theme colors (matching the real app) */
+      --real-gold: #c9a84c;
+      --real-brown: #4a2c0a;
       
-      /* Theme Emerald */
-      --emerald-gold: #c9a84c;
-      --emerald-cream: #eaf2ec;
-      --emerald-dark: #051d11;
+      --real-pink: #d48a82;
+      --real-pink-dark: #3e1814;
+      
+      --real-emerald: #0d3621;
+      --real-emerald-gold: #c9a84c;
     }
 
     * {
@@ -40,13 +42,18 @@
       padding: 0;
     }
 
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      background-color: #faf7f2;
+    }
+
     body {
       font-family: 'Amiri', 'Noto Naskh Arabic', serif;
-      background-color: var(--brown);
-      color: var(--cream);
-      min-height: 100vh;
-      overflow-x: hidden;
+      color: var(--text);
       position: relative;
+      min-height: 100vh;
     }
 
     /* Falling petals */
@@ -83,22 +90,22 @@
       }
     }
 
-    /* Background decoration */
+    /* Background image with bright overlay */
     .bg-image {
       position: fixed;
       inset: 0;
       background-image: url('assets/luxury_wedding_bg.png');
       background-size: cover;
       background-position: center;
-      opacity: 0.42; /* Much higher opacity to showcase the beautiful background */
+      opacity: 0.25;
       z-index: -2;
-      filter: brightness(60%) contrast(105%);
+      filter: brightness(110%) contrast(90%);
     }
 
     .bg-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(26,15,5,0.2) 0%, rgba(10,5,2,0.92) 100%);
+      background: radial-gradient(circle at center, rgba(255, 253, 249, 0.4) 0%, rgba(250, 245, 235, 0.95) 100%);
       z-index: -1;
     }
 
@@ -106,7 +113,7 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 24px;
+      padding: 40px 20px;
       position: relative;
       z-index: 2;
     }
@@ -120,9 +127,9 @@
     }
 
     .lang-btn {
-      background: rgba(255, 248, 220, 0.05);
-      border: 1px solid rgba(201, 168, 76, 0.3);
-      color: var(--gold-light);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--border);
+      color: var(--bronze-light);
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 0.85rem;
@@ -135,161 +142,194 @@
       background: var(--gold-grad);
       color: #1a1000;
       border-color: transparent;
-      box-shadow: 0 0 10px rgba(201, 168, 76, 0.4);
+      box-shadow: 0 4px 10px rgba(184, 144, 60, 0.25);
     }
 
     /* Header */
     header {
       text-align: center;
-      margin-bottom: 50px;
+      margin-bottom: 45px;
       animation: fadeInDown 1s ease;
     }
 
     .logo-ornament {
       font-size: 2.5rem;
       color: var(--gold);
-      margin-bottom: 12px;
-      text-shadow: 0 0 15px rgba(201, 168, 76, 0.4);
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(184, 144, 60, 0.15);
     }
 
     h1 {
       font-family: 'Amiri', serif;
-      font-size: 3rem;
+      font-size: 2.6rem;
       font-weight: 700;
-      color: var(--cream);
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-      margin-bottom: 15px;
-      background: linear-gradient(135deg, #FFF 30%, #f5e6c0 100%);
+      color: var(--bronze);
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--bronze) 30%, var(--gold-dark) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     header p {
-      font-size: 1.25rem;
-      color: var(--gold-light);
+      font-size: 1.15rem;
+      color: var(--bronze-light);
       max-width: 750px;
       margin: 0 auto;
-      line-height: 1.6;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      line-height: 1.5;
     }
 
     /* Main Showcase Section */
     .showcase-grid {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 50px;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
       align-items: flex-start;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 950px) {
       .showcase-grid {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 30px;
       }
     }
 
-    /* Left Side: Interactive Customizer Panel */
-    .customizer-panel {
-      background: rgba(26, 15, 5, 0.75);
-      border: 1px solid rgba(201, 168, 76, 0.3);
-      border-radius: 24px;
-      padding: 30px;
-      backdrop-filter: blur(15px);
-      box-shadow: var(--shadow);
+    /* Left Side: Features Details & Selection */
+    .left-panel-content {
       display: flex;
       flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Guest Customizer Card */
+    .demo-selector-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .selector-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--bronze);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .selector-sub {
+      font-size: 0.88rem;
+      color: var(--bronze-light);
+    }
+
+    .current-guest-display {
+      background: #fffdf9;
+      border: 1px double var(--gold);
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--bronze);
+      min-width: 250px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      transition: all 0.3s;
+    }
+
+    .cycle-btn {
+      background: var(--gold-grad);
+      color: #1a1000;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 24px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(184, 144, 60, 0.2);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cycle-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(184, 144, 60, 0.3);
+    }
+
+    /* All Features List Card */
+    .features-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .features-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--bronze);
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(184, 144, 60, 0.15);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .features-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
     }
 
-    .customizer-title {
-      font-size: 1.5rem;
-      font-weight: 700;
+    .feature-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .feature-icon-box {
+      font-size: 1.35rem;
       color: var(--gold);
-      border-bottom: 1px solid rgba(201, 168, 76, 0.2);
-      padding-bottom: 12px;
-      margin-bottom: 8px;
+      background: rgba(184, 144, 60, 0.08);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(184, 144, 60, 0.15);
     }
 
-    .custom-section-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .field {
+    .feature-text {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
-    .field label {
-      font-size: 0.85rem;
-      color: var(--gold-light);
-      font-weight: bold;
+    .feature-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--bronze);
     }
 
-    .custom-input {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(201,168,76,0.3);
-      border-radius: 10px;
-      padding: 12px 16px;
-      color: var(--cream);
-      font-family: inherit;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    .custom-input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 8px rgba(201, 168, 76, 0.25);
-      background: rgba(0,0,0,0.5);
-    }
-
-    /* Formula Buttons Selector */
-    .formula-selector {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .formula-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      color: var(--cream);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.2s;
-      flex: 1 1 calc(50% - 8px);
-      text-align: center;
-    }
-
-    .formula-btn:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(201, 168, 76, 0.4);
-    }
-
-    .formula-btn.active {
-      background: rgba(201, 168, 76, 0.15);
-      border-color: var(--gold);
-      color: var(--gold-light);
-      font-weight: bold;
-      box-shadow: inset 0 0 10px rgba(201, 168, 76, 0.15);
-    }
-
-    /* Row containing bride/groom names inputs */
-    .names-input-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    .feature-desc {
+      font-size: 0.8rem;
+      color: var(--bronze-light);
+      line-height: 1.4;
     }
 
     /* Right Side: Interactive Mockup */
@@ -297,7 +337,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
     }
 
     /* Mockup Controller Buttons */
@@ -306,32 +346,33 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
-      background: rgba(26,15,5,0.85);
-      padding: 10px;
+      background: rgba(255,255,255,0.85);
+      padding: 8px;
       border-radius: 30px;
-      border: 1px solid rgba(201,168,76,0.3);
+      border: 1px solid var(--border);
       backdrop-filter: blur(8px);
       width: 100%;
-      max-width: 350px;
+      max-width: 320px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
 
     .control-btn {
       background: transparent;
       border: none;
-      color: var(--cream);
-      padding: 8px 14px;
+      color: var(--bronze);
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .control-btn:hover {
-      background: rgba(255,255,255,0.06);
+      background: rgba(0,0,0,0.04);
     }
 
     .control-btn.active {
@@ -342,12 +383,12 @@
 
     /* Phone Mockup Frame */
     .phone-mockup {
-      width: 340px;
-      height: 670px;
-      background: #000;
-      border-radius: 44px;
-      border: 12px solid #1a1a1a;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 0 4px rgba(201,168,76,0.25);
+      width: 330px;
+      height: 650px;
+      background: #0d0d0d;
+      border-radius: 40px;
+      border: 10px solid #1a1a1a;
+      box-shadow: 0 20px 50px rgba(78,47,13,0.18), 0 0 0 4px rgba(184,144,60,0.25);
       position: relative;
       overflow: hidden;
       display: flex;
@@ -360,11 +401,11 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 140px;
-      height: 25px;
+      width: 130px;
+      height: 22px;
       background: #1a1a1a;
-      border-bottom-left-radius: 18px;
-      border-bottom-right-radius: 18px;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
       z-index: 100;
       display: flex;
       justify-content: center;
@@ -372,20 +413,19 @@
     }
 
     .phone-speaker {
-      width: 40px;
+      width: 36px;
       height: 4px;
-      background: #333;
+      background: #2a2a2a;
       border-radius: 2px;
-      margin-bottom: 4px;
     }
 
     /* Phone screen content */
     .phone-screen {
       flex: 1;
-      background: radial-gradient(ellipse at 50% 30%, #5c3a10 0%, #241408 100%);
+      background: radial-gradient(ellipse at 50% 30%, #fdf8f0 0%, #ede0c4 100%);
       position: relative;
       overflow-y: auto;
-      padding: 40px 16px 20px;
+      padding: 30px 14px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -399,13 +439,13 @@
 
     /* Mockup Invitation Card States */
     .phone-screen.theme-gold {
-      background: radial-gradient(ellipse at 50% 30%, #6b420f 0%, #241408 100%);
+      background: radial-gradient(ellipse at 50% 30%, #fdf3e3 0%, #ede0c4 100%);
     }
     .phone-screen.theme-pink {
-      background: radial-gradient(ellipse at 50% 30%, #57201a 0%, #1a0503 100%);
+      background: radial-gradient(ellipse at 50% 30%, #fefaf8 0%, #f8dbd8 100%);
     }
     .phone-screen.theme-emerald {
-      background: radial-gradient(ellipse at 50% 30%, #0d3621 0%, #020b06 100%);
+      background: radial-gradient(ellipse at 50% 30%, #f5f9f6 0%, #cae0d2 100%);
     }
 
     /* Envelope styling inside phone */
@@ -413,16 +453,15 @@
       width: 100%;
       height: 100%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       position: absolute;
       inset: 0;
       z-index: 50;
       transition: all 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-      padding: 16px;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(5px);
+      padding: 12px;
+      background: rgba(78, 47, 13, 0.3);
+      backdrop-filter: blur(4px);
     }
 
     .mock-envelope-wrapper.opened {
@@ -434,27 +473,26 @@
     .mock-envelope {
       width: 100%;
       height: 380px;
-      background: #fbf6ec; /* ivory base */
-      border: 1px solid #d4b475;
+      background: #fcf9f2;
+      border: 1px solid rgba(184, 144, 60, 0.4);
       border-radius: 16px;
-      box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 16px;
+      padding: 24px 14px;
       cursor: pointer;
-      transition: transform 0.3s;
-      background-image: url('assets/minimalist_pattern.png');
-      background-size: cover;
+      background-image: radial-gradient(circle at center, rgba(255,255,255,0.7) 0%, rgba(252,246,236,0.95) 100%);
+      border: 1px solid rgba(184, 144, 60, 0.3);
     }
 
     .mock-envelope::before {
       content: '';
       position: absolute;
       inset: 6px;
-      border: 1px solid rgba(201,168,76,0.25);
+      border: 1px solid rgba(184,144,60,0.22);
       border-radius: 12px;
       pointer-events: none;
     }
@@ -466,20 +504,20 @@
     /* Address card on front of envelope */
     .mock-envelope-address-card {
       width: 90%;
-      background: #fffdfb;
+      background: #fffdf9;
       border: 1px double var(--gold);
       border-radius: 8px;
-      padding: 16px 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      padding: 14px 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
       text-align: center;
       z-index: 2;
-      margin-top: 15px;
+      margin-top: 10px;
     }
 
     .envelope-addressed-to {
       font-family: 'Amiri', serif;
       font-size: 1.1rem;
-      color: #381e0a;
+      color: var(--bronze);
       font-weight: bold;
       word-wrap: break-word;
       line-height: 1.3;
@@ -487,8 +525,8 @@
 
     /* Seal icon */
     .mock-seal {
-      width: 76px;
-      height: 76px;
+      width: 70px;
+      height: 70px;
       position: relative;
       z-index: 10;
       animation: sealPulse 2s infinite;
@@ -496,51 +534,52 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
+      font-size: 2rem;
       border-radius: 50%;
-      background-color: #96251b;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.35), inset 0 0 10px rgba(0,0,0,0.4);
+      background-color: #9c2d2d;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 0 10px rgba(0,0,0,0.4);
       border: 3px double #f5e6c0;
-      margin: 15px 0;
+      margin: 10px 0;
     }
 
     @keyframes sealPulse {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.45); }
-      70% { transform: scale(1.06); box-shadow: 0 0 0 12px rgba(201, 168, 76, 0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); }
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184, 144, 60, 0.4); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(184, 144, 60, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184, 144, 60, 0); }
     }
 
     .mock-seal::after {
-      content: '💌';
+      content: '💍';
     }
 
     .mock-envelope-title {
-      font-size: 0.9rem;
-      color: #7a4a2a;
+      font-size: 0.85rem;
+      color: var(--bronze-light);
       font-weight: bold;
       text-align: center;
       font-family: 'Amiri', serif;
       max-width: 90%;
-      word-wrap: break-word;
       line-height: 1.3;
     }
 
     .mock-envelope-sub {
-      font-size: 0.72rem;
-      color: #a08868;
+      font-size: 0.7rem;
+      color: #9c7f5f;
       letter-spacing: 0.5px;
     }
 
-    /* Wedding Invite Card inside Mockup */
+    /* REAL INVITATION LAYOUT SIMULATION */
+    
+    /* Real App Card Background styling */
     .mock-card {
       width: 100%;
-      min-height: 520px;
-      background: #fdf8f0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.2) 0%, transparent 80%),
+                  linear-gradient(160deg, #fdf8f0 0%, #f5e9d0 35%, #ede0c4 65%, #f0e8d5 100%);
       border-radius: 12px;
-      border: 1px solid var(--gold);
-      padding: 24px 16px;
-      color: #3e220a;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      border: 1px solid var(--real-gold);
+      padding: 20px 12px;
+      color: var(--real-brown);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -548,7 +587,7 @@
       text-align: center;
       font-family: 'Amiri', serif;
       overflow: hidden;
-      transition: background 0.3s;
+      transition: background 0.4s;
     }
 
     .mock-card::before {
@@ -560,51 +599,66 @@
       pointer-events: none;
     }
 
-    /* Change content background depending on theme active inside mockup */
+    /* Card background matching index.html themes */
     .theme-pink .mock-card {
-      background: #fefaf8;
-      color: #3e1814;
-      border-color: var(--pink-gold);
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.2) 0%, transparent 80%),
+                  linear-gradient(160deg, #fefaf8 0%, #f7eae7 35%, #fbe1df 65%, #fadcd8 100%);
+      color: var(--real-pink-dark);
+      border-color: var(--real-pink);
     }
     .theme-pink .mock-card::before {
-      border-color: rgba(212,138,130,0.35);
+      border-color: rgba(212,138,130,0.3);
     }
 
     .theme-emerald .mock-card {
-      background: #f5f9f6;
-      color: #051d11;
-      border-color: var(--emerald-gold);
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.2) 0%, transparent 80%),
+                  linear-gradient(160deg, #f5f9f6 0%, #dbeae0 35%, #cae5d4 65%, #c5dfce 100%);
+      color: var(--real-emerald);
+      border-color: var(--real-emerald-gold);
     }
     .theme-emerald .mock-card::before {
-      border-color: rgba(201,168,76,0.35);
+      border-color: rgba(201,168,76,0.3);
     }
 
-    .mock-card-basmala {
-      font-size: 0.85rem;
-      color: #8c6030;
-      margin-bottom: 12px;
+    /* Basmala */
+    .real-basmala {
+      font-family: 'Amiri', serif;
+      font-size: 0.8rem;
+      color: var(--real-brown);
+      margin-top: 5px;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      font-weight: 700;
     }
-    .theme-pink .mock-card-basmala { color: #9c4e46; }
-    .theme-emerald .mock-card-basmala { color: #165333; }
+    .theme-pink .real-basmala { color: var(--real-pink-dark); }
+    .theme-emerald .real-basmala { color: var(--real-emerald); }
+
+    .real-divider-ornament {
+      color: var(--real-gold);
+      font-size: 0.7rem;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+    .theme-pink .real-divider-ornament { color: var(--real-pink); }
 
     /* Personalization badge/banner inside the invitation card */
     .mock-card-addressed-banner {
-      width: 100%;
+      width: 95%;
       background: rgba(201, 168, 76, 0.08);
-      border: 1px dashed rgba(201, 168, 76, 0.3);
+      border: 1px dashed rgba(201, 168, 76, 0.35);
       border-radius: 6px;
-      padding: 8px;
-      margin-bottom: 14px;
-      font-size: 0.88rem;
+      padding: 6px;
+      margin-bottom: 12px;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: #66461a;
+      color: #7a5a15;
       line-height: 1.3;
     }
     
     .theme-pink .mock-card-addressed-banner {
       background: rgba(212, 138, 130, 0.08);
-      border-color: rgba(212, 138, 130, 0.3);
-      color: #7d332a;
+      border-color: rgba(212, 138, 130, 0.35);
+      color: #8c4238;
     }
     .theme-emerald .mock-card-addressed-banner {
       background: rgba(13, 54, 33, 0.05);
@@ -612,87 +666,242 @@
       color: #0c3820;
     }
 
-    .mock-card-title {
-      font-size: 0.8rem;
+    .real-invite-title {
+      font-size: 0.72rem;
       color: #666;
       margin-bottom: 8px;
     }
 
-    .mock-card-families {
+    /* Families section */
+    .real-families-row {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       width: 100%;
-      font-size: 0.72rem;
-      line-height: 1.35;
-      margin-bottom: 12px;
+      font-size: 0.65rem;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      padding: 0 6px;
+    }
+    .real-family-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .real-family-label {
+      color: #777;
+      font-size: 0.58rem;
+    }
+    .real-family-name {
       font-weight: 700;
     }
-
-    .mock-card-names {
-      font-size: 1.8rem;
+    .real-and-symbol {
+      align-self: center;
+      padding: 0 4px;
+      font-size: 0.75rem;
       font-weight: 700;
-      color: #8a6000;
-      margin: 12px 0;
+      color: var(--real-gold);
+    }
+    .theme-pink .real-and-symbol { color: var(--real-pink); }
+
+    .real-names-main {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--real-brown);
+      margin: 10px 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      font-family: 'Amiri', serif;
     }
-    .theme-pink .mock-card-names { color: var(--pink-gold); }
-    .theme-emerald .mock-card-names { color: var(--gold); }
+    .theme-gold .real-names-main { color: #8a6010; }
+    .theme-pink .real-names-main { color: var(--real-pink); }
+    .theme-emerald .real-names-main { color: #b8903c; }
 
-    .mock-card-names span {
-      display: inline-block;
-    }
-
-    .mock-card-divider {
-      font-size: 1.2rem;
+    .real-names-divider {
+      font-size: 1.1rem;
       opacity: 0.6;
     }
 
-    .mock-card-details {
-      font-size: 0.78rem;
-      color: #555;
-      margin-bottom: 15px;
-      line-height: 1.4;
+    /* Countdown */
+    .real-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--real-gold);
+      margin: 10px 0 4px;
+    }
+    .theme-pink .real-section-title { color: var(--real-pink); }
+    
+    .real-section-subtitle {
+      font-size: 0.65rem;
+      color: #666;
+      margin-bottom: 10px;
     }
 
-    /* Countdown simulator */
-    .mock-countdown {
+    .real-countdown-grid {
       display: flex;
-      gap: 6px;
-      margin-bottom: 15px;
+      gap: 5px;
+      margin-bottom: 12px;
     }
 
-    .mock-cd-unit {
-      background: rgba(201,168,76,0.1);
-      border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 6px;
-      padding: 6px 8px;
+    .real-cd-unit {
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 40px;
-    }
-    .theme-pink .mock-cd-unit {
-      background: rgba(212,138,130,0.1);
-      border-color: rgba(212,138,130,0.25);
-    }
-    .theme-emerald .mock-cd-unit {
-      background: rgba(13,54,33,0.06);
-      border-color: rgba(201,168,76,0.25);
+      min-width: 38px;
     }
 
-    .mock-cd-num {
-      font-size: 0.85rem;
+    .real-cd-box {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 6px;
+      padding: 4px 6px;
+      width: 100%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    .theme-pink .real-cd-box { border-color: rgba(212,138,130,0.3); }
+    .theme-emerald .real-cd-box { border-color: rgba(201,168,76,0.25); }
+
+    .real-cd-num {
+      font-size: 0.82rem;
       font-weight: bold;
       font-family: monospace;
       color: #111;
     }
 
-    .mock-cd-label {
+    .real-cd-label {
+      font-size: 0.58rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    /* Heart clock preview */
+    .real-heart-clock-container {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 15px;
+    }
+    .real-heart-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Timeline Program */
+    .real-timeline {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 10px 0;
+      text-align: right;
+    }
+
+    .real-timeline-item {
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .theme-pink .real-timeline-item { border-color: rgba(212,138,130,0.15); }
+
+    .real-tl-icon {
+      font-size: 1.1rem;
+      width: 26px;
+      height: 26px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(201,168,76,0.25);
+      flex-shrink: 0;
+    }
+    .theme-pink .real-tl-icon { border-color: rgba(212,138,130,0.25); }
+
+    .real-tl-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .real-tl-event {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--real-brown);
+    }
+    .theme-pink .real-tl-event { color: var(--real-pink-dark); }
+    .theme-emerald .real-tl-event { color: var(--real-emerald); }
+
+    .real-tl-loc {
       font-size: 0.58rem;
       color: #666;
     }
+
+    .real-tl-btn {
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 0.58rem;
+      color: var(--real-brown);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .theme-pink .real-tl-btn {
+      background: rgba(212,138,130,0.12);
+      border-color: rgba(212,138,130,0.3);
+      color: var(--real-pink-dark);
+    }
+    .theme-emerald .real-tl-btn {
+      background: rgba(13,54,33,0.06);
+      border-color: rgba(201,168,76,0.25);
+      color: var(--real-emerald);
+    }
+
+    /* Guestbook wishes input mock */
+    .real-wishes-section {
+      width: 100%;
+      background: rgba(255,255,255,0.4);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .real-input-mock {
+      width: 100%;
+      background: #fff;
+      border: 1px solid rgba(201,168,76,0.25);
+      height: 26px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .real-btn-mock {
+      background: var(--real-gold);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      width: 100%;
+      font-size: 0.72rem;
+      padding: 5px;
+      font-weight: 700;
+    }
+    .theme-pink .real-btn-mock { background: var(--real-pink); }
+    .theme-emerald .real-btn-mock { background: var(--real-emerald); }
+
+    .close-inv-btn {
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--real-brown);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.68rem;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 15px;
+      transition: all 0.2s;
+    }
+    .theme-pink .close-inv-btn { border-color: rgba(212,138,130,0.4); color: var(--real-pink-dark); }
+    .theme-emerald .close-inv-btn { border-color: rgba(201,168,76,0.3); color: var(--real-emerald); }
 
     /* Audio ambiance preview status */
     .mock-audio-status {
@@ -705,7 +914,7 @@
       border: 1px solid rgba(39,174,96,0.2);
       border-radius: 12px;
       padding: 4px 10px;
-      margin-top: auto;
+      margin-top: 12px;
     }
 
     .mock-audio-status.playing .music-wave span {
@@ -733,16 +942,16 @@
       100% { height: 10px; }
     }
 
-    /* Features visual cards below */
+    /* Extra Showcase: Guest Management Dashboard */
     .promo-details-section {
-      margin-top: 60px;
+      margin-top: 40px;
       text-align: center;
     }
 
     .promo-section-title {
-      font-size: 2.2rem;
-      color: var(--gold-light);
-      margin-bottom: 25px;
+      font-size: 1.8rem;
+      color: var(--bronze);
+      margin-bottom: 20px;
       text-align: center;
       position: relative;
       display: inline-block;
@@ -751,7 +960,7 @@
     .promo-section-title::after {
       content: '';
       position: absolute;
-      bottom: -10px;
+      bottom: -6px;
       left: 20%;
       right: 20%;
       height: 2px;
@@ -759,26 +968,25 @@
     }
 
     .promo-section-description {
-      font-size: 1.15rem;
-      color: #e5d5be;
+      font-size: 1.1rem;
+      color: var(--bronze-light);
       max-width: 800px;
-      margin: 0 auto 50px;
-      line-height: 1.6;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      margin: 0 auto 35px;
+      line-height: 1.5;
     }
 
     /* Interactive dashboard visual preview */
     .dashboard-preview {
-      background: rgba(26, 15, 5, 0.7);
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      border-radius: 24px;
-      padding: 40px;
-      margin-bottom: 40px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
       text-align: right;
       box-shadow: var(--shadow);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      gap: 30px;
       align-items: center;
       backdrop-filter: blur(10px);
     }
@@ -786,36 +994,36 @@
     @media (max-width: 800px) {
       .dashboard-preview {
         grid-template-columns: 1fr;
-        padding: 24px;
+        padding: 20px;
         text-align: center;
       }
     }
 
     .dash-info h3 {
-      font-size: 1.8rem;
-      color: var(--gold-light);
-      margin-bottom: 15px;
+      font-size: 1.6rem;
+      color: var(--bronze);
+      margin-bottom: 12px;
     }
 
     .dash-info p {
-      font-size: 1rem;
-      color: #dfd0b8;
-      line-height: 1.7;
-      margin-bottom: 20px;
+      font-size: 0.95rem;
+      color: var(--bronze-light);
+      line-height: 1.6;
+      margin-bottom: 15px;
     }
 
     .dash-features {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .dash-features li {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
+      gap: 8px;
+      font-size: 0.9rem;
     }
     
     @media (max-width: 800px) {
@@ -837,79 +1045,79 @@
 
     /* Simulated dashboard screenshot/layout */
     .simulated-dash {
-      background: #110c06;
-      border: 1px solid rgba(201,168,76,0.3);
+      background: #fffcf8;
+      border: 1px solid var(--border);
       border-radius: 12px;
       width: 100%;
       max-width: 420px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      box-shadow: 0 8px 24px rgba(78,47,13,0.06);
       direction: rtl;
     }
 
     .dash-head {
-      background: #1c140b;
-      padding: 12px;
-      border-bottom: 1px solid rgba(201,168,76,0.2);
+      background: #faf5ea;
+      padding: 10px;
+      border-bottom: 1px solid rgba(184, 144, 60, 0.15);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .dash-head-title {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: bold;
-      color: var(--gold);
+      color: var(--bronze);
     }
 
     .dash-head-badge {
-      background: rgba(39,174,96,0.15);
-      border: 1px solid rgba(39,174,96,0.3);
+      background: rgba(39,174,96,0.1);
+      border: 1px solid rgba(39,174,96,0.25);
       color: #27ae60;
-      font-size: 0.68rem;
-      padding: 2px 8px;
+      font-size: 0.65rem;
+      padding: 1px 7px;
       border-radius: 10px;
     }
 
     .dash-body {
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .sim-row {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(201,168,76,0.1);
-      border-radius: 8px;
-      padding: 10px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(184,144,60,0.1);
+      border-radius: 6px;
+      padding: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .sim-guest-name {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: bold;
-      color: var(--cream);
+      color: var(--text);
     }
 
     .sim-guest-formula {
-      font-size: 0.65rem;
-      color: var(--gold-light);
-      background: rgba(201,168,76,0.1);
-      padding: 2px 6px;
+      font-size: 0.62rem;
+      color: var(--bronze-light);
+      background: rgba(184,144,60,0.06);
+      padding: 1px 5px;
       border-radius: 4px;
-      margin-right: 6px;
+      margin-right: 5px;
     }
 
     .sim-btn-wa {
       background: #25d366;
       border: none;
       color: white;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      padding: 4px 6px;
       cursor: pointer;
       font-family: inherit;
     }
@@ -917,12 +1125,12 @@
     /* Footer */
     footer {
       text-align: center;
-      padding: 30px 0;
-      color: var(--gold-light);
-      font-size: 0.85rem;
-      opacity: 0.7;
-      border-top: 1px solid rgba(201,168,76,0.1);
-      margin-top: 40px;
+      padding: 25px 0;
+      color: var(--bronze-light);
+      font-size: 0.82rem;
+      opacity: 0.8;
+      border-top: 1px solid rgba(184,144,60,0.1);
+      margin-top: 30px;
     }
 
     /* Translation Classes */
@@ -955,10 +1163,11 @@
 
     body.lang-fr-active h1, 
     body.lang-fr-active .promo-section-title,
-    body.lang-fr-active .customizer-title,
-    body.lang-fr-active .feature-title,
+    body.lang-fr-active .selector-title,
+    body.lang-fr-active .features-title,
+    body.lang-fr-active .feature-name,
     body.lang-fr-active .mock-envelope-title,
-    body.lang-fr-active .mock-card-names {
+    body.lang-fr-active .real-names-main {
       font-family: 'Playfair Display', serif;
     }
 
@@ -973,7 +1182,7 @@
 
     /* Animations */
     @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
+      from { opacity: 0; transform: translateY(-15px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
@@ -1004,90 +1213,184 @@
       <div class="logo-ornament">👑</div>
       
       <!-- Arabic Title -->
-      <h1 data-lang="ar">ديمو الدعوة الرقمية المخصصة للضيوف</h1>
-      <p data-lang="ar">اختبروا قوة التخصيص الفردي. ادخلوا أسماءكم في لوحة التحكم التفاعلية على اليمين وشاهدوا كيف تُعرض الدعوة والظرف باسمكم مباشرة!</p>
+      <h1 data-lang="ar">اكتشف مميزات دعوتنا الرقمية التفاعلية</h1>
+      <p data-lang="ar">شاهد محاكاة حقيقية لبطاقة دعوتكم، واستعرض كل الميزات من التخصيص وإدارة الضيوف إلى التفاصيل التفاعلية بالكامل.</p>
       
       <!-- French Title -->
-      <h1 data-lang="fr">Démo de l'Invitation Personnalisée pour les Invités</h1>
-      <p data-lang="fr">Découvrez la puissance de la personnalisation. Saisissez votre nom dans le panneau interactif à gauche et voyez l'enveloppe et la carte s'adapter en temps réel !</p>
+      <h1 data-lang="fr">Découvrez les Fonctionnalités de notre Invitation Numérique</h1>
+      <p data-lang="fr">Visualisez une simulation réelle de votre invitation et explorez toutes ses caractéristiques innovantes de personnalisation et de gestion des invités.</p>
     </header>
 
     <!-- Main Interactive Demo Area -->
     <div class="showcase-grid">
       
-      <!-- Left: Interactive Customizer Panel -->
-      <div class="customizer-panel">
-        <h2 class="customizer-title">
-          <span>✨</span>
-          <span data-lang="ar">جرّب تخصيص الأسماء بنفسك!</span>
-          <span data-lang="fr">Personnalisez à votre nom !</span>
-        </h2>
-        <p class="custom-section-subtitle" data-lang="ar">اكتبوا أسماءكم وأسماء العرسان، واختاروا صيغة الدعوة لتروا المحاكاة الحية في شاشة الموبايل فورياً.</p>
-        <p class="custom-section-subtitle" data-lang="fr">Saisissez votre nom, ceux des mariés et choisissez la formule de salutation pour simuler l'affichage en direct.</p>
+      <!-- Left Panel: Selector & Comprehensive Features List -->
+      <div class="left-panel-content">
         
-        <!-- Guest Name Input -->
-        <div class="field">
-          <label for="input-guest-name">
-            <span data-lang="ar">👤 اسم الضيف أو العائلة المعروض:</span>
-            <span data-lang="fr">👤 Nom de l'invité ou de la famille :</span>
-          </label>
-          <input type="text" id="input-guest-name" class="custom-input" value="أحمد بن علي" placeholder="مثال: أحمد بن علي / M. et Mme Riahi">
-        </div>
-
-        <!-- Formula Selector -->
-        <div class="field">
-          <label>
-            <span data-lang="ar">✉️ صيغة التوجيه على المغلف والدعوة:</span>
-            <span data-lang="fr">✉️ Formule d'adresse sur l'enveloppe :</span>
-          </label>
-          <div class="formula-selector">
-            <button class="formula-btn active" data-formula="couple" onclick="selectFormula(this)">
-              <span data-lang="ar">إلى السيد ... وحرمه</span>
-              <span data-lang="fr">M. et Mme ...</span>
-            </button>
-            <button class="formula-btn" data-formula="couple_children" onclick="selectFormula(this)">
-              <span data-lang="ar">... وحرمه وأولاده</span>
-              <span data-lang="fr">M. & Mme ... & enf.</span>
-            </button>
-            <button class="formula-btn" data-formula="man" onclick="selectFormula(this)">
-              <span data-lang="ar">إلى السيد ...</span>
-              <span data-lang="fr">Monsieur ...</span>
-            </button>
-            <button class="formula-btn" data-formula="woman" onclick="selectFormula(this)">
-              <span data-lang="ar">إلى السيدة ...</span>
-              <span data-lang="fr">Madame ...</span>
-            </button>
-            <button class="formula-btn" data-formula="friend" onclick="selectFormula(this)">
-              <span data-lang="ar">إلى صديقي ...</span>
-              <span data-lang="fr">Mon cher ami ...</span>
-            </button>
+        <!-- Guest Demo Selector Card -->
+        <div class="demo-selector-card">
+          <h2 class="selector-title">
+            <span>✨</span>
+            <span data-lang="ar">عرض توضيحي للتخصيص التلقائي</span>
+            <span data-lang="fr">Démo de la Personnalisation Directe</span>
+          </h2>
+          <p class="selector-sub" data-lang="ar">يقوم النظام بإنشاء روابط مخصصة لكل ضيف تلقائياً. اضغط على الزر أدناه لتغيير اسم المدعو وملاحظة كيف تختلف صيغة الترحيب واللغة والثيم فوراً في الموبايل!</p>
+          <p class="selector-sub" data-lang="fr">Le système génère des liens uniques pour chaque invité. Cliquez sur le bouton ci-dessous pour changer d'invité et voir la formule, la langue et le thème s'adapter instantanément dans le simulateur !</p>
+          
+          <!-- Current guest display box -->
+          <div class="current-guest-display" id="guestDisplayBox">
+            السيد أحمد بن علي وحرمه
           </div>
+
+          <button class="cycle-btn" onclick="cycleDemoGuest()">
+            <span>🔄</span>
+            <span data-lang="ar">تغيير الضيف وتحديث الشاشة</span>
+            <span data-lang="fr">Changer d'invité démo</span>
+          </button>
         </div>
 
-        <!-- Bride & Groom Names Input -->
-        <div class="field">
-          <label>
-            <span data-lang="ar">💍 أسماء العروسين:</span>
-            <span data-lang="fr">💍 Noms des Mariés :</span>
-          </label>
-          <div class="names-input-row">
-            <div class="field">
-              <input type="text" id="input-groom-name" class="custom-input" value="مرتضى" placeholder="العريس">
+        <!-- Comprehensive Features List Card -->
+        <div class="features-card">
+          <h2 class="features-title">
+            <span>📋</span>
+            <span data-lang="ar">قائمة مميزات التطبيق الكاملة</span>
+            <span data-lang="fr">Liste Complète des Fonctionnalités</span>
+          </h2>
+          
+          <div class="features-list">
+            
+            <!-- Feature 1 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">✉️</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">مغلف تفاعلي بختم شمعي</span>
+                <span class="feature-name" data-lang="fr">Enveloppe à Sceau de Cire</span>
+                <span class="feature-desc" data-lang="ar">محاكاة فتحEnvelope حقيقية بلمس الختم الشمعي لفتح بطاقة الدعوة بحركة انزلاق انسيابية ممتازة.</span>
+                <span class="feature-desc" data-lang="fr">Simulation d'ouverture d'enveloppe en brisant le sceau de cire 3D virtuel pour révéler la carte.</span>
+              </div>
             </div>
-            <div class="field">
-              <input type="text" id="input-bride-name" class="custom-input" value="مريم" placeholder="العروس">
-            </div>
-          </div>
-        </div>
 
-        <!-- Envelope pattern visual info -->
-        <div class="field" style="margin-top: 10px; border-top: 1px solid rgba(201, 168, 76, 0.15); padding-top: 15px;">
-          <label style="color: var(--gold); font-size: 0.95rem;">🎨 خصائص الدعوة التفاعلية المعروضة :</label>
-          <div style="font-size: 0.82rem; color: #dfd0b8; line-height: 1.6; display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">
-            <div data-lang="ar">✓ <strong>ظرف مخصص:</strong> يُكتب عليه اسم الضيف يدوياً وبطريقة أنيقة قبل الفتح.</div>
-            <div data-lang="fr">✓ <strong>Enveloppe Adressée :</strong> Le nom de l'invité est écrit en calligraphie sur la couverture.</div>
-            <div data-lang="ar">✓ <strong>موسيقى افتتاحية:</strong> تبدأ بالعمل تلقائياً بمجرد كسر الختم وفتح المغلف.</div>
-            <div data-lang="fr">✓ <strong>Musique d'ambiance :</strong> Se déclenche automatiquement à l'ouverture du sceau.</div>
+            <!-- Feature 2 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">🌸</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">تساقط بتلات الورد</span>
+                <span class="feature-name" data-lang="fr">Pluie de Pétales de Fleurs</span>
+                <span class="feature-desc" data-lang="ar">تأثير بصري فاخر بتساقط بتلات الورد المتناسق مع ثيم ألوان الدعوة المختار لإبهار الضيوف.</span>
+                <span class="feature-desc" data-lang="fr">Effet visuel romantique de chute de pétales en accord parfait avec le thème coloré de l'invitation.</span>
+              </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">🔊</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">موسيقى افتتاحية تلقائية</span>
+                <span class="feature-name" data-lang="fr">Ambiance Musicale Automatique</span>
+                <span class="feature-desc" data-lang="ar">تشغيل خلفية موسيقية ساحرة فور فتح المغلف (مارش زفاف غربي أو مالوف للفنان زياد غرسة).</span>
+                <span class="feature-desc" data-lang="fr">Lancement automatique d'une mélodie lors de l'ouverture (Marche Nuptiale ou Malouf de Ziad Gharsa).</span>
+              </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">🎨</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">ثيمات الألوان المتعددة</span>
+                <span class="feature-name" data-lang="fr">Thèmes Visuels Sélectionnables</span>
+                <span class="feature-desc" data-lang="ar">تغيير فوري لكامل ألوان ومؤشرات التطبيق (الذهبي الكلاسيكي، الوردي الناعم، أو الأخضر الزمردي).</span>
+                <span class="feature-desc" data-lang="fr">Changement de thème instantané : Or Impérial, Rose Poudré ou Vert Émeraude.</span>
+              </div>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">⏰</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">عدّاد تنازلي دقيق</span>
+                <span class="feature-name" data-lang="fr">Compte à Rebours Temps Réel</span>
+                <span class="feature-desc" data-lang="ar">عداد بالثواني والدقائق والساعات والأيام يحسب الوقت المتبقي بدقة لموعد حفل الزفاف.</span>
+                <span class="feature-desc" data-lang="fr">Compteur dynamique en temps réel indiquant les jours et secondes restantes avant le mariage.</span>
+              </div>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">❤️</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">ساعة القلب التناظرية</span>
+                <span class="feature-name" data-lang="fr">Horloge en Cœur Interactive</span>
+                <span class="feature-desc" data-lang="ar">ساعة عقارب حقيقية على شكل قلب تنبض بالحركة وتعمل بنعومة تامة متزامنة مع وقت الجوال.</span>
+                <span class="feature-desc" data-lang="fr">Une horloge à aiguilles en forme de cœur, synchronisée sur l'heure locale et animée avec fluidité.</span>
+              </div>
+            </div>
+
+            <!-- Feature 7 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">🗓️</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">برنامج الحفل والـ GPS</span>
+                <span class="feature-name" data-lang="fr">Planning & Navigation GPS</span>
+                <span class="feature-desc" data-lang="ar">عرض متكامل لأحداث الحفل وتواريخها مع أزرار تفتح خرائط الجوال مباشرة لإرشاد الضيف لمكان الحدث.</span>
+                <span class="feature-desc" data-lang="fr">Détails des événements avec boutons GPS intégrés pour guider l'invité via Google Maps vers la salle.</span>
+              </div>
+            </div>
+
+            <!-- Feature 8 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">🗺️</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">خريطة تفاعلية مدمجة</span>
+                <span class="feature-name" data-lang="fr">Carte Interactive Leaflet</span>
+                <span class="feature-desc" data-lang="ar">خريطة جغرافية تفتح كنافذة منبثقة داخل الدعوة دون مغادرة الصفحة، تعرض مكان القاعة بدقة.</span>
+                <span class="feature-desc" data-lang="fr">Intégration d'une carte Leaflet pour visualiser directement les coordonnées sans quitter l'invitation.</span>
+              </div>
+            </div>
+
+            <!-- Feature 9 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">✍️</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">كتاب التهاني وتأكيد الحضور</span>
+                <span class="feature-name" data-lang="fr">Livre d'or & RSVPs</span>
+                <span class="feature-desc" data-lang="ar">يتمكن الضيوف من كتابة تبريكاتهم وتأكيد حضورهم أو اعتذارهم لتظهر مباشرة في لوحة إدارة العروسين.</span>
+                <span class="feature-desc" data-lang="fr">Permet aux proches de laisser des messages et d'indiquer leur présence (sauvegardé sur Firebase).</span>
+              </div>
+            </div>
+
+            <!-- Feature 10 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">👥</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">تخصيص صيغ توجيه الدعوة</span>
+                <span class="feature-name" data-lang="fr">Formules de Salutations</span>
+                <span class="feature-desc" data-lang="ar">احترام كامل للمقامات بفضل توليد الصيغ تلقائياً (إلى السيد... وحرمه، عائلات، أفراد، أو أصدقاء).</span>
+                <span class="feature-desc" data-lang="fr">Gestion et personnalisation des titres honorifiques (M. et Mme, Madame, Ami) selon le destinataire.</span>
+              </div>
+            </div>
+
+            <!-- Feature 11 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">🔐</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">لوحة تحكم خاصة للعروسين</span>
+                <span class="feature-name" data-lang="fr">Espace Privé Mariés (Admin)</span>
+                <span class="feature-desc" data-lang="ar">لوحة إدارة آمنة تسمح بتعديل أسماء العروسين، تفاصيل وتاريخ الحفل، وتوليد روابط الضيوف.</span>
+                <span class="feature-desc" data-lang="fr">Console d'administration protégée pour configurer les textes, musiques, dates et gérer la liste.</span>
+              </div>
+            </div>
+
+            <!-- Feature 12 -->
+            <div class="feature-item">
+              <span class="feature-icon-box">💬</span>
+              <div class="feature-text">
+                <span class="feature-name" data-lang="ar">مشاركة واتساب بنقرة واحدة</span>
+                <span class="feature-name" data-lang="fr">Partage WhatsApp Instantané</span>
+                <span class="feature-desc" data-lang="ar">أزرار إرسال مباشرة تحول الرابط الشخصي وتفتحه في الواتساب مع رسالة ترحيبية جاهزة.</span>
+                <span class="feature-desc" data-lang="fr">Permet d'envoyer l'invitation personnalisée sur WhatsApp en un clic, sans enregistrer le contact.</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -1098,9 +1401,9 @@
         
         <!-- Interactive Controls -->
         <div class="mockup-controls">
-          <button class="control-btn active" onclick="changeMockupTheme('gold')">👑 Gold</button>
-          <button class="control-btn" onclick="changeMockupTheme('pink')">🌸 Pink</button>
-          <button class="control-btn" onclick="changeMockupTheme('emerald')">🌿 Emerald</button>
+          <button class="control-btn active" id="btn-theme-gold" onclick="changeMockupTheme('gold')">👑 Gold</button>
+          <button class="control-btn" id="btn-theme-pink" onclick="changeMockupTheme('pink')">🌸 Pink</button>
+          <button class="control-btn" id="btn-theme-emerald" onclick="changeMockupTheme('emerald')">🌿 Emerald</button>
           <button class="control-btn" id="music-preview-btn" onclick="toggleMockupMusic()">🎵 Play Audio</button>
         </div>
 
@@ -1114,7 +1417,7 @@
             <div class="mock-envelope-wrapper" id="mockEnvelopeWrapper">
               <div class="mock-envelope" onclick="openMockEnvelope()">
                 
-                <div class="mock-envelope-title" id="envTitleAr" data-lang="ar">دعوة زفاف مرتضى & مريم</div>
+                <div class="mock-envelope-title" id="envTitle" data-lang="ar">دعوة زفاف مرتضى & مريم</div>
                 <div class="mock-envelope-title" id="envTitleFr" data-lang="fr">Mariage de Mortadha & Mariam</div>
                 
                 <!-- Envelope Address Card -->
@@ -1124,70 +1427,150 @@
 
                 <div class="mock-seal"></div>
 
-                <div class="mock-envelope-sub" data-lang="ar">اضغط على الختم لفتح الدعوة ✉️</div>
-                <div class="mock-envelope-sub" data-lang="fr">Cliquez sur le sceau pour ouvrir ✉️</div>
+                <div class="mock-envelope-sub" data-lang="ar">اضغط على الختم لفتح الدعوة 💍</div>
+                <div class="mock-envelope-sub" data-lang="fr">Cliquez sur le sceau pour ouvrir 💍</div>
               </div>
             </div>
 
-            <!-- 2. Inside Invitation Card content -->
+            <!-- 2. ACTUAL INVITATION LAYOUT SIMULATION inside phone mockup -->
             <div class="mock-card" id="mockCard">
-              <div class="mock-card-basmala" data-lang="ar">بارك الله لهما وجمع بينهما في خير</div>
-              <div class="mock-card-basmala" data-lang="fr">Bismillah Ar-Rahman Ar-Rahim</div>
               
-              <!-- Personalized Guest Greeting inside the invite card -->
+              <!-- Basmala as in index.html -->
+              <div class="real-basmala" data-lang="ar">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
+              <div class="real-basmala" data-lang="fr">Bismillah Ar-Rahman Ar-Rahim</div>
+              <div class="real-divider-ornament">✦✦✦</div>
+              
+              <!-- Guest Greeting inside the invite card -->
               <div class="mock-card-addressed-banner" id="cardGuestGreeting">إلى السيد أحمد بن علي وحرمه</div>
               
-              <div class="mock-card-title" data-lang="ar">تتشرف عائلتا الرياحي والعمري بدعوتكم</div>
-              <div class="mock-card-title" data-lang="fr">Les familles Riah & Amri ont l'honneur de vous inviter</div>
+              <div class="real-invite-title" data-lang="ar">تتشرف عائلتا</div>
+              <div class="real-invite-title" data-lang="fr">Les familles</div>
               
-              <div class="mock-card-families" data-lang="ar">
-                <div>السيد محمد الرياحي<br>وحرمه جميلة</div>
-                <div>السيد خالد العمري<br>وحرمه عواطف</div>
-              </div>
-              <div class="mock-card-families" data-lang="fr">
-                <div>M. Mohamed Riahi<br>& son épouse Jamila</div>
-                <div>M. Khaled Amri<br>& son épouse Awatef</div>
+              <!-- Families layout as in index.html -->
+              <div class="real-families-row" data-lang="ar">
+                <div class="real-family-block">
+                  <span class="real-family-label">السيد</span>
+                  <span class="real-family-name">محمد الرياحي</span>
+                  <span class="real-family-label" style="font-size: 0.52rem;">والسيدة جميلة السويح</span>
+                </div>
+                <div class="real-and-symbol">و</div>
+                <div class="real-family-block">
+                  <span class="real-family-label">السيد</span>
+                  <span class="real-family-name">خالد العمري</span>
+                  <span class="real-family-label" style="font-size: 0.52rem;">والسيدة عواطف بلقاسم</span>
+                </div>
               </div>
               
-              <div class="mock-card-title" data-lang="ar">لحضور حفل زفاف نجليهما</div>
-              <div class="mock-card-title" data-lang="fr">au mariage de leurs enfants</div>
+              <div class="real-families-row" data-lang="fr">
+                <div class="real-family-block">
+                  <span class="real-family-label">M.</span>
+                  <span class="real-family-name">Mohamed Riahi</span>
+                  <span class="real-family-label" style="font-size: 0.52rem;">& Mme Jamila Souih</span>
+                </div>
+                <div class="real-and-symbol">et</div>
+                <div class="real-family-block">
+                  <span class="real-family-label">M.</span>
+                  <span class="real-family-name">Khaled Amri</span>
+                  <span class="real-family-label" style="font-size: 0.52rem;">& Mme Awatef Belgacem</span>
+                </div>
+              </div>
+              
+              <div class="real-invite-title" style="margin-top: 5px;" data-lang="ar">بدعوتكم لحضور حفل زفاف نجليهما</div>
+              <div class="real-invite-title" style="margin-top: 5px;" data-lang="fr">ont l'honneur de vous inviter au mariage de leurs enfants</div>
 
-              <div class="mock-card-names">
+              <!-- Animated names display -->
+              <div class="real-names-main">
                 <span id="mockGroomName">مرتضى</span>
-                <span class="mock-card-divider">&</span>
+                <span class="real-names-divider">&</span>
                 <span id="mockBrideName">مريم</span>
               </div>
 
-              <div class="mock-card-details" data-lang="ar">
-                📅 الأحد 12 جويلية 2026<br>
-                📍 فضاء الحبيب، طبلبة
-              </div>
-              <div class="mock-card-details" data-lang="fr">
-                📅 Dimanche 12 Juillet 2026<br>
-                📍 Espace El Habib, Teboulba
+              <!-- Countdown title and grid -->
+              <div class="real-section-title" data-lang="ar">العد التنازلي</div>
+              <div class="real-section-title" data-lang="fr">Compte à Rebours</div>
+              <div class="real-section-subtitle" data-lang="ar">لحظات تفصلنا عن اللقاء</div>
+              <div class="real-section-subtitle" data-lang="fr">Des instants précieux avant notre union</div>
+
+              <div class="real-countdown-grid">
+                <div class="real-cd-unit">
+                  <div class="real-cd-box">
+                    <span class="real-cd-num">48</span>
+                  </div>
+                  <span class="real-cd-label" data-lang="ar">يوم</span>
+                  <span class="real-cd-label" data-lang="fr">jours</span>
+                </div>
+                <div class="real-cd-unit">
+                  <div class="real-cd-box">
+                    <span class="real-cd-num">12</span>
+                  </div>
+                  <span class="real-cd-label" data-lang="ar">ساعة</span>
+                  <span class="real-cd-label" data-lang="fr">heures</span>
+                </div>
+                <div class="real-cd-unit">
+                  <div class="real-cd-box">
+                    <span class="real-cd-num">34</span>
+                  </div>
+                  <span class="real-cd-label" data-lang="ar">دقيقة</span>
+                  <span class="real-cd-label" data-lang="fr">mins</span>
+                </div>
               </div>
 
-              <!-- Mini countdown simulation -->
-              <div class="mock-countdown">
-                <div class="mock-cd-unit">
-                  <span class="mock-cd-num">48</span>
-                  <span class="mock-cd-label" data-lang="ar">يوم</span>
-                  <span class="mock-cd-label" data-lang="fr">jrs</span>
-                </div>
-                <div class="mock-cd-unit">
-                  <span class="mock-cd-num">12</span>
-                  <span class="mock-cd-label" data-lang="ar">ساعة</span>
-                  <span class="mock-cd-label" data-lang="fr">hrs</span>
-                </div>
-                <div class="mock-cd-unit">
-                  <span class="mock-cd-num">34</span>
-                  <span class="mock-cd-label" data-lang="ar">دقيقة</span>
-                  <span class="mock-cd-label" data-lang="fr">mins</span>
-                </div>
+              <!-- Heart Clock SVG -->
+              <div class="real-heart-clock-container">
+                <svg class="real-heart-svg" id="heartClockSvg" viewBox="0 0 260 245" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M130,218 C130,218 28,155 28,82 C28,50 54,26 82,26 C101,26 118,36 130,50 C142,36 159,26 178,26 C206,26 232,50 232,82 C232,155 130,218 130,218 Z" fill="rgba(184,144,60,0.06)" stroke="rgba(184,144,60,0.35)" stroke-width="1.5"/>
+                  <g id="hcTicks" stroke="#7c4c1e" stroke-linecap="round"></g>
+                  <g id="hcDots"></g>
+                  <line id="hcMHand" x1="130" y1="122" x2="130" y2="74" stroke="#b8903c" stroke-width="3.2" stroke-linecap="round"/>
+                  <line id="hcHHand" x1="130" y1="122" x2="130" y2="90" stroke="#4e2f0d" stroke-width="5" stroke-linecap="round"/>
+                  <line id="hcSHand" x1="130" y1="132" x2="130" y2="66" stroke="#b8903c" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle cx="130" cy="122" r="5" fill="#4e2f0d"/>
+                </svg>
               </div>
 
-              <button class="primary-btn" style="font-size: 0.72rem; padding: 6px 14px; box-shadow: none;" onclick="resetEnvelope()" data-lang="ar">🔄 إغلاق المغلف للتجربة</button>
-              <button class="primary-btn" style="font-size: 0.72rem; padding: 6px 14px; box-shadow: none;" onclick="resetEnvelope()" data-lang="fr">🔄 Refermer l'enveloppe</button>
+              <!-- Program Timeline -->
+              <div class="real-section-title" style="margin-top: 5px;" data-lang="ar">برنامج الحفل</div>
+              <div class="real-section-title" style="margin-top: 5px;" data-lang="fr">Programme</div>
+              
+              <div class="real-timeline">
+                
+                <div class="real-timeline-item">
+                  <span class="real-tl-icon">💍</span>
+                  <div class="real-tl-content">
+                    <div class="real-tl-event" data-lang="ar">مراسم العقد</div>
+                    <div class="real-tl-event" data-lang="fr">Signature de l'acte</div>
+                    <div class="real-tl-loc" data-lang="ar">فضاء الحبيب، 15:30</div>
+                    <div class="real-tl-loc" data-lang="fr">Espace Habib, 15h30</div>
+                  </div>
+                  <button class="real-tl-btn" data-lang="ar">الموقع</button>
+                  <button class="real-tl-btn" data-lang="fr">GPS</button>
+                </div>
+
+                <div class="real-timeline-item">
+                  <span class="real-tl-icon">🏡</span>
+                  <div class="real-tl-content">
+                    <div class="real-tl-event" data-lang="ar">استقبال الضيوف</div>
+                    <div class="real-tl-event" data-lang="fr">Réception des invités</div>
+                    <div class="real-tl-loc" data-lang="ar">منزل العريس، 16:30</div>
+                    <div class="real-tl-loc" data-lang="fr">Maison du marié, 16h30</div>
+                  </div>
+                  <button class="real-tl-btn" data-lang="ar">الموقع</button>
+                  <button class="real-tl-btn" data-lang="fr">GPS</button>
+                </div>
+
+              </div>
+
+              <!-- Wishes form simulation -->
+              <div class="real-wishes-section">
+                <div style="font-size: 0.68rem; color: #888; margin-bottom: 5px;" data-lang="ar">أرسل تهنئة وتأكيد الحضور للعروسين</div>
+                <div style="font-size: 0.68rem; color: #888; margin-bottom: 5px;" data-lang="fr">Envoyez vos vœux aux mariés</div>
+                <div class="real-input-mock"></div>
+                <button class="real-btn-mock" data-lang="ar">إرسال التهنئة ✨</button>
+                <button class="real-btn-mock" data-lang="fr">Envoyer les vœux ✨</button>
+              </div>
+
+              <button class="close-inv-btn" onclick="resetEnvelope()" data-lang="ar">🔄 إغلاق المغلف للتجربة</button>
+              <button class="close-inv-btn" onclick="resetEnvelope()" data-lang="fr">🔄 Refermer l'enveloppe</button>
 
               <!-- Dynamic status labels -->
               <div class="mock-audio-status" id="musicStatus" style="display:none;">
@@ -1210,7 +1593,7 @@
     <!-- Extra Showcase: Guest Management Dashboard -->
     <div class="promo-details-section">
       <h2 class="promo-section-title" data-lang="ar">إرسال دعوات مخصصة بضغطة زر واحدة</h2>
-      <h2 class="promo-section-title" data-lang="fr">Envoyez des invitations mues en un clic</h2>
+      <h2 class="promo-section-title" data-lang="fr">Envoyez des invitations personnalisées en un clic</h2>
       <p class="promo-section-description" data-lang="ar">من خلال لوحة التحكم الخاصة بكم، يمكنكم توليد مئات الروابط المخصصة تلقائياً للضيوف وإرسالها فوراً عبر الواتساب، مما يمنح كل مدعو شعوراً بالتقدير الفردي والاهتمام الخاص.</p>
       <p class="promo-section-description" data-lang="fr">Depuis votre panneau d'administration, générez automatiquement des centaines de liens personnalisés pour vos proches et envoyez-les directement via WhatsApp, offrant à chaque invité une attention unique.</p>
       
@@ -1296,94 +1679,34 @@
   <script>
     'use strict';
 
-    // State Variables
-    let currentTheme = 'gold';
+    // Mock Guests Configuration database
+    const MOCK_GUESTS = [
+      {
+        guestName: "السيد أحمد بن علي وحرمه",
+        groom: "مرتضى",
+        bride: "مريم",
+        theme: "gold",
+        lang: "ar"
+      },
+      {
+        guestName: "M. et Mme Riahi & enfants",
+        groom: "Mortadha",
+        bride: "Mariam",
+        theme: "pink",
+        lang: "fr"
+      },
+      {
+        guestName: "عشيري الغالي كريم",
+        groom: "مرتضى",
+        bride: "مريم",
+        theme: "emerald",
+        lang: "ar"
+      }
+    ];
+
+    let currentGuestIndex = 0;
     let isMusicPlaying = false;
     let selectedAudioName = 'wedding_march';
-
-    // Formulas Mapping
-    const FORMULAS_AR = {
-      couple: (name) => `إلى السيد ${name} وحرمه`,
-      couple_children: (name) => `إلى السيد ${name} وحرمه وأولاده`,
-      man: (name) => `إلى السيد ${name}`,
-      woman: (name) => `إلى السيدة ${name}`,
-      friend: (name) => `إلى صديقي العزيز ${name}`
-    };
-
-    const FORMULAS_FR = {
-      couple: (name) => `Monsieur et Madame ${name}`,
-      couple_children: (name) => `M. et Mme ${name} & enfants`,
-      man: (name) => `Monsieur ${name}`,
-      woman: (name) => `Madame ${name}`,
-      friend: (name) => `Pour mon cher ami ${name}`
-    };
-
-    // Update personalized guest information in mockup
-    function updatePersonalizedInvite() {
-      const guestNameInput = document.getElementById('input-guest-name');
-      const groomNameInput = document.getElementById('input-groom-name');
-      const brideNameInput = document.getElementById('input-bride-name');
-      
-      const guestName = guestNameInput ? guestNameInput.value.trim() || 'أحمد بن علي' : 'أحمد بن علي';
-      const groomName = groomNameInput ? groomNameInput.value.trim() || 'مرتضى' : 'مرتضى';
-      const brideName = brideNameInput ? brideNameInput.value.trim() || 'مريم' : 'مريم';
-      
-      // Find active formula
-      let formulaType = 'couple';
-      const activeFormulaBtn = document.querySelector('.formula-btn.active');
-      if (activeFormulaBtn) {
-        formulaType = activeFormulaBtn.dataset.formula;
-      }
-      
-      const isFr = document.body.classList.contains('lang-fr-active');
-      
-      // Select appropriate string mapping
-      let greetingText = '';
-      if (isFr) {
-        const fn = FORMULAS_FR[formulaType] || FORMULAS_FR['couple'];
-        greetingText = fn(guestName);
-      } else {
-        const fn = FORMULAS_AR[formulaType] || FORMULAS_AR['couple'];
-        greetingText = fn(guestName);
-      }
-      
-      // Update DOM inside phone screen mockup
-      const addressText = document.getElementById('envAddressText');
-      const cardGreeting = document.getElementById('cardGuestGreeting');
-      const mockGroom = document.getElementById('mockGroomName');
-      const mockBride = document.getElementById('mockBrideName');
-      const envTitleAr = document.getElementById('envTitleAr');
-      const envTitleFr = document.getElementById('envTitleFr');
-      
-      if (addressText) addressText.textContent = greetingText;
-      if (cardGreeting) cardGreeting.textContent = greetingText;
-      if (mockGroom) mockGroom.textContent = groomName;
-      if (mockBride) mockBride.textContent = brideName;
-      
-      if (envTitleAr) envTitleAr.textContent = `دعوة زفاف ${groomName} & ${brideName}`;
-      if (envTitleFr) envTitleFr.textContent = `Mariage de ${groomName} & ${brideName}`;
-    }
-
-    // Set active formula button click
-    function selectFormula(button) {
-      document.querySelectorAll('.formula-btn').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      updatePersonalizedInvite();
-    }
-
-    // Bind event listeners to input fields
-    document.addEventListener('DOMContentLoaded', () => {
-      const guestInput = document.getElementById('input-guest-name');
-      const groomInput = document.getElementById('input-groom-name');
-      const brideInput = document.getElementById('input-bride-name');
-      
-      if (guestInput) guestInput.addEventListener('input', updatePersonalizedInvite);
-      if (groomInput) groomInput.addEventListener('input', updatePersonalizedInvite);
-      if (brideInput) brideInput.addEventListener('input', updatePersonalizedInvite);
-      
-      // Set active default formula labels depending on language on load
-      updatePersonalizedInvite();
-    });
 
     // Set Language toggle
     function setLanguage(lang) {
@@ -1397,42 +1720,50 @@
         body.dir = 'ltr';
         btnFr.classList.add('active');
         btnAr.classList.remove('active');
-        
-        // Swap default placeholder / values to French if unmodified
-        const guestInput = document.getElementById('input-guest-name');
-        if (guestInput && (guestInput.value === 'أحمد بن علي' || guestInput.value === '')) {
-          guestInput.value = 'Ahmed Ben Ali';
-        }
       } else {
         body.classList.remove('lang-fr-active');
         body.classList.add('lang-ar-active');
         body.dir = 'rtl';
         btnAr.classList.add('active');
         btnFr.classList.remove('active');
-        
-        const guestInput = document.getElementById('input-guest-name');
-        if (guestInput && (guestInput.value === 'Ahmed Ben Ali' || guestInput.value === '')) {
-          guestInput.value = 'أحمد بن علي';
-        }
       }
+    }
+
+    // Cycle between mock guests
+    function cycleDemoGuest() {
+      currentGuestIndex = (currentGuestIndex + 1) % MOCK_GUESTS.length;
+      const config = MOCK_GUESTS[currentGuestIndex];
       
-      // Re-trigger greeting calculation to refresh languages formulas
-      updatePersonalizedInvite();
+      // Update Language and Theme
+      setLanguage(config.lang);
+      changeMockupTheme(config.theme);
+      
+      // Update display text in selector card
+      document.getElementById('guestDisplayBox').textContent = config.guestName;
+      
+      // Update envelope address and card details
+      document.getElementById('envAddressText').textContent = config.guestName;
+      document.getElementById('cardGuestGreeting').textContent = config.guestName;
+      document.getElementById('mockGroomName').textContent = config.groom;
+      document.getElementById('mockBrideName').textContent = config.bride;
+      
+      const titleAr = document.getElementById('envTitle');
+      const titleFr = document.getElementById('envTitleFr');
+      if (titleAr) titleAr.textContent = `دعوة زفاف ${config.groom} & ${config.bride}`;
+      if (titleFr) titleFr.textContent = `Mariage de ${config.groom} & ${config.bride}`;
     }
 
     // Change Mockup Themes
     function changeMockupTheme(theme) {
-      currentTheme = theme;
       const screen = document.getElementById('phoneScreen');
       screen.className = 'phone-screen theme-' + theme;
       
-      // Update UI buttons active state
-      const buttons = document.querySelectorAll('.mockup-controls .control-btn');
-      buttons.forEach(btn => {
-        if (btn.textContent.toLowerCase().includes(theme)) {
-          btn.classList.add('active');
-        } else if (!btn.id.includes('music')) {
-          btn.classList.remove('active');
+      // Update UI controls active state
+      ['gold', 'pink', 'emerald'].forEach(t => {
+        const btn = document.getElementById('btn-theme-' + t);
+        if (btn) {
+          if (t === theme) btn.classList.add('active');
+          else btn.classList.remove('active');
         }
       });
 
@@ -1515,16 +1846,14 @@
       const container = document.getElementById('petals-container');
       if (!container) return;
       
-      // Clean previous petals
       container.innerHTML = '';
-      
       const colors = ['#f5dedc', '#d48a82', '#f5e6c0', '#c9a84c', '#fff8d0', '#f5dca0'];
       
-      for (let i = 0; i < 25; i++) {
+      for (let i = 0; i < 22; i++) {
         const petal = document.createElement('div');
         petal.className = 'petal';
         
-        const size = Math.random() * 12 + 6;
+        const size = Math.random() * 10 + 5;
         const left = Math.random() * 100;
         const duration = Math.random() * 5 + 6;
         const delay = Math.random() * 3;
@@ -1541,9 +1870,75 @@
       }
     }
 
+    // SVG Heart Clock Tick generator (exact replica of startHeartClock in app.js)
+    function drawHeartClock() {
+      const cx = 130, cy = 122, r = 60;
+      const tickG = document.getElementById('hcTicks');
+      const dotG  = document.getElementById('hcDots');
+      if (!tickG || !dotG) return;
+
+      tickG.innerHTML = '';
+      dotG.innerHTML = '';
+
+      // Build 60 tick marks
+      for (let i = 0; i < 60; i++) {
+        const ang    = (i / 60) * 2 * Math.PI - Math.PI / 2;
+        const isHour = i % 5 === 0;
+        const r1     = isHour ? r - 9 : r - 5;
+        const x1 = cx + r * Math.cos(ang),  y1 = cy + r * Math.sin(ang);
+        const x2 = cx + r1 * Math.cos(ang), y2 = cy + r1 * Math.sin(ang);
+        const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        ln.setAttribute('x1', x1.toFixed(2)); ln.setAttribute('y1', y1.toFixed(2));
+        ln.setAttribute('x2', x2.toFixed(2)); ln.setAttribute('y2', y2.toFixed(2));
+        ln.setAttribute('stroke-width', isHour ? '2' : '1');
+        ln.setAttribute('opacity',      isHour ? '1'   : '0.4');
+        tickG.appendChild(ln);
+      }
+
+      // Build 12 hour dots
+      for (let j = 0; j < 12; j++) {
+        const ang = (j / 12) * 2 * Math.PI - Math.PI / 2;
+        const rd  = r - 15;
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', (cx + rd * Math.cos(ang)).toFixed(2));
+        dot.setAttribute('cy', (cy + rd * Math.sin(ang)).toFixed(2));
+        dot.setAttribute('r',  '2.5');
+        dot.setAttribute('fill', '#c9a84c');
+        dotG.appendChild(dot);
+      }
+
+      function rotateHand(id, deg) {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('transform', `rotate(${deg} ${cx} ${cy})`);
+      }
+
+      function setLive() {
+        const now = new Date();
+        const ms  = now.getMilliseconds();
+        const s   = now.getSeconds()  + ms / 1000;
+        const m   = now.getMinutes()  + s  / 60;
+        const h   = (now.getHours() % 12) + m / 60;
+        rotateHand('hcSHand', s * 6);
+        rotateHand('hcMHand', m * 6);
+        rotateHand('hcHHand', h * 30);
+      }
+
+      setInterval(setLive, 1000);
+      setLive();
+    }
+
     // Spawn initial background petals loop
     setInterval(spawnLocalPetals, 9000);
-    window.addEventListener('DOMContentLoaded', spawnLocalPetals);
+    window.addEventListener('DOMContentLoaded', () => {
+      spawnLocalPetals();
+      drawHeartClock();
+      
+      // Init mockup fields
+      const config = MOCK_GUESTS[0];
+      document.getElementById('guestDisplayBox').textContent = config.guestName;
+      document.getElementById('envAddressText').textContent = config.guestName;
+      document.getElementById('cardGuestGreeting').textContent = config.guestName;
+    });
   </script>
 
 </body>
