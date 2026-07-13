@@ -1613,24 +1613,86 @@ window.onRsvpSelectChange = function() {
   }
 };
 
+let _confirmedInvitations = [];
+
 function watchRsvpCounter() {
   initFirebase();
   _db.collection('invitations').onSnapshot(snapshot => {
     let totalConfirmed = 0;
+    _confirmedInvitations = [];
+    
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.rsvpCount) {
-        totalConfirmed += Number(data.rsvpCount);
-      } else if (data.rsvpConfirmed) {
-        totalConfirmed += 1;
+      if (data.rsvpConfirmed) {
+        const count = Number(data.rsvpCount || 1);
+        totalConfirmed += count;
+        _confirmedInvitations.push({
+          id: doc.id,
+          guestName: data.guestName || 'عام',
+          rsvpCount: count,
+          wishes: data.wishes || []
+        });
       }
     });
+    
     const badge = document.getElementById('admin-rsvp-counter');
-    if (badge) {
+    if (badge && (_currentRole === 'groom' || _currentRole === 'bride')) {
       const countEl = document.getElementById('rsvp-count-num');
       if (countEl) countEl.textContent = totalConfirmed;
       badge.style.display = 'flex';
+      badge.style.cursor = 'pointer';
+      badge.onclick = openRsvpList;
+      
+      // Shift day-night toggle slightly to the left to avoid overlap
+      const dnToggle = document.getElementById('day-night-toggle');
+      if (dnToggle) dnToggle.style.right = '85px';
+    } else if (badge) {
+      badge.style.display = 'none';
     }
   }, err => console.warn('[InvitApp] Failed to watch RSVP counter:', err));
 }
+
+window.openRsvpList = function() {
+  const overlay = document.getElementById('rsvp-list-overlay');
+  const scrollList = document.getElementById('rsvp-guests-scroll-list');
+  const totalPopup = document.getElementById('rsvp-total-popup');
+  if (!overlay || !scrollList) return;
+  
+  let totalCount = 0;
+  
+  if (_confirmedInvitations.length === 0) {
+    scrollList.innerHTML = `
+      <div style="text-align:center; color:var(--brown-mid); font-size:0.9rem; padding:20px;">
+        لا يوجد حضور مؤكد بعد 🌹
+      </div>`;
+    totalPopup.textContent = '0';
+  } else {
+    scrollList.innerHTML = _confirmedInvitations.map(inv => {
+      totalCount += inv.rsvpCount;
+      
+      let lastWishMsg = '';
+      if (inv.wishes && inv.wishes.length > 0) {
+        lastWishMsg = inv.wishes[inv.wishes.length - 1].message || '';
+      }
+      
+      return `
+        <div style="background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.15); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; text-align:right;">
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+            <strong style="color:var(--brown); font-size:1.05rem;">👤 ${inv.guestName}</strong>
+            <span style="background:linear-gradient(135deg, #FCF6BA 0%, #c9a84c 50%, #8a6010 100%); color:#1a1000; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:12px;">+${inv.rsvpCount}</span>
+          </div>
+          ${lastWishMsg ? `<div style="font-size:0.8rem; color:#7c4c1e; font-style:italic; margin-top:2px;">"${lastWishMsg}"</div>` : ''}
+        </div>
+      `;
+    }).join('');
+    totalPopup.textContent = totalCount;
+  }
+  
+  overlay.style.display = 'flex';
+};
+
+window.closeRsvpList = function() {
+  const overlay = document.getElementById('rsvp-list-overlay');
+  if (overlay) overlay.style.display = 'none';
+};
 
