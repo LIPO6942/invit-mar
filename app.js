@@ -906,6 +906,7 @@ window.submitWish = function() {
   _db.collection('invitations').doc(invSlug).update({
     rsvpConfirmed: isConfirmed,
     rsvpCount: guestCount,
+    rsvpGuestName: name,
     wishes: firebase.firestore.FieldValue.arrayUnion({
       name: name,
       message: msg,
@@ -1626,9 +1627,10 @@ function watchRsvpCounter() {
       if (data.rsvpConfirmed) {
         const count = Number(data.rsvpCount || 1);
         totalConfirmed += count;
+        const displayName = data.rsvpGuestName || (data.wishes && data.wishes.length > 0 ? data.wishes[data.wishes.length - 1].name : null) || data.guestName || 'عام';
         _confirmedInvitations.push({
           id: doc.id,
-          guestName: data.guestName || 'عام',
+          guestName: displayName,
           rsvpCount: count,
           wishes: data.wishes || []
         });
