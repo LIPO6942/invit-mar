@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>دعوة الزفاف الرقمية - المميزات الفاخرة</title>
+  <title>Invitation de Mariage Numérique - Fonctionnalités</title>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,10 +40,11 @@
     }
 
     body {
-      font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+      font-family: 'Playfair Display', 'Amiri', serif;
       color: var(--text);
       position: relative;
       min-height: 100vh;
+      direction: ltr; /* Default French is LTR */
     }
 
     /* Falling petals */
@@ -99,11 +100,47 @@
       z-index: -1;
     }
 
+    /* Top Sticky Professional WhatsApp Banner (without funny expressions) */
+    .whatsapp-banner {
+      background: linear-gradient(135deg, #128c7e 0%, #25d366 100%);
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.15);
+      position: relative;
+      z-index: 100;
+    }
+
+    .wa-banner-link {
+      color: white;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      line-height: 1.4;
+      transition: transform 0.2s;
+    }
+
+    .wa-banner-link:hover {
+      transform: scale(1.01);
+    }
+
+    .wa-banner-link strong {
+      text-decoration: underline;
+      background: rgba(255,255,255,0.15);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 0 4px;
+    }
+
     /* Container */
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 30px 20px 40px;
       position: relative;
       z-index: 2;
     }
@@ -112,8 +149,8 @@
     .lang-switcher {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 25px;
     }
 
     .lang-btn {
@@ -138,7 +175,7 @@
     /* Header */
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 35px;
       animation: fadeInDown 1s ease;
     }
 
@@ -150,7 +187,6 @@
     }
 
     h1 {
-      font-family: 'Amiri', serif;
       font-size: 2.6rem;
       font-weight: 700;
       color: var(--bronze);
@@ -169,7 +205,7 @@
       line-height: 1.5;
     }
 
-    /* Main Showcase Section */
+    /* Main Showcase Grid */
     .showcase-grid {
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
@@ -185,11 +221,44 @@
       }
     }
 
-    /* Left Panel: Features List & Dashboard preview */
+    /* Left Panel: Features List & Detailed RSVP description */
     .left-panel-content {
       display: flex;
       flex-direction: column;
       gap: 24px;
+    }
+
+    /* RSVP explanation card */
+    .rsvp-info-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      border-left: 4px solid var(--gold);
+    }
+    
+    body.lang-ar-active .rsvp-info-card,
+    body.lang-tn-active .rsvp-info-card {
+      border-left: none;
+      border-right: 4px solid var(--gold);
+    }
+
+    .rsvp-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--bronze);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rsvp-desc {
+      font-size: 0.95rem;
+      color: var(--bronze-light);
+      line-height: 1.6;
     }
 
     /* All Features List Card */
@@ -266,7 +335,7 @@
       gap: 20px;
     }
 
-    /* Guest Demo Selector Card (NOW ON TOP OF SMARTPHONE) */
+    /* Guest Demo Selector Card */
     .demo-selector-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -277,7 +346,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       backdrop-filter: blur(10px);
       width: 100%;
       max-width: 330px;
@@ -335,47 +404,55 @@
       box-shadow: 0 5px 12px rgba(184, 144, 60, 0.25);
     }
 
-    /* Audio controls below selector */
-    .mockup-audio-controls {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      max-width: 330px;
+    /* Dual Music Player Controls */
+    .music-selector-title {
+      font-size: 0.76rem;
+      font-weight: bold;
+      color: var(--bronze-light);
+      text-transform: uppercase;
+      margin-top: 4px;
     }
-    
-    .music-btn {
+
+    .music-preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .music-play-btn {
       background: #fffdf9;
       border: 1px solid var(--border);
       color: var(--bronze);
-      padding: 8px 18px;
-      border-radius: 30px;
-      font-size: 0.82rem;
-      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: bold;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.2s;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      width: 100%;
+      gap: 4px;
       justify-content: center;
     }
 
-    .music-btn:hover {
+    .music-play-btn:hover {
       background: #faf6eb;
+      border-color: var(--gold);
     }
 
-    .music-btn.active {
+    .music-play-btn.active {
       background: var(--gold-grad);
       color: #1a1000;
       border-color: transparent;
+      box-shadow: 0 2px 8px rgba(184, 144, 60, 0.15);
     }
 
     /* Phone Mockup Frame */
     .phone-mockup {
       width: 330px;
-      height: 550px; /* Adjusted height to fit mockup screen nicely */
+      height: 550px;
       background: #0d0d0d;
       border-radius: 40px;
       border: 12px solid #1a1a1a;
@@ -648,6 +725,94 @@
       font-family: inherit;
     }
 
+    /* Packs Section CSS */
+    .packs-section {
+      margin-top: 50px;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    .packs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .pack-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pack-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(78, 47, 13, 0.1);
+      border-color: var(--gold);
+    }
+
+    .featured-pack {
+      border: 2px solid var(--gold);
+      background: rgba(255, 253, 245, 0.95);
+    }
+
+    .featured-pack::after {
+      content: '★';
+      position: absolute;
+      top: -12px;
+      font-size: 1.2rem;
+      color: var(--gold);
+      background: #faf7f2;
+      padding: 0 10px;
+    }
+
+    .pack-badge {
+      background: rgba(184, 144, 60, 0.08);
+      border: 1px solid rgba(184, 144, 60, 0.2);
+      color: var(--bronze-light);
+      font-size: 0.72rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .featured-pack .pack-badge {
+      background: var(--gold-grad);
+      color: #1a1000;
+      border: none;
+    }
+
+    .pack-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--bronze);
+      margin-bottom: 5px;
+    }
+
+    .pack-shares {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--gold-dark);
+      margin-bottom: 15px;
+    }
+
+    .pack-explanation {
+      font-size: 0.88rem;
+      color: var(--bronze-light);
+      line-height: 1.5;
+      text-align: center;
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -661,47 +826,81 @@
 
     /* Translation Classes */
     [data-lang="fr"] {
+      display: block;
+    }
+    [data-lang="ar"], [data-lang="tn"] {
       display: none !important;
     }
 
-    body.lang-fr-active [data-lang="ar"] {
-      display: none !important;
-    }
-
+    /* French Active (Default) */
     body.lang-fr-active [data-lang="fr"] {
       display: block !important;
     }
-    
-    /* Inline helper for flex/grid items showing dynamic language */
-    body.lang-fr-active span[data-lang="fr"],
-    body.lang-fr-active button[data-lang="fr"],
-    body.lang-fr-active li[data-lang="fr"] {
-      display: inline-flex !important;
+    body.lang-fr-active [data-lang="ar"],
+    body.lang-fr-active [data-lang="tn"] {
+      display: none !important;
     }
+
+    /* Arabic Active */
+    body.lang-ar-active [data-lang="ar"] {
+      display: block !important;
+    }
+    body.lang-ar-active [data-lang="fr"],
+    body.lang-ar-active [data-lang="tn"] {
+      display: none !important;
+    }
+    body.lang-ar-active {
+      direction: rtl;
+      font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+    }
+    body.lang-ar-active h1, 
+    body.lang-ar-active .promo-section-title,
+    body.lang-ar-active .selector-title,
+    body.lang-ar-active .features-title {
+      font-family: 'Amiri', serif;
+    }
+
+    /* Tunisian Active */
+    body.lang-tn-active [data-lang="tn"] {
+      display: block !important;
+    }
+    body.lang-tn-active [data-lang="fr"],
+    body.lang-tn-active [data-lang="ar"] {
+      display: none !important;
+    }
+    body.lang-tn-active {
+      direction: rtl;
+      font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+    }
+    body.lang-tn-active h1, 
+    body.lang-tn-active .promo-section-title,
+    body.lang-tn-active .selector-title,
+    body.lang-tn-active .features-title {
+      font-family: 'Amiri', serif;
+    }
+
+    /* Inline elements display corrections based on languages active */
+    body.lang-fr-active span[data-lang="fr"],
+    body.lang-fr-active strong[data-lang="fr"] {
+      display: inline !important;
+    }
+    body.lang-ar-active span[data-lang="ar"],
+    body.lang-ar-active strong[data-lang="ar"] {
+      display: inline !important;
+    }
+    body.lang-tn-active span[data-lang="tn"],
+    body.lang-tn-active strong[data-lang="tn"] {
+      display: inline !important;
+    }
+
     body.lang-fr-active div[data-lang="fr"].sim-row {
       display: flex !important;
     }
-
-    body.lang-fr-active {
-      direction: ltr;
-      font-family: 'Playfair Display', sans-serif;
+    body.lang-ar-active div[data-lang="ar"].sim-row {
+      display: flex !important;
     }
-
-    body.lang-fr-active h1, 
-    body.lang-fr-active .promo-section-title,
-    body.lang-fr-active .selector-title,
-    body.lang-fr-active .features-title,
-    body.lang-fr-active .feature-name {
-      font-family: 'Playfair Display', serif;
-    }
-
-    body.lang-fr-active .dashboard-preview {
-      text-align: left;
-      direction: ltr;
-    }
-
-    body.lang-fr-active .simulated-dash {
-      direction: ltr;
+    body.lang-tn-active div[data-lang="tn"].sim-row {
+      display: flex !important;
     }
 
     /* Animations */
@@ -711,11 +910,23 @@
     }
   </style>
 </head>
-<body class="lang-ar-active">
+<body class="lang-fr-active">
 
   <!-- Floating Audio Elements -->
   <audio id="audio-wedding_march" src="assets/wedding_march.mp3" preload="auto"></audio>
   <audio id="audio-ziad_gharsa" src="assets/ziad_gharsa.mp3" preload="auto"></audio>
+
+  <!-- Sticky Professional WhatsApp Contact Banner (clean & professional) -->
+  <div class="whatsapp-banner">
+    <a href="https://wa.me/21653577634?text=Bonjour,%20je%20suis%20intéressé%20par%20votre%20application%20d'invitation%20de%20mariage%20!" target="_blank" class="wa-banner-link">
+      <!-- French (Default) -->
+      <span data-lang="fr">💍 Convaincu ? Contactez-moi sur WhatsApp au <strong>53 577 634</strong> !</span>
+      <!-- Arabic -->
+      <span data-lang="ar">💍 عجبك الجو وحابب تعمل كارت كيفها؟ كلمني واتساب على <strong>53577634</strong></span>
+      <!-- Tunisian -->
+      <span data-lang="tn">💍 عجبك الجو وحابب تعمل كارت كيفها؟ كلمني واتساب على <strong>53577634</strong></span>
+    </a>
+  </div>
 
   <!-- Background Layer -->
   <div class="bg-image"></div>
@@ -726,23 +937,28 @@
 
   <div class="container">
     
-    <!-- Language Switch -->
+    <!-- Language Switch (French, Arabic, Tunisian Dialect) -->
     <div class="lang-switcher">
-      <button class="lang-btn active" id="btn-lang-ar" onclick="setLanguage('ar')">العربية</button>
-      <button class="lang-btn" id="btn-lang-fr" onclick="setLanguage('fr')">Français</button>
+      <button class="lang-btn active" id="btn-lang-fr" onclick="setLanguage('fr')">Français</button>
+      <button class="lang-btn" id="btn-lang-ar" onclick="setLanguage('ar')">العربية</button>
+      <button class="lang-btn" id="btn-lang-tn" onclick="setLanguage('tn')">Tunisien (تونسية) 🇹🇳</button>
     </div>
 
     <!-- Header Section -->
     <header>
       <div class="logo-ornament">👑</div>
       
+      <!-- French Title (Default) -->
+      <h1 data-lang="fr">Découvrez les Fonctionnalités de notre Invitation Numérique</h1>
+      <p data-lang="fr">Visualisez une simulation réelle de votre invitation et explorez toutes ses caractéristiques innovantes de personnalisation et de gestion des invités.</p>
+      
       <!-- Arabic Title -->
       <h1 data-lang="ar">اكتشف مميزات دعوتنا الرقمية التفاعلية</h1>
       <p data-lang="ar">شاهد محاكاة حقيقية لبطاقة دعوتكم، واستعرض كل الميزات من التخصيص وإدارة الضيوف إلى التفاصيل التفاعلية بالكامل.</p>
-      
-      <!-- French Title -->
-      <h1 data-lang="fr">Découvrez les Fonctionnalités de notre Invitation Numérique</h1>
-      <p data-lang="fr">Visualisez une simulation réelle de votre invitation et explorez toutes ses caractéristiques innovantes de personnalisation et de gestion des invités.</p>
+
+      <!-- Tunisian Title -->
+      <h1 data-lang="tn">أعمل طلة واكتشف فازات دعوتنا الرقمية التفاعلية</h1>
+      <p data-lang="tn">شوف ديمو حقيقي لللانفيتاسيون متاعك، وجرب كل الفازات من التخصيص واستدعاء الضيوف بالاسم والتفاصيل الكل.</p>
     </header>
 
     <!-- Main Interactive Demo Area -->
@@ -751,24 +967,46 @@
       <!-- Left Panel: Comprehensive Features List & Dashboard preview -->
       <div class="left-panel-content">
         
+        <!-- RSVP Detailed Explanation Card -->
+        <div class="rsvp-info-card">
+          <h3 class="rsvp-title">
+            <span>🗳️</span>
+            <span data-lang="fr">RSVP : La confirmation de présence simplifiée</span>
+            <span data-lang="ar">ما هو نظام تأكيد الحضور (RSVP)؟</span>
+            <span data-lang="tn">شنية حكاية تأكيد الحضور (RSVP)؟</span>
+          </h3>
+          <p class="rsvp-desc" data-lang="fr">
+            Le <strong>RSVP (Répondez S'il Vous Plaît)</strong> est un système interactif qui permet à vos invités de confirmer en un clic leur présence (seuls, en couple ou en famille) et d'indiquer le nombre d'accompagnants. Fini les dizaines d'appels stressants et les relances manuelles : les confirmations s'enregistrent instantanément sur votre tableau de bord en temps réel.
+          </p>
+          <p class="rsvp-desc" data-lang="ar">
+            نظام <strong>RSVP (تأكيد الحضور)</strong> هو أداة تفاعلية تمكن ضيوفكم من تأكيد حضورهم (بمفردهم، مع الزوج/الزوجة، أو كعائلة) وتحديد عدد المرافقين بنقرة واحدة. يغنيكم هذا تماماً عن عناء الاتصالات الهاتفية المتكررة والطلب اليدوي، حيث تُسجل كل الإجابات والردود فوراً في لوحة التحكم الخاصة بكم.
+          </p>
+          <p class="rsvp-desc" data-lang="tn">
+            نظام <strong>RSVP (تأكيد الحضور)</strong> يخلي ضيافك يجاوبوك ويؤكدوا حضورهم (وحدهم، مع شريكهم، وإلا مع العائلة) ويحددوا قداش من واحد جاي بنقرة بركة. أرتاح من تكسير الراس وتلفونات المتابعة الطويلة، الإجابات الكل تتسجل ديريكت في لوحة التحكم متاعك في لحظتها.
+          </p>
+        </div>
+
         <!-- Comprehensive Features List Card -->
         <div class="features-card">
           <h2 class="features-title">
             <span>📋</span>
-            <span data-lang="ar">مميزات دعوتنا الرقمية</span>
-            <span data-lang="fr">Fonctionnalités de l'Invitation</span>
+            <span data-lang="fr">Toutes les Fonctionnalités de l'Application</span>
+            <span data-lang="ar">قائمة مميزات التطبيق الكاملة</span>
+            <span data-lang="tn">كل فازات وخصائص التطبيق</span>
           </h2>
           
           <div class="features-list">
             
             <!-- Feature 1 -->
             <div class="feature-item">
-              <span class="feature-icon-box">✉️</span>
+              <span class="feature-icon-box">👤</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">مغلف تفاعلي مخصص بالأسماء</span>
-                <span class="feature-name" data-lang="fr">Enveloppe nominative scellée</span>
-                <span class="feature-desc" data-lang="ar">مغلف فاخر مغلق يظهر عليه اسم كل ضيف بوضوح مع ختم شمعي يمنح الضيف شعوراً بالتقدير الفردي.</span>
-                <span class="feature-desc" data-lang="fr">Une enveloppe prestigieuse affichant le nom de l'invité surmonté d'un sceau de cire virtuel.</span>
+                <span class="feature-name" data-lang="fr">Invitations nominatives personnalisées</span>
+                <span class="feature-name" data-lang="ar">دعوات مخصصة بالأسماء الشخصية</span>
+                <span class="feature-name" data-lang="tn">استدعاءات مخصصة بالاسم الشخصي</span>
+                <span class="feature-desc" data-lang="fr">L'application gère et affiche l'enveloppe et l'invitation au nom propre de chaque invité, garantissant un accueil chaleureux et sur-mesure.</span>
+                <span class="feature-desc" data-lang="ar">يقوم التطبيق بإعداد وعرض المغلف والبطاقة بالاسم الشخصي المحدد لكل ضيف، مما يضمن ترحيباً راقياً وخاصاً بكل مدعو.</span>
+                <span class="feature-desc" data-lang="tn">السيستم يخرجلك استدعاء مخصص بالاسم لكل ضيف (مثال: السيد علي وسيدة حرمه) باش كل واحد يحس روحو مقدر سبيسيال.</span>
               </div>
             </div>
 
@@ -776,98 +1014,116 @@
             <div class="feature-item">
               <span class="feature-icon-box">✍️</span>
               <div class="feature-text">
+                <span class="feature-name" data-lang="fr">Livre d'or et RSVPs nominatifs</span>
                 <span class="feature-name" data-lang="ar">تأكيد حضور ودفتر تهاني بالأسماء</span>
-                <span class="feature-name" data-lang="fr">RSVPs & souhaits nominatifs</span>
-                <span class="feature-desc" data-lang="ar">يتلقى العريس والعروس رسائل تهاني وتأكيدات حضور مباشرة من ضيوفهم مرتبطة بأسمائهم تلقائياً.</span>
-                <span class="feature-desc" data-lang="fr">Les mariés reçoivent directement les félicitations et confirmations de présence avec le nom de l'invité associé.</span>
+                <span class="feature-name" data-lang="tn">تأكيد حضور ودفتر تهاني بالاسماء</span>
+                <span class="feature-desc" data-lang="fr">Les mariés reçoivent directement les félicitations et confirmations de présence de leurs invités, chacune étant automatiquement liée au nom du destinataire.</span>
+                <span class="feature-desc" data-lang="ar">يتلقى العروسان رسائل التهاني والردود من ضيوفهم بشكل منظم، حيث ترتبط كل تهنئة باسم الضيف المرسل تلقائياً في لوحة التحكم.</span>
+                <span class="feature-desc" data-lang="tn">العروسين يجيوهم الميساجات والتهاني متاع الضياف مسجلة بالاسم متاعهم ديريكت في لوحة التحكم باش يبقاولهم كذكرى مزيانة.</span>
               </div>
             </div>
 
             <!-- Feature 3 -->
             <div class="feature-item">
-              <span class="feature-icon-box">🌸</span>
+              <span class="feature-icon-box">✉️</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">تساقط بتلات الورد</span>
-                <span class="feature-name" data-lang="fr">Pluie de Pétales de Fleurs</span>
-                <span class="feature-desc" data-lang="ar">تأثير بصري فاخر بتساقط بتلات الورد المتناسق مع ثيم ألوان الدعوة المختار لإبهار الضيوف.</span>
-                <span class="feature-desc" data-lang="fr">Effet visuel romantique de chute de pétales en accord parfait avec le thème coloré de l'invitation.</span>
+                <span class="feature-name" data-lang="fr">Enveloppe virtuelle scellée</span>
+                <span class="feature-name" data-lang="ar">مغلف تفاعلي بختم شمعي</span>
+                <span class="feature-name" data-lang="tn">جوا تفاعلي بختم شمعي</span>
+                <span class="feature-desc" data-lang="fr">Une enveloppe ivoire réaliste portant le nom de l'invité et un sceau de cire virtuel à briser pour l'ouverture.</span>
+                <span class="feature-desc" data-lang="ar">مغلف فاخر مغلق يظهر عليه اسم كل ضيف بوضوح مع ختم شمعي يفتحه الضيف بحركة انسيابية ممتازة.</span>
+                <span class="feature-desc" data-lang="tn">جوا ورقي مزيان عليه اسم الضيف ومسكر بختم شمعي، الضيف يكبس عليه باش يتحل الجوا بطريقة طيارة.</span>
               </div>
             </div>
 
             <!-- Feature 4 -->
             <div class="feature-item">
-              <span class="feature-icon-box">🔊</span>
+              <span class="feature-icon-box">🌸</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">موسيقى افتتاحية تلقائية</span>
-                <span class="feature-name" data-lang="fr">Ambiance Musicale Automatique</span>
-                <span class="feature-desc" data-lang="ar">تشغيل خلفية موسيقية ساحرة فور فتح المغلف (مارش زفاف غربي أو مالوف للفنان زياد غرسة).</span>
-                <span class="feature-desc" data-lang="fr">Lancement automatique d'une mélodie lors de l'ouverture (Marche Nuptiale ou Malouf de Ziad Gharsa).</span>
+                <span class="feature-name" data-lang="fr">Pluie de pétales animée</span>
+                <span class="feature-name" data-lang="ar">تساقط بتلات الورد</span>
+                <span class="feature-name" data-lang="tn">رميان الورد التفاعلي</span>
+                <span class="feature-desc" data-lang="fr">Des pétales de fleurs de la couleur de votre thème tombent délicatement à l'écran pour un effet romantique immédiat.</span>
+                <span class="feature-desc" data-lang="ar">تأثير بصري فاخر بتساقط بتلات الورد المتناسق مع ثيم ألوان الدعوة المختار لإبهار الضيوف.</span>
+                <span class="feature-desc" data-lang="tn">أفكت بصري مزيان برشا يخلي وراق الورد تطير وتطيح في الشاشة متناسقة مع لون الثيم اللي اخترتوه.</span>
               </div>
             </div>
 
             <!-- Feature 5 -->
             <div class="feature-item">
-              <span class="feature-icon-box">🎨</span>
+              <span class="feature-icon-box">🔊</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">ثيمات الألوان المتعددة</span>
-                <span class="feature-name" data-lang="fr">Thèmes Visuels Sélectionnables</span>
-                <span class="feature-desc" data-lang="ar">تغيير كامل ألوان ومؤشرات التطبيق (الذهبي الكلاسيكي، الوردي الناعم، أو الأخضر الزمردي).</span>
-                <span class="feature-desc" data-lang="fr">Changement de thème instantané : Or Impérial, Rose Poudré ou Vert Émeraude.</span>
+                <span class="feature-name" data-lang="fr">Ambiance sonore automatique</span>
+                <span class="feature-name" data-lang="ar">موسيقى افتتاحية تلقائية</span>
+                <span class="feature-name" data-lang="tn">موسيقى تخدم وحدها</span>
+                <span class="feature-desc" data-lang="fr">Lancement d'une musique d'accueil élégante dès l'ouverture de l'enveloppe (Marche Nuptiale ou Malouf Tunisien).</span>
+                <span class="feature-desc" data-lang="ar">تشغيل خلفية موسيقية ساحرة فور فتح المغلف (مارش زفاف كلاسيكي أو مالوف للفنان زياد غرسة).</span>
+                <span class="feature-desc" data-lang="tn">تخدم غناية افتتاحية طيارة أول ما يتحل الجوا (مارش زفاف وإلا مالوف تونسي للفنان زياد غرسة).</span>
               </div>
             </div>
 
             <!-- Feature 6 -->
             <div class="feature-item">
-              <span class="feature-icon-box">⏰</span>
+              <span class="feature-icon-box">🎨</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">عدّاد تنازلي دقيق</span>
-                <span class="feature-name" data-lang="fr">Compte à Rebours Temps Réel</span>
-                <span class="feature-desc" data-lang="ar">عداد بالثواني والدقائق والساعات والأيام يحسب الوقت المتبقي لموعد حفل الزفاف.</span>
-                <span class="feature-desc" data-lang="fr">Compteur dynamique en temps réel indiquant les secondes restantes avant le mariage.</span>
+                <span class="feature-name" data-lang="fr">Thèmes visuels personnalisables</span>
+                <span class="feature-name" data-lang="ar">ثيمات الألوان المتعددة</span>
+                <span class="feature-name" data-lang="tn">ألوان وثيمات مختلفة</span>
+                <span class="feature-desc" data-lang="fr">Choix instantané du style visuel général de l'invitation (Or Royal, Rose Poudré ou Vert Émeraude).</span>
+                <span class="feature-desc" data-lang="ar">تغيير فوري لكامل ألوان ومؤشرات التطبيق (الذهبي الكلاسيكي، الوردي الناعم، أو الأخضر الزمردي).</span>
+                <span class="feature-desc" data-lang="tn">تبديل فوري لالوان الاستدعاء الكل حسب ذوقك (ذهبي ملكي، غوز بودر، وإلا أخضر زمردي).</span>
               </div>
             </div>
 
             <!-- Feature 7 -->
             <div class="feature-item">
-              <span class="feature-icon-box">❤️</span>
+              <span class="feature-icon-box">⏰</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">ساعة القلب التناظرية</span>
-                <span class="feature-name" data-lang="fr">Horloge en Cœur Interactive</span>
-                <span class="feature-desc" data-lang="ar">ساعة عقارب حقيقية على شكل قلب تنبض بالحركة وتعمل متزامنة مع وقت الجوال.</span>
-                <span class="feature-desc" data-lang="fr">Une horloge à aiguilles en forme de cœur, synchronisée sur l'heure locale et animée.</span>
+                <span class="feature-name" data-lang="fr">Compte à rebours temps réel</span>
+                <span class="feature-name" data-lang="ar">عدّاد تنازلي دقيق</span>
+                <span class="feature-name" data-lang="tn">حساب الوقت المتبقي</span>
+                <span class="feature-desc" data-lang="fr">Affiche les jours, heures et secondes restants avant le moment fatidique de la cérémonie.</span>
+                <span class="feature-desc" data-lang="ar">عداد بالثواني والدقائق والساعات والأيام يحسب الوقت المتبقي لموعد حفل الزفاف.</span>
+                <span class="feature-desc" data-lang="tn">كونتور بالثانية والدقيقة والنهار يحسب قداش مازال وقت على ليلة العمر.</span>
               </div>
             </div>
 
             <!-- Feature 8 -->
             <div class="feature-item">
-              <span class="feature-icon-box">🗓️</span>
+              <span class="feature-icon-box">❤️</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">برنامج الحفل والـ GPS</span>
-                <span class="feature-name" data-lang="fr">Planning & Navigation GPS</span>
-                <span class="feature-desc" data-lang="ar">عرض متكامل لأحداث الحفل وتواريخها مع أزرار تفتح خرائط الجوال مباشرة لإرشاد الضيف لمكان الحدث.</span>
-                <span class="feature-desc" data-lang="fr">Détails des événements avec boutons GPS intégrés pour guider l'invité via Google Maps.</span>
+                <span class="feature-name" data-lang="fr">Horloge en cœur interactive</span>
+                <span class="feature-name" data-lang="ar">ساعة القلب التناظرية</span>
+                <span class="feature-name" data-lang="tn">ساعة القلب التفاعلية</span>
+                <span class="feature-desc" data-lang="fr">Une horloge animée en forme de cœur dont les aiguilles suivent l'heure locale en temps réel.</span>
+                <span class="feature-desc" data-lang="ar">ساعة عقارب حقيقية على شكل قلب تنبض بالحركة وتعمل متزامنة مع وقت الجوال.</span>
+                <span class="feature-desc" data-lang="tn">ساعة عقارب حقيقية على شكل قلب تدور وتمشي متناسقة مع وقت التليفون.</span>
               </div>
             </div>
 
             <!-- Feature 9 -->
             <div class="feature-item">
-              <span class="feature-icon-box">🗺️</span>
+              <span class="feature-icon-box">🗓️</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">خريطة تفاعلية مدمجة</span>
-                <span class="feature-name" data-lang="fr">Carte Interactive Leaflet</span>
-                <span class="feature-desc" data-lang="ar">خريطة جغرافية تفتح كنافذة منبثقة داخل الدعوة دون مغادرة الصفحة، تعرض مكان القاعة بدقة.</span>
-                <span class="feature-desc" data-lang="fr">Intégration d'une carte Leaflet pour visualiser directement les coordonnées de la salle.</span>
+                <span class="feature-name" data-lang="fr">Itinéraires & Guidage GPS</span>
+                <span class="feature-name" data-lang="ar">برنامج الحفل والـ GPS</span>
+                <span class="feature-name" data-lang="tn">البرنامج والـ GPS</span>
+                <span class="feature-desc" data-lang="fr">Chaque étape du mariage est listée avec un bouton ouvrant Google Maps pour guider l'invité.</span>
+                <span class="feature-desc" data-lang="ar">عرض متكامل لأحداث الحفل وتواريخها مع أزرار تفتح خرائط الجوال مباشرة لإرشاد الضيف لمكان الحدث.</span>
+                <span class="feature-desc" data-lang="tn">كل حدث في العرس مقيد معاه وتوتو وبوتون يحل الجي بي اس ديريكت باش يوصل الضياف للقاعة.</span>
               </div>
             </div>
 
             <!-- Feature 10 -->
             <div class="feature-item">
-              <span class="feature-icon-box">👥</span>
+              <span class="feature-icon-box">🗺️</span>
               <div class="feature-text">
-                <span class="feature-name" data-lang="ar">تخصيص صيغ توجيه الدعوة</span>
-                <span class="feature-name" data-lang="fr">Formules de Salutations</span>
-                <span class="feature-desc" data-lang="ar">احترام كامل للمقامات بفضل توليد الصيغ تلقائياً (إلى السيد... وحرمه، عائلات، أفراد، أو أصدقاء).</span>
-                <span class="feature-desc" data-lang="fr">Gestion et personnalisation des formules (M. et Mme, Madame, Ami) selon le destinataire.</span>
+                <span class="feature-name" data-lang="fr">Carte interactive intégrée</span>
+                <span class="feature-name" data-lang="ar">خريطة تفاعلية مدمجة</span>
+                <span class="feature-name" data-lang="tn">خريطة تفاعلية في وسط الاستدعاء</span>
+                <span class="feature-desc" data-lang="fr">Une carte Leaflet s'ouvre directement dans l'invitation sous forme de modal pour localiser la salle.</span>
+                <span class="feature-desc" data-lang="ar">خريطة جغرافية تفتح كنافذة منبثقة داخل الدعوة دون مغادرة الصفحة، تعرض مكان القاعة بدقة.</span>
+                <span class="feature-desc" data-lang="tn">خريطة جغرافية تتحل في وسط الانفيتاسيون تبين بلاصة الصالة بلاش ما يخرج الضيف من الباج.</span>
               </div>
             </div>
 
@@ -875,10 +1131,12 @@
             <div class="feature-item">
               <span class="feature-icon-box">🔐</span>
               <div class="feature-text">
+                <span class="feature-name" data-lang="fr">Console d'administration sécurisée</span>
                 <span class="feature-name" data-lang="ar">لوحة تحكم خاصة للعروسين</span>
-                <span class="feature-name" data-lang="fr">Espace Privé Mariés (Admin)</span>
+                <span class="feature-name" data-lang="tn">لوحة تحكم خاصة بالعروسين</span>
+                <span class="feature-desc" data-lang="fr">Panneau protégé pour modifier les coordonnées, choisir les musiques, les thèmes et générer les liens.</span>
                 <span class="feature-desc" data-lang="ar">لوحة إدارة آمنة تسمح بتعديل أسماء العروسين، تفاصيل وتاريخ الحفل، وتوليد روابط الضيوف.</span>
-                <span class="feature-desc" data-lang="fr">Console d'administration protégée pour configurer les textes, musiques, dates et gérer la liste.</span>
+                <span class="feature-desc" data-lang="tn">لوحة تحكم محمية بكود سبيسيال تخلي العروسين يبدلوا التصاور، الغنايات، وتاريخ العرس ويخرجوا الروابط.</span>
               </div>
             </div>
 
@@ -886,10 +1144,12 @@
             <div class="feature-item">
               <span class="feature-icon-box">💬</span>
               <div class="feature-text">
+                <span class="feature-name" data-lang="fr">Partage WhatsApp instantané</span>
                 <span class="feature-name" data-lang="ar">مشاركة واتساب بنقرة واحدة</span>
-                <span class="feature-name" data-lang="fr">Partage WhatsApp Instantané</span>
-                <span class="feature-desc" data-lang="ar">أزرار إرسال مباشرة تحول الرابط الشخصي وتفتحه في الواتساب مع رسالة ترحيبية جاهزة للعميل.</span>
-                <span class="feature-desc" data-lang="fr">Permet d'envoyer l'invitation personnalisée sur WhatsApp en un clic, sans enregistrer le contact.</span>
+                <span class="feature-name" data-lang="tn">مشاركة واتساب بكبسة زر</span>
+                <span class="feature-desc" data-lang="fr">Boutons d'envoi rapide générant des messages pré-remplis contenant le lien de chaque invité.</span>
+                <span class="feature-desc" data-lang="ar">أزرار إرسال مباشرة تحول الرابط الشخصي وتفتحه في الواتساب مع رسالة ترحيبية جاهزة.</span>
+                <span class="feature-desc" data-lang="tn">بوتون تبارطاجي بيه الانفيتاسيون ديريكت على الواتساب مع ميساج ترحيبي حاضر ومريغل.</span>
               </div>
             </div>
 
@@ -905,39 +1165,39 @@
         <div class="demo-selector-card">
           <h2 class="selector-title">
             <span>✨</span>
-            <span data-lang="ar">ديمو المعاينة المباشرة</span>
             <span data-lang="fr">Aperçu direct de la démo</span>
+            <span data-lang="ar">ديمو المعاينة المباشرة</span>
+            <span data-lang="tn">ديمو المعاينة المباشرة</span>
           </h2>
+          <p class="selector-sub" data-lang="fr">Cliquez sur le bouton pour basculer d'invité et observer la personnalisation du nom et du thème.</p>
           <p class="selector-sub" data-lang="ar">اضغط على الزر لتغيير الضيف وملاحظة كيف تختلف بطاقة الدعوة واللغة والثيم تلقائياً.</p>
-          <p class="selector-sub" data-lang="fr">Cliquez sur le bouton pour basculer d'invité et observer l'adaptation automatique de la langue et du thème.</p>
+          <p class="selector-sub" data-lang="tn">اضغط على البوتون باش تبدل الضيف وتشوف التخصيص متاع الاسم واللغة والثيم كيفاش يتبدل.</p>
           
           <!-- Current guest display box -->
           <div class="current-guest-display" id="guestDisplayBox">
-            السيد علي بن سالم وحرمه
+            Pour le marié
           </div>
 
           <button class="cycle-btn" onclick="cycleDemoGuest()">
             <span>🔄</span>
-            <span data-lang="ar">تغيير الضيف والدعوة المعروضة</span>
             <span data-lang="fr">Changer d'invité démo</span>
+            <span data-lang="ar">تغيير الضيف والدعوة المعروضة</span>
+            <span data-lang="tn">بدل الضيف المعروض</span>
           </button>
           
           <!-- Audio Play controls -->
-          <div class="mockup-audio-controls">
-            <button class="music-btn" id="music-preview-btn" onclick="toggleMockupMusic()">
-              <span>🎵</span>
-              <span data-lang="ar">استماع للموسيقى المرافقة</span>
-              <span data-lang="fr">Écouter la musique associée</span>
-            </button>
+          <div class="music-selector-title">
+            <span data-lang="fr">🎻 Tester la musique d'ambiance :</span>
+            <span data-lang="ar">🎻 تجربة الموسيقى المرافقة:</span>
+            <span data-lang="tn">🎻 جرب أسمع الموسيقى :</span>
           </div>
-
-          <!-- Dynamic status labels -->
-          <div class="mock-audio-status" id="musicStatus" style="display:none;">
-            <div class="music-wave">
-              <span></span><span></span><span></span>
-            </div>
-            <span data-lang="ar">الموسيقى تعمل 🔊</span>
-            <span data-lang="fr">Musique en cours 🔊</span>
+          <div class="music-preview-grid">
+            <button class="music-play-btn" id="btn-play-march" onclick="playSpecificMusic('wedding_march')">
+              <span>🎻</span> Marche Nuptiale
+            </button>
+            <button class="music-play-btn" id="btn-play-gharsa" onclick="playSpecificMusic('ziad_gharsa')">
+              <span>🌙</span> Z. Gharsa (Malouf)
+            </button>
           </div>
 
         </div>
@@ -948,7 +1208,7 @@
           
           <div class="phone-screen" id="phoneScreen">
             <!-- Screen image displaying screenshot of envelope addressed to guest -->
-            <img id="screenshotImg" src="assets/demo_env_ar.png" alt="Aperçu invitation">
+            <img id="screenshotImg" src="assets/demo_env_fr.png" alt="Aperçu invitation">
           </div>
         </div>
 
@@ -956,32 +1216,40 @@
 
     </div>
 
-    <!-- Extra Showcase: Guest Management Dashboard -->
+    <!-- Extra Showcase: Guest Wishes -->
     <div class="promo-details-section">
+      <h2 class="promo-section-title" data-lang="fr">Un livre d'or et des vœux 100% nominatifs</h2>
       <h2 class="promo-section-title" data-lang="ar">تواصل شخصي وتهاني متبادلة بالأسماء</h2>
-      <h2 class="promo-section-title" data-lang="fr">Communication et Vœux Nominatifs</h2>
+      <h2 class="promo-section-title" data-lang="tn">تواصل شخصي وتهاني متبادلة بالأسماء</h2>
+      
+      <p class="promo-section-description" data-lang="fr">Chaque message de félicitations ou confirmation de présence envoyé par vos invités est automatiquement identifié par leur nom. Fini les messages anonymes ou difficiles à attribuer, vous savez exactement qui vous écrit.</p>
       <p class="promo-section-description" data-lang="ar">يستطيع العروسان استقبال تبريكات وتهاني ضيوفهم بشكل منظم، حيث ترتبط كل تهنئة مرسلة باسم الضيف مباشرة في لوحة التحكم، مما يسهل قراءتها ومشاركتها.</p>
-      <p class="promo-section-description" data-lang="fr">Les mariés reçoivent les vœux et confirmations de présence de manière organisée. Chaque message de félicitations est lié au nom de l'invité correspondant dans la console, facilitant son suivi.</p>
+      <p class="promo-section-description" data-lang="tn">العروسين يجيوهم الميساجات والتهاني متاع الضياف مسجلة بالاسم متاعهم ديريكت في لوحة التحكم باش تبقاولهم كذكرى مزيانة ويعرفوا شكون بعثلهم بدقة.</p>
       
       <div class="dashboard-preview">
         
         <!-- Info text -->
         <div class="dash-info">
+          <h3 data-lang="fr">Une gestion centralisée et transparente</h3>
           <h3 data-lang="ar">كيف تبدو تجربة استقبال التهاني؟</h3>
-          <h3 data-lang="fr">Comment se passe la réception des félicitations ?</h3>
+          <h3 data-lang="tn">كيفاش توصلك التهاني في لوحة التحكم؟</h3>
           
+          <p data-lang="fr">Lorsqu'un proche écrit un mot doux ou valide sa présence sur son invitation personnalisée, l'information remonte instantanément dans votre espace d'administration. Les messages sont classés proprement par invité.</p>
           <p data-lang="ar">يقوم الضيف بكتابة تهنئته داخل الدعوة الرقمية الخاصة به، وبكبسة زر تصل التهنئة للعروسين معروضة باسم الضيف وصيغته الترحيبية مباشرة في لوحة إدارة قائمة المدعوين.</p>
-          <p data-lang="fr">L'invité écrit son message directement depuis son invitation numérique personnalisée. En un clic, son message apparaît dans l'espace d'administration des mariés, signé de son nom et accompagné de son statut.</p>
+          <p data-lang="tn">الضيف يكتب تهنيتو في باج الاستدعاء متاعو، وبقرصة زر بركة يوصل الميساج للعروسين باسم الضيف واللقب متاعو في تابلو د بور نظيف ومريغل.</p>
           
           <ul class="dash-features">
+            <li data-lang="fr">Félicitations associées au profil de l'invité.</li>
             <li data-lang="ar">استقبال التهاني وتأكيد الحضور باسم كل ضيف.</li>
-            <li data-lang="fr">Réception des RSVPs et vœux nominatifs de chaque invité.</li>
+            <li data-lang="tn">تستقبل التهاني وتأكيد الحضور باسم الضيف ديريكت.</li>
             
-            <li data-lang="ar">ربط التهنئة بالصيغة (عائلات، أفراد، أصدقاء) لمعرفة مرسل التهنئة بدقة.</li>
-            <li data-lang="fr">Lien direct du message avec le profil de l'invité pour l'identifier.</li>
+            <li data-lang="fr">Classement par formule d'invitation (Famille, Couple, Ami).</li>
+            <li data-lang="ar">ربط التهنئة بالصيغة (عائلات، أفراد، أصدقاء) لمعرفة مرسل التهنئة.</li>
+            <li data-lang="tn">ربط الميساج بالصيغة (عائلات، أفراد، أصحاب) باش تعرف شكون بعثلك.</li>
             
+            <li data-lang="fr">Archivage sécurisé pour conserver vos souvenirs de mariage.</li>
             <li data-lang="ar">أرشيف تذكاري متكامل لتهاني كل الضيوف للرجوع إليه دائماً.</li>
-            <li data-lang="fr">Un livre d'or numérique archivé contenant les mots doux de vos proches.</li>
+            <li data-lang="tn">أرشيف كامل لتهاني الضياف الكل يبقى مسجل للرجوع ليه وقت ما تحب.</li>
           </ul>
         </div>
 
@@ -989,21 +1257,16 @@
         <div class="dash-visual">
           <div class="simulated-dash">
             <div class="dash-head">
-              <span class="dash-head-title" data-lang="ar">📋 قائمة المدعوين (لوحة العروسين)</span>
               <span class="dash-head-title" data-lang="fr">📋 Liste des Invités (Dashboard)</span>
-              <span class="dash-head-badge" data-lang="ar">نشط</span>
+              <span class="dash-head-title" data-lang="ar">📋 قائمة المدعوين (لوحة العروسين)</span>
+              <span class="dash-head-title" data-lang="tn">📋 قائمة المدعوين (لوحة العروسين)</span>
               <span class="dash-head-badge" data-lang="fr">Actif</span>
+              <span class="dash-head-badge" data-lang="ar">نشط</span>
+              <span class="dash-head-badge" data-lang="tn">نشط</span>
             </div>
             <div class="dash-body">
               
               <!-- Guest Row 1 -->
-              <div class="sim-row" data-lang="ar">
-                <div>
-                  <span class="sim-guest-name">محمد الرياحي</span>
-                  <span class="sim-guest-formula">إلى السيد محمد وحرمه</span>
-                </div>
-                <button class="sim-btn-wa">💬 إرسال</button>
-              </div>
               <div class="sim-row" data-lang="fr">
                 <div>
                   <span class="sim-guest-name">M. et Mme Riahi</span>
@@ -1011,8 +1274,29 @@
                 </div>
                 <button class="sim-btn-wa">💬 Envoyer</button>
               </div>
+              <div class="sim-row" data-lang="ar">
+                <div>
+                  <span class="sim-guest-name">محمد الرياحي</span>
+                  <span class="sim-guest-formula">إلى السيد محمد وحرمه</span>
+                </div>
+                <button class="sim-btn-wa">💬 إرسال</button>
+              </div>
+              <div class="sim-row" data-lang="tn">
+                <div>
+                  <span class="sim-guest-name">محمد الرياحي</span>
+                  <span class="sim-guest-formula">إلى السيد محمد وحرمه</span>
+                </div>
+                <button class="sim-btn-wa">💬 إرسال</button>
+              </div>
 
               <!-- Guest Row 2 -->
+              <div class="sim-row" data-lang="fr">
+                <div>
+                  <span class="sim-guest-name">M. Khaled Amri</span>
+                  <span class="sim-guest-formula">Famille Amri</span>
+                </div>
+                <button class="sim-btn-wa" style="background:#8a6000; color:white;">✓ Envoyé</button>
+              </div>
               <div class="sim-row" data-lang="ar">
                 <div>
                   <span class="sim-guest-name">خالد العمري</span>
@@ -1020,12 +1304,12 @@
                 </div>
                 <button class="sim-btn-wa" style="background:#8a6000; color:white;">✓ تم الإرسال</button>
               </div>
-              <div class="sim-row" data-lang="fr">
+              <div class="sim-row" data-lang="tn">
                 <div>
-                  <span class="sim-guest-name">M. Khaled Amri</span>
-                  <span class="sim-guest-formula">Famille Amri</span>
+                  <span class="sim-guest-name">خالد العمري</span>
+                  <span class="sim-guest-formula">إلى السيد خالد وحرمه وأبنائه</span>
                 </div>
-                <button class="sim-btn-wa" style="background:#8a6000; color:white;">✓ Envoyé</button>
+                <button class="sim-btn-wa" style="background:#8a6000; color:white;">✓ تم الإرسال</button>
               </div>
 
             </div>
@@ -1035,9 +1319,64 @@
       </div>
     </div>
 
+    <!-- Packs Section (NEW) -->
+    <div class="packs-section">
+      <h2 class="promo-section-title" data-lang="fr">Nos Packs d'Invitations</h2>
+      <h2 class="promo-section-title" data-lang="ar">باقات الاشتراكات والأسعار</h2>
+      <h2 class="promo-section-title" data-lang="tn">باقات الاشتراكات والأسعار</h2>
+      
+      <p class="promo-section-description" data-lang="fr">Choisissez le forfait adapté à votre mariage. Chaque pack vous donne un accès complet à toutes les fonctionnalités avec une limite sur le nombre d'invitations personnalisées uniques générées.</p>
+      <p class="promo-section-description" data-lang="ar">اختر الباقة المناسبة لعدد ضيوف فرحكم. تمنحكم كل باقة وصولاً كاملاً لجميع الميزات التفاعلية مع اختلاف سعة توليد روابط المدعوين المخصصة.</p>
+      <p class="promo-section-description" data-lang="tn">اختار الباقة اللي توالم عدد ضيافك. كل باقة تعطيك أكسي كامل للفازات والخصائص الكل، مع اختلاف قداش تنجم تطلع من رابط مخصص بالأسماء.</p>
+
+      <div class="packs-grid">
+        <!-- Pack 1 -->
+        <div class="pack-card">
+          <div class="pack-badge" data-lang="fr">Petit Comité</div>
+          <div class="pack-badge" data-lang="ar">باقة صغيرة</div>
+          <div class="pack-badge" data-lang="tn">الباقة الصغيرة</div>
+          
+          <h3 class="pack-name">Pack 30</h3>
+          <div class="pack-shares">30 <span data-lang="fr">liens invités</span><span data-lang="ar">مدعو</span><span data-lang="tn">رابط ضيف</span></div>
+          
+          <p class="pack-explanation" data-lang="fr">Idéal pour les mariages intimistes ou pour inviter uniquement le cercle familial très proche. Permet de générer jusqu'à 30 liens uniques personnalisés.</p>
+          <p class="pack-explanation" data-lang="ar">مثالية للأفراح الصغيرة أو لمشاركة الدعوة مع دائرة العائلة المقربة جداً. تتيح توليد وإرسال حتى 30 رابطاً فريداً بالأسماء.</p>
+          <p class="pack-explanation" data-lang="tn">طيارة للأفراح العائلية الصغيرة والمقربين برشا. تخليك تطلع وتبعث حتى 30 رابط سبيسيال بالاسماء.</p>
+        </div>
+
+        <!-- Pack 2 -->
+        <div class="pack-card featured-pack">
+          <div class="pack-badge" data-lang="fr">Recommandé</div>
+          <div class="pack-badge" data-lang="ar">الأكثر طلباً</div>
+          <div class="pack-badge" data-lang="tn">الأكثر طلباً</div>
+          
+          <h3 class="pack-name">Pack 60</h3>
+          <div class="pack-shares">60 <span data-lang="fr">liens invités</span><span data-lang="ar">مدعو</span><span data-lang="tn">رابط ضيف</span></div>
+          
+          <p class="pack-explanation" data-lang="fr">Le meilleur choix pour la majorité des mariages standards. Permet de générer jusqu'à 60 liens personnalisés individuels pour vos familles et groupes d'amis.</p>
+          <p class="pack-explanation" data-lang="ar">الخيار الأفضل والأنسب لمعظم الحفلات المتوسطة. يتيح توليد وإرسال حتى 60 رابطاً مخصصاً للعائلات والأصدقاء.</p>
+          <p class="pack-explanation" data-lang="tn">أحسن خيار وأكثر باقة مطلوبة لأغلب العرايس. تعطيك حتى 60 رابط مخصص بالاسم للعائلات والأصحاب.</p>
+        </div>
+
+        <!-- Pack 3 -->
+        <div class="pack-card">
+          <div class="pack-badge" data-lang="fr">Prestige</div>
+          <div class="pack-badge" data-lang="ar">الباقة الكبيرة</div>
+          <div class="pack-badge" data-lang="tn">الباقة الكبيرة</div>
+          
+          <h3 class="pack-name">Pack 100</h3>
+          <div class="pack-shares">100 <span data-lang="fr">liens invités</span><span data-lang="ar">مدعو</span><span data-lang="tn">رابط ضيف</span></div>
+          
+          <p class="pack-explanation" data-lang="fr">Conçu pour les grands mariages et les grandes familles. Permet de générer jusqu'à 100 liens personnalisés sans aucune restriction pour inviter tout le monde.</p>
+          <p class="pack-explanation" data-lang="ar">مخصصة للحفلات الكبيرة والأفراح التي تضم عائلات موسعة. تتيح توليد وإرسال حتى 100 رابط مخصص لدعوة الجميع بكل سهولة.</p>
+          <p class="pack-explanation" data-lang="tn">مخصصة للأفراح الكبيرة والعائلات الموسعة. تعطيك حتى 100 رابط مخصص بالاسم باش تستدعى الناس الكل بلاش حتى قلق.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer>
-      <p>© 2026 - دعوة زفاف إلكترونية تفاعلية راقية. جميع الحقوق محفوظة.</p>
+      <p>© 2026 - Invitation de Mariage Numérique Interactive. Tous droits réservés.</p>
     </footer>
 
   </div>
@@ -1046,47 +1385,56 @@
     'use strict';
 
     // Mock Guests Configuration database matching user attached screenshots
+    // French is first to load by default as requested
     const MOCK_GUESTS = [
-      {
-        guestName: "السيد علي بن سالم وحرمه",
-        img: "assets/demo_env_ar.png",
-        lang: "ar",
-        audio: "wedding_march"
-      },
       {
         guestName: "Pour le marié",
         img: "assets/demo_env_fr.png",
         lang: "fr",
         audio: "ziad_gharsa"
+      },
+      {
+        guestName: "السيد علي بن سالم وحرمه",
+        img: "assets/demo_env_ar.png",
+        lang: "ar",
+        audio: "wedding_march"
       }
     ];
 
     let currentGuestIndex = 0;
     let isMusicPlaying = false;
-    let selectedAudioName = 'wedding_march';
+    let activeAudioName = 'ziad_gharsa'; // Default for the first configuration
 
-    // Set Language toggle
+    // Set Language toggle (Français, Arabe, Tunisien)
     function setLanguage(lang) {
       const body = document.body;
       const btnAr = document.getElementById('btn-lang-ar');
       const btnFr = document.getElementById('btn-lang-fr');
+      const btnTn = document.getElementById('btn-lang-tn');
       
+      // Reset classes
+      body.classList.remove('lang-ar-active', 'lang-fr-active', 'lang-tn-active');
+      btnAr.classList.remove('active');
+      btnFr.classList.remove('active');
+      btnTn.classList.remove('active');
+
       if (lang === 'fr') {
-        body.classList.remove('lang-ar-active');
         body.classList.add('lang-fr-active');
         body.dir = 'ltr';
         btnFr.classList.add('active');
-        btnAr.classList.remove('active');
-      } else {
-        body.classList.remove('lang-fr-active');
+      } else if (lang === 'ar') {
         body.classList.add('lang-ar-active');
         body.dir = 'rtl';
         btnAr.classList.add('active');
-        btnFr.classList.remove('active');
+      } else if (lang === 'tn') {
+        body.classList.add('lang-tn-active');
+        body.dir = 'rtl';
+        btnTn.classList.add('active');
       }
     }
 
     // Cycle between mock guests
+    // Will cycle language and screenshot to demonstrate localization automatically
     function cycleDemoGuest() {
       currentGuestIndex = (currentGuestIndex + 1) % MOCK_GUESTS.length;
       const config = MOCK_GUESTS[currentGuestIndex];
@@ -1107,32 +1455,55 @@
         }, 150);
       }
       
-      selectedAudioName = config.audio;
+      activeAudioName = config.audio;
 
-      // If already playing, transition music
+      // If already playing, transition music to the one linked to this guest theme
       if (isMusicPlaying) {
         stopAllAudio();
-        playAudio(selectedAudioName);
+        playAudio(activeAudioName);
+        updateActiveMusicButtonState(activeAudioName);
       }
     }
 
-    // Music Player controls
-    function toggleMockupMusic() {
-      const musicBtn = document.getElementById('music-preview-btn');
+    // Direct audio playing options (🎻 & 🌙)
+    function playSpecificMusic(name) {
       const statusIndicator = document.getElementById('musicStatus');
       
-      if (isMusicPlaying) {
+      if (isMusicPlaying && activeAudioName === name) {
+        // Toggle off if clicking the active playing one
         stopAllAudio();
         isMusicPlaying = false;
-        musicBtn.classList.remove('active');
         statusIndicator.style.display = 'none';
         statusIndicator.classList.remove('playing');
+        updateActiveMusicButtonState(null);
       } else {
-        playAudio(selectedAudioName);
+        // Stop current and play new
+        stopAllAudio();
+        activeAudioName = name;
+        playAudio(name);
         isMusicPlaying = true;
-        musicBtn.classList.add('active');
         statusIndicator.style.display = 'flex';
         statusIndicator.classList.add('playing');
+        updateActiveMusicButtonState(name);
+      }
+    }
+
+    // Helper toggle music
+    function toggleMockupMusic() {
+      playSpecificMusic(activeAudioName);
+    }
+
+    function updateActiveMusicButtonState(playingName) {
+      const btnMarch = document.getElementById('btn-play-march');
+      const btnGharsa = document.getElementById('btn-play-gharsa');
+      
+      if (btnMarch) btnMarch.classList.remove('active');
+      if (btnGharsa) btnGharsa.classList.remove('active');
+
+      if (playingName === 'wedding_march' && btnMarch) {
+        btnMarch.classList.add('active');
+      } else if (playingName === 'ziad_gharsa' && btnGharsa) {
+        btnGharsa.classList.add('active');
       }
     }
 
@@ -1190,10 +1561,11 @@
     window.addEventListener('DOMContentLoaded', () => {
       spawnLocalPetals();
       
-      // Init mockup fields
+      // Init mockup fields (French is first by default)
       const config = MOCK_GUESTS[0];
       document.getElementById('guestDisplayBox').textContent = config.guestName;
       document.getElementById('screenshotImg').src = config.img;
+      setLanguage('fr');
     });
   </script>
 
