@@ -290,6 +290,26 @@ function getTimelineIcon(eventName) {
   </svg>`;
 }
 
+function formatTo24h(timeStr, ampmStr) {
+  if (!timeStr) return '';
+  const ampm = (ampmStr || '').trim().toUpperCase();
+  if (ampm !== 'AM' && ampm !== 'PM') {
+    return timeStr;
+  }
+  const parts = timeStr.split(':');
+  let hours = parseInt(parts[0], 10);
+  const minutes = parts[1] || '00';
+  if (isNaN(hours)) return timeStr;
+  if (ampm === 'PM' && hours < 12) {
+    hours += 12;
+  } else if (ampm === 'AM' && hours === 12) {
+    hours = 0;
+  }
+  const hoursFormatted = hours.toString().padStart(2, '0');
+  const minutesFormatted = minutes.toString().padStart(2, '0');
+  return `${hoursFormatted}:${minutesFormatted}`;
+}
+
 function rebuildTimelineFromConfig(events) {
   const timeline = document.getElementById('timeline');
   if (!timeline) return;
@@ -301,7 +321,7 @@ function rebuildTimelineFromConfig(events) {
       <span class="tl-date">${ev.d||''}</span>
       <div class="tl-event font-amiri">${ev.n||''}</div>
       <div class="tl-location">${ev.l||''}</div>
-      <div class="tl-time">${ev.t||''} <span class="tl-ampm">${ev.a||''}</span></div>
+      <div class="tl-time">${formatTo24h(ev.t, ev.a)}</div>
       <button class="tl-location-btn" onclick="openMap(this)">${pinIcon}<span>الموقع</span></button>`;
     return `
       <div class="timeline-item"
