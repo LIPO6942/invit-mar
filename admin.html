@@ -33,6 +33,18 @@
 .save-bar-text span { color:var(--gold); font-weight:700; }
 .main-content { padding-bottom: 70px !important; }
 
+/* On mobile: save-bar floats above the bottom nav (60px) */
+@media (max-width: 600px) {
+  .save-bar {
+    bottom: 60px;         /* sit above the 60px mobile bottom nav */
+    padding: 8px 14px;
+    z-index: 60;
+  }
+  .main-content {
+    padding-bottom: 140px !important; /* save-bar (52px) + bottom-nav (60px) + gap */
+  }
+}
+
 /* Link display improvements */
 .link-url {
   font-family: 'Courier New', monospace;
