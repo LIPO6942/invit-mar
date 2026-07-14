@@ -895,7 +895,7 @@ function applyConfigToFields(c) {
 
   if (c.mu) selectMusic(c.mu, false); // restore music without triggering saveAll
 
-  if (c.ev) {
+  if (c.ev && c.ev.length > 0) {
     window._adminEvents = c.ev.map(e => ({
       nameAr:   e.n, date: e.d, time: e.t, ampm: e.a,
       location: e.l, lat:  e.la != null ? String(e.la) : '',
@@ -955,7 +955,9 @@ const DEFAULT_EVENTS = [
 ];
 
 function renderEvents() {
-  const events = window._adminEvents || DEFAULT_EVENTS;
+  const events = (window._adminEvents && window._adminEvents.length > 0)
+    ? window._adminEvents
+    : DEFAULT_EVENTS;
   window._adminEvents = events;
   const c = document.getElementById('events-container');
   if (!c) return;
