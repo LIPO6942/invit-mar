@@ -1432,27 +1432,27 @@ body.lang-fr .animated-bride {
   text-align: center;
 }
 
-/* French: closing easel names — scale down to fit inside the frame */
+/* French: closing easel names — scale down to fit inside the frame with bold handwriting effect */
 body.lang-fr .closing-easel-groom,
 body.lang-fr .closing-easel-bride {
-  font-family: 'Playfair Display', 'Didot', 'Georgia', serif;
-  font-size: clamp(0.55rem, 2.2vw, 0.82rem);
+  font-family: 'Dancing Script', 'Comfortaa', cursive;
+  font-size: clamp(0.95rem, 3.8vw, 1.45rem);
+  font-weight: 700; /* Extra bold */
   white-space: normal;
-  word-break: break-all;
-  line-height: 1.2;
-  color: #321c0b;
+  word-break: break-word;
+  line-height: 1.15;
+  color: #2b1708; /* Deep brown handwritten ink */
+  text-shadow: 0 1px 1px rgba(255,255,255,0.6);
 }
 
 body.lang-fr .closing-easel-header {
-  font-family: 'Playfair Display', 'Didot', 'Georgia', serif;
-  font-size: clamp(0.68rem, 2.8vw, 0.95rem);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: none !important; /* Hide "Mariage de" completely for this model */
 }
 
 body.lang-fr .closing-easel-txts {
   width: 44%;
   left: -1%; /* Center the text container on the whiteboard */
+  top: 44%; /* Push it down to center vertically */
   overflow: visible;
   display: flex;
   flex-direction: column;
@@ -2419,8 +2419,8 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
    Locked to invariant coordinates thanks to fixed 3:4 aspect ratio. */
 .closing-easel-txts {
   position: absolute;
-  top: 36%; 
-  left: -4%; /* Shifted further left (from -2.5%) for perfect visual alignment on the easel */
+  top: 44%; 
+  left: -2%; /* Centered better horizontally */
   width: 44%;
   z-index: 2;
   display: flex;
@@ -2433,16 +2433,7 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
 }
 
 .closing-easel-header {
-  font-family: 'Aref Ruqaa Ink', 'Amiri', serif;
-  font-size: clamp(1rem, 4.2vw, 1.25rem); /* Larger font size for prominence */
-  font-weight: 700; /* Bold weight */
-  color: var(--gold) !important; /* Bright gold matching the stars */
-  letter-spacing: 0.5px;
-  text-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.20),
-    0 0 1px rgba(74, 44, 10, 0.4); /* Contrast shadow on whiteboard */
-  margin-bottom: 2px;
-  text-align: center;
+  display: none !important; /* Hide "Mariage de" / "حفل زفاف" on the easel board globally */
 }
 
 .closing-easel-groom,
@@ -2478,8 +2469,8 @@ body.night-mode .p1-invite-text { color: #d4b87a; }
     flex: 1 1 50%;
   }
   .closing-easel-txts {
-    top: 36%;
-    left: -1.5%; /* Shifted more to the left (from -0.5%) for perfect visual alignment */
+    top: 44%;
+    left: -0.5%; /* Center on desktop */
     width: 44%;
   }
 }
