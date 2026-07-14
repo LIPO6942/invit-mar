@@ -311,25 +311,10 @@
       <div class="page-title">🔗 إنشاء رابط الدعوة</div>
       <div class="page-subtitle">احفظ أولاً ثم اختر الباقة وأنشئ الرابط</div>
 
-      <!-- Production URL configuration -->
-      <div class="card">
-        <div class="card-title">🌐 رابط الموقع المرفوع على الإنترنت</div>
-        <div class="field" style="margin-top:10px">
-          <label>أدخل رابط موقعك المرفوع على Vercel أو Netlify لتوليد روابط قصيرة تعمل على الموبايل:</label>
-          <input id="prodUrlInput" type="text" placeholder="https://your-app.vercel.app" dir="ltr" style="font-family:monospace; font-size:0.95rem; width:100%; border:1px solid var(--border); padding:10px; border-radius:6px; background:rgba(0,0,0,0.2); color:white;">
-          <small style="color:var(--text-muted); display:block; margin-top:6px; font-size:0.76rem">إذا تركته فارغاً، سيتم استخدام العنوان الحالي للمتصفح تلقائياً.</small>
-        </div>
-      </div>
+      <!-- Hidden fields preserved for internal use -->
+      <input type="hidden" id="prodUrlInput">
+      <input type="hidden" id="guestNameInput">
 
-      <!-- Guest Name input field -->
-      <div class="card">
-        <div class="card-title">👤 اسم الضيف (اختياري)</div>
-        <div class="field" style="margin-top:10px">
-          <label>أدخل اسم الضيف لتوليد رابط مخصص وتتبع زياراته بشكل منفصل:</label>
-          <input id="guestNameInput" type="text" placeholder="مثال: أحمد، عائلة العبيدي..." style="font-size:0.95rem; width:100%; border:1px solid var(--border); padding:10px; border-radius:6px; background:rgba(0,0,0,0.2); color:white;">
-          <small style="color:var(--text-muted); display:block; margin-top:6px; font-size:0.76rem">إذا تم ملء هذا الحقل, فسيتم تتبع هذا الضيف باسمه في لوحة المتابعة بالأسفل.</small>
-        </div>
-      </div>
 
       <!-- Couple Password for guests.html -->
       <div class="card" style="border-color:rgba(201,168,76,0.35);background:rgba(201,168,76,0.04)">

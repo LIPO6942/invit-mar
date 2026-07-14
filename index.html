@@ -144,7 +144,7 @@
           <div class="program-bg-overlay"></div>
           <div class="program-content">
             <div class="program-header">
-              <div class="program-title-script font-amiri">برنامج الحفل</div>
+              <div class="program-title-script font-amiri" data-tr="program_title">برنامج الحفل</div>
               <div class="program-ornament"></div>
             </div>
             <div class="timeline" id="timeline">
@@ -157,7 +157,7 @@
                   <div class="tl-time">15:30</div>
                   <button class="tl-location-btn" onclick="openMap(this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>الموقع</span>
+                    <span data-tr="location_btn">الموقع</span>
                   </button>
                 </div>
                 <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
@@ -178,7 +178,7 @@
                   <div class="tl-time">16:30</div>
                   <button class="tl-location-btn" onclick="openMap(this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>الموقع</span>
+                    <span data-tr="location_btn">الموقع</span>
                   </button>
                 </div>
               </div>
@@ -191,7 +191,7 @@
                   <div class="tl-time">17:00</div>
                   <button class="tl-location-btn" onclick="openMap(this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>الموقع</span>
+                    <span data-tr="location_btn">الموقع</span>
                   </button>
                 </div>
                 <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
@@ -212,7 +212,7 @@
                   <div class="tl-time">18:30</div>
                   <button class="tl-location-btn" onclick="openMap(this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>الموقع</span>
+                    <span data-tr="location_btn">الموقع</span>
                   </button>
                 </div>
               </div>
@@ -225,7 +225,7 @@
                   <div class="tl-time">20:00</div>
                   <button class="tl-location-btn" onclick="openMap(this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>الموقع</span>
+                    <span data-tr="location_btn">الموقع</span>
                   </button>
                 </div>
                 <div class="tl-dot-wrapper"><div class="tl-dot"></div></div>
@@ -279,11 +279,11 @@
             <div class="closing-left">
               <!-- Guest personalized address (shown if ?guest= param present) -->
               <div class="closing-guest-box" id="closingGuestAddress" style="display:none">
-                <div class="closing-guest-to font-amiri">إلى</div>
+                <div class="closing-guest-to font-amiri" data-tr="closing_to">إلى</div>
                 <div class="closing-guest-txt font-amiri" id="closingGuestName">…</div>
               </div>
 
-              <div class="closing-tagline font-amiri">يسعدنا مشاركتكم هذه الفرحة</div>
+              <div class="closing-tagline font-amiri" data-tr="closing_tagline">يسعدنا مشاركتكم هذه الفرحة</div>
               <div class="closing-heart">❤</div>
 
               <div class="closing-thanks">
@@ -297,7 +297,7 @@
               <div class="closing-easel-frame">
                 <img src="assets/wedding_hall_board.png" alt="Salle de fête" class="closing-easel-photo">
                 <div class="closing-easel-txts font-amiri">
-                  <div class="closing-easel-header">حفل زفاف</div>
+                  <div class="closing-easel-header" data-tr="closing_easel_header">حفل زفاف</div>
                   <div class="closing-easel-groom" data-cfg="groomNameDisplay">مرتضى</div>
                   <div class="closing-easel-amp">✦</div>
                   <div class="closing-easel-bride" data-cfg="brideNameDisplay">مريم</div>
@@ -513,12 +513,12 @@
   <div class="map-sheet">
     <div class="map-sheet-handle"></div>
     <button class="map-close-btn" onclick="closeMap()">✕</button>
-    <div class="map-sheet-title" id="modal-event-title">الموقع</div>
+    <div class="map-sheet-title" id="modal-event-title" data-tr="location_btn">الموقع</div>
     <div class="map-sheet-address" id="modal-address"></div>
     <div id="leaflet-map"></div>
     <button class="open-maps-btn" id="open-maps-btn" onclick="openInMaps()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
-      افتح في خرائط جوجل
+      <span data-tr="open_maps">افتح في خرائط جوجل</span>
     </button>
   </div>
 </div>

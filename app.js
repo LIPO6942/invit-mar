@@ -1263,6 +1263,9 @@ const TRANSLATIONS = {
     gb_submit: 'إرسال التهنئة ✨',
     gb_sug_label: '💡 اقتراحات جاهزة للتهنئة:',
     closing_tagline: 'يسعدنا مشاركتكم هذه الفرحة',
+    closing_to: 'إلى',
+    closing_easel_header: 'حفل زفاف',
+    open_maps: 'افتح في خرائط جوجل',
   },
   fr: {
     basmala: 'Que Dieu les bénisse, les comble de bonheur et les réunisse.',
@@ -1289,6 +1292,9 @@ const TRANSLATIONS = {
     gb_submit: 'Envoyer les félicitations ✨',
     gb_sug_label: '💡 Formules de vœux suggérées :',
     closing_tagline: 'Nous sommes honorés de partager ce moment avec vous',
+    closing_to: 'À',
+    closing_easel_header: 'Mariage de',
+    open_maps: 'Ouvrir dans Google Maps',
   }
 };
 
