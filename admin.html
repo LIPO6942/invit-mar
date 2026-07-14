@@ -298,7 +298,9 @@
     <div class="page" id="page-programme">
       <div class="page-title">🗓️ برنامج الحفل</div>
       <div class="page-subtitle">5 أحداث قابلة للتعديل</div>
-      <div id="events-container"></div>
+      <div class="card">
+        <div id="events-container"></div>
+      </div>
     </div>
 
     <!-- ▸ PAGE 5 — Links -->
@@ -664,6 +666,9 @@ function showPage(id) {
   const map = { 'page-couple':0,'page-families':1,'page-date':2,'page-programme':3,'page-links':4,'page-qrcode':5 };
   document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
   window.scrollTo(0, 0);
+  if (id === 'page-programme') {
+    renderEvents();
+  }
   if (id === 'page-qrcode') {
     generatePromoQr();
     updateFlyerFooter();
