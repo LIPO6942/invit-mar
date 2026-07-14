@@ -336,6 +336,19 @@ html, body {
   padding: 16px;
   margin-bottom: 12px;
   position: relative;
+  transition: opacity 0.2s;
+}
+
+.event-card-disabled {
+  opacity: 0.42;
+  border-style: dashed;
+  border-color: rgba(150,120,60,0.3);
+  pointer-events: all;
+}
+.event-card-disabled input,
+.event-card-disabled select {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .event-card-header {

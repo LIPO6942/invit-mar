@@ -313,13 +313,16 @@ function formatTo24h(timeStr, ampmStr) {
 function rebuildTimelineFromConfig(events) {
   const timeline = document.getElementById('timeline');
   if (!timeline) return;
+  const isFr = document.body.classList.contains('lang-fr');
+  const pinLabel = isFr ? 'Lieu' : 'الموقع';
   const pinIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
   timeline.innerHTML = events.map((ev, i) => {
     const isEven  = i % 2 === 0;
+    const evName  = (isFr && ev.nf) ? ev.nf : (ev.n || '');
     const iconHTML = getTimelineIcon(ev.n);
     const infoHTML = `
       <span class="tl-date">${ev.d||''}</span>
-      <div class="tl-event font-amiri">${ev.n||''}</div>
+      <div class="tl-event font-amiri">${evName}</div>
       <div class="tl-location">${ev.l||''}</div>
       <div class="tl-time">${formatTo24h(ev.t, ev.a)}</div>
       <button class="tl-location-btn" onclick="openMap(this)">${pinIcon}<span>الموقع</span></button>`;

@@ -297,9 +297,12 @@
     <!-- ▸ PAGE 4 — Programme -->
     <div class="page" id="page-programme">
       <div class="page-title">🗓️ برنامج الحفل</div>
-      <div class="page-subtitle">5 أحداث قابلة للتعديل</div>
+      <div class="page-subtitle">أضف أو احذف الأحداث حسب برنامج حفلتك</div>
       <div class="card">
         <div id="events-container"></div>
+        <button class="btn btn-outline" style="margin-top:8px;width:100%" onclick="addEvent()">
+          ＋ إضافة حدث جديد
+        </button>
       </div>
     </div>
 
@@ -805,14 +808,14 @@ function buildConfig() {
     bm: val('brideMother'),
     wd: val('weddingDate'),
     wdd:val('weddingDateDisplay'),
-    ev: collectEvents().map(e => ({
-      n: e.nameAr,
-      d: e.date,
-      t: e.time,
-      a: e.ampm,
-      l: e.location,
-      la: e.lat  ? parseFloat(e.lat)  : null,
-      lo: e.lng  ? parseFloat(e.lng)  : null,
+    ev: collectEvents().filter(e => e.active !== false).map(e => ({
+      n:  e.nameAr,
+      nf: e.nameFr,
+      d:  e.date,
+      t:  e.time,
+      l:  e.location,
+      la: e.lat ? parseFloat(e.lat) : null,
+      lo: e.lng ? parseFloat(e.lng) : null,
       e:  e.emoji,
     })),
   };
@@ -897,10 +900,17 @@ function applyConfigToFields(c) {
 
   if (c.ev && c.ev.length > 0) {
     window._adminEvents = c.ev.map(e => ({
-      nameAr:   e.n, date: e.d, time: e.t,
-      location: e.l, lat:  e.la != null ? String(e.la) : '',
-      lng:      e.lo != null ? String(e.lo) : '', emoji: e.e
+      nameAr:   e.n, nameFr: e.nf || '', date: e.d, time: e.t,
+      location: e.l, lat: e.la != null ? String(e.la) : '',
+      lng:      e.lo != null ? String(e.lo) : '', emoji: e.e, active: true
     }));
+    // Merge with DEFAULT_EVENTS for any that are missing (to keep full template)
+    const savedNames = new Set(window._adminEvents.map(e => e.nameAr));
+    DEFAULT_EVENTS.forEach(def => {
+      if (!savedNames.has(def.nameAr)) {
+        window._adminEvents.push({...def, active: false});
+      }
+    });
     renderEvents();
   }
 }
@@ -947,45 +957,52 @@ function set(id, v) {
 // ── Events ──
 const EMOJI_OPTIONS = ['💍','🏡','📷','🍽️','🎉','🌹','💐','🎊','🕌','🎶'];
 const DEFAULT_EVENTS = [
-  { nameAr:'مراسم العقد',   date:'12/07/2026', time:'15:30', location:'فضاء الحبيب، طبلبة',    lat:'35.632714', lng:'10.941811', emoji:'💍' },
-  { nameAr:'استقبال الضيوف',date:'13/07/2026', time:'16:30', location:'منزل العريس، طبلبة',    lat:'35.642004', lng:'10.966089', emoji:'🏡' },
-  { nameAr:'جلسة تصوير',   date:'14/07/2026', time:'17:00', location:'برج الراس، المهدية',    lat:'35.508971', lng:'11.081458', emoji:'📷' },
-  { nameAr:'مأدبة العشاء', date:'15/07/2026', time:'18:30', location:'منزل العريس، طبلبة',    lat:'35.642004', lng:'10.966089', emoji:'🍽️'},
-  { nameAr:'حفل الأفراح',  date:'16/07/2026', time:'20:00', location:'فضاء موازين، قصر هلال', lat:'35.658203', lng:'10.880335', emoji:'🎉' },
+  { nameAr:'مراسم العقد',   nameFr:'Cérémonie d\'alliance', date:'12/07/2026', time:'15:30', location:'فضاء الحبيب، طبلبة', lat:'35.632714', lng:'10.941811', emoji:'💍', active:true },
+  { nameAr:'استقبال الضيوف', nameFr:'Accueil des invités',  date:'13/07/2026', time:'16:30', location:'منزل العريس، طبلبة', lat:'35.642004', lng:'10.966089', emoji:'🏡', active:true },
+  { nameAr:'جلسة تصوير',   nameFr:'Séance photo',         date:'14/07/2026', time:'17:00', location:'برج الراس، المهدية', lat:'35.508971', lng:'11.081458', emoji:'📷', active:true },
+  { nameAr:'مأدبة العشاء', nameFr:'Dîner de gala',         date:'15/07/2026', time:'18:30', location:'منزل العريس، طبلبة', lat:'35.642004', lng:'10.966089', emoji:'🍽️', active:true },
+  { nameAr:'حفل الأفراح',  nameFr:'Fête de mariage',       date:'16/07/2026', time:'20:00', location:'فضاء موازين، قصر هلال', lat:'35.658203', lng:'10.880335', emoji:'🎉', active:true },
 ];
 
 function renderEvents() {
   const events = (window._adminEvents && window._adminEvents.length > 0)
     ? window._adminEvents
-    : DEFAULT_EVENTS;
+    : DEFAULT_EVENTS.map(e => ({...e}));
   window._adminEvents = events;
   const c = document.getElementById('events-container');
   if (!c) return;
   c.innerHTML = '';
   events.forEach((ev, i) => {
+    const isActive = ev.active !== false; // default true
     const card = document.createElement('div');
-    card.className = 'event-card';
+    card.className = 'event-card' + (isActive ? '' : ' event-card-disabled');
     card.innerHTML = `
       <div class="event-card-header">
         <span class="event-num">الحدث ${i+1}</span>
-        <div class="event-emoji-picker" id="ep${i}"></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="event-emoji-picker" id="ep${i}"></div>
+          <button onclick="toggleEvent(${i})" style="background:${isActive?'rgba(50,180,50,0.15)':'rgba(180,100,0,0.15)'};border:1px solid ${isActive?'rgba(50,180,50,0.35)':'rgba(180,100,0,0.35)'};color:${isActive?'#50c050':'#c08020'};border-radius:8px;padding:5px 10px;cursor:pointer;font-size:0.8rem;font-weight:700">${isActive?'✓ مفعّل':'○ معطّل'}</button>
+          <button onclick="deleteEvent(${i})" style="background:rgba(220,50,50,0.12);border:1px solid rgba(220,50,50,0.3);color:#e05555;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:0.8rem;font-weight:700">✕ حذف</button>
+        </div>
       </div>
       <div class="form-row">
-        <div class="field"><label>اسم الحدث</label><input class="ev-nameAr" type="text" value="${ev.nameAr||''}"></div>
-        <div class="field"><label>التاريخ</label><input class="ev-date" type="text" value="${ev.date||''}" dir="ltr"></div>
+        <div class="field"><label>اسم الحدث (عربي)</label><input class="ev-nameAr" type="text" value="${ev.nameAr||''}" ${!isActive?'disabled':''}></div>
+        <div class="field"><label>Nom (français)</label><input class="ev-nameFr" type="text" value="${ev.nameFr||''}" placeholder="ex: Fête de mariage" dir="ltr" ${!isActive?'disabled':''}></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>الوقت (صيغة 24ساعة)</label><input class="ev-time" type="text" value="${ev.time||''}" placeholder="مثال: 15:30" dir="ltr"></div>
-        <div class="field"><label>الإيموجي</label><input class="ev-emoji" type="text" value="${ev.emoji||'🎉'}" readonly style="cursor:pointer;text-align:center;font-size:1.3rem"></div>
-      </div>
-      <div class="form-row single">
-        <div class="field"><label>اسم المكان</label><input class="ev-location" type="text" value="${ev.location||''}"></div>
+        <div class="field"><label>التاريخ</label><input class="ev-date" type="text" value="${ev.date||''}" dir="ltr" ${!isActive?'disabled':''}></div>
+        <div class="field"><label>الوقت (24ساعة)</label><input class="ev-time" type="text" value="${ev.time||''}" placeholder="15:30" dir="ltr" ${!isActive?'disabled':''}></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>Latitude</label><input class="ev-lat" type="text" value="${ev.lat||''}" dir="ltr"></div>
-        <div class="field"><label>Longitude</label><input class="ev-lng" type="text" value="${ev.lng||''}" dir="ltr"></div>
+        <div class="field"><label>اسم المكان</label><input class="ev-location" type="text" value="${ev.location||''}" ${!isActive?'disabled':''}></div>
+        <div class="field"><label>الإيموجي</label><input class="ev-emoji" type="text" value="${ev.emoji||'🎉'}" readonly style="cursor:pointer;text-align:center;font-size:1.3rem" ${!isActive?'disabled':''}></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Latitude</label><input class="ev-lat" type="text" value="${ev.lat||''}" dir="ltr" ${!isActive?'disabled':''}></div>
+        <div class="field"><label>Longitude</label><input class="ev-lng" type="text" value="${ev.lng||''}" dir="ltr" ${!isActive?'disabled':''}></div>
       </div>`;
     c.appendChild(card);
+    if (!isActive) return; // skip emoji picker for disabled cards
     // Emoji picker
     const picker = card.querySelector(`#ep${i}`);
     EMOJI_OPTIONS.forEach(em => {
@@ -1002,15 +1019,41 @@ function renderEvents() {
   });
 }
 
+function toggleEvent(index) {
+  window._adminEvents = collectEvents();
+  window._adminEvents[index].active = !window._adminEvents[index].active;
+  renderEvents();
+}
+
+function addEvent() {
+  window._adminEvents = collectEvents();
+  window._adminEvents.push({ nameAr:'', nameFr:'', date:'', time:'', location:'', lat:'', lng:'', emoji:'🎉', active:true });
+  renderEvents();
+  const c = document.getElementById('events-container');
+  if (c && c.lastElementChild) c.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function deleteEvent(index) {
+  if (window._adminEvents.length <= 1) {
+    showToast('⚠️ يجب الإبقاء على حدث واحد على الأقل');
+    return;
+  }
+  window._adminEvents = collectEvents();
+  window._adminEvents.splice(index, 1);
+  renderEvents();
+}
+
 function collectEvents() {
-  return Array.from(document.querySelectorAll('.event-card')).map(card => ({
+  return Array.from(document.querySelectorAll('.event-card')).map((card, i) => ({
     nameAr:   card.querySelector('.ev-nameAr').value.trim(),
+    nameFr:   card.querySelector('.ev-nameFr') ? card.querySelector('.ev-nameFr').value.trim() : '',
     date:     card.querySelector('.ev-date').value.trim(),
     time:     card.querySelector('.ev-time').value.trim(),
     emoji:    card.querySelector('.ev-emoji').value,
     location: card.querySelector('.ev-location').value.trim(),
     lat:      card.querySelector('.ev-lat').value.trim(),
     lng:      card.querySelector('.ev-lng').value.trim(),
+    active:   window._adminEvents && window._adminEvents[i] ? window._adminEvents[i].active !== false : true,
   }));
 }
 
