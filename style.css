@@ -994,6 +994,205 @@ body:not(.env-open) {
   margin-top: -4px;
 }
 
+/* ─────── 7.5 Weather Card (Premium) ─────── */
+.weather-card-container {
+  width: 90%;
+  max-width: 320px;
+  margin: 25px auto 10px;
+  perspective: 1000px;
+  z-index: 5;
+}
+
+.weather-glass-card {
+  position: relative;
+  background: rgba(20, 14, 4, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 16px;
+  padding: 16px 20px;
+  color: var(--text);
+  box-shadow: 0 8px 32px 0 rgba(10, 6, 2, 0.37),
+              inset 0 0 12px rgba(201, 168, 76, 0.05);
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.weather-glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 168, 76, 0.45);
+  box-shadow: 0 12px 40px 0 rgba(201, 168, 76, 0.15),
+              0 8px 32px 0 rgba(10, 6, 2, 0.5);
+}
+
+/* Shine Sweep Animation */
+.weather-shine {
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 248, 220, 0.15),
+    transparent
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: weatherShineSweep 6s infinite ease-in-out;
+}
+
+@keyframes weatherShineSweep {
+  0% { left: -150%; }
+  15% { left: 150%; }
+  100% { left: 150%; }
+}
+
+.weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.weather-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.weather-icon-glow {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 0 4px var(--gold));
+  animation: weatherFloat 3s ease-in-out infinite alternate;
+  display: inline-block;
+}
+
+@keyframes weatherFloat {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-3px) scale(1.05); }
+}
+
+.weather-location {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.weather-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weather-temp-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+body.lang-ar .weather-temp-block {
+  text-align: right;
+  align-items: flex-start;
+}
+
+.weather-temp {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #FCF6BA 0%, #c9a84c 50%, #8a6010 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.weather-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.weather-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text);
+  min-width: 90px;
+}
+
+.weather-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: flex-end;
+}
+
+body.lang-ar .weather-detail-item {
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+}
+
+.wd-icon {
+  font-size: 0.85rem;
+}
+
+.wd-label {
+  color: var(--muted);
+  margin-right: auto;
+  padding-left: 6px;
+}
+
+body.lang-ar .wd-label {
+  margin-right: unset;
+  margin-left: auto;
+  padding-left: unset;
+  padding-right: 6px;
+}
+
+.wd-val {
+  font-weight: 700;
+  color: var(--gold-l);
+}
+
+/* Skeleton Loading styles */
+.weather-skeleton {
+  animation: skeletonPulse 1.8s infinite ease-in-out;
+}
+
+.weather-skeleton .weather-temp,
+.weather-skeleton .weather-desc,
+.weather-skeleton .weather-location,
+.weather-skeleton .wd-val {
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.1) 25%, rgba(201, 168, 76, 0.25) 50%, rgba(201, 168, 76, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: skeletonFlow 1.8s infinite linear;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+@keyframes skeletonPulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.95; }
+  100% { opacity: 0.6; }
+}
+
+@keyframes skeletonFlow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* ─────── 8. Programme / Timeline ─────── */
 #program-section {
   min-height: auto;

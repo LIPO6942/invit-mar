@@ -21,6 +21,12 @@ let _roleWishes = [];
 let _resolvedGuestName = null;
 let _resolvedGuestType = null;
 
+// Weather forecast params — updated from cfg when config loads
+let _weatherLat = 35.6327;   // Teboulba default
+let _weatherLon = 10.9418;
+let _weatherDate = null;      // will be set from cfg.wd (YYYY-MM-DD)
+let _weatherLocation = null;  // city name from first event
+
 /* ──────────────────────────────────────────────
    Firebase config (shared with admin.html)
 ──────────────────────────────────────────────── */
@@ -161,6 +167,8 @@ function loadConfigFromURL() {
         applyConfigToDOM(cfg);
         applyMusicFromConfig(cfg);
         if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
+        extractWeatherParamsFromConfig(cfg);
+        loadWeatherForecast();
         
         // Apply theme color
         if (cfg.th && cfg.th !== 'gold') {
@@ -202,6 +210,9 @@ function loadConfigFromURL() {
         if (cfg.wd) _weddingDateTime = cfg.wd;
         applyConfigToDOM(cfg);
         if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
+        extractWeatherParamsFromConfig(cfg);
+        loadWeatherForecast();
+
         if (cfg.th && cfg.th !== 'gold') document.body.classList.add('theme-' + cfg.th);
         applyEnvelopeDesign(cfg);
         fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
@@ -220,6 +231,9 @@ function loadConfigFromURL() {
     if (cfg.wd) _weddingDateTime = cfg.wd;
     applyConfigToDOM(cfg);
     if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
+    extractWeatherParamsFromConfig(cfg);
+    loadWeatherForecast();
+
     if (cfg.th && cfg.th !== 'gold') document.body.classList.add('theme-' + cfg.th);
     applyEnvelopeDesign(cfg);
     if (cfg.id && cfg.ps) checkAndIncrementPack(cfg.id, cfg.ps);
@@ -233,6 +247,9 @@ function loadConfigFromURL() {
         if (cfg.wd) _weddingDateTime = cfg.wd;
         applyConfigToDOM(cfg);
         if (cfg.ev && cfg.ev.length) rebuildTimelineFromConfig(cfg.ev);
+        extractWeatherParamsFromConfig(cfg);
+        loadWeatherForecast();
+
         
         // Apply theme color
         if (cfg.th && cfg.th !== 'gold') {
@@ -1082,6 +1099,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 5. Apply nominative guest name if present in URL
   readAndApplyGuestParam();
+
+  // 6. Load premium weather forecast widget
+  loadWeatherForecast();
 });
 
 /* ────────────────────────────────────────────────
@@ -1266,6 +1286,11 @@ const TRANSLATIONS = {
     closing_to: 'إلى',
     closing_easel_header: 'حفل زفاف',
     open_maps: 'افتح في خرائط جوجل',
+    weather_title: 'حالة الطقس ليوم الزفاف',
+    weather_location: 'طبلبة، تونس',
+    weather_humidity: 'الرطوبة',
+    weather_wind: 'الرياح',
+    weather_season_avg: 'معدل طقس صيفي مثالي ☀️',
   },
   fr: {
     basmala: 'Que Dieu les bénisse, les comble de bonheur et les réunisse.',
@@ -1295,6 +1320,11 @@ const TRANSLATIONS = {
     closing_to: 'À',
     closing_easel_header: 'Mariage de',
     open_maps: 'Ouvrir dans Google Maps',
+    weather_title: 'Météo prévue pour le Jour J',
+    weather_location: 'Teboulba, Tunisie',
+    weather_humidity: 'Humidité',
+    weather_wind: 'Vent',
+    weather_season_avg: 'Météo estivale idéale ☀️',
   }
 };
 
@@ -1767,4 +1797,170 @@ window.closeRsvpList = function() {
   const overlay = document.getElementById('rsvp-list-overlay');
   if (overlay) overlay.style.display = 'none';
 };
+
+/* ────────────────────────────────────────────────
+   WEATHER FORECAST WIDGET — Open-Meteo (Dynamic)
+   Reads lat/lon from first event in cfg.ev, date from cfg.wd.
+   Falls back to Teboulba defaults if no config available.
+   ──────────────────────────────────────────────── */
+
+/**
+ * Extracts weather-relevant params from config and updates globals.
+ * Called every time a config is applied to DOM.
+ */
+function extractWeatherParamsFromConfig(cfg) {
+  if (!cfg) return;
+
+  // ── Date: from cfg.wd (format: "YYYY-MM-DDTHH:mm:ss") ──
+  if (cfg.wd) {
+    _weatherDate = cfg.wd.split('T')[0]; // keep only YYYY-MM-DD
+  }
+
+  // ── Coordinates: from first active event with valid lat/lng ──
+  if (cfg.ev && cfg.ev.length) {
+    const firstWithCoords = cfg.ev.find(e => e.la && e.lo && parseFloat(e.la) && parseFloat(e.lo));
+    if (firstWithCoords) {
+      _weatherLat = parseFloat(firstWithCoords.la);
+      _weatherLon = parseFloat(firstWithCoords.lo);
+      _weatherLocation = firstWithCoords.l || null;
+    }
+  }
+
+  // ── Update location label in the weather card ──
+  if (_weatherLocation) {
+    document.querySelectorAll('[data-tr="weather_location"]').forEach(el => {
+      el.textContent = _weatherLocation;
+    });
+  }
+}
+
+/**
+ * Shared WMO code → description/icon mapper
+ */
+function _weatherCodeToDesc(code) {
+  if (code === 0)                  return { ar: 'صافي ومشمس',    fr: 'Ensoleillé',               icon: '☀️' };
+  if (code >= 1  && code <= 3)     return { ar: 'غائم جزئياً',   fr: 'Partiellement nuageux',     icon: '⛅' };
+  if (code >= 45 && code <= 48)    return { ar: 'ضباب كثيف',     fr: 'Brouillard',                icon: '🌫️' };
+  if (code >= 51 && code <= 67)    return { ar: 'أمطار خفيفة',   fr: 'Pluie légère',              icon: '🌧️' };
+  if (code >= 71 && code <= 86)    return { ar: 'تساقط ثلوج',    fr: 'Neige',                     icon: '❄️' };
+  if (code >= 95)                  return { ar: 'عواصف رعدية',   fr: 'Orageux',                   icon: '⛈️' };
+  return                                   { ar: 'غائم',          fr: 'Nuageux',                   icon: '☁️' };
+}
+
+function _applyWeatherToDOM(temp, humidity, wind, code) {
+  const isFr = document.documentElement.lang === 'fr';
+  const { ar, fr, icon } = _weatherCodeToDesc(code);
+
+  const tempVal    = document.getElementById('weather-temp-val');
+  const descText   = document.getElementById('weather-desc-text');
+  const humidityEl = document.getElementById('weather-humidity-val');
+  const windEl     = document.getElementById('weather-wind-val');
+  const iconGlow   = document.querySelector('.weather-icon-glow');
+  const card       = document.querySelector('.weather-glass-card');
+
+  if (tempVal)    tempVal.textContent    = `${temp}°C`;
+  if (descText)   descText.textContent   = isFr ? `${fr} ${icon}` : `${ar} ${icon}`;
+  if (humidityEl) humidityEl.textContent = `${humidity}%`;
+  if (windEl)     windEl.textContent     = `${wind} km/h`;
+  if (iconGlow)   iconGlow.textContent   = icon;
+  if (card)       card.classList.remove('weather-skeleton');
+}
+
+function loadWeatherForecast() {
+  const lat  = _weatherLat;
+  const lon  = _weatherLon;
+  const isFr = document.documentElement.lang === 'fr';
+
+  // Determine if we should use daily forecast (future) or current conditions
+  const today    = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const wDate    = _weatherDate || today;
+  const isFuture = wDate > today;
+
+  let url;
+  if (isFuture) {
+    // Forecast: ask for the specific wedding date daily data
+    url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+        + `&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,windspeed_10m_max,precipitation_probability_max`
+        + `&start_date=${wDate}&end_date=${wDate}&timezone=auto`;
+  } else {
+    // Past date or today: use current conditions
+    url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+        + `&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`;
+  }
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (isFuture) {
+        // Daily forecast response
+        if (!data || !data.daily) throw new Error('No daily data');
+        const d = data.daily;
+        const tempMax  = Math.round(d.temperature_2m_max[0]);
+        const tempMin  = Math.round(d.temperature_2m_min[0]);
+        const tempAvg  = Math.round((tempMax + tempMin) / 2);
+        const code     = d.weathercode[0];
+        const wind     = Math.round(d.windspeed_10m_max[0]);
+        const precProb = d.precipitation_probability_max ? Math.round(d.precipitation_probability_max[0]) : null;
+
+        // Show range for daily forecast
+        const tempVal = document.getElementById('weather-temp-val');
+        if (tempVal) tempVal.textContent = `${tempMin}–${tempMax}°C`;
+
+        // Humidity not available in daily, show rain probability instead
+        const humidityEl = document.getElementById('weather-humidity-val');
+        if (humidityEl && precProb !== null) humidityEl.textContent = `${precProb}%`;
+
+        const windEl = document.getElementById('weather-wind-val');
+        if (windEl) windEl.textContent = `${wind} km/h`;
+
+        const { ar, fr, icon } = _weatherCodeToDesc(code);
+        const descText  = document.getElementById('weather-desc-text');
+        if (descText)   descText.textContent = isFr ? `${fr} ${icon}` : `${ar} ${icon}`;
+        const iconGlow  = document.querySelector('.weather-icon-glow');
+        if (iconGlow)   iconGlow.textContent = icon;
+        const card = document.querySelector('.weather-glass-card');
+        if (card) card.classList.remove('weather-skeleton');
+
+        // Update humidity label to show "Pluie" instead of humidity for daily
+        document.querySelectorAll('[data-tr="weather_humidity"]').forEach(el => {
+          el.textContent = isFr ? 'Risque pluie' : 'احتمال مطر';
+        });
+
+      } else {
+        // Current conditions response
+        if (!data || !data.current) throw new Error('No current data');
+        const c = data.current;
+        _applyWeatherToDOM(
+          Math.round(c.temperature_2m),
+          Math.round(c.relative_humidity_2m),
+          Math.round(c.wind_speed_10m),
+          c.weather_code
+        );
+      }
+    })
+    .catch(err => {
+      console.warn('[InvitApp] Weather API failed, using seasonal fallback:', err);
+      // Seasonal fallback based on month of wedding date
+      const month = _weatherDate ? parseInt(_weatherDate.split('-')[1]) : new Date().getMonth() + 1;
+      const isSummer = month >= 5 && month <= 9;
+      const fallbackTemp = isSummer ? '31°C' : '18°C';
+      const fallbackDesc = isSummer
+        ? (isFr ? 'Estival et ensoleillé ☀️' : 'صيفي مشمس وجميل ☀️')
+        : (isFr ? 'Doux et agréable 🌤️' : 'معتدل وجميل 🌤️');
+
+      const tempVal    = document.getElementById('weather-temp-val');
+      const descText   = document.getElementById('weather-desc-text');
+      const humidityEl = document.getElementById('weather-humidity-val');
+      const windEl     = document.getElementById('weather-wind-val');
+      const iconGlow   = document.querySelector('.weather-icon-glow');
+      const card       = document.querySelector('.weather-glass-card');
+
+      if (tempVal)    tempVal.textContent    = fallbackTemp;
+      if (descText)   descText.textContent   = fallbackDesc;
+      if (humidityEl) humidityEl.textContent = isSummer ? '52%' : '65%';
+      if (windEl)     windEl.textContent     = isSummer ? '14 km/h' : '18 km/h';
+      if (iconGlow)   iconGlow.textContent   = isSummer ? '☀️' : '🌤️';
+      if (card)       card.classList.remove('weather-skeleton');
+    });
+}
 
