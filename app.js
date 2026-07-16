@@ -1903,7 +1903,8 @@ function loadWeatherForecast() {
         const precProb = d.precipitation_probability_max ? Math.round(d.precipitation_probability_max[0]) : null;
 
         // Show range for daily forecast — format for RTL readability
-        const tempVal = document.getElementById('weather-temp-val');\n        if (tempVal) {
+        const tempVal = document.getElementById('weather-temp-val');
+        if (tempVal) {
           const maxLabel = isFr ? 'max' : 'أقصى';
           const minLabel = isFr ? 'min' : 'أدنى';
           // Two clearly labeled temperature values, works in both RTL and LTR
