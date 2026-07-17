@@ -539,10 +539,30 @@
 
       <!-- Custom Marine Botanicals (Bord de Mer) -->
       <svg class="envelope-botanicals" viewBox="0 0 200 250" style="display:none; position:absolute; bottom:135px; width:200px; height:250px; pointer-events:none; z-index:1;">
-        <!-- Dried Palm Spear / Fan Leaf (Left-Center, behind other elements) -->
-        <g opacity="0.88">
-          <path d="M 100 200 Q 75 130, 62 80" stroke="#bfaa8f" stroke-width="2.5" fill="none" />
-          <path d="M 62 80 L 32 65 L 56 78 L 40 50 L 60 70 L 52 35 L 66 65 L 68 25 L 75 62 L 85 28 L 84 64 L 102 38 L 92 70 C 95 72, 98 75, 100 80 Z" fill="#d2c4aa" stroke="#bfaa8f" stroke-width="0.5" />
+        <!-- Dried Pleated Palm Fan Leaf (Left-Center, behind other elements) -->
+        <g class="dried-palm-spear" opacity="0.9" filter="drop-shadow(2px 3px 5px rgba(0,0,0,0.2))">
+          <!-- Stem -->
+          <path d="M 100 200 Q 80 140, 72 110" stroke="#b5a287" stroke-width="3" fill="none" />
+          <!-- Radially pleated segments (alternating light and shadow) -->
+          <!-- Base point: 72, 110 -->
+          <path d="M 72 110 L 35 75 L 42 66 Z" fill="#cfbf9e" />
+          <path d="M 72 110 L 42 66 L 50 56 Z" fill="#e5d7b8" />
+          <path d="M 72 110 L 50 56 L 60 48 Z" fill="#cfbf9e" />
+          <path d="M 72 110 L 60 48 L 72 44 Z" fill="#e5d7b8" />
+          <path d="M 72 110 L 72 44 L 84 46 Z" fill="#c2b192" />
+          <path d="M 72 110 L 84 46 L 96 52 Z" fill="#e5d7b8" />
+          <path d="M 72 110 L 96 52 L 108 62 Z" fill="#cfbf9e" />
+          <path d="M 72 110 L 108 62 L 118 75 Z" fill="#b0a083" />
+
+          <!-- Segment fold lines for extra detail -->
+          <line x1="72" y1="110" x2="35" y2="75" stroke="#b5a287" stroke-width="0.8" opacity="0.6" />
+          <line x1="72" y1="110" x2="42" y2="66" stroke="#ffffff" stroke-width="0.5" opacity="0.5" />
+          <line x1="72" y1="110" x2="50" y2="56" stroke="#b5a287" stroke-width="0.8" opacity="0.6" />
+          <line x1="72" y1="110" x2="60" y2="48" stroke="#ffffff" stroke-width="0.5" opacity="0.5" />
+          <line x1="72" y1="110" x2="72" y2="44" stroke="#b5a287" stroke-width="0.8" opacity="0.6" />
+          <line x1="72" y1="110" x2="84" y2="46" stroke="#ffffff" stroke-width="0.5" opacity="0.5" />
+          <line x1="72" y1="110" x2="96" y2="52" stroke="#b5a287" stroke-width="0.8" opacity="0.6" />
+          <line x1="72" y1="110" x2="108" y2="62" stroke="#ffffff" stroke-width="0.5" opacity="0.5" />
         </g>
         <!-- Bunny tail grass (right side) -->
         <path d="M 100 200 Q 120 130, 135 70" stroke="#cbbca0" stroke-width="2" fill="none" />
