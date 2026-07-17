@@ -1757,6 +1757,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   box-shadow:
     inset -6px 0 15px rgba(0,0,0,0.22),
     inset 0 0 40px rgba(0,0,0,0.05) !important;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.35) !important;
 }
 
 .pattern-minimalist-active .right-panel {
@@ -1794,6 +1795,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
     -6px 0 16px rgba(0,0,0,0.28),
     inset 6px 0 15px rgba(0,0,0,0.22),
     inset 0 0 40px rgba(0,0,0,0.05) !important;
+  border-left: 1.5px solid rgba(0, 0, 0, 0.42) !important;
 }
 
 .marine-decor {
@@ -2852,6 +2854,24 @@ body.night-mode .closing-easel-amp {
 }
 body.night-mode .closing-easel-frame {
   border-color: rgba(201, 168, 76, 0.35);
+}
+
+/* Custom background adjustments for Option 4 (seaside beach ceremony entrance) */
+.hero-bg-parallax.bg-bridal-entrance {
+  background-position: center 60% !important; /* Shift down to reveal walkway and side chairs */
+  animation: kenBurnsGentle 25s ease-in-out infinite alternate !important; /* Gentle pan so sides aren't cropped */
+}
+
+@keyframes kenBurnsGentle {
+  0%   { transform: scale(1.02) translate(0, 0); }
+  50%  { transform: scale(1.08) translate(-1%, -0.6%); }
+  100% { transform: scale(1.02) translate(0, 0); }
+}
+
+/* Enlarge groom & bride names specifically for the Arabic version of open content */
+body.lang-ar .animated-groom,
+body.lang-ar .animated-bride {
+  font-size: clamp(1.4rem, 6.8vw, 2.6rem);
 }
 
 

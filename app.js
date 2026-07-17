@@ -1156,6 +1156,11 @@ function applyEnvelopeDesign(cfg) {
   const heroBg = document.querySelector('.hero-bg-parallax');
   if (heroBg) {
     heroBg.style.backgroundImage = `url('assets/${hallPhoto}.png')`;
+    if (hallPhoto === 'hall_bridal_entrance') {
+      heroBg.classList.add('bg-bridal-entrance');
+    } else {
+      heroBg.classList.remove('bg-bridal-entrance');
+    }
   }
 
   // ── Closing Photo (cp): which hall image shows in closing section ──
