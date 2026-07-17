@@ -1860,20 +1860,22 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
       transparent 2.5px, transparent 3.5px,
       rgba(0, 0, 0, 0.02) 3.5px, rgba(0, 0, 0, 0.02) 4.5px
     ),
-    /* Layer 2: Ribbon Satin Sheen Gradient */
+    /* Layer 2: 3D Cylindrical Satin lighting with edge roll-off shadows */
     linear-gradient(
       to bottom,
-      #b89f7b 0%,
-      #cfbf9b 18%,
-      #fffcf2 42%,
-      #fffcf2 58%,
-      #cfbf9b 82%,
-      #9c8b6a 100%
+      #8a7050 0%,
+      #b89f7b 8%,
+      #cfbf9b 22%,
+      #fffef8 45%,
+      #fffef8 55%,
+      #cfbf9b 78%,
+      #a39272 92%,
+      #7a6646 100%
     );
   box-shadow:
-    0 6px 14px rgba(0, 0, 0, 0.25),
-    inset 0 1px 1px rgba(255, 255, 255, 0.5),
-    inset 0 -1.5px 2px rgba(0, 0, 0, 0.18);
+    0 8px 18px rgba(0, 0, 0, 0.28),
+    0 -2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
   border-top: 1.5px solid rgba(255, 255, 255, 0.45);
   border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
 }
