@@ -1517,6 +1517,8 @@ async function loadGuestDropdown() {
         hasPhotosGeneral: (cfg.features?.photoStackPhotos?.length || 0) > 0,
         subGuests,          // [{id, name, ...}]
         guestPhotos,        // {guestId: [...photos]}
+        groomAr,
+        brideAr,
       });
     });
 
@@ -1584,19 +1586,41 @@ function onWeddingPhotoSelect(weddingKey) {
     }
   });
 
-  rows
-    .sort((a, b) => a.displayName.localeCompare(b.displayName))
-    .forEach(({ slug, guestId, displayName, hasPhotos }) => {
-      const opt = document.createElement('option');
-      opt.value = slug;
-      if (guestId) opt.dataset.guestId = guestId;  // tag with sub-guest ID
-      opt.textContent = `${hasPhotos ? '📸' : '👤'} ${displayName}`;
-      guestSel.appendChild(opt);
-    });
+  // Sort guest rows alphabetically
+  rows.sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+  // Prepend Groom and Bride at the top
+  const firstInv = invitations[0];
+  if (firstInv) {
+    const groomName = firstInv.groomAr || 'العريس';
+    const brideName = firstInv.brideAr || 'العروس';
+    const groomHasPhotos = Array.isArray(firstInv.guestPhotos?.['groom']) && firstInv.guestPhotos['groom'].length > 0;
+    const brideHasPhotos = Array.isArray(firstInv.guestPhotos?.['bride']) && firstInv.guestPhotos['bride'].length > 0;
+
+    rows.unshift(
+      {
+        slug: firstInv.slug,
+        guestId: 'groom',
+        displayName: `🤵 العريس (${groomName})`,
+        hasPhotos: groomHasPhotos,
+      },
+      {
+        slug: firstInv.slug,
+        guestId: 'bride',
+        displayName: `👰 العروس (${brideName})`,
+        hasPhotos: brideHasPhotos,
+      }
+    );
+  }
+
+  rows.forEach(({ slug, guestId, displayName, hasPhotos }) => {
+    const opt = document.createElement('option');
+    opt.value = slug;
+    if (guestId) opt.dataset.guestId = guestId;  // tag with sub-guest ID (includes 'groom' or 'bride')
+    opt.textContent = `${hasPhotos ? '📸' : '👤'} ${displayName}`;
+    guestSel.appendChild(opt);
+  });
 }
-
-
-
 async function onGuestPhotoSelect(slug) {
   _selectedGuestSlug = slug;
   const banner     = document.getElementById('guestPhotoBanner');

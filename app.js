@@ -2012,9 +2012,10 @@ function initPhotoStack(cfg) {
     return;
   }
 
-  // 2. Determine which photos to show based on ?gid= in URL
+  // 2. Determine which photos to show based on ?gid= or ?view= in URL
   const params   = new URLSearchParams(window.location.search);
   const gid      = params.get('gid') || params.get('guest') || null;
+  const view     = params.get('view') || null;
 
   let rawPhotos = null;
 
@@ -2025,8 +2026,19 @@ function initPhotoStack(cfg) {
       rawPhotos = perGuest[gid];
     }
     // else: no photos assigned to this guest → section stays hidden
+  } else if (view === 'groom' || view === 'bride') {
+    // Groom/Bride view: look up guestPhotos['groom'] or guestPhotos['bride']
+    const perGuest = cfg.features.guestPhotos;
+    if (perGuest && Array.isArray(perGuest[view]) && perGuest[view].length > 0) {
+      rawPhotos = perGuest[view];
+    } else {
+      // Fallback: if no custom couple photos are configured, show the general wedding photos
+      if (Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0) {
+        rawPhotos = cfg.features.photoStackPhotos;
+      }
+    }
   } else {
-    // General link (no gid): use global photoStackPhotos
+    // General link (no gid, no view): use global photoStackPhotos
     if (Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0) {
       rawPhotos = cfg.features.photoStackPhotos;
     }
