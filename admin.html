@@ -1467,7 +1467,8 @@ function applyCrop() {
 // ══════════════════════════════════════════════
 //  PER-GUEST PHOTO MANAGEMENT
 // ══════════════════════════════════════════════
-let _selectedGuestSlug = null;
+let _selectedGuestSlug = null;   // parent invitation slug
+let _selectedGuestId   = null;   // sub-guest ID from guests[] array (null = general link)
 
 // grouped wedding data: Map< weddingKey → [{slug, guestName, hasPhotos, subGuests[]}] >
 window._weddingsMap = new Map();
@@ -1506,13 +1507,16 @@ async function loadGuestDropdown() {
       }
 
       // subGuests = the guests[] array stored by guests.html
-      const subGuests = Array.isArray(d.guests) ? d.guests : [];
+      const subGuests  = Array.isArray(d.guests) ? d.guests : [];
+      const guestPhotos = cfg.features?.guestPhotos || {};
 
       window._weddingsMap.get(weddingKey).push({
         slug:      doc.id,
         guestName: d.guestName || '',
-        hasPhotos: (cfg.features?.photoStackPhotos?.length || 0) > 0,
-        subGuests,                        // [{id, name, type, ...}]
+        // hasPhotos for general link
+        hasPhotosGeneral: (cfg.features?.photoStackPhotos?.length || 0) > 0,
+        subGuests,          // [{id, name, ...}]
+        guestPhotos,        // {guestId: [...photos]}
       });
     });
 
@@ -1544,6 +1548,7 @@ function onWeddingPhotoSelect(weddingKey) {
   const guestSel = document.getElementById('guestPhotoSelect');
   for (let i = 0; i < 3; i++) clearPhotoSlot(i);
   _selectedGuestSlug = null;
+  _selectedGuestId   = null;
   const banner = document.getElementById('guestPhotoBanner');
   if (banner) banner.style.display = 'none';
 
@@ -1555,36 +1560,36 @@ function onWeddingPhotoSelect(weddingKey) {
   const invitations = window._weddingsMap.get(weddingKey);
   guestSel.innerHTML = '<option value="">-- اختر المدعو --</option>';
 
-  // Flatten: for each invitation, list sub-guests individually
-  // or the invitation-level name if no sub-guests exist.
   const rows = [];
 
-  invitations.forEach(({ slug, guestName, hasPhotos, subGuests }) => {
+  invitations.forEach(({ slug, guestName, hasPhotosGeneral, subGuests, guestPhotos }) => {
     if (subGuests && subGuests.length > 0) {
-      // Expand each sub-guest separately
       subGuests.forEach(sg => {
+        // Check if THIS specific guest already has photos
+        const sgHasPhotos = Array.isArray(guestPhotos[sg.id]) && guestPhotos[sg.id].length > 0;
         rows.push({
           slug,
+          guestId:     sg.id,
           displayName: sg.name,
-          hasPhotos,
-          isSub: true,
+          hasPhotos:   sgHasPhotos,
+          isSub:       true,
         });
       });
     } else {
-      // No sub-guests: show the invitation-level name
-      // Replace the default 'عام' with a readable label
+      // No sub-guests: show general invitation entry
       const label = guestName && guestName !== 'عام'
         ? guestName
         : '📋 الدعوة العامة للزفاف';
-      rows.push({ slug, displayName: label, hasPhotos, isSub: false });
+      rows.push({ slug, guestId: null, displayName: label, hasPhotos: hasPhotosGeneral, isSub: false });
     }
   });
 
   rows
     .sort((a, b) => a.displayName.localeCompare(b.displayName))
-    .forEach(({ slug, displayName, hasPhotos }) => {
+    .forEach(({ slug, guestId, displayName, hasPhotos }) => {
       const opt = document.createElement('option');
       opt.value = slug;
+      if (guestId) opt.dataset.guestId = guestId;  // tag with sub-guest ID
       opt.textContent = `${hasPhotos ? '📸' : '👤'} ${displayName}`;
       guestSel.appendChild(opt);
     });
@@ -1599,13 +1604,15 @@ async function onGuestPhotoSelect(slug) {
   for (let i = 0; i < 3; i++) clearPhotoSlot(i);
 
   if (!slug) {
+    _selectedGuestId = null;
     if (banner) banner.style.display = 'none';
     return;
   }
 
-  // Get the display name from the selected option (not from Firestore's guestName field)
-  const guestSel = document.getElementById('guestPhotoSelect');
+  // Read guestId and display name from the selected option
+  const guestSel   = document.getElementById('guestPhotoSelect');
   const selectedOpt = guestSel ? guestSel.options[guestSel.selectedIndex] : null;
+  _selectedGuestId  = selectedOpt?.dataset?.guestId || null;
   const displayName = selectedOpt
     ? selectedOpt.textContent.replace(/^[📸👤]\s*/, '').trim()
     : slug;
@@ -1624,8 +1631,20 @@ async function onGuestPhotoSelect(slug) {
     const ps  = cfg.features || {};
     window._photoStackPhotos = [null, null, null];
 
-    if (Array.isArray(ps.photoStackPhotos) && ps.photoStackPhotos.length > 0) {
-      ps.photoStackPhotos.forEach((p, i) => {
+    // Load photos: per-guest if sub-guest, global if general link
+    let storedPhotos = null;
+    if (_selectedGuestId) {
+      // Sub-guest: load from config.features.guestPhotos[guestId]
+      storedPhotos = Array.isArray(ps.guestPhotos?.[_selectedGuestId])
+        ? ps.guestPhotos[_selectedGuestId]
+        : [];
+    } else {
+      // General link: load from config.features.photoStackPhotos
+      storedPhotos = Array.isArray(ps.photoStackPhotos) ? ps.photoStackPhotos : [];
+    }
+
+    if (storedPhotos.length > 0) {
+      storedPhotos.forEach((p, i) => {
         if (i >= 3) return;
         const url     = typeof p === 'string' ? p : (p?.url || '');
         const caption = typeof p === 'string' ? '' : (p?.caption || '');
@@ -1638,12 +1657,11 @@ async function onGuestPhotoSelect(slug) {
           if (db) db.style.display = 'inline-block';
         }
       });
-      const cnt = ps.photoStackPhotos.length;
       if (bannerText) bannerText.textContent =
-        `✅ ${displayName} — ${cnt} صورة محفوظة. عدّل كما تشاء ثم اضغط حفظ.`;
+        `✅ ${displayName} — ${storedPhotos.length} صورة محفوظة. عدّل كما تشاء ثم اضغط حفظ.`;
     } else {
       if (bannerText) bannerText.textContent =
-        `📭 ${displayName} — لا توجد صور بعد. أضف صورًا ثم اضغط حفظ.`;
+        `📭 ${displayName} — لا توجد صور مخصصة له بعد. أضف صورًا ثم اضغط حفظ.`;
     }
   } catch (err) {
     console.error('onGuestPhotoSelect:', err);
@@ -1661,7 +1679,7 @@ async function savePhotosForGuest() {
   if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...'; }
 
   try {
-    // 1. Cloudinary upload for new base64 photos
+    // 1. Cloudinary upload for any new base64 photos
     const cloudName    = (document.getElementById('cloudinaryCloudName')    || {}).value?.trim() || '';
     const uploadPreset = (document.getElementById('cloudinaryUploadPreset') || {}).value?.trim() || '';
     if (cloudName && uploadPreset) {
@@ -1684,7 +1702,7 @@ async function savePhotosForGuest() {
     // 2. Build photos array
     const photos = getPhotoStackConfigPhotos();
 
-    // 3. Read current invitation config and merge
+    // 3. Check the invitation doc exists
     initFirebase();
     const docRef = _db.collection('invitations').doc(_selectedGuestSlug);
     const snap   = await docRef.get();
@@ -1693,36 +1711,51 @@ async function savePhotosForGuest() {
       return;
     }
 
-    const currentCfg      = snap.data().config || {};
-    const currentFeatures = currentCfg.features || {};
     const psActEl = document.getElementById('photoStackActive');
+    const isActive = psActEl ? psActEl.value === 'true' : true;
+    const theme    = window._photoStackTheme || 'floral';
 
-    await docRef.update({
-      'config.features': {
-        ...currentFeatures,
-        photoStack:       psActEl ? psActEl.value === 'true' : true,
-        photoStackTheme:  window._photoStackTheme || 'floral',
-        photoStackPhotos: photos,
-      },
-      updated: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    if (_selectedGuestId) {
+      // ── Sub-guest: write ONLY this guest's photos ──
+      // Dot-notation update touches only this key, preserving other guests
+      await docRef.update({
+        [`config.features.guestPhotos.${_selectedGuestId}`]: photos,
+        'config.features.photoStack':      isActive,
+        'config.features.photoStackTheme': theme,
+        updated: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      // ── General link: write global photoStackPhotos ──
+      await docRef.update({
+        'config.features.photoStackPhotos': photos,
+        'config.features.photoStack':       isActive,
+        'config.features.photoStackTheme':  theme,
+        updated: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
 
-    const guestName = snap.data().guestName || _selectedGuestSlug;
-    showToast(`✅ تم حفظ ${photos.length} صورة لـ ${guestName}`);
+    // Read display name from current dropdown selection
+    const guestSel   = document.getElementById('guestPhotoSelect');
+    const selOpt     = guestSel ? guestSel.options[guestSel.selectedIndex] : null;
+    const displayName = selOpt
+      ? selOpt.textContent.replace(/^[📸👤]\s*/, '').trim()
+      : (_selectedGuestId || _selectedGuestSlug);
 
-    // Refresh banner
+    showToast(`✅ تم حفظ ${photos.length} صورة لـ ${displayName}`);
+
     const bannerText = document.getElementById('guestPhotoBannerText');
     if (bannerText) bannerText.textContent =
-      `✅ ${guestName} — ${photos.length} صورة محفوظة بنجاح`;
+      `✅ ${displayName} — ${photos.length} صورة محفوظة بنجاح`;
 
     // Refresh both dropdowns and restore selections
-    const savedSlug = _selectedGuestSlug;
+    const savedSlug    = _selectedGuestSlug;
+    const savedGuestId = _selectedGuestId;
     await loadGuestDropdown();
 
     // Find which wedding this guest belongs to and re-select it
     let restoredWedding = '';
-    for (const [wKey, guests] of window._weddingsMap.entries()) {
-      if (guests.some(g => g.slug === savedSlug)) {
+    for (const [wKey, invs] of window._weddingsMap.entries()) {
+      if (invs.some(inv => inv.slug === savedSlug)) {
         restoredWedding = wKey;
         break;
       }
@@ -1730,8 +1763,17 @@ async function savePhotosForGuest() {
     if (restoredWedding) {
       document.getElementById('weddingPhotoSelect').value = restoredWedding;
       onWeddingPhotoSelect(restoredWedding);
-      document.getElementById('guestPhotoSelect').value = savedSlug;
+
+      // Restore the specific option (match by slug + guestId)
+      const guestSel2 = document.getElementById('guestPhotoSelect');
+      for (const opt of guestSel2.options) {
+        if (opt.value === savedSlug && (opt.dataset.guestId || null) === savedGuestId) {
+          opt.selected = true;
+          break;
+        }
+      }
       _selectedGuestSlug = savedSlug;
+      _selectedGuestId   = savedGuestId;
     }
 
   } catch (err) {

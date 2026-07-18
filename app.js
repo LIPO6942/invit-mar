@@ -2000,30 +2000,51 @@ function loadWeatherForecast() {
 function initPhotoStack(cfg) {
   const section = document.getElementById('photo-stack-section');
   const wrapper = document.getElementById('photo-stack-cards-wrapper');
-  const widget = document.getElementById('photo-stack-widget');
-  
+  const widget  = document.getElementById('photo-stack-widget');
+
   if (!section || !wrapper || !widget) return;
-  
-  // 1. Check activation & configuration
-  const hasPhotos = cfg.features && Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0;
+
+  // 1. Must be globally enabled
   const isEnabled = cfg.features && cfg.features.photoStack === true;
-  
-  if (!isEnabled || !hasPhotos) {
+  if (!isEnabled) {
     section.style.display = 'none';
     wrapper.innerHTML = '';
     return;
   }
-  
-  // 2. Filter valid photos (strings or objects)
-  const photos = cfg.features.photoStackPhotos.map(p => {
-    if (typeof p === 'string') {
-      return { url: p.trim(), caption: '' };
-    } else if (p && typeof p === 'object' && p.url) {
-      return { url: p.url.trim(), caption: p.caption || '' };
+
+  // 2. Determine which photos to show based on ?gid= in URL
+  const params   = new URLSearchParams(window.location.search);
+  const gid      = params.get('gid') || params.get('guest') || null;
+
+  let rawPhotos = null;
+
+  if (gid) {
+    // Sub-guest link: ONLY show photos specifically assigned to this guest
+    const perGuest = cfg.features.guestPhotos;
+    if (perGuest && Array.isArray(perGuest[gid]) && perGuest[gid].length > 0) {
+      rawPhotos = perGuest[gid];
     }
+    // else: no photos assigned to this guest → section stays hidden
+  } else {
+    // General link (no gid): use global photoStackPhotos
+    if (Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0) {
+      rawPhotos = cfg.features.photoStackPhotos;
+    }
+  }
+
+  if (!rawPhotos || rawPhotos.length === 0) {
+    section.style.display = 'none';
+    wrapper.innerHTML = '';
+    return;
+  }
+
+  // 3. Normalise photo objects
+  const photos = rawPhotos.map(p => {
+    if (typeof p === 'string')  return { url: p.trim(), caption: '' };
+    if (p && typeof p === 'object' && p.url) return { url: p.url.trim(), caption: p.caption || '' };
     return null;
   }).filter(p => p && p.url !== '');
-  
+
   if (photos.length === 0) {
     section.style.display = 'none';
     wrapper.innerHTML = '';
