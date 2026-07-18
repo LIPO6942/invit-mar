@@ -992,6 +992,7 @@ function downloadQrCode() {
 // ── Save / Load ──
 function buildConfig() {
   // Use COMPACT short keys to minimize URL length
+  const psActEl = document.getElementById('photoStackActive');
   return {
     v:  1,                   // version
     th: window._selectedTheme || 'gold', // theme
@@ -1022,6 +1023,12 @@ function buildConfig() {
       lo: e.lng ? parseFloat(e.lng) : null,
       e:  e.emoji,
     })),
+    // ── Photo Stack ──
+    features: {
+      photoStack:       psActEl ? psActEl.value === 'true' : false,
+      photoStackTheme:  window._photoStackTheme || 'floral',
+      photoStackPhotos: getPhotoStackConfigPhotos()
+    }
   };
 }
 
@@ -1031,11 +1038,33 @@ function val(id) {
 }
 
 async function saveAll() {
+  const label = document.getElementById('lastSavedLabel');
+
+  // ── Cloudinary upload step (only for new base64 photos) ──
+  const cloudName    = (document.getElementById('cloudinaryCloudName')    || {}).value || '';
+  const uploadPreset = (document.getElementById('cloudinaryUploadPreset') || {}).value || '';
+  if (cloudName.trim() && uploadPreset.trim()) {
+    for (let i = 0; i < 3; i++) {
+      const url = window._photoStackPhotos[i];
+      if (url && url.startsWith('data:image/')) {
+        try {
+          if (label) label.textContent = `⏳ جاري رفع الصورة ${i + 1} إلى Cloudinary...`;
+          const secureUrl = await uploadToCloudinary(url, cloudName.trim(), uploadPreset.trim());
+          window._photoStackPhotos[i] = secureUrl;
+          setSlotPreview(i, secureUrl);
+        } catch (err) {
+          console.error('Cloudinary upload error slot', i, err);
+          showToast(`⚠️ فشل رفع الصورة ${i + 1} – تم الاحتفاظ بـ Base64`);
+        }
+      }
+    }
+  }
+
+  // ── Build config (includes updated Cloudinary URLs) and save ──
   const cfg = buildConfig();
   localStorage.setItem('weddingAdminConfig', JSON.stringify(cfg));
   localStorage.setItem('weddingAdminProdUrl', val('prodUrlInput'));
-  const label = document.getElementById('lastSavedLabel');
-  label.textContent = '⏳ جاري حفظ الإعدادات...';
+  if (label) label.textContent = '⏳ جاري حفظ الإعدادات...';
 
   try {
     initFirebase();
@@ -1386,54 +1415,7 @@ function applyCrop() {
   showToast('✂️ تم قص وتعديل الصورة بنجاح');
 }
 
-// ══════════════════════════════════════════════
-//  PATCH buildConfig to include features block
-// ══════════════════════════════════════════════
-const _origBuildConfig = buildConfig;
-function buildConfig() {
-  const cfg = _origBuildConfig();
-  const psActEl = document.getElementById('photoStackActive');
-  cfg.features = {
-    photoStack:       psActEl ? psActEl.value === 'true' : false,
-    photoStackTheme:  window._photoStackTheme || 'floral',
-    photoStackPhotos: getPhotoStackConfigPhotos()
-  };
-  return cfg;
-}
-
-// ══════════════════════════════════════════════
-//  PATCH saveAll to handle Cloudinary uploads
-// ══════════════════════════════════════════════
-const _origSaveAll = saveAll;
-async function saveAll() {
-  const label = document.getElementById('lastSavedLabel');
-
-  // Read Cloudinary credentials
-  const cloudName    = (document.getElementById('cloudinaryCloudName')    || {}).value || '';
-  const uploadPreset = (document.getElementById('cloudinaryUploadPreset') || {}).value || '';
-  const useCloudinary = cloudName.trim() !== '' && uploadPreset.trim() !== '';
-
-  // Upload base64 images to Cloudinary if configured
-  if (useCloudinary) {
-    for (let i = 0; i < 3; i++) {
-      const url = window._photoStackPhotos[i];
-      if (url && url.startsWith('data:image/')) {
-        try {
-          if (label) label.textContent = `⏳ جاري رفع الصورة ${i + 1} إلى Cloudinary...`;
-          const secureUrl = await uploadToCloudinary(url, cloudName.trim(), uploadPreset.trim());
-          window._photoStackPhotos[i] = secureUrl;
-          setSlotPreview(i, secureUrl);
-        } catch (err) {
-          console.error('Cloudinary upload error slot', i, err);
-          showToast(`⚠️ فشل رفع الصورة ${i + 1} – تم الاحتفاظ بـ Base64`);
-        }
-      }
-    }
-  }
-
-  // Delegate to original saveAll (which will call buildConfig again → picks up new URLs)
-  return _origSaveAll();
-}
+// (Photo Stack logic integrated directly into buildConfig and saveAll above)
 
 // ── Auto-generate wedding date display text from datetime-local ──
 function autoFillDateDisplay(val) {
