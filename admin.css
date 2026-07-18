@@ -713,7 +713,7 @@ html, body {
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 14px 12px 8px;
+    padding: 14px 12px 140px; /* extra bottom so save-bar & mobile nav don't cover content */
     min-height: 0;
   }
 

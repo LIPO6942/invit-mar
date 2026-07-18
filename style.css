@@ -2923,28 +2923,39 @@ body.lang-ar .animated-bride {
   --grain-opacity: 0;
 }
 
-/* Theme 2: "Vintage" (vintage) */
+/* Theme 2: "Vintage" — Parchemin chaleureux & dorures */
 .photo-stack-theme[data-theme="vintage"] {
-  --card-bg: linear-gradient(135deg, #f4edd8 0%, #e5d7bd 100%);
-  --card-border: 2px solid #5a4531;
-  --card-border-inner: none;
-  --card-inner-offset: 6px;
-  --card-radius: 3px;
-  --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-  
-  --filigree-display: none;
-  --medallion-display: none;
-  
-  --photo-filter: sepia(0.55) contrast(1.05) saturate(1.1) brightness(0.98);
-  --photo-radius: 2px;
-  
-  --caption-font: 'Courier New', Courier, monospace;
-  --caption-color: #5a4531;
-  --caption-size: 0.95rem;
-  --caption-transform: lowercase;
-  --caption-weight: bold;
-  
-  --grain-opacity: 0.08;
+  --card-bg: linear-gradient(160deg, #f8f0dc 0%, #ede0c0 40%, #e2d0a8 100%);
+  --card-border: 2px solid #8b6b3d;
+  --card-border-inner: 1.5px solid rgba(139, 107, 61, 0.45);
+  --card-inner-offset: 10px;
+  --card-radius: 5px;
+  --card-shadow:
+    0 6px 24px rgba(60, 35, 10, 0.28),
+    0 2px 6px rgba(60, 35, 10, 0.15),
+    inset 0 0 30px rgba(180, 140, 80, 0.08);
+
+  --filigree-display: block;
+  --filigree-size: 22px;
+  --filigree-stroke: #8b6b3d;
+  --filigree-fill: #a07840;
+
+  --medallion-display: flex;
+  --medallion-bg: linear-gradient(135deg, #f0e0b0 0%, #c9a050 60%, #8b6b3d 100%);
+  --medallion-border: 1px solid rgba(255,255,255,0.35);
+  --medallion-shadow: 0 2px 6px rgba(60,35,10,0.25);
+  --medallion-color: #3a2208;
+
+  --photo-filter: sepia(0.45) contrast(1.08) saturate(1.05) brightness(0.97);
+  --photo-radius: 3px;
+
+  --caption-font: 'Playfair Display', 'Amiri', 'Georgia', serif;
+  --caption-color: #5c3d10;
+  --caption-size: 1.15rem;
+  --caption-transform: none;
+  --caption-weight: 600;
+
+  --grain-opacity: 0.13;
 }
 
 /* Theme 3: "Émeraude & Or" (royal/emerald) */
