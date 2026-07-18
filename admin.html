@@ -1565,9 +1565,15 @@ function onWeddingPhotoSelect(weddingKey) {
   const rows = [];
 
   invitations.forEach(({ slug, guestName, hasPhotosGeneral, subGuests, guestPhotos }) => {
+    // Always add the general invitation entry for this wedding link
+    const label = guestName && guestName !== 'عام'
+      ? guestName
+      : '📋 الدعوة العامة للزفاف';
+    rows.push({ slug, guestId: null, displayName: label, hasPhotos: hasPhotosGeneral, isSub: false });
+
+    // Then add any personalized sub-guests inside it
     if (subGuests && subGuests.length > 0) {
       subGuests.forEach(sg => {
-        // Check if THIS specific guest already has photos
         const sgHasPhotos = Array.isArray(guestPhotos[sg.id]) && guestPhotos[sg.id].length > 0;
         rows.push({
           slug,
@@ -1577,12 +1583,6 @@ function onWeddingPhotoSelect(weddingKey) {
           isSub:       true,
         });
       });
-    } else {
-      // No sub-guests: show general invitation entry
-      const label = guestName && guestName !== 'عام'
-        ? guestName
-        : '📋 الدعوة العامة للزفاف';
-      rows.push({ slug, guestId: null, displayName: label, hasPhotos: hasPhotosGeneral, isSub: false });
     }
   });
 
