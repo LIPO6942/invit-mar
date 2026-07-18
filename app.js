@@ -2025,22 +2025,30 @@ function initPhotoStack(cfg) {
     if (perGuest && Array.isArray(perGuest[gid]) && perGuest[gid].length > 0) {
       rawPhotos = perGuest[gid];
     }
-    // else: no photos assigned to this guest → section stays hidden
   } else if (view === 'groom' || view === 'bride') {
     // Groom/Bride view: look up guestPhotos['groom'] or guestPhotos['bride']
     const perGuest = cfg.features.guestPhotos;
     if (perGuest && Array.isArray(perGuest[view]) && perGuest[view].length > 0) {
       rawPhotos = perGuest[view];
     } else {
-      // Fallback: if no custom couple photos are configured, show the general wedding photos
-      if (Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0) {
-        rawPhotos = cfg.features.photoStackPhotos;
-      }
+      // Fallback: if no custom couple photos are configured, show the 3 default couple photos
+      rawPhotos = [
+        { url: 'assets/default_couple_1.jpg', caption: '💍 فرحتنا اكتملت' },
+        { url: 'assets/default_couple_2.jpg', caption: '✨ ليلة العمر' },
+        { url: 'assets/default_couple_3.jpg', caption: '❤️ حب أبدي' }
+      ];
     }
   } else {
     // General link (no gid, no view): use global photoStackPhotos
     if (Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0) {
       rawPhotos = cfg.features.photoStackPhotos;
+    } else {
+      // Fallback to default code-based general photo
+      rawPhotos = [
+        { url: 'assets/default_wedding_general.jpg', caption: '💍 فرحتنا اكتملت' },
+        { url: 'assets/default_wedding_general.jpg', caption: '✨ ليلة العمر' },
+        { url: 'assets/default_wedding_general.jpg', caption: '❤️ حب أبدي' }
+      ];
     }
   }
 
@@ -2233,4 +2241,3 @@ function initPhotoStack(cfg) {
   
   updatePositions();
 }
-
