@@ -403,17 +403,32 @@
           اختر مدعواً من القائمة أدناه لتحميل صوره الحالية أو إضافة صور جديدة له. يمكنك تكرار العملية لأي مدعو آخر.
         </div>
 
-        <!-- Guest selector row -->
-        <div style="display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:180px;">
-            <label style="font-size:0.78rem; color:var(--text-muted); margin-bottom:5px; display:block;">👤 اختر المدعو / المدعوة</label>
-            <select id="guestPhotoSelect" onchange="onGuestPhotoSelect(this.value)"
-              style="width:100%; padding:10px; background:rgba(0,0,0,0.3); color:white; border:1px solid var(--border); border-radius:8px; font-size:0.9rem;">
-              <option value="">-- اختر من القائمة --</option>
-            </select>
+        <!-- Step 1: Wedding selector -->
+        <div style="margin-bottom:14px;">
+          <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+            <div style="flex:1; min-width:180px;">
+              <label style="font-size:0.78rem; color:var(--text-muted); margin-bottom:5px; display:block;">
+                💍 الخطوة 1 — اختر حفل الزفاف
+              </label>
+              <select id="weddingPhotoSelect" onchange="onWeddingPhotoSelect(this.value)"
+                style="width:100%; padding:10px; background:rgba(0,0,0,0.3); color:white; border:1px solid var(--border); border-radius:8px; font-size:0.9rem;">
+                <option value="">-- اختر الزفاف --</option>
+              </select>
+            </div>
+            <button onclick="loadGuestDropdown()" title="تحديث القائمة"
+              style="padding:10px 14px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); color:var(--gold); border-radius:8px; cursor:pointer; font-size:1rem; flex-shrink:0; margin-bottom:1px;">🔄</button>
           </div>
-          <button onclick="loadGuestDropdown()" title="تحديث قائمة المدعوين"
-            style="margin-top:22px; padding:10px 14px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); color:var(--gold); border-radius:8px; cursor:pointer; font-size:1rem; flex-shrink:0;">🔄</button>
+        </div>
+
+        <!-- Step 2: Guest selector (populated after wedding is chosen) -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.78rem; color:var(--text-muted); margin-bottom:5px; display:block;">
+            👤 الخطوة 2 — اختر المدعو / المدعوة
+          </label>
+          <select id="guestPhotoSelect" onchange="onGuestPhotoSelect(this.value)"
+            style="width:100%; padding:10px; background:rgba(0,0,0,0.3); color:white; border:1px solid var(--border); border-radius:8px; font-size:0.9rem;">
+            <option value="">-- اختر الزفاف أولاً --</option>
+          </select>
         </div>
 
         <!-- Selected guest info banner -->
@@ -1454,36 +1469,94 @@ function applyCrop() {
 // ══════════════════════════════════════════════
 let _selectedGuestSlug = null;
 
+// grouped wedding data: Map< weddingKey → [{slug, guestName, hasPhotos}] >
+window._weddingsMap = new Map();
+
 async function loadGuestDropdown() {
-  const sel = document.getElementById('guestPhotoSelect');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">⏳ جاري التحميل...</option>';
+  const weddingSel = document.getElementById('weddingPhotoSelect');
+  const guestSel   = document.getElementById('guestPhotoSelect');
+  if (!weddingSel || !guestSel) return;
+
+  weddingSel.innerHTML = '<option value="">⏳ جاري التحميل...</option>';
+  guestSel.innerHTML   = '<option value="">-- اختر الزفاف أولاً --</option>';
+
   try {
     initFirebase();
     const snap = await _db.collection('invitations').get();
-    sel.innerHTML = '<option value="">-- اختر مدعواً --</option>';
+
     if (snap.empty) {
-      sel.innerHTML = '<option value="">لا توجد دعوات محفوظة بعد</option>';
+      weddingSel.innerHTML = '<option value="">لا توجد دعوات محفوظة بعد</option>';
       return;
     }
-    snap.docs
-      .sort((a, b) => (a.data().guestName || a.id).localeCompare(b.data().guestName || b.id))
-      .forEach(doc => {
-        const d    = doc.data();
-        const name = d.guestName || d.config?.ga || doc.id;
-        const hasPhotos = d.config?.features?.photoStackPhotos?.length > 0;
-        const opt  = document.createElement('option');
-        opt.value  = doc.id;
-        opt.textContent = `${hasPhotos ? '📸' : '👤'} ${name}  (${doc.id})`;
-        sel.appendChild(opt);
+
+    // ── Group by wedding (groom + bride) ──
+    window._weddingsMap = new Map();
+    snap.docs.forEach(doc => {
+      const d   = doc.data();
+      const cfg = d.config || {};
+
+      // Wedding key: Arabic groom name + bride name from config
+      const groomAr = cfg.ga  || cfg.gf2 || '';
+      const brideAr = cfg.ba  || cfg.bf2 || '';
+      const weddingKey = groomAr && brideAr
+        ? `${groomAr} 💍 ${brideAr}`
+        : (groomAr || brideAr || doc.id.split('-').slice(0, 2).join(' & '));
+
+      if (!window._weddingsMap.has(weddingKey)) {
+        window._weddingsMap.set(weddingKey, []);
+      }
+      window._weddingsMap.get(weddingKey).push({
+        slug:      doc.id,
+        guestName: d.guestName || '',
+        hasPhotos: (cfg.features?.photoStackPhotos?.length || 0) > 0,
       });
-    showToast(`✅ تم تحميل ${snap.size} دعوة`);
+    });
+
+    // ── Populate wedding dropdown ──
+    weddingSel.innerHTML = '<option value="">-- اختر الزفاف --</option>';
+    [...window._weddingsMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([key, guests]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `💍 ${key}  (${guests.length} دعوة)`;
+        weddingSel.appendChild(opt);
+      });
+
+    showToast(`✅ ${window._weddingsMap.size} زفاف — ${snap.size} دعوة`);
   } catch (err) {
     console.error('loadGuestDropdown:', err);
-    sel.innerHTML = '<option value="">⚠️ فشل تحميل القائمة</option>';
-    showToast('⚠️ تعذّر تحميل قائمة المدعوين');
+    weddingSel.innerHTML = '<option value="">⚠️ فشل التحميل</option>';
+    showToast('⚠️ تعذّر تحميل البيانات');
   }
 }
+
+function onWeddingPhotoSelect(weddingKey) {
+  const guestSel = document.getElementById('guestPhotoSelect');
+  // Clear slots when wedding changes
+  for (let i = 0; i < 3; i++) clearPhotoSlot(i);
+  _selectedGuestSlug = null;
+  const banner = document.getElementById('guestPhotoBanner');
+  if (banner) banner.style.display = 'none';
+
+  if (!weddingKey || !window._weddingsMap.has(weddingKey)) {
+    guestSel.innerHTML = '<option value="">-- اختر الزفاف أولاً --</option>';
+    return;
+  }
+
+  const guests = window._weddingsMap.get(weddingKey);
+  guestSel.innerHTML = '<option value="">-- اختر المدعو --</option>';
+  guests
+    .sort((a, b) => (a.guestName || a.slug).localeCompare(b.guestName || b.slug))
+    .forEach(({ slug, guestName, hasPhotos }) => {
+      const opt = document.createElement('option');
+      opt.value = slug;
+      opt.textContent = `${hasPhotos ? '📸' : '👤'} ${guestName || slug}`;
+      guestSel.appendChild(opt);
+    });
+}
+
+
 
 async function onGuestPhotoSelect(slug) {
   _selectedGuestSlug = slug;
@@ -1601,9 +1674,24 @@ async function savePhotosForGuest() {
     if (bannerText) bannerText.textContent =
       `✅ ${guestName} — ${photos.length} صورة محفوظة بنجاح`;
 
-    // Refresh dropdown to update the 📸 indicator
+    // Refresh both dropdowns and restore selections
+    const savedSlug = _selectedGuestSlug;
     await loadGuestDropdown();
-    document.getElementById('guestPhotoSelect').value = _selectedGuestSlug;
+
+    // Find which wedding this guest belongs to and re-select it
+    let restoredWedding = '';
+    for (const [wKey, guests] of window._weddingsMap.entries()) {
+      if (guests.some(g => g.slug === savedSlug)) {
+        restoredWedding = wKey;
+        break;
+      }
+    }
+    if (restoredWedding) {
+      document.getElementById('weddingPhotoSelect').value = restoredWedding;
+      onWeddingPhotoSelect(restoredWedding);
+      document.getElementById('guestPhotoSelect').value = savedSlug;
+      _selectedGuestSlug = savedSlug;
+    }
 
   } catch (err) {
     console.error('savePhotosForGuest:', err);
