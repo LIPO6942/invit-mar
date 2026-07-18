@@ -87,6 +87,11 @@ function applyConfigToDOM(cfg) {
   if (groomDisplay && brideDisplay) {
     document.title = isFr ? `Mariage de ${groomDisplay} & ${brideDisplay}` : `حفل زفاف ${groomDisplay} و ${brideDisplay}`;
   }
+
+  // Initialize Photo Stack Widget
+  if (typeof initPhotoStack === 'function') {
+    initPhotoStack(cfg);
+  }
 }
 
 function checkRoleView() {
@@ -1301,6 +1306,9 @@ const TRANSLATIONS = {
     weather_humidity: 'الرطوبة',
     weather_wind: 'الرياح',
     weather_season_avg: 'معدل طقس صيفي مثالي ☀️',
+    photo_stack_title: 'ألبوم صورنا',
+    photo_stack_subtitle: 'لحظاتنا السعيدة معاً',
+    photo_stack_next: 'الصورة التالية',
   },
   fr: {
     basmala: 'Que Dieu les bénisse, les comble de bonheur et les réunisse.',
@@ -1335,6 +1343,9 @@ const TRANSLATIONS = {
     weather_humidity: 'Humidité',
     weather_wind: 'Vent',
     weather_season_avg: 'Météo estivale idéale ☀️',
+    photo_stack_title: 'Notre album photo',
+    photo_stack_subtitle: 'Nos moments précieux ensemble',
+    photo_stack_next: 'Photo suivante',
   }
 };
 
@@ -1981,5 +1992,212 @@ function loadWeatherForecast() {
       if (iconGlow)   iconGlow.textContent   = isSummer ? '☀️' : '🌤️';
       if (card)       card.classList.remove('weather-skeleton');
     });
+}
+
+/* ────────────────────────────────────────────────
+   PHOTO STACK WIDGET LOGIC
+   ──────────────────────────────────────────────── */
+function initPhotoStack(cfg) {
+  const section = document.getElementById('photo-stack-section');
+  const wrapper = document.getElementById('photo-stack-cards-wrapper');
+  const widget = document.getElementById('photo-stack-widget');
+  
+  if (!section || !wrapper || !widget) return;
+  
+  // 1. Check activation & configuration
+  const hasPhotos = cfg.features && Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0;
+  const isEnabled = cfg.features && cfg.features.photoStack === true;
+  
+  if (!isEnabled || !hasPhotos) {
+    section.style.display = 'none';
+    wrapper.innerHTML = '';
+    return;
+  }
+  
+  // 2. Filter valid photos (strings or objects)
+  const photos = cfg.features.photoStackPhotos.map(p => {
+    if (typeof p === 'string') {
+      return { url: p.trim(), caption: '' };
+    } else if (p && typeof p === 'object' && p.url) {
+      return { url: p.url.trim(), caption: p.caption || '' };
+    }
+    return null;
+  }).filter(p => p && p.url !== '');
+  
+  if (photos.length === 0) {
+    section.style.display = 'none';
+    wrapper.innerHTML = '';
+    return;
+  }
+  
+  // Show section
+  section.style.display = 'flex';
+  
+  // 3. Set Theme
+  let theme = cfg.features.photoStackTheme || 'floral';
+  if (theme === 'emerald') theme = 'royal';
+  if (theme !== 'floral' && theme !== 'vintage' && theme !== 'royal') {
+    theme = 'floral';
+  }
+  widget.setAttribute('data-theme', theme);
+  
+  // 4. Render cards
+  wrapper.innerHTML = '';
+  const numPhotos = photos.length;
+  let activeIndex = 0;
+  
+  const cardElements = photos.map((photo, index) => {
+    const card = document.createElement('div');
+    card.className = 'photo-card-item';
+    
+    // Frame
+    const frame = document.createElement('div');
+    frame.className = 'card-frame';
+    
+    // Medallion
+    const medallion = document.createElement('div');
+    medallion.className = 'card-medallion';
+    medallion.innerHTML = `
+      <svg class="medallion-icon" viewBox="0 0 64 64">
+        <path d="M12 44 L18 20 L28 32 L32 16 L36 32 L42 20 L48 44 Z" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="12" cy="18" r="2.5" fill="currentColor"/>
+        <circle cx="32" cy="14" r="2.5" fill="currentColor"/>
+        <circle cx="48" cy="18" r="2.5" fill="currentColor"/>
+      </svg>
+    `;
+    frame.appendChild(medallion);
+    
+    // Corner Filigrees
+    const corners = ['tl', 'tr', 'bl', 'br'];
+    corners.forEach(pos => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', `corner-filigree corner-${pos}`);
+      svg.setAttribute('viewBox', '0 0 40 40');
+      svg.innerHTML = `
+        <path d="M 5,5 L 20,5 M 5,5 L 5,20" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <circle cx="10" cy="10" r="2" fill="currentColor"/>
+      `;
+      frame.appendChild(svg);
+    });
+    
+    // Image wrapper
+    const imgWrapper = document.createElement('div');
+    imgWrapper.className = 'card-image-wrapper';
+    
+    const img = document.createElement('img');
+    img.className = 'card-photo';
+    img.alt = photo.caption || 'Wedding Photo';
+    img.loading = 'lazy';
+    img.src = photo.url;
+    
+    // Fallback on error
+    img.onerror = function() {
+      console.warn('[InvitApp] Photo Stack image failed to load:', photo.url);
+      imgWrapper.style.background = 'rgba(201,168,76,0.06)';
+      imgWrapper.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; color:var(--gold); font-family:sans-serif; text-align:center; padding:15px; box-sizing:border-box;">
+          <span style="font-size:2rem; margin-bottom:8px;">❤️</span>
+          <span class="font-amiri" style="font-size:1.1rem; color:var(--gold-light);">M & M</span>
+        </div>
+      `;
+    };
+    
+    imgWrapper.appendChild(img);
+    frame.appendChild(imgWrapper);
+    
+    // Caption
+    if (photo.caption) {
+      const caption = document.createElement('div');
+      caption.className = 'card-caption';
+      caption.textContent = photo.caption;
+      frame.appendChild(caption);
+    }
+    
+    card.appendChild(frame);
+    
+    // Vintage light paper grain overlay
+    const grain = document.createElement('div');
+    grain.className = 'grain-overlay';
+    card.appendChild(grain);
+    
+    wrapper.appendChild(card);
+    return card;
+  });
+  
+  // 5. Update Positions
+  function updatePositions() {
+    cardElements.forEach((card, index) => {
+      card.classList.remove('card-top', 'card-mid', 'card-back', 'card-hidden');
+      
+      let diff = (index - activeIndex + numPhotos) % numPhotos;
+      
+      if (numPhotos === 1) {
+        card.classList.add('card-top');
+        card.removeAttribute('role');
+        card.removeAttribute('tabindex');
+        card.removeAttribute('aria-label');
+      } else if (numPhotos === 2) {
+        if (diff === 0) {
+          card.classList.add('card-top');
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('aria-label', TRANSLATIONS[_currentLang || 'ar'].photo_stack_next || 'Photo suivante');
+        } else {
+          card.classList.add('card-mid');
+          card.removeAttribute('role');
+          card.removeAttribute('tabindex');
+          card.removeAttribute('aria-label');
+        }
+      } else {
+        if (diff === 0) {
+          card.classList.add('card-top');
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('aria-label', TRANSLATIONS[_currentLang || 'ar'].photo_stack_next || 'Photo suivante');
+        } else if (diff === 1) {
+          card.classList.add('card-mid');
+          card.removeAttribute('role');
+          card.removeAttribute('tabindex');
+          card.removeAttribute('aria-label');
+        } else if (diff === 2) {
+          card.classList.add('card-back');
+          card.removeAttribute('role');
+          card.removeAttribute('tabindex');
+          card.removeAttribute('aria-label');
+        } else {
+          card.classList.add('card-hidden');
+          card.removeAttribute('role');
+          card.removeAttribute('tabindex');
+          card.removeAttribute('aria-label');
+        }
+      }
+    });
+  }
+  
+  // 6. Interactive Event listeners
+  if (numPhotos > 1) {
+    const handleNextCard = (e) => {
+      const card = e.target.closest('.photo-card-item');
+      if (card && card.classList.contains('card-top')) {
+        activeIndex = (activeIndex + 1) % numPhotos;
+        updatePositions();
+      }
+    };
+    
+    wrapper.addEventListener('click', handleNextCard);
+    
+    wrapper.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const card = e.target.closest('.photo-card-item');
+        if (card && card.classList.contains('card-top')) {
+          e.preventDefault();
+          activeIndex = (activeIndex + 1) % numPhotos;
+          updatePositions();
+        }
+      }
+    });
+  }
+  
+  updatePositions();
 }
 

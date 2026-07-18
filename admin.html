@@ -117,6 +117,7 @@
     <div class="nav-item"         onclick="showPage('page-families')">  <span class="nav-icon">👨‍👩‍👦</span><span class="nav-label">العائلات</span></div>
     <div class="nav-item"         onclick="showPage('page-date')">      <span class="nav-icon">📅</span><span class="nav-label">التاريخ</span></div>
     <div class="nav-item"         onclick="showPage('page-programme')"> <span class="nav-icon">🗓️</span><span class="nav-label">البرنامج</span></div>
+    <div class="nav-item"         onclick="showPage('page-photos')">    <span class="nav-icon">📸</span><span class="nav-label">ألبوم الصور</span></div>
     <div class="nav-item"         onclick="showPage('page-links')">     <span class="nav-icon">🔗</span><span class="nav-label">الروابط</span></div>
     <div class="nav-item"         onclick="showPage('page-qrcode')">    <span class="nav-icon">🔳</span><span class="nav-label">رمز QR</span></div>
     <div class="sidebar-bottom">
@@ -339,7 +340,128 @@
       </div>
     </div>
 
-    <!-- ▸ PAGE 5 — Links -->
+    <!-- ▸ PAGE 5 — Photos (Photo Stack) -->
+    <div class="page" id="page-photos">
+      <div class="page-title">📸 ألبوم الصور (Photo Stack)</div>
+      <div class="page-subtitle">تفعيل وإدارة ألبوم الصور التفاعلي المنزلق في أسفل الدعوة</div>
+      
+      <!-- Activation card -->
+      <div class="card">
+        <div class="card-title">⚙️ تفعيل الألبوم</div>
+        <div class="form-row" style="grid-template-columns: 1fr; margin-top: 10px;">
+          <div class="field">
+            <label>عرض قسم ألبوم الصور في الدعوة :</label>
+            <select id="photoStackActive" onchange="togglePhotoStackFields()">
+              <option value="false">❌ غير نشط (مخفي)</option>
+              <option value="true">✅ نشط (معروض)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cloudinary Config card -->
+      <div class="card photo-stack-setting-container" style="display:none; border-color: rgba(201,168,76,0.35); background: rgba(201,168,76,0.03);">
+        <div class="card-title">☁️ إعدادات Cloudinary (اختياري / لتفادي Base64)</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:12px;">
+          إذا تركت هذه الحقول فارغة، فسيتم حفظ الصور مباشرة في كود الدعوة (Base64) بحد أقصى 3 صور. لتخزين أسرع ومظهر أنظف، أدخل إعدادات حساب Cloudinary الخاص بك.
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Cloud Name</label>
+            <input id="cloudinaryCloudName" type="text" placeholder="مثال: dqz12xyz" oninput="saveCloudinarySettings()" dir="ltr" style="background:rgba(0,0,0,0.25); color:white; border:1px solid var(--border); padding:10px; border-radius:6px;">
+          </div>
+          <div class="field">
+            <label>Upload Preset (Unsigned)</label>
+            <input id="cloudinaryUploadPreset" type="text" placeholder="مثال: my_preset" oninput="saveCloudinarySettings()" dir="ltr" style="background:rgba(0,0,0,0.25); color:white; border:1px solid var(--border); padding:10px; border-radius:6px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme card -->
+      <div class="card photo-stack-setting-container" style="display:none;">
+        <div class="card-title">🎨 ثيم ألبوم الصور</div>
+        <div style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
+          <div class="theme-card photo-stack-theme-card selected" data-theme="floral" onclick="selectPhotoStackTheme('floral')" style="flex:1; min-width:100px; text-align:center; padding:12px; border:2px solid var(--gold); border-radius:8px; cursor:pointer; background:rgba(0,0,0,0.3)">
+            <div style="font-size:1.5rem">🌸</div>
+            <div style="font-size:0.82rem; margin-top:4px; color:white; font-weight:700">Doré & Floral</div>
+          </div>
+          <div class="theme-card photo-stack-theme-card" data-theme="vintage" onclick="selectPhotoStackTheme('vintage')" style="flex:1; min-width:100px; text-align:center; padding:12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:rgba(0,0,0,0.3)">
+            <div style="font-size:1.5rem">📻</div>
+            <div style="font-size:0.82rem; margin-top:4px; color:white; font-weight:700">Vintage</div>
+          </div>
+          <div class="theme-card photo-stack-theme-card" data-theme="royal" onclick="selectPhotoStackTheme('royal')" style="flex:1; min-width:100px; text-align:center; padding:12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:rgba(0,0,0,0.3)">
+            <div style="font-size:1.5rem">💚</div>
+            <div style="font-size:0.82rem; margin-top:4px; color:white; font-weight:700">Émeraude & Or</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo slots card -->
+      <div class="card photo-stack-setting-container" style="display:none;">
+        <div class="card-title">🖼️ إدارة صور الألبوم</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:15px;">
+          يمكنك إضافة من 1 إلى 3 صور. سيتم اقتصاص الصور إلى نسبة 3:4 المناسبة للبطاقات.
+        </div>
+        
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Slot 0 -->
+          <div class="photo-slot-card" style="display:flex; gap:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); padding:16px; border-radius:8px; align-items:center;">
+            <div class="photo-slot-preview" id="preview-slot-0" style="width:75px; height:100px; border:2px dashed rgba(201,168,76,0.3); border-radius:6px; background:#0a0602; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+              <span style="font-size:1.5rem; color:#444;">📸</span>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:bold; color:var(--gold-light); font-size:0.9rem;">الصورة الأولى (المقدمة)</span>
+                <button class="btn btn-ghost" id="delete-btn-slot-0" onclick="clearPhotoSlot(0)" style="color:#ff6b6b; padding:4px 8px; font-size:0.75rem; display:none; border:none; background:none; cursor:pointer;">✕ حذف</button>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input type="file" id="file-slot-0" accept="image/*" onchange="handleFileSelect(event, 0)" style="display:none;">
+                <button class="btn btn-outline" onclick="document.getElementById('file-slot-0').click()" style="padding:6px 12px; font-size:0.8rem; border-color:var(--border); color:var(--text); cursor:pointer;">📁 اختر صورة</button>
+                <input type="text" id="caption-slot-0" placeholder="شرح اختياري لهذه الصورة..." style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid var(--border); background:rgba(0,0,0,0.25); color:white; font-size:0.82rem;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 1 -->
+          <div class="photo-slot-card" style="display:flex; gap:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); padding:16px; border-radius:8px; align-items:center;">
+            <div class="photo-slot-preview" id="preview-slot-1" style="width:75px; height:100px; border:2px dashed rgba(201,168,76,0.3); border-radius:6px; background:#0a0602; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+              <span style="font-size:1.5rem; color:#444;">📸</span>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:bold; color:var(--gold-light); font-size:0.9rem;">الصورة الثانية (الوسط)</span>
+                <button class="btn btn-ghost" id="delete-btn-slot-1" onclick="clearPhotoSlot(1)" style="color:#ff6b6b; padding:4px 8px; font-size:0.75rem; display:none; border:none; background:none; cursor:pointer;">✕ حذف</button>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input type="file" id="file-slot-1" accept="image/*" onchange="handleFileSelect(event, 1)" style="display:none;">
+                <button class="btn btn-outline" onclick="document.getElementById('file-slot-1').click()" style="padding:6px 12px; font-size:0.8rem; border-color:var(--border); color:var(--text); cursor:pointer;">📁 اختر صورة</button>
+                <input type="text" id="caption-slot-1" placeholder="شرح اختياري لهذه الصورة..." style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid var(--border); background:rgba(0,0,0,0.25); color:white; font-size:0.82rem;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot 2 -->
+          <div class="photo-slot-card" style="display:flex; gap:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); padding:16px; border-radius:8px; align-items:center;">
+            <div class="photo-slot-preview" id="preview-slot-2" style="width:75px; height:100px; border:2px dashed rgba(201,168,76,0.3); border-radius:6px; background:#0a0602; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+              <span style="font-size:1.5rem; color:#444;">📸</span>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:bold; color:var(--gold-light); font-size:0.9rem;">الصورة الثالثة (الخلف)</span>
+                <button class="btn btn-ghost" id="delete-btn-slot-2" onclick="clearPhotoSlot(2)" style="color:#ff6b6b; padding:4px 8px; font-size:0.75rem; display:none; border:none; background:none; cursor:pointer;">✕ حذف</button>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input type="file" id="file-slot-2" accept="image/*" onchange="handleFileSelect(event, 2)" style="display:none;">
+                <button class="btn btn-outline" onclick="document.getElementById('file-slot-2').click()" style="padding:6px 12px; font-size:0.8rem; border-color:var(--border); color:var(--text); cursor:pointer;">📁 اختر صورة</button>
+                <input type="text" id="caption-slot-2" placeholder="شرح اختياري لهذه الصورة..." style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid var(--border); background:rgba(0,0,0,0.25); color:white; font-size:0.82rem;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ▸ PAGE 6 — Links -->
     <div class="page" id="page-links">
       <div class="page-title">🔗 إنشاء رابط الدعوة</div>
       <div class="page-subtitle">احفظ أولاً ثم اختر الباقة وأنشئ الرابط</div>
@@ -497,10 +619,47 @@
     <div class="mbn-item"        onclick="showPage('page-families')"  data-page="page-families">  <span class="mbn-icon">👨‍👩‍👦</span><span class="mbn-label">العائلات</span></div>
     <div class="mbn-item"        onclick="showPage('page-date')"      data-page="page-date">      <span class="mbn-icon">📅</span><span class="mbn-label">التاريخ</span></div>
     <div class="mbn-item"        onclick="showPage('page-programme')" data-page="page-programme"> <span class="mbn-icon">🗓️</span><span class="mbn-label">البرنامج</span></div>
+    <div class="mbn-item"        onclick="showPage('page-photos')"    data-page="page-photos">    <span class="mbn-icon">📸</span><span class="mbn-label">الصور</span></div>
     <div class="mbn-item"        onclick="showPage('page-links')"     data-page="page-links">     <span class="mbn-icon">🔗</span><span class="mbn-label">الروابط</span></div>
     <div class="mbn-item"        onclick="showPage('page-qrcode')"    data-page="page-qrcode">    <span class="mbn-icon">🔳</span><span class="mbn-label">QR</span></div>
   </nav>
 
+</div>
+
+<!-- ══ CROPPER MODAL ══ -->
+<div id="cropper-modal" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; direction:rtl;">
+  <div style="position:absolute; inset:0; background:rgba(10,6,2,0.85); backdrop-filter:blur(8px);" onclick="closeCropper()"></div>
+  <div style="position:relative; background:#1e1711; border:1.5px solid var(--gold); border-radius:20px; width:90%; max-width:420px; padding:24px; color:white; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; gap:16px; box-shadow:0 10px 30px rgba(0,0,0,0.5); box-sizing:border-box;">
+    <div style="font-weight:bold; color:var(--gold-light); font-size:1.15rem; text-align:center; font-family:'Amiri', serif;">✂️ تعديل وقص الصورة (3:4)</div>
+    
+    <!-- Crop Workspace -->
+    <div id="cropper-workspace" style="position:relative; width:230px; height:300px; border:2px solid var(--gold); border-radius:8px; overflow:hidden; background:#000; cursor:move; display:flex; align-items:center; justify-content:center;">
+      <img id="cropper-image" src="" style="position:absolute; transform-origin:center center; user-select:none; pointer-events:none; max-width:none; display:block;">
+    </div>
+    
+    <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:-8px;">
+      💡 اسحب الصورة لتحريكها داخل المربع المذهب
+    </div>
+
+    <!-- Controls -->
+    <div style="width:100%; display:flex; flex-direction:column; gap:12px; box-sizing:border-box; padding:0 4px;">
+      <!-- Zoom -->
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <span style="font-size:0.85rem; color:var(--text-muted); flex-shrink:0;">🔍 التكبير</span>
+        <input type="range" id="crop-zoom" min="0.5" max="3" step="0.05" value="1" oninput="updateCropTransform()" style="flex:1; accent-color:var(--gold); height:6px; border-radius:3px; background:#443; cursor:pointer;">
+      </div>
+      <!-- Rotation -->
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <span style="font-size:0.85rem; color:var(--text-muted); flex-shrink:0;">🔄 التدوير</span>
+        <button class="btn btn-outline" onclick="rotateCrop(90)" style="padding:5px 15px; font-size:0.8rem; border-color:rgba(201,168,76,0.3); color:var(--gold); cursor:pointer; background:rgba(0,0,0,0.2); border-radius:6px; font-family:'Amiri', serif;">🔄 +90 درجة</button>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; width:100%; margin-top:8px;">
+      <button class="btn btn-ghost" onclick="closeCropper()" style="flex:1; border:1px solid rgba(255,255,255,0.1); color:#ff6b6b; padding:10px; border-radius:6px; cursor:pointer; font-family:'Amiri', serif; font-size:0.9rem;">إلغاء</button>
+      <button class="btn btn-primary" onclick="applyCrop()" style="flex:2; padding:10px; border-radius:6px; cursor:pointer; font-family:'Amiri', serif; font-size:0.9rem;">✅ اعتماد الصورة</button>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -694,7 +853,15 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const map = { 'page-couple':0,'page-families':1,'page-date':2,'page-programme':3,'page-links':4,'page-qrcode':5 };
+  const map = {
+    'page-couple': 0,
+    'page-families': 1,
+    'page-date': 2,
+    'page-programme': 3,
+    'page-photos': 4,
+    'page-links': 5,
+    'page-qrcode': 6
+  };
   document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
   // Sync mobile bottom nav
   document.querySelectorAll('.mbn-item').forEach(n => n.classList.remove('active'));
@@ -748,6 +915,10 @@ function initAdmin() {
   const brAr = document.getElementById('brideAr');
   if (grAr) grAr.addEventListener('input', updateFlyerFooter);
   if (brAr) brAr.addEventListener('input', updateFlyerFooter);
+
+  // Photo Stack: load Cloudinary creds & init cropper drag
+  loadCloudinarySettings();
+  initCropperDrag();
 
   // Initial QR generation
   setTimeout(() => {
@@ -947,6 +1118,321 @@ function applyConfigToFields(c) {
     });
     renderEvents();
   }
+
+  // ── Restore Photo Stack config if present ──
+  if (c.features) {
+    const ps = c.features;
+    const psActEl = document.getElementById('photoStackActive');
+    if (psActEl) psActEl.value = ps.photoStack ? 'true' : 'false';
+    selectPhotoStackTheme(ps.photoStackTheme || 'floral');
+    window._photoStackPhotos = [null, null, null];
+    if (Array.isArray(ps.photoStackPhotos)) {
+      ps.photoStackPhotos.forEach((p, i) => {
+        if (i >= 3) return;
+        const url     = typeof p === 'string' ? p : (p ? p.url     : '');
+        const caption = typeof p === 'string' ? '' : (p ? p.caption : '');
+        if (url) {
+          window._photoStackPhotos[i] = url;
+          setSlotPreview(i, url);
+          set(`caption-slot-${i}`, caption);
+          const db = document.getElementById(`delete-btn-slot-${i}`);
+          if (db) db.style.display = 'inline-block';
+        } else {
+          clearPhotoSlot(i);
+        }
+      });
+    } else {
+      for (let i = 0; i < 3; i++) clearPhotoSlot(i);
+    }
+  } else {
+    const psActEl = document.getElementById('photoStackActive');
+    if (psActEl) psActEl.value = 'false';
+    selectPhotoStackTheme('floral');
+    window._photoStackPhotos = [null, null, null];
+    for (let i = 0; i < 3; i++) clearPhotoSlot(i);
+  }
+  togglePhotoStackFields();
+}
+
+// ══════════════════════════════════════════════
+//  PHOTO STACK ADMIN STATE & HELPERS
+// ══════════════════════════════════════════════
+window._photoStackTheme  = 'floral';
+window._photoStackPhotos = [null, null, null];
+
+function selectPhotoStackTheme(theme) {
+  window._photoStackTheme = theme;
+  document.querySelectorAll('.photo-stack-theme-card').forEach(card => {
+    const sel = card.dataset.theme === theme;
+    card.style.borderColor = sel ? 'var(--gold)' : 'var(--border)';
+    card.style.borderWidth  = sel ? '2px' : '1px';
+  });
+}
+
+function togglePhotoStackFields() {
+  const active = document.getElementById('photoStackActive').value === 'true';
+  document.querySelectorAll('.photo-stack-setting-container').forEach(el => {
+    el.style.display = active ? 'block' : 'none';
+  });
+}
+
+function setSlotPreview(index, url) {
+  const preview = document.getElementById(`preview-slot-${index}`);
+  if (!preview) return;
+  preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`;
+  preview.style.borderStyle = 'solid';
+  preview.style.borderColor = 'var(--gold)';
+}
+
+function clearPhotoSlot(index) {
+  window._photoStackPhotos[index] = null;
+  const preview = document.getElementById(`preview-slot-${index}`);
+  if (preview) {
+    preview.innerHTML = `<span style="font-size:1.5rem;color:#444;">📸</span>`;
+    preview.style.borderStyle = 'dashed';
+    preview.style.borderColor = 'rgba(201,168,76,0.3)';
+  }
+  const db = document.getElementById(`delete-btn-slot-${index}`);
+  if (db) db.style.display = 'none';
+  const fi = document.getElementById(`file-slot-${index}`);
+  if (fi) fi.value = '';
+}
+
+function getPhotoStackConfigPhotos() {
+  const photos = [];
+  for (let i = 0; i < 3; i++) {
+    const url = window._photoStackPhotos[i];
+    const captionEl = document.getElementById(`caption-slot-${i}`);
+    const caption = captionEl ? captionEl.value.trim() : '';
+    if (url) photos.push({ url, caption });
+  }
+  return photos;
+}
+
+// ── Cloudinary settings (persisted in localStorage) ──
+function saveCloudinarySettings() {
+  const cn = document.getElementById('cloudinaryCloudName');
+  const up = document.getElementById('cloudinaryUploadPreset');
+  if (cn) localStorage.setItem('cloudinaryCloudName',    cn.value.trim());
+  if (up) localStorage.setItem('cloudinaryUploadPreset', up.value.trim());
+}
+
+function loadCloudinarySettings() {
+  const cn = localStorage.getItem('cloudinaryCloudName')    || '';
+  const up = localStorage.getItem('cloudinaryUploadPreset') || '';
+  const cnEl = document.getElementById('cloudinaryCloudName');
+  const upEl = document.getElementById('cloudinaryUploadPreset');
+  if (cnEl) cnEl.value = cn;
+  if (upEl) upEl.value = up;
+}
+
+async function uploadToCloudinary(base64Data, cloudName, uploadPreset) {
+  const fd = new FormData();
+  fd.append('file', base64Data);
+  fd.append('upload_preset', uploadPreset);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: fd
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Cloudinary upload failed');
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
+// ══════════════════════════════════════════════
+//  INTERACTIVE CROPPER
+// ══════════════════════════════════════════════
+const cropState = {
+  imgSrc: '', slotIndex: null,
+  zoom: 1, rotation: 0,
+  panX: 0, panY: 0,
+  dragging: false, dragStartX: 0, dragStartY: 0
+};
+
+function handleFileSelect(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('⚠️ حجم الصورة كبير جداً (الأقصى 5 ميجابايت)');
+    event.target.value = '';
+    return;
+  }
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+    showToast('⚠️ صيغة الصورة غير مدعومة (JPG, PNG, WEBP فقط)');
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => openCropper(e.target.result, index);
+  reader.readAsDataURL(file);
+}
+
+function openCropper(imgSrc, slotIndex) {
+  cropState.imgSrc    = imgSrc;
+  cropState.slotIndex = slotIndex;
+  cropState.zoom = 1; cropState.rotation = 0;
+  cropState.panX = 0; cropState.panY    = 0;
+
+  const modal      = document.getElementById('cropper-modal');
+  const img        = document.getElementById('cropper-image');
+  const zoomSlider = document.getElementById('crop-zoom');
+
+  img.src = imgSrc;
+  zoomSlider.value = 1;
+  modal.style.display = 'flex';
+
+  img.onload = () => {
+    const ws = document.getElementById('cropper-workspace');
+    const scale = Math.max(ws.clientWidth / img.naturalWidth, ws.clientHeight / img.naturalHeight);
+    cropState.zoom = scale;
+    zoomSlider.min   = String(scale * 0.5);
+    zoomSlider.max   = String(scale * 4);
+    zoomSlider.value = String(scale);
+    updateCropTransform();
+  };
+}
+
+function closeCropper() {
+  document.getElementById('cropper-modal').style.display = 'none';
+  if (cropState.slotIndex !== null) {
+    const fi = document.getElementById(`file-slot-${cropState.slotIndex}`);
+    if (fi) fi.value = '';
+  }
+}
+
+function rotateCrop(angle) {
+  cropState.rotation = (cropState.rotation + angle) % 360;
+  updateCropTransform();
+}
+
+function updateCropTransform() {
+  const img        = document.getElementById('cropper-image');
+  const zoomSlider = document.getElementById('crop-zoom');
+  if (!img || !zoomSlider) return;
+  cropState.zoom = parseFloat(zoomSlider.value);
+  img.style.left = '50%';
+  img.style.top  = '50%';
+  img.style.transform =
+    `translate(-50%,-50%) translate3d(${cropState.panX}px,${cropState.panY}px,0) ` +
+    `scale(${cropState.zoom}) rotate(${cropState.rotation}deg)`;
+}
+
+function initCropperDrag() {
+  const ws = document.getElementById('cropper-workspace');
+  if (!ws) return;
+
+  const startDrag = e => {
+    cropState.dragging  = true;
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    cropState.dragStartX = cx - cropState.panX;
+    cropState.dragStartY = cy - cropState.panY;
+  };
+  const moveDrag = e => {
+    if (!cropState.dragging) return;
+    if (e.cancelable) e.preventDefault();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    cropState.panX = cx - cropState.dragStartX;
+    cropState.panY = cy - cropState.dragStartY;
+    updateCropTransform();
+  };
+  const stopDrag = () => { cropState.dragging = false; };
+
+  ws.addEventListener('mousedown',  startDrag);
+  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('mouseup',   stopDrag);
+  ws.addEventListener('touchstart', startDrag, { passive: true });
+  window.addEventListener('touchmove', moveDrag, { passive: false });
+  window.addEventListener('touchend',  stopDrag);
+}
+
+function applyCrop() {
+  const img = document.getElementById('cropper-image');
+  if (!img || cropState.slotIndex === null) return;
+
+  // Export at 2× resolution for Retina: 460×600
+  const canvas = document.createElement('canvas');
+  canvas.width  = 460;
+  canvas.height = 600;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fffdf9';
+  ctx.fillRect(0, 0, 460, 600);
+
+  ctx.save();
+  ctx.translate(230, 300);
+  ctx.rotate(cropState.rotation * Math.PI / 180);
+  const scale = cropState.zoom * 2;
+  ctx.scale(scale, scale);
+  const dx = (cropState.panX * 2) / scale;
+  const dy = (cropState.panY * 2) / scale;
+  ctx.drawImage(img,
+    -img.naturalWidth  / 2 + dx,
+    -img.naturalHeight / 2 + dy,
+    img.naturalWidth, img.naturalHeight
+  );
+  ctx.restore();
+
+  const croppedUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const idx = cropState.slotIndex;
+  window._photoStackPhotos[idx] = croppedUrl;
+  setSlotPreview(idx, croppedUrl);
+  const db = document.getElementById(`delete-btn-slot-${idx}`);
+  if (db) db.style.display = 'inline-block';
+  closeCropper();
+  showToast('✂️ تم قص وتعديل الصورة بنجاح');
+}
+
+// ══════════════════════════════════════════════
+//  PATCH buildConfig to include features block
+// ══════════════════════════════════════════════
+const _origBuildConfig = buildConfig;
+function buildConfig() {
+  const cfg = _origBuildConfig();
+  const psActEl = document.getElementById('photoStackActive');
+  cfg.features = {
+    photoStack:       psActEl ? psActEl.value === 'true' : false,
+    photoStackTheme:  window._photoStackTheme || 'floral',
+    photoStackPhotos: getPhotoStackConfigPhotos()
+  };
+  return cfg;
+}
+
+// ══════════════════════════════════════════════
+//  PATCH saveAll to handle Cloudinary uploads
+// ══════════════════════════════════════════════
+const _origSaveAll = saveAll;
+async function saveAll() {
+  const label = document.getElementById('lastSavedLabel');
+
+  // Read Cloudinary credentials
+  const cloudName    = (document.getElementById('cloudinaryCloudName')    || {}).value || '';
+  const uploadPreset = (document.getElementById('cloudinaryUploadPreset') || {}).value || '';
+  const useCloudinary = cloudName.trim() !== '' && uploadPreset.trim() !== '';
+
+  // Upload base64 images to Cloudinary if configured
+  if (useCloudinary) {
+    for (let i = 0; i < 3; i++) {
+      const url = window._photoStackPhotos[i];
+      if (url && url.startsWith('data:image/')) {
+        try {
+          if (label) label.textContent = `⏳ جاري رفع الصورة ${i + 1} إلى Cloudinary...`;
+          const secureUrl = await uploadToCloudinary(url, cloudName.trim(), uploadPreset.trim());
+          window._photoStackPhotos[i] = secureUrl;
+          setSlotPreview(i, secureUrl);
+        } catch (err) {
+          console.error('Cloudinary upload error slot', i, err);
+          showToast(`⚠️ فشل رفع الصورة ${i + 1} – تم الاحتفاظ بـ Base64`);
+        }
+      }
+    }
+  }
+
+  // Delegate to original saveAll (which will call buildConfig again → picks up new URLs)
+  return _origSaveAll();
 }
 
 // ── Auto-generate wedding date display text from datetime-local ──
