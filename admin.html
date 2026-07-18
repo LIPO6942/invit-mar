@@ -1469,7 +1469,7 @@ function applyCrop() {
 // ══════════════════════════════════════════════
 let _selectedGuestSlug = null;
 
-// grouped wedding data: Map< weddingKey → [{slug, guestName, hasPhotos}] >
+// grouped wedding data: Map< weddingKey → [{slug, guestName, hasPhotos, subGuests[]}] >
 window._weddingsMap = new Map();
 
 async function loadGuestDropdown() {
@@ -1489,15 +1489,14 @@ async function loadGuestDropdown() {
       return;
     }
 
-    // ── Group by wedding (groom + bride) ──
+    // ── Group by wedding (groom + bride names from config) ──
     window._weddingsMap = new Map();
     snap.docs.forEach(doc => {
       const d   = doc.data();
       const cfg = d.config || {};
 
-      // Wedding key: Arabic groom name + bride name from config
-      const groomAr = cfg.ga  || cfg.gf2 || '';
-      const brideAr = cfg.ba  || cfg.bf2 || '';
+      const groomAr = cfg.ga || cfg.gf2 || '';
+      const brideAr = cfg.ba || cfg.bf2 || '';
       const weddingKey = groomAr && brideAr
         ? `${groomAr} 💍 ${brideAr}`
         : (groomAr || brideAr || doc.id.split('-').slice(0, 2).join(' & '));
@@ -1505,10 +1504,15 @@ async function loadGuestDropdown() {
       if (!window._weddingsMap.has(weddingKey)) {
         window._weddingsMap.set(weddingKey, []);
       }
+
+      // subGuests = the guests[] array stored by guests.html
+      const subGuests = Array.isArray(d.guests) ? d.guests : [];
+
       window._weddingsMap.get(weddingKey).push({
         slug:      doc.id,
         guestName: d.guestName || '',
         hasPhotos: (cfg.features?.photoStackPhotos?.length || 0) > 0,
+        subGuests,                        // [{id, name, type, ...}]
       });
     });
 
@@ -1516,14 +1520,19 @@ async function loadGuestDropdown() {
     weddingSel.innerHTML = '<option value="">-- اختر الزفاف --</option>';
     [...window._weddingsMap.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
-      .forEach(([key, guests]) => {
+      .forEach(([key, invitations]) => {
+        // Count: sub-guests across all invitations of this wedding
+        const totalGuests = invitations.reduce((sum, inv) => {
+          return sum + (inv.subGuests.length > 0 ? inv.subGuests.length : 1);
+        }, 0);
         const opt = document.createElement('option');
         opt.value = key;
-        opt.textContent = `💍 ${key}  (${guests.length} دعوة)`;
+        opt.textContent = `💍 ${key}  (${totalGuests} مدعو)`;
         weddingSel.appendChild(opt);
       });
 
-    showToast(`✅ ${window._weddingsMap.size} زفاف — ${snap.size} دعوة`);
+    const totalInv = snap.size;
+    showToast(`✅ ${window._weddingsMap.size} زفاف — ${totalInv} دعوة`);
   } catch (err) {
     console.error('loadGuestDropdown:', err);
     weddingSel.innerHTML = '<option value="">⚠️ فشل التحميل</option>';
@@ -1533,7 +1542,6 @@ async function loadGuestDropdown() {
 
 function onWeddingPhotoSelect(weddingKey) {
   const guestSel = document.getElementById('guestPhotoSelect');
-  // Clear slots when wedding changes
   for (let i = 0; i < 3; i++) clearPhotoSlot(i);
   _selectedGuestSlug = null;
   const banner = document.getElementById('guestPhotoBanner');
@@ -1544,14 +1552,40 @@ function onWeddingPhotoSelect(weddingKey) {
     return;
   }
 
-  const guests = window._weddingsMap.get(weddingKey);
+  const invitations = window._weddingsMap.get(weddingKey);
   guestSel.innerHTML = '<option value="">-- اختر المدعو --</option>';
-  guests
-    .sort((a, b) => (a.guestName || a.slug).localeCompare(b.guestName || b.slug))
-    .forEach(({ slug, guestName, hasPhotos }) => {
+
+  // Flatten: for each invitation, list sub-guests individually
+  // or the invitation-level name if no sub-guests exist.
+  const rows = [];
+
+  invitations.forEach(({ slug, guestName, hasPhotos, subGuests }) => {
+    if (subGuests && subGuests.length > 0) {
+      // Expand each sub-guest separately
+      subGuests.forEach(sg => {
+        rows.push({
+          slug,
+          displayName: sg.name,
+          hasPhotos,
+          isSub: true,
+        });
+      });
+    } else {
+      // No sub-guests: show the invitation-level name
+      // Replace the default 'عام' with a readable label
+      const label = guestName && guestName !== 'عام'
+        ? guestName
+        : '📋 الدعوة العامة للزفاف';
+      rows.push({ slug, displayName: label, hasPhotos, isSub: false });
+    }
+  });
+
+  rows
+    .sort((a, b) => a.displayName.localeCompare(b.displayName))
+    .forEach(({ slug, displayName, hasPhotos }) => {
       const opt = document.createElement('option');
       opt.value = slug;
-      opt.textContent = `${hasPhotos ? '📸' : '👤'} ${guestName || slug}`;
+      opt.textContent = `${hasPhotos ? '📸' : '👤'} ${displayName}`;
       guestSel.appendChild(opt);
     });
 }
@@ -1568,6 +1602,13 @@ async function onGuestPhotoSelect(slug) {
     if (banner) banner.style.display = 'none';
     return;
   }
+
+  // Get the display name from the selected option (not from Firestore's guestName field)
+  const guestSel = document.getElementById('guestPhotoSelect');
+  const selectedOpt = guestSel ? guestSel.options[guestSel.selectedIndex] : null;
+  const displayName = selectedOpt
+    ? selectedOpt.textContent.replace(/^[📸👤]\s*/, '').trim()
+    : slug;
 
   if (banner) banner.style.display = 'block';
   if (bannerText) bannerText.textContent = '⏳ جاري تحميل صور هذا المدعو...';
@@ -1599,10 +1640,10 @@ async function onGuestPhotoSelect(slug) {
       });
       const cnt = ps.photoStackPhotos.length;
       if (bannerText) bannerText.textContent =
-        `✅ ${doc.data().guestName || slug} — ${cnt} صورة محفوظة. عدّل كما تشاء ثم اضغط حفظ.`;
+        `✅ ${displayName} — ${cnt} صورة محفوظة. عدّل كما تشاء ثم اضغط حفظ.`;
     } else {
       if (bannerText) bannerText.textContent =
-        `📭 ${doc.data().guestName || slug} — لا توجد صور بعد. أضف صورًا ثم اضغط حفظ.`;
+        `📭 ${displayName} — لا توجد صور بعد. أضف صورًا ثم اضغط حفظ.`;
     }
   } catch (err) {
     console.error('onGuestPhotoSelect:', err);
