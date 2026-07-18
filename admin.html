@@ -1498,6 +1498,11 @@ async function loadGuestDropdown() {
       const d   = doc.data();
       const cfg = d.config || {};
 
+      // Filter: only show weddings that have activated the photo stack feature
+      if (!cfg.features || cfg.features.photoStack !== true) {
+        return;
+      }
+
       const groomAr = cfg.ga || cfg.gf2 || '';
       const brideAr = cfg.ba || cfg.bf2 || '';
       const weddingKey = groomAr && brideAr
@@ -1523,6 +1528,11 @@ async function loadGuestDropdown() {
         brideAr,
       });
     });
+
+    if (window._weddingsMap.size === 0) {
+      weddingSel.innerHTML = '<option value="">لا توجد حفلات مفعلة فيها ميزة الصور</option>';
+      return;
+    }
 
     // ── Populate wedding dropdown ──
     weddingSel.innerHTML = '<option value="">-- اختر الزفاف --</option>';
@@ -2064,6 +2074,9 @@ async function generateLink() {
     document.getElementById('generateBtn').textContent = '✨ إنشاء الرابط';
 
     await renderLinksHistory();
+    if (typeof loadGuestDropdown === 'function') {
+      await loadGuestDropdown();
+    }
     showToast(existingSlug ? '✅ تم تحديث الدعوة!' : '🎉 تم إنشاء الرابط!');
 
   } catch(e) {
@@ -2326,23 +2339,7 @@ function generateClientPassword(id) {
 }
 
 function quickCopy(url) { navigator.clipboard.writeText(url).then(() => showToast('\u{1F4CB} \u062A\u0645 \u0627\u0644\u0646\u0633\u062E!')); }
-async function updateLinkConfig(id) {
-  if (!confirm(`هل أنت متأكد من تحديث تفاصيل الدعوة الخاصة بالرابط (${id}) بالبيانات الحالية للنموذج؟`)) return;
-  try {
-    initFirebase();
-    const cfg = buildConfig();
-    cfg.id = id;
-    
-    await _db.collection('invitations').doc(id).update({
-      config: cfg
-    });
-    
-    showToast('✅ تم تحديث بيانات الدعوة بنجاح على السيرفر!');
-  } catch (e) {
-    console.error('Failed to update invitation config:', e);
-    showToast('❌ فشل التحديث: ' + e.message);
-  }
-}
+
 
 async function deleteLink(id) {
   if (!confirm(`هل أنت متأكد من حذف هذا الرابط (${id}) نهائياً من السيرفر؟`)) return;

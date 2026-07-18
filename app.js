@@ -2032,10 +2032,11 @@ function initPhotoStack(cfg) {
       rawPhotos = perGuest[view];
     } else {
       // Fallback: if no custom couple photos are configured, show the 3 default couple photos
+      const isFr = cfg.la === 'fr';
       rawPhotos = [
-        { url: 'assets/default_couple_1.jpg', caption: '💍 فرحتنا اكتملت' },
-        { url: 'assets/default_couple_2.jpg', caption: '✨ ليلة العمر' },
-        { url: 'assets/default_couple_3.jpg', caption: '❤️ حب أبدي' }
+        { url: 'assets/default_couple_1.jpg', caption: isFr ? '💍 Notre bonheur est complet' : '💍 فرحتنا اكتملت' },
+        { url: 'assets/default_couple_2.jpg', caption: isFr ? '✨ Le grand jour' : '✨ ليلة العمر' },
+        { url: 'assets/default_couple_3.jpg', caption: isFr ? '❤️ Amour infini' : '❤️ حب أبدي' }
       ];
     }
   } else {
@@ -2044,10 +2045,11 @@ function initPhotoStack(cfg) {
       rawPhotos = cfg.features.photoStackPhotos;
     } else {
       // Fallback to default code-based general photo
+      const isFr = cfg.la === 'fr';
       rawPhotos = [
-        { url: 'assets/default_wedding_general.jpg', caption: '💍 فرحتنا اكتملت' },
-        { url: 'assets/default_wedding_general.jpg', caption: '✨ ليلة العمر' },
-        { url: 'assets/default_wedding_general.jpg', caption: '❤️ حب أبدي' }
+        { url: 'assets/default_wedding_general.jpg', caption: isFr ? '💍 Notre bonheur est complet' : '💍 فرحتنا اكتملت' },
+        { url: 'assets/default_wedding_general.jpg', caption: isFr ? '✨ Le grand jour' : '✨ ليلة العمر' },
+        { url: 'assets/default_wedding_general.jpg', caption: isFr ? '❤️ Amour infini' : '❤️ حب أبدي' }
       ];
     }
   }
