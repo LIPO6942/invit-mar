@@ -1105,6 +1105,24 @@ document.addEventListener('DOMContentLoaded', () => {
   loadWeatherForecast();
 });
 
+function getTifinaghInitial(name) {
+  if (!name) return 'ⵣ';
+  const clean = name.trim().toLowerCase();
+  const ch = clean.charAt(0);
+  const TIFINAGH_MAP = {
+    'a': 'ⴰ', 'b': 'ⴱ', 'c': 'ⵛ', 'd': 'ⴷ', 'e': 'ⴻ', 'f': 'ⴼ', 'g': 'ⴳ',
+    'h': 'ⵀ', 'i': 'ⵉ', 'j': 'ⵊ', 'k': 'ⴽ', 'l': 'ⵍ', 'm': 'ⵎ', 'n': 'ⵏ',
+    'o': 'ⵓ', 'p': 'ⵒ', 'q': 'ⵇ', 'r': 'ⵔ', 's': 'ⵙ', 't': 'ⵜ', 'u': 'ⵓ',
+    'v': 'ⵠ', 'w': 'ⵡ', 'x': 'ⵅ', 'y': 'ⵢ', 'z': 'ⵣ',
+    'أ': 'ⴰ', 'إ': 'ⴰ', 'آ': 'ⴰ', 'ا': 'ⴰ', 'ب': 'ⴱ', 'ت': 'ⵜ', 'ث': 'ⵝ',
+    'ج': 'ⵊ', 'ح': 'ⵃ', 'خ': 'ⵅ', 'د': 'ⴷ', 'ذ': 'ⵠ', 'ر': 'ⵔ', 'ز': 'ⵣ',
+    'س': 'ⵙ', 'ش': 'ⵛ', 'ص': 'ⵚ', 'ض': 'ⴹ', 'ط': 'ⵟ', 'ظ': 'ⵯ', 'ع': 'ⵄ',
+    'غ': 'ⵖ', 'ف': 'ⴼ', 'ق': 'ⵇ', 'ك': 'ⴽ', 'ل': 'ⵍ', 'م': 'ⵎ', 'ن': 'ⵏ',
+    'ه': 'ⵀ', 'و': 'ⵡ', 'ي': 'ⵢ'
+  };
+  return TIFINAGH_MAP[ch] || 'ⵣ';
+}
+
 /* ────────────────────────────────────────────────
    ENVELOPE DESIGN — applies motif & seal from config
    ──────────────────────────────────────────────── */
@@ -1207,8 +1225,14 @@ function applyEnvelopeDesign(cfg) {
     if (sealImg) {
       if (seal === 'monogram') {
         sealImg.src = 'assets/monogram_wax_seal_bg.png';
+        sealImg.style.transform = 'none';
         if (sealMonoText) {
           sealMonoText.style.display = 'flex';
+          sealMonoText.style.flexDirection = 'row';
+          sealMonoText.style.justifyContent = 'center';
+          sealMonoText.style.alignItems = 'center';
+          sealMonoText.style.paddingBottom = '0';
+
           let initials = '';
           if (cfg.si) {
             initials = cfg.si;
@@ -1277,24 +1301,6 @@ function applyEnvelopeDesign(cfg) {
             sealMonoText.appendChild(singleSpan);
           }
         }
-function getTifinaghInitial(name) {
-  if (!name) return 'ⵣ';
-  const clean = name.trim().toLowerCase();
-  const ch = clean.charAt(0);
-  const TIFINAGH_MAP = {
-    'a': 'ⴰ', 'b': 'ⴱ', 'c': 'ⵛ', 'd': 'ⴷ', 'e': 'ⴻ', 'f': 'ⴼ', 'g': 'ⴳ',
-    'h': 'ⵀ', 'i': 'ⵉ', 'j': 'ⵊ', 'k': 'ⴽ', 'l': 'ⵍ', 'm': 'ⵎ', 'n': 'ⵏ',
-    'o': 'ⵓ', 'p': 'ⵒ', 'q': 'ⵇ', 'r': 'ⵔ', 's': 'ⵙ', 't': 'ⵜ', 'u': 'ⵓ',
-    'v': 'ⵠ', 'w': 'ⵡ', 'x': 'ⵅ', 'y': 'ⵢ', 'z': 'ⵣ',
-    'أ': 'ⴰ', 'إ': 'ⴰ', 'ا': 'ⴰ', 'ب': 'ⴱ', 'ت': 'ⵜ', 'ث': 'ⵝ', 'ج': 'ⵊ',
-    'ح': 'ⵃ', 'خ': 'ⵅ', 'د': 'ⴷ', 'ذ': 'ⵠ', 'ر': 'ⵔ', 'ز': 'ⵣ', 'س': 'ⵙ',
-    'ش': 'ⵛ', 'ص': 'ⵚ', 'ض': 'ⴹ', 'ط': 'ⵟ', 'ظ': 'ⵯ', 'ع': 'ⵄ', 'غ': 'ⵖ',
-    'ف': 'ⴼ', 'ق': 'ⵇ', 'ك': 'ⴽ', 'ل': 'ⵍ', 'م': 'ⵎ', 'ن': 'ⵏ', 'ه': 'ⵀ',
-    'و': 'ⵡ', 'ي': 'ⵢ'
-  };
-  return TIFINAGH_MAP[ch] || 'ⵣ';
-}
-
       } else if (seal === 'lock') {
         sealImg.src = 'assets/lock_wax_seal.png';
         sealImg.style.transform = 'scale(1.18)';
@@ -1306,9 +1312,10 @@ function getTifinaghInitial(name) {
         sealImg.style.transform = 'none';
         if (sealMonoText) {
           sealMonoText.style.display = 'flex';
-          sealMonoText.style.flexDirection = 'row';
-          sealMonoText.style.justifyContent = 'center';
+          sealMonoText.style.flexDirection = 'column';
+          sealMonoText.style.justifyContent = 'flex-end';
           sealMonoText.style.alignItems = 'center';
+          sealMonoText.style.paddingBottom = '12px';
           
           const isFr = cfg.la === 'fr';
           const groomName = isFr ? (cfg.gf2 || cfg.ga) : cfg.ga;
@@ -1318,7 +1325,7 @@ function getTifinaghInitial(name) {
           const bTifi = getTifinaghInitial(brideName || 'B');
           
           sealMonoText.innerHTML = `
-            <div class="amazigh-engraved-initials">
+            <div class="amazigh-engraved-wrapper">
               <span class="amazigh-char">${gTifi}</span>
               <span class="amazigh-sep">⵰</span>
               <span class="amazigh-char">${bTifi}</span>
@@ -1333,6 +1340,7 @@ function getTifinaghInitial(name) {
           sealMonoText.style.flexDirection = 'column';
           sealMonoText.style.justifyContent = 'flex-end';
           sealMonoText.style.alignItems = 'center';
+          sealMonoText.style.paddingBottom = '10px';
           const isFr = cfg.la === 'fr';
           const brideName = (isFr ? (cfg.bf2 || cfg.ba) : (cfg.ba || cfg.bf2) || 'العروسة').trim();
           sealMonoText.innerHTML = `

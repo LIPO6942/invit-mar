@@ -2382,30 +2382,29 @@ body.env-open .animated-bride-family {
 }
 
 /* ── 3D Engraved Amazigh Tifinagh Initials ── */
-.amazigh-engraved-initials {
+.amazigh-engraved-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-family: 'Amiri', 'Segoe UI Historic', 'Ebrima', serif;
-  color: #fae69e;
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.85),
-    0 0 10px rgba(255, 235, 150, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.6);
-  letter-spacing: 2px;
+  gap: 5px;
+  background: rgba(10, 32, 16, 0.65);
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(250, 230, 158, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
   direction: ltr;
 }
 
-.amazigh-engraved-initials .amazigh-char {
-  font-size: 1.65rem;
+.amazigh-engraved-wrapper .amazigh-char {
+  font-family: 'Amiri', 'Segoe UI Historic', 'Ebrima', serif;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #fae69e;
-  filter: drop-shadow(0 2px 4px rgba(10, 40, 15, 0.95));
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(250, 230, 158, 0.5);
 }
 
-.amazigh-engraved-initials .amazigh-sep {
-  font-size: 1.1rem;
+.amazigh-engraved-wrapper .amazigh-sep {
+  font-size: 0.85rem;
   color: #d4af37;
   opacity: 0.85;
 }
