@@ -2381,6 +2381,35 @@ body.env-open .animated-bride-family {
   filter: brightness(1.05) contrast(1.05);
 }
 
+/* ── 3D Engraved Amazigh Tifinagh Initials ── */
+.amazigh-engraved-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: 'Amiri', 'Segoe UI Historic', 'Ebrima', serif;
+  color: #fae69e;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.85),
+    0 0 10px rgba(255, 235, 150, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  letter-spacing: 2px;
+  direction: ltr;
+}
+
+.amazigh-engraved-initials .amazigh-char {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #fae69e;
+  filter: drop-shadow(0 2px 4px rgba(10, 40, 15, 0.95));
+}
+
+.amazigh-engraved-initials .amazigh-sep {
+  font-size: 1.1rem;
+  color: #d4af37;
+  opacity: 0.85;
+}
+
 /* Hide nominative card completely when invitation is opened */
 .invitation.open .guest-name-banner {
   display: none !important;

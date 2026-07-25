@@ -1277,13 +1277,57 @@ function applyEnvelopeDesign(cfg) {
             sealMonoText.appendChild(singleSpan);
           }
         }
+function getTifinaghInitial(name) {
+  if (!name) return 'ⵣ';
+  const clean = name.trim().toLowerCase();
+  const ch = clean.charAt(0);
+  const TIFINAGH_MAP = {
+    'a': 'ⴰ', 'b': 'ⴱ', 'c': 'ⵛ', 'd': 'ⴷ', 'e': 'ⴻ', 'f': 'ⴼ', 'g': 'ⴳ',
+    'h': 'ⵀ', 'i': 'ⵉ', 'j': 'ⵊ', 'k': 'ⴽ', 'l': 'ⵍ', 'm': 'ⵎ', 'n': 'ⵏ',
+    'o': 'ⵓ', 'p': 'ⵒ', 'q': 'ⵇ', 'r': 'ⵔ', 's': 'ⵙ', 't': 'ⵜ', 'u': 'ⵓ',
+    'v': 'ⵠ', 'w': 'ⵡ', 'x': 'ⵅ', 'y': 'ⵢ', 'z': 'ⵣ',
+    'أ': 'ⴰ', 'إ': 'ⴰ', 'ا': 'ⴰ', 'ب': 'ⴱ', 'ت': 'ⵜ', 'ث': 'ⵝ', 'ج': 'ⵊ',
+    'ح': 'ⵃ', 'خ': 'ⵅ', 'د': 'ⴷ', 'ذ': 'ⵠ', 'ر': 'ⵔ', 'ز': 'ⵣ', 'س': 'ⵙ',
+    'ش': 'ⵛ', 'ص': 'ⵚ', 'ض': 'ⴹ', 'ط': 'ⵟ', 'ظ': 'ⵯ', 'ع': 'ⵄ', 'غ': 'ⵖ',
+    'ف': 'ⴼ', 'ق': 'ⵇ', 'ك': 'ⴽ', 'ل': 'ⵍ', 'م': 'ⵎ', 'ن': 'ⵏ', 'ه': 'ⵀ',
+    'و': 'ⵡ', 'ي': 'ⵢ'
+  };
+  return TIFINAGH_MAP[ch] || 'ⵣ';
+}
+
       } else if (seal === 'lock') {
         sealImg.src = 'assets/lock_wax_seal.png';
+        sealImg.style.transform = 'scale(1.18)';
         if (sealMonoText) {
           sealMonoText.style.display = 'none';
         }
-      } else if (seal === 'amazigh' || seal === 'zellige') {
-        sealImg.src = seal === 'amazigh' ? 'assets/amazigh_wax_seal.png' : 'assets/zellige_wax_seal.png';
+      } else if (seal === 'amazigh') {
+        sealImg.src = 'assets/amazigh_wax_seal.png';
+        sealImg.style.transform = 'none';
+        if (sealMonoText) {
+          sealMonoText.style.display = 'flex';
+          sealMonoText.style.flexDirection = 'row';
+          sealMonoText.style.justifyContent = 'center';
+          sealMonoText.style.alignItems = 'center';
+          
+          const isFr = cfg.la === 'fr';
+          const groomName = isFr ? (cfg.gf2 || cfg.ga) : cfg.ga;
+          const brideName = isFr ? (cfg.bf2 || cfg.ba) : cfg.ba;
+          
+          const gTifi = getTifinaghInitial(groomName || 'G');
+          const bTifi = getTifinaghInitial(brideName || 'B');
+          
+          sealMonoText.innerHTML = `
+            <div class="amazigh-engraved-initials">
+              <span class="amazigh-char">${gTifi}</span>
+              <span class="amazigh-sep">⵰</span>
+              <span class="amazigh-char">${bTifi}</span>
+            </div>
+          `;
+        }
+      } else if (seal === 'zellige') {
+        sealImg.src = 'assets/zellige_wax_seal.png';
+        sealImg.style.transform = 'none';
         if (sealMonoText) {
           sealMonoText.style.display = 'flex';
           sealMonoText.style.flexDirection = 'column';
@@ -1300,6 +1344,7 @@ function applyEnvelopeDesign(cfg) {
         }
       } else {
         sealImg.src = `assets/${seal}_wax_seal.png`;
+        sealImg.style.transform = 'none';
         if (sealMonoText) {
           sealMonoText.style.display = 'none';
         }
