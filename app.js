@@ -1113,12 +1113,17 @@ let _sealApplied = false; // Flag to prevent seal from being changed multiple ti
 function applyEnvelopeDesign(cfg) {
   if (!cfg) return;
 
-  // ── Motif (ep: 'floral' | 'vintage' | 'minimalist' | 'nature') ──
-  const pattern     = cfg.ep || 'floral';
+  // ── Motif (ep: 'floral' | 'vintage' | 'minimalist' | 'nature' | 'arabesque' | 'zellige' | 'door' | 'calligraphy' | 'amazigh') ──
+  const pattern        = cfg.ep || 'floral';
   const showFloral     = pattern === 'floral';
   const showVintage    = pattern === 'vintage';
   const showMinimalist = pattern === 'minimalist';
   const showNature     = pattern === 'nature';
+  const showArabesque  = pattern === 'arabesque';
+  const showZellige    = pattern === 'zellige' || pattern === 'crown';
+  const showDoor       = pattern === 'door' || pattern === 'porte';
+  const showCalligraphy = pattern === 'calligraphy';
+  const showAmazigh    = pattern === 'amazigh';
 
   document.querySelectorAll('.panel-branches').forEach(el => {
     el.style.display = showFloral ? '' : 'none';
@@ -1131,6 +1136,21 @@ function applyEnvelopeDesign(cfg) {
   });
   document.querySelectorAll('.panel-nature').forEach(el => {
     el.style.display = showNature ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-arabesque').forEach(el => {
+    el.style.display = showArabesque ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-zellige').forEach(el => {
+    el.style.display = showZellige ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-door').forEach(el => {
+    el.style.display = showDoor ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-calligraphy').forEach(el => {
+    el.style.display = showCalligraphy ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-amazigh').forEach(el => {
+    el.style.display = showAmazigh ? 'block' : 'none';
   });
 
   const invitationEl = document.getElementById('invitation');
@@ -1171,10 +1191,16 @@ function applyEnvelopeDesign(cfg) {
     closingImg.src = `assets/${closingPhoto}.png`;
   }
 
-  // ── Seal symbol (es: 'heart' | 'rings' | 'monogram' | 'bismillah') ──
+  // ── Seal symbol (es: 'heart' | 'rings' | 'monogram' | 'bismillah' | 'lock' | 'amazigh' | 'zellige') ──
   // Only apply seal once to prevent it from changing after initial load
   if (!_sealApplied) {
-    const seal = cfg.es || 'heart';
+    let seal = cfg.es;
+    if (!seal) {
+      if (showDoor) seal = 'lock';
+      else if (showAmazigh) seal = 'amazigh';
+      else if (showZellige) seal = 'zellige';
+      else seal = 'heart';
+    }
     const sealImg = document.getElementById('seal-3d-img');
     const sealMonoText = document.getElementById('seal-3d-monogram-text');
 
@@ -1234,7 +1260,6 @@ function applyEnvelopeDesign(cfg) {
             span2.textContent = parts[2];
             span2.className = 'mono-letter';
             
-            // Arabic is RTL, Latin is LTR. Row-reverse ensures correct order
             if (!hasLatin) {
               sealMonoText.style.flexDirection = 'row-reverse';
             } else {
@@ -1252,6 +1277,27 @@ function applyEnvelopeDesign(cfg) {
             sealMonoText.appendChild(singleSpan);
           }
         }
+      } else if (seal === 'lock') {
+        sealImg.src = 'assets/lock_wax_seal.png';
+        if (sealMonoText) {
+          sealMonoText.style.display = 'none';
+        }
+      } else if (seal === 'amazigh' || seal === 'zellige') {
+        sealImg.src = seal === 'amazigh' ? 'assets/amazigh_wax_seal.png' : 'assets/zellige_wax_seal.png';
+        if (sealMonoText) {
+          sealMonoText.style.display = 'flex';
+          sealMonoText.style.flexDirection = 'column';
+          sealMonoText.style.justifyContent = 'flex-end';
+          sealMonoText.style.alignItems = 'center';
+          const isFr = cfg.la === 'fr';
+          const brideName = (isFr ? (cfg.bf2 || cfg.ba) : (cfg.ba || cfg.bf2) || 'العروسة').trim();
+          sealMonoText.innerHTML = `
+            <div class="seal-sub-engraved-wrapper">
+              <div class="seal-sub-line"></div>
+              <span class="seal-sub-bride-name">${brideName}</span>
+            </div>
+          `;
+        }
       } else {
         sealImg.src = `assets/${seal}_wax_seal.png`;
         if (sealMonoText) {
@@ -1263,7 +1309,11 @@ function applyEnvelopeDesign(cfg) {
     _sealApplied = true; // Mark seal as applied to prevent future changes
 
     // Update mini wax seals on guest banners
-    const miniSealSrc = (seal === 'monogram') ? 'assets/monogram_wax_seal_bg.png' : `assets/${seal}_wax_seal.png`;
+    const miniSealSrc = (seal === 'monogram') ? 'assets/monogram_wax_seal_bg.png' :
+                        (seal === 'lock') ? 'assets/lock_wax_seal.png' :
+                        (seal === 'amazigh') ? 'assets/amazigh_wax_seal.png' :
+                        (seal === 'zellige') ? 'assets/zellige_wax_seal.png' :
+                        `assets/${seal}_wax_seal.png`;
     document.querySelectorAll('.guest-seal-img').forEach(img => {
       img.src = miniSealSrc;
     });
