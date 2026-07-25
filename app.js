@@ -1261,6 +1261,12 @@ function applyEnvelopeDesign(cfg) {
     }
     sealImg.style.opacity = '1';
     _sealApplied = true; // Mark seal as applied to prevent future changes
+
+    // Update mini wax seals on guest banners
+    const miniSealSrc = (seal === 'monogram') ? 'assets/monogram_wax_seal_bg.png' : `assets/${seal}_wax_seal.png`;
+    document.querySelectorAll('.guest-seal-img').forEach(img => {
+      img.src = miniSealSrc;
+    });
   }
 
   // Sync Day/Night mode icon
