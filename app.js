@@ -343,6 +343,33 @@ function formatToGCalUTC(dateObj) {
   return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
 }
 
+function _getGuestFormattedName(isFr) {
+  if (typeof _resolvedGuestName === 'undefined' || !_resolvedGuestName) return null;
+  const guestName = _resolvedGuestName;
+  const guestType = (typeof _resolvedGuestType !== 'undefined' && _resolvedGuestType) ? _resolvedGuestType : 'ar_couple';
+  
+  if (isFr) {
+    switch (guestType) {
+      case 'fr_couple':          return `Monsieur & Madame ${guestName}`;
+      case 'fr_man':             return `Monsieur ${guestName}`;
+      case 'fr_woman':           return `Madame ${guestName}`;
+      case 'fr_friend_m':        return `Cher Ami ${guestName}`;
+      case 'fr_friend_f':        return `Chère Amie ${guestName}`;
+      default:                   return guestName;
+    }
+  } else {
+    switch (guestType) {
+      case 'ar_couple':          return `السيد ${guestName} وحرمه`;
+      case 'ar_couple_children': return `السيد ${guestName} وحرمه وأبنائه`;
+      case 'ar_man':             return `السيد ${guestName}`;
+      case 'ar_woman':           return `السيدة ${guestName}`;
+      case 'ar_friend_m':        return `الصديق العزيز ${guestName}`;
+      case 'ar_friend_f':        return `الصديقة العزيزة ${guestName}`;
+      default:                   return guestName;
+    }
+  }
+}
+
 function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
   let startDate = new Date();
   
@@ -381,14 +408,22 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
   const endUtc = formatToGCalUTC(endDate);
 
   const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
+  const guestSalutation = _getGuestFormattedName(isFr);
+
+  let guestHeader = '';
+  if (guestSalutation) {
+    guestHeader = isFr
+      ? `Bienvenue ${guestSalutation} ! 🌸\n`
+      : `أهلاً وسهلاً بك ${guestSalutation} 🌸\n`;
+  }
 
   const defaultDetails = isFr
-    ? `Nous avons l'honneur de vous inviter à notre célébration de mariage !\n\n` +
+    ? `${guestHeader}Nous avons l'honneur de vous inviter à notre célébration de mariage !\n\n` +
       `📌 Rappel : Veuillez enregistrer cet événement dans votre Google Calendar. Rappels conseillés : 24h avant et 1h avant l'événement.\n\n` +
-      `Lien de l'invitation numérique : ${window.location.href}`
-    : `يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\n` +
+      `Lien de votre invitation personnelle : ${window.location.href}`
+    : `${guestHeader}يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\n` +
       `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
-      `رابط الدعوة الإلكترونية: ${window.location.href}`;
+      `رابط دعوتك الخاصة: ${window.location.href}`;
 
   const finalDetails = details || defaultDetails;
   const finalLocation = location || _weatherLocation || (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
@@ -411,12 +446,15 @@ function openMainGoogleCalendar() {
   const groomEl = document.querySelector('[data-cfg="groomNameDisplay"]');
   const brideName = brideEl ? brideEl.textContent.trim() : '';
   const groomName = groomEl ? groomEl.textContent.trim() : '';
-  
+  const guestSalutation = _getGuestFormattedName(isFr);
+
   let title = '';
   if (isFr) {
     title = (groomName && brideName) ? `Mariage de ${groomName} & ${brideName} 💍` : 'Célébration de Mariage 💍';
+    if (guestSalutation) title += ` (Pour ${guestSalutation})`;
   } else {
     title = (groomName && brideName) ? `حفل زفاف ${groomName} و ${brideName} 💍` : 'حفل الزفاف 💍';
+    if (guestSalutation) title += ` (خاصة بـ ${guestSalutation})`;
   }
 
   const location = _weatherLocation || (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
@@ -442,20 +480,32 @@ function openEventGoogleCalendar(btn) {
   const groomEl = document.querySelector('[data-cfg="groomNameDisplay"]');
   const brideName = brideEl ? brideEl.textContent.trim() : '';
   const groomName = groomEl ? groomEl.textContent.trim() : '';
+  const guestSalutation = _getGuestFormattedName(isFr);
 
-  const fullTitle = isFr
+  let fullTitle = isFr
     ? `${eventTitle} - Mariage ${groomName} & ${brideName}`.trim()
     : `${eventTitle} - ${groomName} & ${brideName}`.trim();
 
+  if (guestSalutation) {
+    fullTitle += isFr ? ` (${guestSalutation})` : ` (${guestSalutation})`;
+  }
+
+  let guestHeader = '';
+  if (guestSalutation) {
+    guestHeader = isFr
+      ? `Bienvenue ${guestSalutation} ! 🌸\n`
+      : `أهلاً وسهلاً بك ${guestSalutation} 🌸\n`;
+  }
+
   const details = isFr
-    ? `Invitation pour la cérémonie : ${eventTitle}.\n\n` +
+    ? `${guestHeader}Invitation pour la cérémonie : ${eventTitle}.\n\n` +
       `📌 Rappel : N'oubliez pas d'enregistrer l'événement dans votre Google Calendar. Notification de rappel conseillée : 1 jour avant et 1 heure avant l'événement.\n\n` +
       `Lieu : ${eventLocation}\n` +
-      `Lien d'invitation : ${window.location.href}`
-    : `دعوة لحضور ${eventTitle}.\n\n` +
+      `Lien de votre invitation personnelle : ${window.location.href}`
+    : `${guestHeader}دعوة لحضور ${eventTitle}.\n\n` +
       `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
       `المكان: ${eventLocation}\n` +
-      `رابط الدعوة: ${window.location.href}`;
+      `رابط دعوتك الخاصة: ${window.location.href}`;
 
   const url = buildGoogleCalendarUrl(fullTitle, eventDate, eventTime, eventLocation, details);
   window.open(url, '_blank', 'noopener,noreferrer');
