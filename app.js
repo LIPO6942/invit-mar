@@ -380,16 +380,22 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
   const startUtc = formatToGCalUTC(startDate);
   const endUtc = formatToGCalUTC(endDate);
 
-  const defaultDetails = `يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\n` +
-    `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
-    `رابط الدعوة الإلكترونية: ${window.location.href}`;
+  const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
+
+  const defaultDetails = isFr
+    ? `Nous avons l'honneur de vous inviter à notre célébration de mariage !\n\n` +
+      `📌 Rappel : Veuillez enregistrer cet événement dans votre Google Calendar. Rappels conseillés : 24h avant et 1h avant l'événement.\n\n` +
+      `Lien de l'invitation numérique : ${window.location.href}`
+    : `يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\n` +
+      `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
+      `رابط الدعوة الإلكترونية: ${window.location.href}`;
 
   const finalDetails = details || defaultDetails;
-  const finalLocation = location || _weatherLocation || 'طبلبة، تونس';
+  const finalLocation = location || _weatherLocation || (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: title || document.title || 'حفل الزفاف',
+    text: title || document.title || (isFr ? 'Célébration de Mariage' : 'حفل الزفاف'),
     dates: `${startUtc}/${endUtc}`,
     details: finalDetails,
     location: finalLocation,
@@ -400,17 +406,26 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
 }
 
 function openMainGoogleCalendar() {
+  const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
   const brideEl = document.querySelector('[data-cfg="brideNameDisplay"]');
   const groomEl = document.querySelector('[data-cfg="groomNameDisplay"]');
   const brideName = brideEl ? brideEl.textContent.trim() : '';
   const groomName = groomEl ? groomEl.textContent.trim() : '';
-  const title = (groomName && brideName) ? `حفل زفاف ${groomName} و ${brideName} 💍` : 'حفل الزفاف 💍';
-  const location = _weatherLocation || 'طبلبة، تونس';
+  
+  let title = '';
+  if (isFr) {
+    title = (groomName && brideName) ? `Mariage de ${groomName} & ${brideName} 💍` : 'Célébration de Mariage 💍';
+  } else {
+    title = (groomName && brideName) ? `حفل زفاف ${groomName} و ${brideName} 💍` : 'حفل الزفاف 💍';
+  }
+
+  const location = _weatherLocation || (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
   const url = buildGoogleCalendarUrl(title, _weddingDateTime, null, location, null);
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 function openEventGoogleCalendar(btn) {
+  const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
   const item = btn.closest('.timeline-item');
   if (!item) return;
 
@@ -418,21 +433,29 @@ function openEventGoogleCalendar(btn) {
   const dateEl = item.querySelector('.tl-date');
   const timeEl = item.querySelector('.tl-time');
   
-  const eventTitle = titleEl ? titleEl.textContent.trim() : 'حفل الزفاف';
+  const eventTitle = titleEl ? titleEl.textContent.trim() : (isFr ? 'Célébration' : 'حفل الزفاف');
   const eventDate = dateEl ? dateEl.textContent.trim() : null;
   const eventTime = timeEl ? timeEl.textContent.trim() : null;
-  const eventLocation = item.getAttribute('data-location') || 'تونس';
+  const eventLocation = item.getAttribute('data-location') || (isFr ? 'Tunisie' : 'تونس');
 
   const brideEl = document.querySelector('[data-cfg="brideNameDisplay"]');
   const groomEl = document.querySelector('[data-cfg="groomNameDisplay"]');
   const brideName = brideEl ? brideEl.textContent.trim() : '';
   const groomName = groomEl ? groomEl.textContent.trim() : '';
-  const fullTitle = `${eventTitle} - ${groomName} & ${brideName}`.trim();
 
-  const details = `دعوة لحضور ${eventTitle}.\n\n` +
-    `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
-    `المكان: ${eventLocation}\n` +
-    `رابط الدعوة: ${window.location.href}`;
+  const fullTitle = isFr
+    ? `${eventTitle} - Mariage ${groomName} & ${brideName}`.trim()
+    : `${eventTitle} - ${groomName} & ${brideName}`.trim();
+
+  const details = isFr
+    ? `Invitation pour la cérémonie : ${eventTitle}.\n\n` +
+      `📌 Rappel : N'oubliez pas d'enregistrer l'événement dans votre Google Calendar. Notification de rappel conseillée : 1 jour avant et 1 heure avant l'événement.\n\n` +
+      `Lieu : ${eventLocation}\n` +
+      `Lien d'invitation : ${window.location.href}`
+    : `دعوة لحضور ${eventTitle}.\n\n` +
+      `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
+      `المكان: ${eventLocation}\n` +
+      `رابط الدعوة: ${window.location.href}`;
 
   const url = buildGoogleCalendarUrl(fullTitle, eventDate, eventTime, eventLocation, details);
   window.open(url, '_blank', 'noopener,noreferrer');
@@ -1785,10 +1808,18 @@ function applyLanguage(lang) {
   // Translate static texts
   document.querySelectorAll('[data-tr]').forEach(el => {
     const key = el.getAttribute('data-tr');
-    if (dict[key]) {
+    if (dict && dict[key]) {
       el.textContent = dict[key];
     }
   });
+
+  // Translate Google Calendar main button text dynamically
+  const gcalBtnSpan = document.querySelector('[data-tr="gcal_main_btn"]');
+  if (gcalBtnSpan) {
+    gcalBtnSpan.textContent = isFr
+      ? "Enregistrer dans Google Calendar (Rappels 24h & 1h avant) 🔔"
+      : "حفظ الموعد في Calendrier Google لتلقي تذكير (قبل يوم وقبل ساعة) 🔔";
+  }
 
   // Translate placeholders
   document.querySelectorAll('[data-tr-placeholder]').forEach(el => {
