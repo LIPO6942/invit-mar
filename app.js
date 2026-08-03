@@ -3213,53 +3213,42 @@ function downloadSouvenirImage() {
   container.innerHTML = `
     <div style="position: relative; width: 100%; margin: 0 auto; text-align: center;">
 
-      <!-- ── 1. ENVELOPE TOP OPEN FLAP (470px aligned flush with card) ── -->
-      <svg width="470" height="110" viewBox="0 0 470 110" style="display: block; margin: 0 auto -45px auto; position: relative; z-index: 1;" preserveAspectRatio="none">
+      <!-- ── 1. TOP ENVELOPE OPEN FLAP (Elegant Parchment V-Flap) ── -->
+      <svg width="460" height="105" viewBox="0 0 460 105" style="display: block; margin: 0 auto -42px auto; position: relative; z-index: 1;" preserveAspectRatio="none">
         <defs>
           <linearGradient id="topFlapGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#eadaa2"/>
-            <stop offset="60%" stop-color="#d4b472"/>
-            <stop offset="100%" stop-color="#b8954e"/>
+            <stop offset="0%" stop-color="#f5e8c4"/>
+            <stop offset="50%" stop-color="#e2c687"/>
+            <stop offset="100%" stop-color="#c49e52"/>
           </linearGradient>
-          <filter id="flapShadow" x="-10%" y="-10%" width="120%" height="130%">
-            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.4"/>
+          <filter id="flapShadow" x="-10%" y="-10%" width="120%" height="140%">
+            <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.45"/>
           </filter>
         </defs>
         <!-- Triangle Flap pointing UP -->
-        <polygon points="0,110 470,110 235,0" fill="url(#topFlapGrad)" filter="url(#flapShadow)"/>
-        <polygon points="0,110 470,110 235,0" fill="none" stroke="#fceab8" stroke-width="2" opacity="0.7"/>
-        <!-- Inner flap foil trim -->
-        <polygon points="18,108 452,108 235,12" fill="none" stroke="#8c6d23" stroke-width="1" stroke-dasharray="4,4" opacity="0.45"/>
-        <text x="235" y="65" text-anchor="middle" font-family="serif" font-size="18" font-weight="bold" fill="#4a3410" opacity="0.5">${mono}</text>
+        <polygon points="0,105 460,105 230,0" fill="url(#topFlapGrad)" filter="url(#flapShadow)"/>
+        <polygon points="0,105 460,105 230,0" fill="none" stroke="#fcf2d4" stroke-width="2" opacity="0.8"/>
+        <!-- Inner flap gold foil trim -->
+        <polygon points="16,103 444,103 230,10" fill="none" stroke="#9e7b2f" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.5"/>
       </svg>
 
       <!-- ── 2. INVITATION CARD (Sliding out of Envelope) ── -->
       <div style="
         position: relative;
         z-index: 2;
-        width: 470px;
+        width: 460px;
         margin: 0 auto;
-        background: linear-gradient(155deg, #fffdf8 0%, #fbf4e4 50%, #f4e8cf 100%);
+        background: linear-gradient(155deg, #fffdfa 0%, #fbf5e6 50%, #f4e7cd 100%);
         border: 2.5px solid #d4af37;
         border-radius: 14px;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.4), inset 0 0 0 4px rgba(212,175,55,0.2);
-        padding: 24px 22px 75px 22px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.42), inset 0 0 0 4px rgba(212,175,55,0.22);
+        padding: 22px 20px 72px 20px;
         box-sizing: border-box;
       ">
 
-        <!-- Top Gold Badge -->
-        <div style="
-          display: inline-block;
-          border: 1px solid #d4af37;
-          border-radius: 20px;
-          padding: 2px 14px;
-          background: rgba(212, 175, 55, 0.08);
-          color: #8c6d23;
-          font-size: 0.85rem;
-          font-weight: bold;
-          margin-bottom: 12px;
-        ">
-          ✦ ${mono} ✦
+        <!-- Top Gold Ornament Stars (No Monogram Repetition) -->
+        <div style="color: #c9a84c; font-size: 0.85rem; letter-spacing: 4px; margin-bottom: 10px;">
+          ✦ ✦ ✦
         </div>
 
         <!-- Guest Salutation Card -->
@@ -3332,21 +3321,20 @@ function downloadSouvenirImage() {
           text-align: ${isRtl ? 'right' : 'left'};
           box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         ">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: #fdf7e7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
+          <!-- Time & Day Line (No Date Repetition!) -->
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #fdf7e7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
             </div>
             <div>
               <div style="font-size: 0.65rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
-                ${isFr ? 'Date' : 'تاريخ حفل الزفاف'}
+                ${isFr ? 'Jour et Heure' : 'اليوم والتوقيت'}
               </div>
               <div style="font-size: 0.88rem; font-weight: bold; color: #3b280a;">
-                ${dateStr}
+                ${isFr ? 'Samedi, à partir de 19:00' : 'يوم السبت، بداية من الساعة 19:00'}
               </div>
             </div>
           </div>
@@ -3419,38 +3407,50 @@ function downloadSouvenirImage() {
           </div>
         </div>
 
-        <!-- 3D Realistic Red & Gold Wax Seal (Center Seal over V-Fold) -->
+        <!-- 3D ROYAL CRIMSON & GOLD WAX SEAL (Matching Main Envelope Seal) -->
         <div style="
           position: absolute;
-          top: 35px;
+          top: 28px;
           left: 50%;
           transform: translateX(-50%);
-          width: 72px;
-          height: 72px;
+          width: 70px;
+          height: 70px;
           border-radius: 50%;
-          background: radial-gradient(circle at 35% 35%, #e74c3c 0%, #c0392b 40%, #881e14 75%, #4a0d07 100%);
-          border: 2.5px solid #ffd700;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 3px 6px rgba(255,255,255,0.4);
+          background: radial-gradient(circle at 35% 35%, #d62828 0%, #a81c1c 45%, #700f0f 80%, #3a0505 100%);
+          border: 2.5px solid #d4af37;
+          box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.35), 0 8px 22px rgba(0,0,0,0.55), inset 0 3px 6px rgba(255,255,255,0.4);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #fff8dc;
-          font-size: 1.1rem;
-          font-weight: bold;
-          text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+          position: relative;
         ">
-          ${mono}
+          <!-- Inner Gold Engraved Circle Trim -->
+          <div style="
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 1px dashed rgba(212, 175, 55, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff8dc;
+            font-size: 1.05rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+          ">
+            ${mono}
+          </div>
         </div>
 
-        <!-- Footer Caption (NO letter-spacing to prevent Arabic character overlap) -->
+        <!-- Footer Caption (Clean, Elegant, NO repeated names) -->
         <div style="
-          margin-top: 15px;
+          margin-top: 14px;
           text-align: center;
           font-size: 0.85rem;
           color: #d4af37;
           font-weight: bold;
         ">
-          ✦ تذكار دعوة زفاف ${groom} &amp; ${bride} ✦
+          ✦ تذكار دعوة زفاف ملكية ✦
         </div>
 
       </div><!-- /Pocket -->
