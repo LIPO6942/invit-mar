@@ -3666,6 +3666,96 @@ body.lang-ar .animated-bride {
   line-height: 1.35;
 }
 
+/* ── Single-option souvenir modal ── */
+.souvenir-modal-single {
+  max-width: 360px !important;
+  padding: 32px 28px 28px !important;
+  background: linear-gradient(160deg, #fffdf9 0%, #f7eed9 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,0.4),
+    0 0 0 4px rgba(201,168,76,0.1),
+    0 20px 60px rgba(0,0,0,0.35) !important;
+}
 
+.souvenir-modal-icon-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #f5e190 0%, #d4a830 40%, #8a5d00 80%);
+  border: 2px solid rgba(201,168,76,0.7);
+  box-shadow:
+    0 0 0 4px rgba(201,168,76,0.15),
+    0 8px 24px rgba(0,0,0,0.25);
+  margin-bottom: 14px;
+}
 
+.souvenir-modal-icon-ring .souvenir-modal-icon {
+  font-size: 2.2rem;
+  margin: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.souvenir-confirm-zone {
+  text-align: center;
+  padding-top: 8px;
+}
+
+.souvenir-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #c9a84c 0%, #f5e190 50%, #c9a84c 100%);
+  background-size: 200% auto;
+  color: #2b1a00;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 32px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.45);
+  transition: all 0.3s ease;
+  animation: shimmerBtn 3s linear infinite;
+}
+
+@keyframes shimmerBtn {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.souvenir-confirm-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(201,168,76,0.6);
+}
+
+.souvenir-confirm-btn:active {
+  transform: translateY(0);
+}
+
+.souvenir-confirm-icon {
+  font-size: 1.4rem;
+}
+
+.souvenir-confirm-arrow {
+  font-size: 1.1rem;
+  animation: bounceDown 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(4px); }
+}
+
+.souvenir-hint {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: #8a6000;
+  opacity: 0.75;
+  letter-spacing: 0.5px;
+}
 

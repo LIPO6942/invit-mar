@@ -860,28 +860,22 @@
 <!-- ══ SOUVENIR MODAL ══ -->
 <div id="souvenir-modal" style="display:none;" class="souvenir-modal-overlay">
   <div class="souvenir-modal-backdrop" onclick="closeSouvenirModal()"></div>
-  <div class="souvenir-modal-content">
+  <div class="souvenir-modal-content souvenir-modal-single">
     <button class="souvenir-modal-close" onclick="closeSouvenirModal()">✕</button>
     <div class="souvenir-modal-header">
-      <div class="souvenir-modal-icon">💌</div>
-      <h2 class="souvenir-modal-title font-amiri" data-tr="souvenir_modal_title">تحميل تذكار الدعوة</h2>
-      <p class="souvenir-modal-subtitle font-amiri" data-tr="souvenir_modal_subtitle">اختر صيغة الملف التي تفضلها لحفظ تذكار الدعوة</p>
+      <div class="souvenir-modal-icon-ring">
+        <div class="souvenir-modal-icon">🏅</div>
+      </div>
+      <h2 class="souvenir-modal-title font-amiri" data-tr="souvenir_modal_title">تذكار الدعوة الملكية</h2>
+      <p class="souvenir-modal-subtitle font-amiri" data-tr="souvenir_modal_subtitle">سيتم تحميل صورة فوتوغرافية فاخرة تحمل اسمك وتذكار يوم الزفاف</p>
     </div>
-    <div class="souvenir-modal-options">
-      <button class="souvenir-option-card" onclick="downloadSouvenirImage()">
-        <div class="option-icon">🖼️</div>
-        <div class="option-info">
-          <div class="option-title font-amiri" data-tr="souvenir_opt_png_title">تحميل كصورة (PNG)</div>
-          <div class="option-desc" data-tr="souvenir_opt_png_desc">صورة عالية الجودة تحتوي على المغلف باسمك وكارت الدعوة مناسبة للحفظ في معرض الصور.</div>
-        </div>
+    <div class="souvenir-confirm-zone">
+      <button class="souvenir-confirm-btn" id="souvenir-main-btn" onclick="downloadSouvenirImage()">
+        <span class="souvenir-confirm-icon">📸</span>
+        <span class="font-amiri" data-tr="souvenir_btn_text">تحميل الصورة التذكارية</span>
+        <span class="souvenir-confirm-arrow">↓</span>
       </button>
-      <button class="souvenir-option-card" onclick="downloadSouvenirHtml()">
-        <div class="option-icon">📄</div>
-        <div class="option-info">
-          <div class="option-title font-amiri" data-tr="souvenir_opt_html_title">تحميل كصفحة ويب (HTML)</div>
-          <div class="option-desc" data-tr="souvenir_opt_html_desc">ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.</div>
-        </div>
-      </button>
+      <p class="souvenir-hint font-amiri">صورة عالية الدقة · PNG · نمط ملكي فاخر</p>
     </div>
   </div>
 </div>
