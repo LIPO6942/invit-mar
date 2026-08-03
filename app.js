@@ -3644,7 +3644,7 @@ function handleCoupleNamesClick(e) {
   _coupleNameClickCount++;
   if (_coupleNameClickTimer) clearTimeout(_coupleNameClickTimer);
   
-  if (_coupleNameClickCount >= 3) {
+  if (_coupleNameClickCount >= 2) {
     _coupleNameClickCount = 0;
     if (e && e.stopPropagation) e.stopPropagation();
     openWeddingSwitcherModal();
@@ -3653,7 +3653,7 @@ function handleCoupleNamesClick(e) {
   
   _coupleNameClickTimer = setTimeout(() => {
     _coupleNameClickCount = 0;
-  }, 600);
+  }, 700);
 }
 
 let _sealClickCount = 0;
@@ -3663,7 +3663,7 @@ function handleSealClick(e) {
   _sealClickCount++;
   if (_sealClickTimer) clearTimeout(_sealClickTimer);
   
-  if (_sealClickCount >= 3) {
+  if (_sealClickCount >= 2) {
     _sealClickCount = 0;
     if (e && e.stopPropagation) e.stopPropagation();
     openPwaGuestSwitcher();
@@ -3672,7 +3672,7 @@ function handleSealClick(e) {
   
   _sealClickTimer = setTimeout(() => {
     _sealClickCount = 0;
-  }, 600);
+  }, 700);
 }
 
 function openPwaGuestSwitcher() {
@@ -3763,7 +3763,7 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
   _resolvedGuestName = guestName;
   _resolvedGuestType = guestType;
 
-  // Update PWA URL in-place without page reload
+  // 1. Update PWA URL in-place with ?guest=Nom&type=Type
   try {
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('guest', guestName);
@@ -3773,11 +3773,20 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
     console.error('URL pushState error:', e);
   }
 
-  // Re-render invitation UI live inside PWA
+  // 2. Live re-render guest card & personalized invitation text inside PWA
   _updateGuestBanner();
   _updatePersonalizedInviteDesc();
 
+  // 3. Make sure nominative guest card banner is displayed
+  const banner = document.getElementById('guestNameBanner');
+  if (banner) banner.style.display = 'block';
+
   closePwaGuestSwitcher();
+
+  // 4. Smoothly open envelope to unveil this guest's personalized invitation
+  if (!_envelopeOpened) {
+    setTimeout(() => { openEnvelopeNow(); }, 300);
+  }
 }
 
 /* ═══════════════════════════════════════════════
