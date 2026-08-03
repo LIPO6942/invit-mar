@@ -3613,13 +3613,47 @@ function closeIosPwaModal() {
 }
 
 /* ═══════════════════════════════════════════════
-   PWA ADMIN GUEST SWITCHER TRICK
+   PWA ADMIN GUEST SWITCHER TRICK & SECURITY
    ═══════════════════════════════════════════════ */
+function _checkIsAdminAccess() {
+  const params = new URLSearchParams(window.location.search);
+  return (
+    params.get('admin') === '1' ||
+    params.get('view') === 'groom' ||
+    params.get('view') === 'bride' ||
+    sessionStorage.getItem('admin_authenticated') === 'true' ||
+    localStorage.getItem('admin_authenticated') === 'true'
+  );
+}
+
+function handleMedallionClick(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  // Public guests -> simply opens the envelope!
+  if (!_checkIsAdminAccess()) {
+    openEnvelopeNow();
+    return;
+  }
+  // Admin user -> opens the PWA Guest Switcher Modal
+  openPwaGuestSwitcher();
+}
+
 function openPwaGuestSwitcher() {
+  if (!_checkIsAdminAccess()) {
+    const pass = prompt('🔑 أدخل كلمة مرور الأدمن لتجربة روابط الضيوف (Admin Password):');
+    if (pass === 'admin2026') {
+      sessionStorage.setItem('admin_authenticated', 'true');
+    } else if (pass !== null) {
+      alert('❌ كلمة المرور خاطئة. هذه الخاصية مخصصة للآدمن فقط.');
+      return;
+    } else {
+      return;
+    }
+  }
+
   const modal = document.getElementById('pwaGuestSwitcherModal');
   if (!modal) return;
   
-  // Populate sample guest links
+  // Populate guest links
   const container = document.getElementById('pwaSavedGuestsList');
   if (container) {
     const sampleGuests = [
@@ -3629,11 +3663,22 @@ function openPwaGuestSwitcher() {
       { name: 'مريم العمري', type: 'ar_woman' },
       { name: 'Ayoub & Khouloud', type: 'fr_couple' }
     ];
+
+    let firebaseGuests = [];
+    if (_confirmedInvitations && _confirmedInvitations.length > 0) {
+      _confirmedInvitations.forEach(inv => {
+        if (inv.guestName && inv.guestName !== 'عام') {
+          firebaseGuests.push({ name: inv.guestName, type: 'ar_couple' });
+        }
+      });
+    }
+
+    const allGuests = [...firebaseGuests, ...sampleGuests];
     
-    container.innerHTML = sampleGuests.map(g => `
+    container.innerHTML = allGuests.map(g => `
       <button onclick="applyPwaGuest('${g.name.replace(/'/g, "\\'")}', '${g.type}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:8px 12px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); border-radius:8px; font-family:'Amiri',serif; font-size:0.92rem; color:#3d2600; cursor:pointer; text-align:right;">
         <span>👤 ${g.name}</span>
-        <span style="font-size:0.78rem; opacity:0.8; color:#8a6010;">اختبار ➜</span>
+        <span style="font-size:0.78rem; opacity:0.85; color:#8a6010; font-weight:bold;">اختبار ➜</span>
       </button>
     `).join('');
   }
