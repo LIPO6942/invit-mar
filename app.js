@@ -3729,62 +3729,81 @@ function openWeddingSwitcherModal() {
   const container = document.getElementById('weddingProjectsList');
   if (!container) return;
 
-  container.innerHTML = `<div style="text-align:center; padding:15px; color:#fff3ad; font-family:'Amiri',serif;">⏳ جاري تحميل مشاريع الزفاف الحقيقية المسجلة...</div>`;
+  // Immediately clear hardcoded HTML and show spinner
+  container.innerHTML = '<div style="text-align:center; padding:15px; color:#fff3ad; font-family:\'Amiri\',serif;">&#x23F3; جاري الاتصال بـ Firebase...</div>';
 
-  initFirebase();
-
-  // Base deployment URL for this app
   const BASE_URL = 'https://invit-mar-bice.vercel.app/';
+
+  // Ensure Firebase is initialized
+  try {
+    initFirebase();
+  } catch(e) {
+    container.innerHTML = '<div style="color:#f66;padding:12px;font-size:0.85rem;">❌ خطأ في تهيئة Firebase: ' + e.message + '</div>';
+    return;
+  }
+
+  if (!_db) {
+    container.innerHTML = '<div style="color:#f66;padding:12px;font-size:0.85rem;">❌ _db is null — Firebase not initialized</div>';
+    return;
+  }
 
   _db.collection('invitations').get()
     .then(snapshot => {
+      const count = snapshot.size;
       let realWeddings = [];
-      if (!snapshot.empty) {
-        snapshot.forEach(doc => {
-          const data = doc.data() || {};
-          const cfg = data.config || {};
-          // Try all possible name fields (gn/ga for groom, bn/ba for bride)
-          const groom = cfg.gn || cfg.ga || '';
-          const bride = cfg.bn || cfg.ba || '';
-          const label = (groom || bride)
-            ? `💍 ${groom}${groom && bride ? ' & ' : ''}${bride}`.trim()
-            : `💍 Mariage (${doc.id})`;
-          const url = cfg.url || `${BASE_URL}?inv=${encodeURIComponent(doc.id)}`;
-          console.log('[WeddingSwitcher] doc:', doc.id, '| groom:', groom, '| bride:', bride, '| url:', url);
-          realWeddings.push({ id: doc.id, label, url });
-        });
-      } else {
-        console.warn('[WeddingSwitcher] Firestore snapshot is EMPTY — check Firestore Security Rules (list permission needed on invitations collection)');
-      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data() || {};
+        const cfg = data.config || {};
+        const groom = cfg.gn || cfg.ga || cfg.groomName || '';
+        const bride  = cfg.bn || cfg.ba || cfg.brideName  || '';
+        const label = (groom || bride)
+          ? `💍 ${groom}${groom && bride ? ' & ' : ''}${bride}`.trim()
+          : `💍 Mariage — ${doc.id}`;
+        const url = cfg.url || `${BASE_URL}?inv=${encodeURIComponent(doc.id)}`;
+        realWeddings.push({ id: doc.id, label, url });
+      });
 
       if (realWeddings.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:14px; color:#d4b260; font-family:'Amiri',serif;">⚠️ لا توجد مشاريع زفاف مسجلة بعد في قاعدة البيانات.<br><small style="opacity:0.6">تحقق من Firestore Security Rules</small></div>`;
+        container.innerHTML =
+          '<div style="text-align:center;padding:14px;color:#f99;font-size:0.85rem;">' +
+          '⚠️ Firebase connecté mais collection vide<br>' +
+          '<small>snapshot.size = ' + count + ' | Collection = invitations</small>' +
+          '</div>';
         return;
       }
 
-      // Highlight current wedding
       const currentInv = new URLSearchParams(window.location.search).get('inv') || '';
-
       container.innerHTML = realWeddings.map(w => {
         const isCurrent = w.id === currentInv;
         const border = isCurrent ? '2px solid #f7cb4d' : '1.5px solid #c9a84c';
         const bg = isCurrent
           ? 'linear-gradient(135deg, rgba(247,203,77,0.3) 0%, rgba(138,96,16,0.35) 100%)'
           : 'linear-gradient(135deg, rgba(247,203,77,0.1) 0%, rgba(138,96,16,0.15) 100%)';
-        const badge = isCurrent ? `<span style="font-size:0.72rem; color:#0a1912; background:#f7cb4d; padding:2px 8px; border-radius:6px; margin-right:6px;">الحالي</span>` : '';
-        return `
-          <button onclick="switchWeddingProject('${w.id}', '${w.url}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:${bg}; border:${border}; border-radius:12px; font-family:'Amiri',serif; font-size:1rem; color:#fff3ad; font-weight:bold; cursor:pointer; text-align:right; box-sizing:border-box;">
-            <span>${badge}${w.label}</span>
-            <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px; flex-shrink:0;">فتح ➜</span>
-          </button>
-        `;
+        const badge = isCurrent
+          ? '<span style="font-size:0.72rem;color:#0a1912;background:#f7cb4d;padding:2px 8px;border-radius:6px;margin-right:6px;">الحالي</span>'
+          : '';
+        return `<button onclick="switchWeddingProject('${w.id}','${w.url}')"
+          style="display:flex;justify-content:space-between;align-items:center;width:100%;
+          padding:12px 14px;background:${bg};border:${border};border-radius:12px;
+          font-family:'Amiri',serif;font-size:1rem;color:#fff3ad;font-weight:bold;
+          cursor:pointer;text-align:right;box-sizing:border-box;margin-bottom:6px;">
+          <span>${badge}${w.label}</span>
+          <span style="font-size:0.8rem;color:#f7cb4d;background:rgba(0,0,0,0.4);
+            padding:4px 10px;border-radius:6px;flex-shrink:0;">فتح ➜</span>
+        </button>`;
       }).join('');
     })
     .catch(err => {
-      console.error('[Wedding Switcher] Firestore load failed:', err);
-      container.innerHTML = `<div style="text-align:center; padding:14px; color:#f66; font-family:'Amiri',serif;">❌ تعذر تحميل قائمة الزفاف.<br><small>${err.message}</small></div>`;
+      container.innerHTML =
+        '<div style="text-align:center;padding:14px;color:#f66;font-size:0.85rem;">' +
+        '❌ Firestore Error: ' + err.code + '<br>' +
+        '<small>' + err.message + '</small>' +
+        '</div>';
     });
 }
+
+
 
 
 function openPwaGuestSwitcher() {
