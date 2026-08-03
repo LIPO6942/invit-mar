@@ -1332,6 +1332,7 @@ function applyEnvelopeDesign(cfg) {
   const showCalligraphy = pattern === 'calligraphy';
   const showAmazigh    = pattern === 'amazigh';
   const showEmbossed   = pattern === 'embossed' || pattern === 'botanical_embossed';
+  const showSageEmbossed = pattern === 'sage_embossed' || pattern === 'botanical_sage';
 
   document.querySelectorAll('.panel-branches').forEach(el => {
     el.style.display = showFloral ? '' : 'none';
@@ -1362,6 +1363,9 @@ function applyEnvelopeDesign(cfg) {
   });
   document.querySelectorAll('.panel-embossed').forEach(el => {
     el.style.display = showEmbossed ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-sage-embossed').forEach(el => {
+    el.style.display = showSageEmbossed ? 'block' : 'none';
   });
 
   const invitationEl = document.getElementById('invitation');
