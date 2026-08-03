@@ -1320,7 +1320,7 @@ let _sealApplied = false; // Flag to prevent seal from being changed multiple ti
 function applyEnvelopeDesign(cfg) {
   if (!cfg) return;
 
-  // ── Motif (ep: 'floral' | 'vintage' | 'minimalist' | 'nature' | 'arabesque' | 'zellige' | 'door' | 'calligraphy' | 'amazigh') ──
+  // ── Motif (ep: 'floral' | 'vintage' | 'minimalist' | 'nature' | 'arabesque' | 'zellige' | 'door' | 'calligraphy' | 'amazigh' | 'embossed') ──
   const pattern        = cfg.ep || 'floral';
   const showFloral     = pattern === 'floral';
   const showVintage    = pattern === 'vintage';
@@ -1331,6 +1331,7 @@ function applyEnvelopeDesign(cfg) {
   const showDoor       = pattern === 'door' || pattern === 'porte';
   const showCalligraphy = pattern === 'calligraphy';
   const showAmazigh    = pattern === 'amazigh';
+  const showEmbossed   = pattern === 'embossed' || pattern === 'botanical_embossed';
 
   document.querySelectorAll('.panel-branches').forEach(el => {
     el.style.display = showFloral ? '' : 'none';
@@ -1358,6 +1359,9 @@ function applyEnvelopeDesign(cfg) {
   });
   document.querySelectorAll('.panel-amazigh').forEach(el => {
     el.style.display = showAmazigh ? 'block' : 'none';
+  });
+  document.querySelectorAll('.panel-embossed').forEach(el => {
+    el.style.display = showEmbossed ? 'block' : 'none';
   });
 
   const invitationEl = document.getElementById('invitation');
