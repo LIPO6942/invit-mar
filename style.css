@@ -3782,20 +3782,22 @@ body.lang-ar .animated-bride {
   height: 56px;
   border-radius: 50%;
   background: radial-gradient(
-    circle at 38% 32%,
-    #173e2d 0%,
-    #0e2a1e 40%,
-    #071911 82%,
-    #020a07 100%
+    circle at 35% 30%,
+    #ffffff 0%,
+    #fff7d1 12%,
+    #fce28b 32%,
+    #d69d20 65%,
+    #946508 90%,
+    #523500 100%
   );
-  border: 2px solid #f7d070;
+  border: 1.5px solid #fff5c0;
   box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.55),
-    0 0 0 2px rgba(255, 245, 200, 0.9),
-    0 0 0 4.5px rgba(201, 168, 76, 0.85),
-    0 0 14px rgba(247, 208, 112, 0.5),
-    inset 0 3px 6px rgba(255, 255, 255, 0.4),
-    inset 0 -3px 8px rgba(0, 0, 0, 0.8);
+    0 8px 22px rgba(0, 0, 0, 0.45),
+    0 0 0 2px rgba(255, 235, 170, 0.9),
+    0 0 0 4.5px rgba(201, 168, 76, 0.8),
+    0 0 14px rgba(247, 208, 112, 0.45),
+    inset 0 3px 6px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3807,10 +3809,10 @@ body.lang-ar .animated-bride {
 .guest-medallion-badge::before {
   content: '';
   position: absolute;
-  inset: 3px;
+  inset: 3.5px;
   border-radius: 50%;
-  border: 1.5px dotted #f7d070;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.85);
+  border: 1.2px dashed #7a5005;
+  box-shadow: inset 0 0 6px rgba(120, 80, 5, 0.4);
   pointer-events: none;
 }
 
@@ -3820,7 +3822,7 @@ body.lang-ar .animated-bride {
   left: 9px;
   width: 18px;
   height: 9px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%);
   border-radius: 50%;
   transform: rotate(-35deg);
   filter: blur(1px);
@@ -3835,7 +3837,7 @@ body.lang-ar .animated-bride {
   text-shadow: 0 0 8px #f7d070;
 }
 
-/* Calligraphic Arabic Monogram Ligature Style (Liquid 24K Gold Stamped) */
+/* Calligraphic Arabic Monogram Ligature Style (Deep Bronze Engraved) */
 .medallion-initials-art {
   display: flex;
   align-items: center;
@@ -3850,6 +3852,7 @@ body.lang-ar .animated-bride {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 3px;
   font-family: 'Aref Ruqaa', 'Aref Ruqaa Ink', 'Amiri', serif;
   font-weight: 700;
   direction: rtl;
@@ -3858,24 +3861,21 @@ body.lang-ar .animated-bride {
 }
 
 .ar-callig-main-flourish {
-  font-size: 1.85rem;
+  font-size: 1.6rem;
   line-height: 1;
-  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  background: linear-gradient(145deg, #210d00 0%, #4a2402 55%, #170700 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
-  transform: translateY(-1px) scaleX(1.06);
+  filter: drop-shadow(0 1px 1px rgba(255, 248, 220, 0.95));
 }
 
 .ar-callig-sec-flourish {
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   line-height: 1;
-  margin-right: -9px;
-  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  background: linear-gradient(145deg, #210d00 0%, #4a2402 55%, #170700 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
-  transform: translateY(2px) rotate(-5deg);
+  filter: drop-shadow(0 1px 1px rgba(255, 248, 220, 0.95));
 }
 
 .ar-callig-hamza-accent {
@@ -3883,57 +3883,58 @@ body.lang-ar .animated-bride {
   top: 4px;
   right: 10px;
   font-size: 0.75rem;
-  color: #fff2b2;
+  color: #3b1900;
   font-family: 'Amiri', serif;
   opacity: 0.95;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 4px #f7c948);
+  filter: drop-shadow(0 0.5px 0.5px rgba(255, 248, 220, 0.9));
 }
 
 .ar-callig-letter-a, .ar-callig-letter-b {
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-family: 'Aref Ruqaa', 'Amiri', serif;
   font-weight: 700;
-  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  background: linear-gradient(145deg, #210d00 0%, #4a2402 55%, #170700 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
+  filter: drop-shadow(0 1px 1px rgba(255, 248, 220, 0.95));
 }
 
 .ar-callig-separator {
-  font-size: 0.7rem;
-  color: #f7d070;
-  margin: 0 2px;
+  font-size: 0.75rem;
+  color: #6b4305;
+  opacity: 0.75;
+  margin: 0 1px;
 }
 
 .latin-callig-composition {
   font-family: 'Playfair Display', 'Dancing Script', serif;
   font-weight: 700;
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   letter-spacing: 1px;
-  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  background: linear-gradient(145deg, #210d00 0%, #4a2402 55%, #170700 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
+  filter: drop-shadow(0 1px 1px rgba(255, 248, 220, 0.95));
 }
 
 @keyframes medallionPulseGlow {
   0%, 100% {
     box-shadow:
-      0 8px 22px rgba(0, 0, 0, 0.55),
-      0 0 0 2px rgba(255, 245, 200, 0.9),
-      0 0 0 4.5px rgba(201, 168, 76, 0.85),
-      0 0 14px rgba(247, 208, 112, 0.4),
-      inset 0 3px 6px rgba(255, 255, 255, 0.4),
-      inset 0 -3px 8px rgba(0, 0, 0, 0.8);
+      0 8px 22px rgba(0, 0, 0, 0.45),
+      0 0 0 2px rgba(255, 235, 170, 0.9),
+      0 0 0 4.5px rgba(201, 168, 76, 0.8),
+      0 0 14px rgba(247, 208, 112, 0.45),
+      inset 0 3px 6px rgba(255, 255, 255, 0.85),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.5);
   }
   50% {
     box-shadow:
-      0 10px 28px rgba(0, 0, 0, 0.65),
+      0 10px 26px rgba(0, 0, 0, 0.55),
       0 0 0 2.5px rgba(255, 248, 220, 1),
       0 0 0 5.5px rgba(230, 180, 40, 0.95),
       0 0 22px rgba(247, 208, 112, 0.75),
-      inset 0 3.5px 8px rgba(255, 255, 255, 0.6),
-      inset 0 -3px 8px rgba(0, 0, 0, 0.8);
+      inset 0 3.5px 8px rgba(255, 255, 255, 0.95),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.5);
   }
 }
 

@@ -1784,12 +1784,11 @@ function _extractGuestInitials(guestName) {
 
     const raw = `${char1}${char2}`;
 
-    // Highly creative overlapping calligraphic composition (matching user reference artwork e.g., ح أ or س أ)
     const html = `
       <div class="ar-callig-composition">
-        <span class="ar-callig-main-flourish">${char1}</span>
-        <span class="ar-callig-sec-flourish">${char2}</span>
-        <span class="ar-callig-hamza-accent">ء</span>
+        <span class="ar-callig-letter-a">${char1}</span>
+        <span class="ar-callig-separator">·</span>
+        <span class="ar-callig-letter-b">${char2}</span>
       </div>
     `;
 
