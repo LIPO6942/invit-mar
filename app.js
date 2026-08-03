@@ -3612,4 +3612,67 @@ function closeIosPwaModal() {
   if (modal) modal.style.display = 'none';
 }
 
+/* ═══════════════════════════════════════════════
+   PWA ADMIN GUEST SWITCHER TRICK
+   ═══════════════════════════════════════════════ */
+function openPwaGuestSwitcher() {
+  const modal = document.getElementById('pwaGuestSwitcherModal');
+  if (!modal) return;
+  
+  // Populate sample guest links
+  const container = document.getElementById('pwaSavedGuestsList');
+  if (container) {
+    const sampleGuests = [
+      { name: 'فاروق الدريدي', type: 'ar_couple_children' },
+      { name: 'سامي الطرابلسي', type: 'ar_couple' },
+      { name: 'حسام أحمد', type: 'ar_man' },
+      { name: 'مريم العمري', type: 'ar_woman' },
+      { name: 'Ayoub & Khouloud', type: 'fr_couple' }
+    ];
+    
+    container.innerHTML = sampleGuests.map(g => `
+      <button onclick="applyPwaGuest('${g.name.replace(/'/g, "\\'")}', '${g.type}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:8px 12px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); border-radius:8px; font-family:'Amiri',serif; font-size:0.92rem; color:#3d2600; cursor:pointer; text-align:right;">
+        <span>👤 ${g.name}</span>
+        <span style="font-size:0.78rem; opacity:0.8; color:#8a6010;">اختبار ➜</span>
+      </button>
+    `).join('');
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closePwaGuestSwitcher() {
+  const modal = document.getElementById('pwaGuestSwitcherModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function applyPwaGuestFromInput() {
+  const input = document.getElementById('pwaCustomGuestInput');
+  if (!input || !input.value.trim()) return;
+  applyPwaGuest(input.value.trim(), 'ar_couple');
+}
+
+function applyPwaGuest(guestName, guestType = 'ar_couple') {
+  if (!guestName) return;
+  _resolvedGuestName = guestName;
+  _resolvedGuestType = guestType;
+
+  // Update PWA URL in-place without page reload
+  try {
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('guest', guestName);
+    if (guestType) newUrl.searchParams.set('type', guestType);
+    window.history.pushState({}, '', newUrl.toString());
+  } catch(e) {
+    console.error('URL pushState error:', e);
+  }
+
+  // Re-render invitation UI live inside PWA
+  _updateGuestBanner();
+  _updatePersonalizedInviteDesc();
+
+  closePwaGuestSwitcher();
+}
+
+
 

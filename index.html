@@ -629,16 +629,16 @@
 
     <!-- ⑦ Nominative Guest Card — visible only when ?guest= URL param is present -->
     <div class="guest-name-banner" id="guestNameBanner" style="display:none">
-      <!-- Royal Gold 3D Initials Medallion Badge -->
-      <div class="guest-medallion-container" id="guestMedallionContainer">
+      <!-- 3D Engraved Wax Seal Initials Medallion Badge (Click to switch guest link in PWA) -->
+      <div class="guest-medallion-container" id="guestMedallionContainer" onclick="openPwaGuestSwitcher()" title="انقر لتجربة رابط ضيف آخر في PWA">
         <div class="guest-medallion-badge">
           <div class="medallion-shine"></div>
           <div class="medallion-stars">✦</div>
           <div class="medallion-initials-art" id="guestMedallionInitials">
             <div class="ar-callig-composition">
-              <span class="ar-callig-main-flourish">س</span>
-              <span class="ar-callig-sec-flourish">أ</span>
-              <span class="ar-callig-hamza-accent">ء</span>
+              <span class="ar-callig-letter-a">ف</span>
+              <span class="ar-callig-separator">·</span>
+              <span class="ar-callig-letter-b">د</span>
             </div>
           </div>
         </div>
@@ -891,6 +891,35 @@
       <li>اختر <strong>"الإضافة إلى الشاشة الرئيسية"</strong> (Add to Home Screen) ➕.</li>
     </ol>
     <button class="pwa-modal-action-btn" onclick="closeIosPwaModal()" data-tr="got_it">حسناً، فهمت</button>
+  </div>
+</div>
+
+<!-- 🪄 Admin PWA Guest Link Switcher Modal -->
+<div id="pwaGuestSwitcherModal" class="pwa-modal-backdrop" style="display:none;" onclick="closePwaGuestSwitcher()">
+  <div class="pwa-modal-card" style="max-width: 380px; text-align: right;" onclick="event.stopPropagation()">
+    <button class="pwa-modal-close" onclick="closePwaGuestSwitcher()">✕</button>
+    <div style="text-align: center; margin-bottom: 14px;">
+      <span style="font-size: 2.2rem;">🪄</span>
+      <h3 style="font-size: 1.3rem; color: #2b1800; margin-top: 4px;" data-tr="pwa_switcher_title">تجربة رابط ضيف آخر (PWA)</h3>
+      <p style="font-size: 0.85rem; color: #704706;" data-tr="pwa_switcher_subtitle">أدخل اسماً أو اختر ضيفاً لمشاهدة دعوتهم مباشرة داخل التطبيق</p>
+    </div>
+    
+    <div style="margin-bottom: 14px;">
+      <label style="display: block; font-size: 0.88rem; font-weight: bold; color: #3d2600; margin-bottom: 6px;">كتابة اسم ضيف جديد :</label>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="pwaCustomGuestInput" placeholder="مثال: فاروق الدريدي" style="flex:1; padding: 10px 14px; border: 1.5px solid #c9a84c; border-radius: 12px; font-family: 'Amiri', serif; font-size: 0.95rem; outline: none; background: #fffdf8;">
+        <button onclick="applyPwaGuestFromInput()" style="padding: 10px 16px; background: linear-gradient(135deg, #c9a84c 0%, #8a6010 100%); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">تطبيق ✨</button>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid rgba(201,168,76,0.25); padding-top: 12px; margin-top: 12px;">
+      <label style="display: block; font-size: 0.88rem; font-weight: bold; color: #3d2600; margin-bottom: 8px;">أو اختر من قائمة ضيوف تجريبية :</label>
+      <div id="pwaSavedGuestsList" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-left: 2px;">
+        <!-- Populated dynamically by JS -->
+      </div>
+    </div>
+
+    <button onclick="closePwaGuestSwitcher()" style="width: 100%; margin-top: 16px; padding: 10px; background: #e0d0b0; color: #3d2600; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">إغلاق</button>
   </div>
 </div>
 
