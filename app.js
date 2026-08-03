@@ -3197,15 +3197,14 @@ function downloadSouvenirImage() {
   const isRtl = !isFr;
   const dir = isRtl ? 'rtl' : 'ltr';
 
-  // Create clean off-screen wrapper attached to DOM for full font & layout calculation
   const container = document.createElement('div');
   container.style.cssText = `
     position: absolute;
     top: 0;
     left: -9999px;
-    width: 520px;
-    background: #0f0a05;
-    padding: 30px;
+    width: 560px;
+    background: radial-gradient(ellipse at 50% 30%, #261b10 0%, #120c06 70%, #080402 100%);
+    padding: 35px 25px;
     box-sizing: border-box;
     font-family: 'Amiri', 'Traditional Arabic', 'Playfair Display', serif;
     direction: ${dir};
@@ -3215,211 +3214,257 @@ function downloadSouvenirImage() {
   const mono = `${groom[0] || 'م'} & ${bride[0] || 'م'}`;
 
   container.innerHTML = `
-    <div style="
-      background: linear-gradient(150deg, #fffdfa 0%, #f9f3e5 50%, #f3e9d2 100%);
-      border: 3px solid #d4af37;
-      border-radius: 20px;
-      box-shadow: inset 0 0 0 5px rgba(212, 175, 55, 0.25), 0 15px 35px rgba(0,0,0,0.4);
-      padding: 35px 25px 30px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    ">
-      <!-- Top Decorative Gold Ribbon -->
-      <div style="
-        background: linear-gradient(90deg, #b8860b 0%, #d4af37 30%, #fff8dc 50%, #d4af37 70%, #b8860b 100%);
-        height: 6px;
-        margin: -35px -25px 25px -25px;
-      "></div>
+    <div style="position: relative; width: 100%; margin: 0 auto; text-align: center;">
 
-      <!-- Header Monogram Badge -->
-      <div style="
-        display: inline-block;
-        border: 1px solid #d4af37;
-        border-radius: 30px;
-        padding: 4px 18px;
-        background: rgba(212, 175, 55, 0.08);
-        color: #8c6d23;
-        font-size: 0.9rem;
-        font-weight: bold;
-        letter-spacing: 2px;
-        margin-bottom: 20px;
-      ">
-        ✦ ${mono} ✦
-      </div>
+      <!-- ── 1. ENVELOPE TOP OPEN FLAP (Background Layer) ── -->
+      <svg width="510" height="120" viewBox="0 0 510 120" style="display: block; margin: 0 auto -50px auto; position: relative; z-index: 1;" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="topFlapGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#dfcb95"/>
+            <stop offset="60%" stop-color="#caaf6b"/>
+            <stop offset="100%" stop-color="#b0934e"/>
+          </linearGradient>
+          <filter id="flapShadow" x="-10%" y="-10%" width="120%" height="130%">
+            <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+          </filter>
+        </defs>
+        <!-- Triangle Flap pointing UP -->
+        <polygon points="0,120 510,120 255,0" fill="url(#topFlapGrad)" filter="url(#flapShadow)"/>
+        <polygon points="0,120 510,120 255,0" fill="none" stroke="#f5e0a3" stroke-width="2" opacity="0.6"/>
+        <!-- Inner flap foil trim -->
+        <polygon points="20,118 490,118 255,12" fill="none" stroke="#8c6d23" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+        <text x="255" y="70" text-anchor="middle" font-family="serif" font-size="20" font-weight="bold" fill="#523c03" opacity="0.45">${mono}</text>
+      </svg>
 
-      <!-- Envelope / Guest Salutation Card -->
+      <!-- ── 2. INVITATION CARD (Sliding out of Envelope) ── -->
       <div style="
-        background: rgba(255, 255, 255, 0.75);
-        border: 1px dashed #c59b27;
-        border-radius: 14px;
-        padding: 16px 20px;
-        margin-bottom: 24px;
-        box-shadow: 0 4px 12px rgba(140, 109, 35, 0.08);
+        position: relative;
+        z-index: 2;
+        width: 470px;
+        margin: 0 auto;
+        background: linear-gradient(155deg, #fffdf8 0%, #fbf4e4 50%, #f4e8cf 100%);
+        border: 2.5px solid #d4af37;
+        border-radius: 16px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 0 0 4px rgba(212,175,55,0.2);
+        padding: 28px 24px 70px 24px;
+        box-sizing: border-box;
       ">
-        <div style="font-size: 0.85rem; color: #8c6d23; margin-bottom: 4px; font-style: italic;">
-          ${guestTitle}
-        </div>
-        <div style="font-size: 1.75rem; font-weight: bold; color: #4a3410; line-height: 1.3;">
-          ${guestName}
-        </div>
+
+        <!-- Top Gold Ornament -->
         <div style="
           display: inline-block;
-          margin-top: 8px;
-          background: #d4af37;
-          color: #1a1000;
-          font-size: 0.75rem;
+          border: 1px solid #d4af37;
+          border-radius: 20px;
+          padding: 3px 16px;
+          background: rgba(212, 175, 55, 0.08);
+          color: #8c6d23;
+          font-size: 0.82rem;
           font-weight: bold;
-          padding: 3px 12px;
-          border-radius: 10px;
+          letter-spacing: 2px;
+          margin-bottom: 14px;
         ">
-          ${isFr ? '✦ Souvenir d\'Invitation ✦' : '✦ مغلف الدعوة التذكاري ✦'}
+          ✦ ${mono} ✦
         </div>
-      </div>
 
-      <!-- 3D Gold Wax Seal Center Symbol -->
-      <div style="margin: 0 auto 20px auto; width: 64px; height: 64px; position: relative;">
+        <!-- Guest Salutation Card inside -->
         <div style="
-          width: 64px;
-          height: 64px;
+          background: rgba(255, 255, 255, 0.85);
+          border: 1.5px dashed #c59b27;
+          border-radius: 12px;
+          padding: 12px 16px;
+          margin-bottom: 16px;
+          box-shadow: 0 3px 10px rgba(140, 109, 35, 0.08);
+        ">
+          <div style="font-size: 0.8rem; color: #8c6d23; margin-bottom: 2px; font-style: italic;">
+            ${guestTitle}
+          </div>
+          <div style="font-size: 1.6rem; font-weight: bold; color: #4a3410; line-height: 1.2;">
+            ${guestName}
+          </div>
+        </div>
+
+        <!-- Verse / Blessing -->
+        <div style="font-size: 1.05rem; color: #7a5a18; font-weight: bold; margin-bottom: 4px; line-height: 1.5;">
+          بارك الله لهما وبارك عليهما وجمع بينهما في خير
+        </div>
+
+        <div style="color: #d4af37; font-size: 0.85rem; letter-spacing: 4px; margin: 6px 0;">
+          ✦ ✦ ✦
+        </div>
+
+        <div style="font-size: 0.88rem; color: #664d1a; margin-bottom: 8px;">
+          ${isFr ? "Les familles vous invitent au mariage de leurs enfants" : "يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف"}
+        </div>
+
+        <!-- Couple Names -->
+        <div style="
+          font-size: 2.4rem;
+          font-weight: bold;
+          color: #3b280a;
+          margin: 6px 0 12px;
+          line-height: 1.1;
+        ">
+          ${groom} <span style="color: #d4af37; font-size: 1.6rem; vertical-align: middle;">&amp;</span> ${bride}
+        </div>
+
+        <!-- Highlighted Date Badge -->
+        <div style="
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          background: rgba(212, 175, 55, 0.12);
+          border: 1.5px solid #d4af37;
+          border-radius: 12px;
+          padding: 8px 18px;
+          margin-bottom: 14px;
+        ">
+          <div style="font-size: 2.1rem; font-weight: 800; color: #8c6d23; line-height: 1;">
+            ${dayNum}
+          </div>
+          <div style="text-align: ${isRtl ? 'right' : 'left'};">
+            <div style="font-size: 1rem; font-weight: bold; color: #4a3410;">${monthName}</div>
+            <div style="font-size: 0.78rem; color: #8c6d23;">${year}</div>
+          </div>
+        </div>
+
+        <!-- Venue & Details Box -->
+        <div style="
+          background: #ffffff;
+          border: 1px solid #e0c878;
+          border-radius: 10px;
+          padding: 12px 14px;
+          text-align: ${isRtl ? 'right' : 'left'};
+          box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        ">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: #fdf7e7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size: 0.65rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
+                ${isFr ? 'Date' : 'تاريخ حفل الزفاف'}
+              </div>
+              <div style="font-size: 0.88rem; font-weight: bold; color: #3b280a;">
+                ${dateStr}
+              </div>
+            </div>
+          </div>
+
+          <div style="height: 1px; background: #f0e2b6; margin: 6px 0;"></div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: #fdf7e7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size: 0.65rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
+                ${isFr ? 'Lieu' : 'مكان الحفل'}
+              </div>
+              <div style="font-size: 0.88rem; font-weight: bold; color: #3b280a;">
+                ${isFr ? 'Palais des Fêtes — Teboulba, Monastir' : 'قصر الأفراح — طبلبة، المنستير'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /Card -->
+
+      <!-- ── 3. ENVELOPE FRONT POCKET (Overlapping Card in 3D) ── -->
+      <div style="
+        position: relative;
+        z-index: 3;
+        width: 510px;
+        margin: -80px auto 0 auto;
+      ">
+        <svg width="510" height="150" viewBox="0 0 510 150" style="display: block; margin: 0 auto;" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="pocketGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f5e7c4"/>
+              <stop offset="40%" stop-color="#ebd8a7"/>
+              <stop offset="100%" stop-color="#d4ba7d"/>
+            </linearGradient>
+            <filter id="pocketShadow" x="-10%" y="-20%" width="120%" height="140%">
+              <feDropShadow dx="0" dy="-4" stdDeviation="5" flood-color="#000" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+          <!-- Front Pocket V-Shape -->
+          <polygon points="0,0 255,75 510,0 510,150 0,150" fill="url(#pocketGrad)" filter="url(#pocketShadow)"/>
+          <polygon points="0,0 255,75 510,0" fill="none" stroke="#fcf3d9" stroke-width="2"/>
+          <line x1="0" y1="0" x2="255" y2="75" stroke="#b89a58" stroke-width="1.2"/>
+          <line x1="510" y1="0" x2="255" y2="75" stroke="#b89a58" stroke-width="1.2"/>
+        </svg>
+
+        <!-- Postal Stamp Badge (Top Right Corner of Envelope) -->
+        <div style="
+          position: absolute;
+          top: 30px;
+          right: 25px;
+          background: #faf4e4;
+          border: 2px dashed #b8860b;
+          border-radius: 4px;
+          padding: 4px 10px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          text-align: center;
+          transform: rotate(4deg);
+        ">
+          <div style="font-size: 0.6rem; color: #8c6d23; font-weight: bold; text-transform: uppercase;">
+            STAMP · 2026
+          </div>
+          <div style="font-size: 0.75rem; font-weight: bold; color: #4a3410;">
+            ${dayNum} ${monthName}
+          </div>
+        </div>
+
+        <!-- 3D Realistic Red & Gold Wax Seal (Center Seal over V-Fold) -->
+        <div style="
+          position: absolute;
+          top: 35px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 72px;
+          height: 72px;
           border-radius: 50%;
-          background: radial-gradient(circle at 35% 35%, #fff1b0 0%, #d4af37 35%, #997312 70%, #523c03 100%);
-          border: 2px solid #ffd700;
-          box-shadow: 0 6px 16px rgba(82, 60, 3, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+          background: radial-gradient(circle at 35% 35%, #e74c3c 0%, #c0392b 40%, #881e14 75%, #4a0d07 100%);
+          border: 2.5px solid #ffd700;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 3px 6px rgba(255,255,255,0.4);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #fff9e6;
-          font-size: 1.4rem;
+          color: #fff8dc;
+          font-size: 1.1rem;
           font-weight: bold;
-          text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+          text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         ">
-          ✦
-        </div>
-      </div>
-
-      <!-- Wedding Blessing Text -->
-      <div style="font-size: 1.15rem; color: #7a5a18; font-weight: bold; margin-bottom: 6px; line-height: 1.6;">
-        ${isFr ? "بارك الله لهما وبارك عليهما وجمع بينهما في خير" : "بارك الله لهما وبارك عليهما وجمع بينهما في خير"}
-      </div>
-
-      <div style="color: #d4af37; font-size: 0.9rem; letter-spacing: 5px; margin: 10px 0;">
-        ✦ ✦ ✦
-      </div>
-
-      <div style="font-size: 0.95rem; color: #664d1a; margin-bottom: 12px;">
-        ${isFr ? "Les familles vous invitent au mariage de leurs enfants" : "يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف"}
-      </div>
-
-      <!-- Couple Names -->
-      <div style="
-        font-size: 2.6rem;
-        font-weight: bold;
-        color: #3b280a;
-        margin: 10px 0 16px;
-        line-height: 1.2;
-      ">
-        ${groom} <span style="color: #d4af37; font-size: 1.8rem; vertical-align: middle;">&amp;</span> ${bride}
-      </div>
-
-      <!-- Highlighted Date Badge -->
-      <div style="
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(212, 175, 55, 0.12);
-        border: 1.5px solid #d4af37;
-        border-radius: 14px;
-        padding: 10px 22px;
-        margin-bottom: 20px;
-      ">
-        <div style="font-size: 2.4rem; font-weight: 800; color: #8c6d23; line-height: 1;">
-          ${dayNum}
-        </div>
-        <div style="text-align: ${isRtl ? 'right' : 'left'};">
-          <div style="font-size: 1.1rem; font-weight: bold; color: #4a3410;">${monthName}</div>
-          <div style="font-size: 0.85rem; color: #8c6d23;">${year}</div>
-        </div>
-      </div>
-
-      <!-- Event Details Box with Clean SVG Icons -->
-      <div style="
-        background: #ffffff;
-        border: 1px solid #e0c878;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 20px;
-        text-align: ${isRtl ? 'right' : 'left'};
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      ">
-        <!-- Date Line -->
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-          <div style="
-            width: 32px; height: 32px; border-radius: 50%; background: #fdf7e7;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-          ">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          </div>
-          <div>
-            <div style="font-size: 0.7rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
-              ${isFr ? 'Date du Mariage' : 'تاريخ حفل الزفاف'}
-            </div>
-            <div style="font-size: 0.95rem; font-weight: bold; color: #3b280a;">
-              ${dateStr}
-            </div>
-          </div>
+          ${mono}
         </div>
 
-        <div style="height: 1px; background: #f0e2b6; margin: 8px 0;"></div>
-
-        <!-- Venue Line -->
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="
-            width: 32px; height: 32px; border-radius: 50%; background: #fdf7e7;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-          ">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-          </div>
-          <div>
-            <div style="font-size: 0.7rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
-              ${isFr ? 'Lieu de la Cérémonie' : 'مكان الحفل'}
-            </div>
-            <div style="font-size: 0.95rem; font-weight: bold; color: #3b280a;">
-              ${isFr ? 'Palais des Fêtes — Teboulba, Monastir' : 'قصر الأفراح — طبلبة، المنستير'}
-            </div>
-          </div>
+        <!-- Footer Caption -->
+        <div style="
+          margin-top: 15px;
+          text-align: center;
+          font-size: 0.78rem;
+          color: #d4af37;
+          letter-spacing: 1px;
+          font-style: italic;
+        ">
+          ✦ تذكار دعوة زفاف ${groom} &amp; ${bride} ✦
         </div>
-      </div>
 
-      <!-- Thanks Message -->
-      <div style="font-size: 0.9rem; color: #7a5a18; font-style: italic; margin-bottom: 20px;">
-        ${isFr ? "Nous vous remercions chaleureusement pour votre présence ❤" : "نشكركم جزيل الشكر على حضوركم ومحبتكم دمتُم سنداً وفرحاً لنا"}
-      </div>
+      </div><!-- /Pocket -->
 
-      <!-- Bottom Footer Gold Border -->
-      <div style="
-        border-top: 1px stroke #e0c878;
-        padding-top: 12px;
-        font-size: 0.75rem;
-        color: #a08442;
-        letter-spacing: 1px;
-      ">
-        ✦ تذكار خاص لمحفوظات حفل زفاف ${groom} &amp; ${bride} ✦
-      </div>
     </div>
   `;
 
   document.body.appendChild(container);
 
-  // Await fonts loading to avoid rendering glitches
   const triggerCapture = () => {
     html2canvas(container, {
       scale: 2.5,
@@ -3430,13 +3475,13 @@ function downloadSouvenirImage() {
       document.body.removeChild(container);
       const link = document.createElement('a');
       const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
-      link.download = `Invitation_Souvenir_${sanitizedGuest}.png`;
+      link.download = `Invitation_3D_Souvenir_${sanitizedGuest}.png`;
       link.href = canvas.toDataURL('image/png');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }).catch(err => {
-      console.error('Souvenir capture error:', err);
+      console.error('Souvenir 3D capture error:', err);
       if (document.body.contains(container)) document.body.removeChild(container);
     });
   };
