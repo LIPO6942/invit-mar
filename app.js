@@ -3643,7 +3643,6 @@ let _envNamesClickTimer = null;
 function handleEnvelopeNamesClick(e) {
   if (e) {
     if (e.stopPropagation) e.stopPropagation();
-    if (e.preventDefault) e.preventDefault();
   }
   _envNamesClickCount++;
   if (_envNamesClickTimer) clearTimeout(_envNamesClickTimer);
@@ -3658,6 +3657,24 @@ function handleEnvelopeNamesClick(e) {
     _envNamesClickCount = 0;
   }, 500);
 }
+
+// 100% Reliable touch double-tap handler for mobile touchscreens (iOS/Android PWA)
+document.addEventListener('DOMContentLoaded', () => {
+  const envBanner = document.querySelector('.env-names-banner');
+  if (envBanner) {
+    let lastBannerTap = 0;
+    envBanner.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      const diff = now - lastBannerTap;
+      if (diff > 0 && diff < 450) {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        openWeddingSwitcherModal();
+      }
+      lastBannerTap = now;
+    });
+  }
+});
 
 let _sealClickTimer = null;
 let _sealTapCount = 0;

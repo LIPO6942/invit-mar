@@ -1,9 +1,5 @@
-const CACHE_NAME = 'invit-mar-v1';
+const CACHE_NAME = 'invit-mar-v999';
 const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
   './manifest.json',
   './assets/heart_wax_seal.png',
   './assets/icon-192.png',
@@ -12,11 +8,11 @@ const ASSETS_TO_CACHE = [
 
 // Install Event
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching static assets');
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -27,7 +23,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', cache);
+            console.log('[SW] Clearing old cache:', cache);
             return caches.delete(cache);
           }
         })
@@ -36,28 +32,25 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event (Network First, fallback to Cache)
+// Fetch Event (Network First, NEVER cache HTML/JS/CSS to ensure instant updates)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  
+  const url = event.request.url;
+
+  // Always fetch JS, CSS, and HTML fresh from network!
+  if (url.includes('.js') || url.includes('.css') || url.includes('.html') || url.endsWith('/')) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && event.request.url.startsWith('http')) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
-        }
-        return networkResponse;
-      })
-      .catch(() => {
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('./index.html');
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
+});
           }
         });
       })
