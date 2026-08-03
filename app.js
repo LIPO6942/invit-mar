@@ -3637,75 +3637,58 @@ function handleMedallionClick(e) {
   openPwaGuestSwitcher();
 }
 
-let _envNamesClickCount = 0;
-let _envNamesClickTimer = null;
-
 function handleEnvelopeNamesClick(e) {
-  if (e) {
-    if (e.stopPropagation) e.stopPropagation();
-  }
-  _envNamesClickCount++;
-  if (_envNamesClickTimer) clearTimeout(_envNamesClickTimer);
-  
-  if (_envNamesClickCount >= 2) {
-    _envNamesClickCount = 0;
-    openWeddingSwitcherModal();
-    return;
-  }
-  
-  _envNamesClickTimer = setTimeout(() => {
-    _envNamesClickCount = 0;
-  }, 500);
+  // handled by touchend below — click is ignored on mobile
 }
 
-// 100% Reliable touch double-tap handler for mobile touchscreens (iOS/Android PWA)
-document.addEventListener('DOMContentLoaded', () => {
+function handleEnvelopeNamesDblClick(e) {
+  if (e) e.preventDefault();
+  openWeddingSwitcherModal();
+}
+
+// NOTE: app.js loads at bottom of <body>, so DOM is already ready — no DOMContentLoaded needed!
+// Attach directly: double-tap on .env-names-banner -> openWeddingSwitcherModal()
+(function attachEnvBannerDoubleTap() {
   const envBanner = document.querySelector('.env-names-banner');
-  if (envBanner) {
-    let lastBannerTap = 0;
-    envBanner.addEventListener('touchend', (e) => {
-      const now = Date.now();
-      const diff = now - lastBannerTap;
-      if (diff > 0 && diff < 450) {
-        if (e.cancelable) e.preventDefault();
-        e.stopPropagation();
-        openWeddingSwitcherModal();
-      }
-      lastBannerTap = now;
-    });
+  if (!envBanner) {
+    // Retry once in case rendering is delayed
+    setTimeout(() => {
+      const b = document.querySelector('.env-names-banner');
+      if (b) _attachBannerListeners(b);
+    }, 800);
+    return;
   }
-});
+  _attachBannerListeners(envBanner);
+})();
 
-let _sealClickTimer = null;
-let _sealTapCount = 0;
-
-function handleSealClick(e) {
-  if (e) {
-    if (e.stopPropagation) e.stopPropagation();
-    if (e.preventDefault) e.preventDefault();
-  }
-
-  _sealTapCount++;
-
-  if (_sealTapCount === 1) {
-    // Single click -> wait 350ms to see if a second click arrives
-    _sealClickTimer = setTimeout(() => {
-      _sealTapCount = 0;
-      _sealClickTimer = null;
-      // Single click opens envelope normally!
-      openEnvelopeNow();
-    }, 350);
-  } else if (_sealTapCount >= 2) {
-    // Double click -> Immediately cancel single click timer and DO NOT open envelope!
-    if (_sealClickTimer) {
-      clearTimeout(_sealClickTimer);
-      _sealClickTimer = null;
+function _attachBannerListeners(envBanner) {
+  // Mobile: touchend double-tap
+  let lastTap = 0;
+  envBanner.addEventListener('touchend', function(e) {
+    const now = Date.now();
+    if (now - lastTap > 0 && now - lastTap < 450) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      openWeddingSwitcherModal();
     }
-    _sealTapCount = 0;
-    
-    // Open ONLY Guest List Modal!
-    openPwaGuestSwitcher();
-  }
+    lastTap = now;
+  }, { passive: false });
+
+  // Desktop: dblclick
+  envBanner.addEventListener('dblclick', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    openWeddingSwitcherModal();
+  });
+
+  // Prevent text selection on mousedown
+  envBanner.addEventListener('mousedown', function(e) { e.preventDefault(); });
+}
+
+// Seal click: always opens the envelope directly (guest switching via medallion)
+function handleSealClick(e) {
+  if (e) e.stopPropagation();
+  openEnvelopeNow();
 }
 
 function openWeddingSwitcherModal() {
@@ -4018,10 +4001,8 @@ function switchWeddingFromInput() {
   switchWeddingProject(input.value.trim());
 }
 
-// Initialize long-press gestures on page load
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(initAdminLongPressGestures, 500);
-});
+// Kept for compatibility — long-press gestures no longer needed (handled via touchend)
+function initAdminLongPressGestures() {}
 
 
 

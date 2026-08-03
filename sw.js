@@ -1,5 +1,7 @@
-const CACHE_NAME = 'invit-mar-v1000';
+const CACHE_NAME = 'invit-mar-v105';
 const ASSETS_TO_CACHE = [
+  './index.html?v=105',
+  './app.js?v=105',
   './manifest.json',
   './assets/heart_wax_seal.png',
   './assets/icon-192.png',
