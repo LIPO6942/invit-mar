@@ -3760,7 +3760,7 @@ body.lang-ar .animated-bride {
 }
 
 /* ═══════════════════════════════════════════════
-   ROYAL GOLD 3D ENGRAVED WAX SEAL MEDALLION (ENVELOPE)
+   ROYAL DARK ANTIQUE GOLD 3D ENGRAVED MEDALLION (ENVELOPE)
    ═══════════════════════════════════════════════ */
 .guest-medallion-container {
   position: absolute;
@@ -3774,30 +3774,30 @@ body.lang-ar .animated-bride {
 }
 
 .guest-seal-mini {
-  display: none !important; /* Replaced by the 3D Engraved Wax Seal Medallion */
+  display: none !important; /* Replaced by the Royal Dark Antique Gold Medallion */
 }
 
 .guest-medallion-badge {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: radial-gradient(
-    circle at 36% 30%,
-    #fffef5 0%,
-    #fdf0b0 16%,
-    #f0c84a 40%,
-    #c9930c 70%,
-    #6e4406 100%
+    circle at 35% 30%,
+    #ffd67a 0%,
+    #c49121 20%,
+    #855a08 48%,
+    #472d00 80%,
+    #211200 100%
   );
-  border: 1.5px solid rgba(255, 250, 210, 0.9);
+  border: 2px solid #f0ca65;
   box-shadow:
-    0 8px 22px rgba(45, 22, 4, 0.55),
-    0 0 0 2px rgba(230, 190, 80, 0.9),
-    0 0 0 4.5px rgba(160, 110, 20, 0.75),
-    0 0 14px rgba(247, 208, 112, 0.5),
-    inset 0 3px 6px rgba(255, 255, 220, 0.85),
-    inset 0 -4px 10px rgba(50, 25, 5, 0.65);
+    0 10px 25px rgba(0, 0, 0, 0.65),
+    0 0 0 2px rgba(255, 235, 170, 0.95),
+    0 0 0 5px rgba(150, 105, 15, 0.85),
+    0 0 16px rgba(247, 208, 112, 0.5),
+    inset 0 3px 6px rgba(255, 245, 200, 0.75),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3805,24 +3805,24 @@ body.lang-ar .animated-bride {
   overflow: visible;
 }
 
-/* Stamped Inner Wax Ridge Filter */
+/* Deep Filigree Inner Ring Rim */
 .guest-medallion-badge::before {
   content: '';
   position: absolute;
   inset: 3.5px;
   border-radius: 50%;
-  border: 1.5px solid rgba(130, 80, 10, 0.45);
-  box-shadow: inset 0 1px 3px rgba(40, 20, 0, 0.6), 0 1px 1px rgba(255, 255, 240, 0.7);
+  border: 1.5px dashed #361f00;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9);
   pointer-events: none;
 }
 
 .medallion-shine {
   position: absolute;
   top: 3px;
-  left: 9px;
+  left: 10px;
   width: 18px;
   height: 9px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%);
   border-radius: 50%;
   transform: rotate(-35deg);
   filter: blur(1px);
@@ -3837,7 +3837,7 @@ body.lang-ar .animated-bride {
   text-shadow: 0 0 8px #f7d070;
 }
 
-/* Calligraphic Arabic Monogram Ligature Style (Deeply Engraved Wax Impression) */
+/* Calligraphic Arabic Monogram Ligature Style (Accentuated Deep Engraving) */
 .medallion-initials-art {
   display: flex;
   align-items: center;
@@ -3852,62 +3852,62 @@ body.lang-ar .animated-bride {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   font-family: 'Aref Ruqaa', 'Aref Ruqaa Ink', 'Amiri', serif;
-  font-weight: 700;
+  font-weight: 900;
   direction: rtl;
   width: 100%;
   height: 100%;
 }
 
 .ar-callig-main-flourish, .ar-callig-sec-flourish, .ar-callig-letter-a, .ar-callig-letter-b {
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   line-height: 1;
   font-family: 'Aref Ruqaa', 'Amiri', serif;
-  font-weight: 800;
-  background: linear-gradient(180deg, #422402 0%, #291400 50%, #522e03 100%);
+  font-weight: 900;
+  background: linear-gradient(180deg, #1c0800 0%, #3b1900 50%, #0a0300 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1.5px 0.5px rgba(255, 255, 225, 0.85)) drop-shadow(0 -1px 1px rgba(20, 10, 0, 0.9));
+  filter: drop-shadow(0 2px 0.5px rgba(255, 235, 170, 0.95)) drop-shadow(0 -1.5px 1px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 10px rgba(0,0,0,0.5));
 }
 
 .ar-callig-separator {
-  font-size: 0.75rem;
-  color: #422402;
-  opacity: 0.8;
+  font-size: 0.8rem;
+  color: #1c0800;
+  opacity: 0.9;
   margin: 0 1px;
-  filter: drop-shadow(0 1px 0.5px rgba(255, 255, 225, 0.8));
+  filter: drop-shadow(0 1.5px 0.5px rgba(255, 235, 170, 0.9));
 }
 
 .latin-callig-composition {
   font-family: 'Playfair Display', 'Dancing Script', serif;
-  font-weight: 800;
-  font-size: 1.5rem;
+  font-weight: 900;
+  font-size: 1.55rem;
   letter-spacing: 1px;
-  background: linear-gradient(180deg, #422402 0%, #291400 50%, #522e03 100%);
+  background: linear-gradient(180deg, #1c0800 0%, #3b1900 50%, #0a0300 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1.5px 0.5px rgba(255, 255, 225, 0.85)) drop-shadow(0 -1px 1px rgba(20, 10, 0, 0.9));
+  filter: drop-shadow(0 2px 0.5px rgba(255, 235, 170, 0.95)) drop-shadow(0 -1.5px 1px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 10px rgba(0,0,0,0.5));
 }
 
 @keyframes medallionPulseGlow {
   0%, 100% {
     box-shadow:
-      0 8px 22px rgba(45, 22, 4, 0.55),
-      0 0 0 2px rgba(230, 190, 80, 0.9),
-      0 0 0 4.5px rgba(160, 110, 20, 0.75),
-      0 0 14px rgba(247, 208, 112, 0.45),
-      inset 0 3px 6px rgba(255, 255, 220, 0.85),
-      inset 0 -4px 10px rgba(50, 25, 5, 0.65);
+      0 10px 25px rgba(0, 0, 0, 0.65),
+      0 0 0 2px rgba(255, 235, 170, 0.95),
+      0 0 0 5px rgba(150, 105, 15, 0.85),
+      0 0 16px rgba(247, 208, 112, 0.5),
+      inset 0 3px 6px rgba(255, 245, 200, 0.75),
+      inset 0 -4px 10px rgba(0, 0, 0, 0.85);
   }
   50% {
     box-shadow:
-      0 10px 26px rgba(45, 22, 4, 0.65),
+      0 12px 30px rgba(0, 0, 0, 0.75),
       0 0 0 2.5px rgba(255, 248, 220, 1),
-      0 0 0 5.5px rgba(230, 180, 40, 0.95),
-      0 0 22px rgba(247, 208, 112, 0.75),
-      inset 0 3.5px 8px rgba(255, 255, 225, 0.95),
-      inset 0 -4px 10px rgba(50, 25, 5, 0.65);
+      0 0 0 6px rgba(230, 180, 40, 0.95),
+      0 0 24px rgba(247, 208, 112, 0.8),
+      inset 0 3.5px 8px rgba(255, 245, 200, 0.9),
+      inset 0 -4px 10px rgba(0, 0, 0, 0.85);
   }
 }
 

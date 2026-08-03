@@ -894,6 +894,8 @@ function watchInvitation(slug, callback) {
 // ── Auth ──
 function doLogin() {
   if (document.getElementById('pwdInput').value === ADMIN_PASSWORD) {
+    localStorage.setItem('admin_authenticated', 'true');
+    sessionStorage.setItem('admin_authenticated', 'true');
     document.getElementById('login-screen').classList.add('hide');
     setTimeout(() => {
       document.getElementById('login-screen').style.display = 'none';

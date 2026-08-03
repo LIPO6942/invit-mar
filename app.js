@@ -3719,5 +3719,100 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
   closePwaGuestSwitcher();
 }
 
+/* ═══════════════════════════════════════════════
+   ADMIN LONG-PRESS SECRET GESTURES (PWA)
+   ═══════════════════════════════════════════════ */
+function initAdminLongPressGestures() {
+  // 1. Long-press on Wax Seal (#seal) -> Opens Guest Switcher for THIS wedding
+  const sealEl = document.getElementById('seal') || document.getElementById('sealWrapper');
+  if (sealEl) {
+    _attachLongPress(sealEl, 2500, () => {
+      openPwaGuestSwitcher();
+    });
+  }
+
+  // 2. Long-press on Couple Names Banner (.animated-names) -> Opens Wedding Project Switcher
+  const namesEl = document.querySelector('.animated-names') || document.querySelector('.names-main');
+  if (namesEl) {
+    _attachLongPress(namesEl, 2500, () => {
+      openWeddingSwitcherModal();
+    });
+  }
+}
+
+/** Helper function to attach touch/mouse long-press handlers */
+function _attachLongPress(element, durationMs, callback) {
+  let timer = null;
+
+  const start = (e) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      if (navigator.vibrate) navigator.vibrate(80);
+      callback();
+    }, durationMs);
+  };
+
+  const cancel = () => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  };
+
+  element.addEventListener('touchstart', start, { passive: true });
+  element.addEventListener('touchend', cancel, { passive: true });
+  element.addEventListener('touchcancel', cancel, { passive: true });
+  element.addEventListener('mousedown', start);
+  element.addEventListener('mouseup', cancel);
+  element.addEventListener('mouseleave', cancel);
+}
+
+// 🏰 Wedding Switcher Modal Functions
+function openWeddingSwitcherModal() {
+  if (!_checkIsAdminAccess()) {
+    const pass = prompt('🔑 أدخل كلمة مرور الأدمن للتبديل بين مشاريع الزفاف (Admin Password):');
+    if (pass === 'admin2026') {
+      sessionStorage.setItem('admin_authenticated', 'true');
+    } else if (pass !== null) {
+      alert('❌ كلمة المرور خاطئة. هذه الخاصية مخصصة للآدمن فقط.');
+      return;
+    } else {
+      return;
+    }
+  }
+
+  const modal = document.getElementById('weddingSwitcherModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeWeddingSwitcher() {
+  const modal = document.getElementById('weddingSwitcherModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function switchWeddingProject(slug) {
+  if (!slug) return;
+  if (slug === 'invit mar') {
+    window.location.href = 'index.html';
+  } else if (slug === 'invit watia') {
+    window.location.href = '../invit watia/index.html';
+  } else {
+    window.location.href = `../${slug}/index.html`;
+  }
+}
+
+function switchWeddingFromInput() {
+  const input = document.getElementById('customWeddingSlugInput');
+  if (!input || !input.value.trim()) return;
+  switchWeddingProject(input.value.trim());
+}
+
+// Initialize long-press gestures on page load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initAdminLongPressGestures, 500);
+});
+
+
 
 
