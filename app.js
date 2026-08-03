@@ -2576,14 +2576,13 @@ function initPhotoStack(cfg) {
 }
 
 /* ────────────────────────────────────────────────
-   PREMIUM WEDDING CALENDAR WIDGET
+   MINI FEUILLET ÉPHÉMÉRIDE WIDGET
 ──────────────────────────────────────────────── */
 function renderPremiumCalendar() {
-  const monthYearEl  = document.getElementById('calendar-month-year');
-  const gridHeaderEl = document.getElementById('calendar-grid-header');
-  const gridDaysEl   = document.getElementById('calendar-grid-days');
-  const ringTextEl   = document.getElementById('calendar-ring-text');
-  if (!monthYearEl || !gridHeaderEl || !gridDaysEl) return;
+  const monthYearEl = document.getElementById('calendar-month-year');
+  const dayNumEl    = document.getElementById('mini-calendar-day');
+  const weekdayEl   = document.getElementById('mini-calendar-weekday');
+  if (!monthYearEl || !dayNumEl) return;
 
   const wDate = new Date(_weddingDateTime);
   if (isNaN(wDate.getTime())) return;
@@ -2591,6 +2590,7 @@ function renderPremiumCalendar() {
   const year       = wDate.getFullYear();
   const month      = wDate.getMonth(); // 0-indexed
   const weddingDay = wDate.getDate();
+  const dayOfWeek  = wDate.getDay();   // 0 = Sun
 
   const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
 
@@ -2600,41 +2600,13 @@ function renderPremiumCalendar() {
   const monthName = isFr ? frMonths[month] : arMonths[month];
   monthYearEl.textContent = `${monthName} ${year}`;
 
-  // Weekday names header
-  const arDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-  const frDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-  const dayNames = isFr ? frDays : arDays;
+  dayNumEl.textContent = weddingDay;
 
-  gridHeaderEl.innerHTML = dayNames.map(d => `<div>${d}</div>`).join('');
-
-  // First day of month (0 = Sun, 1 = Mon...)
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  // Total days in month
-  const totalDays = new Date(year, month + 1, 0).getDate();
-
-  let daysHtml = '';
-  // Empty slots for padding before first day
-  for (let i = 0; i < firstDayIndex; i++) {
-    daysHtml += `<div class="calendar-day empty"></div>`;
-  }
-
-  // Days 1..totalDays
-  for (let day = 1; day <= totalDays; day++) {
-    if (day === weddingDay) {
-      daysHtml += `<div class="calendar-day wedding-day" title="${isFr ? 'Jour du mariage !' : 'يوم الزفاف المبارك'}">${day}</div>`;
-    } else {
-      daysHtml += `<div class="calendar-day">${day}</div>`;
-    }
-  }
-
-  gridDaysEl.innerHTML = daysHtml;
-
-  if (ringTextEl) {
-    if (isFr) {
-      ringTextEl.textContent = `Jour J : ${weddingDay} ${monthName} ${year}`;
-    } else {
-      ringTextEl.textContent = `اليوم الموعود: ${weddingDay} ${monthName} ${year}`;
-    }
+  // Weekdays
+  const arDaysFull = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const frDaysFull = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  if (weekdayEl) {
+    weekdayEl.textContent = isFr ? frDaysFull[dayOfWeek] : arDaysFull[dayOfWeek];
   }
 }
 
