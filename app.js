@@ -3847,19 +3847,43 @@ function applyPwaGuestFromInput() {
 
 function applyPwaGuest(guestName, guestType = 'ar_couple') {
   if (!guestName) return;
+  
+  // Persist override in storage
   sessionStorage.setItem('pwa_override_guest', guestName);
   sessionStorage.setItem('pwa_override_type', guestType);
   localStorage.setItem('pwa_override_guest', guestName);
   localStorage.setItem('pwa_override_type', guestType);
 
+  // Close modal first
+  const modal = document.getElementById('pwaGuestSwitcherModal');
+  if (modal) modal.style.display = 'none';
+
+  // Update URL silently (no reload — PWA would reset to manifest start_url on reload)
   try {
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('guest', guestName);
-    if (guestType) currentUrl.searchParams.set('type', guestType);
-    window.location.href = currentUrl.toString();
-  } catch(e) {
-    console.error('PWA Guest navigation error:', e);
-    window.location.search = `?guest=${encodeURIComponent(guestName)}&type=${encodeURIComponent(guestType)}`;
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('guest', guestName);
+    if (guestType) newUrl.searchParams.set('type', guestType);
+    window.history.pushState({}, '', newUrl.toString());
+  } catch(e) {}
+
+  // Apply guest banner and personalized content LIVE without reloading
+  _resolvedGuestName = guestName;
+  _resolvedGuestType = guestType;
+  _applyGuestBanner(guestName, guestType);
+  _updatePersonalizedInviteDesc();
+
+  // Show banner
+  const banner = document.getElementById('guestNameBanner');
+  if (banner) banner.style.display = 'block';
+
+  // Open envelope if not already open
+  if (!_envelopeOpened) {
+    setTimeout(() => openEnvelopeNow(), 300);
+  } else {
+    // Re-open: close then re-open
+    _envelopeOpened = false;
+    document.querySelector('.invitation')?.classList.remove('open');
+    setTimeout(() => openEnvelopeNow(), 400);
   }
 }
 
