@@ -1289,6 +1289,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 6. Load premium weather forecast widget
   loadWeatherForecast();
+
+  // 7. Render premium circled wedding calendar
+  renderPremiumCalendar();
 });
 
 function getTifinaghInitial(name) {
@@ -1604,6 +1607,17 @@ const TRANSLATIONS = {
     photo_stack_title: 'ألبوم صورنا',
     photo_stack_subtitle: 'لحظاتنا السعيدة معاً',
     photo_stack_next: 'الصورة التالية',
+    calendar_subtitle: 'تاريخ يومنا المميز',
+    souvenir_badge: 'تذكار خاص',
+    souvenir_title: 'احفظ دعوتك للذكرى',
+    souvenir_desc: 'يمكنك تحميل نسخة ثابتة من هذه الدعوة تتضمن المغلف باسمك لتبقى تذكاراً جميلاً لهذا اليوم المميّز.',
+    souvenir_btn_text: 'تحميل تذكار الدعوة',
+    souvenir_modal_title: 'تحميل تذكار الدعوة',
+    souvenir_modal_subtitle: 'اختر صيغة الملف التي تفضلها لحفظ تذكار الدعوة',
+    souvenir_opt_png_title: 'تحميل كصورة (PNG)',
+    souvenir_opt_png_desc: 'صورة عالية الجودة تحتوي على المغلف باسمك وكارت الدعوة مناسبة للحفظ في معرض الصور.',
+    souvenir_opt_html_title: 'تحميل كصفحة ويب (HTML)',
+    souvenir_opt_html_desc: 'ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.',
   },
   fr: {
     basmala: 'Que Dieu les bénisse, les comble de bonheur et les réunisse.',
@@ -1641,6 +1655,17 @@ const TRANSLATIONS = {
     photo_stack_title: 'Notre album photo',
     photo_stack_subtitle: 'Nos moments précieux ensemble',
     photo_stack_next: 'Photo suivante',
+    calendar_subtitle: 'La date de notre jour spécial',
+    souvenir_badge: 'Souvenir Spécial',
+    souvenir_title: 'Gardez votre invitation en souvenir',
+    souvenir_desc: 'Vous pouvez télécharger une version statique de cette invitation incluant l\'enveloppe avec votre nom comme souvenir précieux.',
+    souvenir_btn_text: 'Télécharger mon souvenir',
+    souvenir_modal_title: 'Télécharger le souvenir',
+    souvenir_modal_subtitle: 'Choisissez le format de fichier que vous préférez',
+    souvenir_opt_png_title: 'Télécharger en Image (PNG)',
+    souvenir_opt_png_desc: 'Une image haute définition contenant l\'enveloppe avec votre nom et la carte d\'invitation.',
+    souvenir_opt_html_title: 'Télécharger en Page Web (HTML)',
+    souvenir_opt_html_desc: 'Un fichier HTML autonome complet qui fonctionne hors-ligne.',
   }
 };
 
@@ -1895,6 +1920,9 @@ function applyLanguage(lang) {
 
   // Render Recipient select options
   renderRecipientOptions(lang);
+
+  // Re-render premium calendar in active language
+  renderPremiumCalendar();
 
   // Apply dedicated role inscription for groom/bride private view
   if (window._pendingRoleView) {
@@ -2545,4 +2573,314 @@ function initPhotoStack(cfg) {
   }
   
   updatePositions();
+}
+
+/* ────────────────────────────────────────────────
+   PREMIUM WEDDING CALENDAR WIDGET
+──────────────────────────────────────────────── */
+function renderPremiumCalendar() {
+  const monthYearEl  = document.getElementById('calendar-month-year');
+  const gridHeaderEl = document.getElementById('calendar-grid-header');
+  const gridDaysEl   = document.getElementById('calendar-grid-days');
+  const ringTextEl   = document.getElementById('calendar-ring-text');
+  if (!monthYearEl || !gridHeaderEl || !gridDaysEl) return;
+
+  const wDate = new Date(_weddingDateTime);
+  if (isNaN(wDate.getTime())) return;
+
+  const year       = wDate.getFullYear();
+  const month      = wDate.getMonth(); // 0-indexed
+  const weddingDay = wDate.getDate();
+
+  const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
+
+  // Month names
+  const arMonths = ['جانفي', 'فيفري', 'مارس', 'أفريل', 'ماي', 'جوان', 'جويلية', 'أوت', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  const frMonths = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  const monthName = isFr ? frMonths[month] : arMonths[month];
+  monthYearEl.textContent = `${monthName} ${year}`;
+
+  // Weekday names header
+  const arDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const frDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const dayNames = isFr ? frDays : arDays;
+
+  gridHeaderEl.innerHTML = dayNames.map(d => `<div>${d}</div>`).join('');
+
+  // First day of month (0 = Sun, 1 = Mon...)
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  // Total days in month
+  const totalDays = new Date(year, month + 1, 0).getDate();
+
+  let daysHtml = '';
+  // Empty slots for padding before first day
+  for (let i = 0; i < firstDayIndex; i++) {
+    daysHtml += `<div class="calendar-day empty"></div>`;
+  }
+
+  // Days 1..totalDays
+  for (let day = 1; day <= totalDays; day++) {
+    if (day === weddingDay) {
+      daysHtml += `<div class="calendar-day wedding-day" title="${isFr ? 'Jour du mariage !' : 'يوم الزفاف المبارك'}">${day}</div>`;
+    } else {
+      daysHtml += `<div class="calendar-day">${day}</div>`;
+    }
+  }
+
+  gridDaysEl.innerHTML = daysHtml;
+
+  if (ringTextEl) {
+    if (isFr) {
+      ringTextEl.textContent = `Jour J : ${weddingDay} ${monthName} ${year}`;
+    } else {
+      ringTextEl.textContent = `اليوم الموعود: ${weddingDay} ${monthName} ${year}`;
+    }
+  }
+}
+
+/* ────────────────────────────────────────────────
+   SOUVENIR DOWNLOAD LOGIC
+──────────────────────────────────────────────── */
+function openSouvenirModal() {
+  const modal = document.getElementById('souvenir-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeSouvenirModal() {
+  const modal = document.getElementById('souvenir-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function downloadSouvenirHtml() {
+  closeSouvenirModal();
+
+  const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
+
+  // Resolve Guest Name & Salutation
+  const guestTitle = document.getElementById('guestCardTitle')?.textContent || (isFr ? 'Monsieur & Madame' : 'إلى السيد');
+  const guestName  = document.getElementById('guestBannerLabel')?.textContent || _resolvedGuestName || (isFr ? 'Nos Chers Invités' : 'ضيوفنا الكرام');
+  const fullGuestSalutation = `${guestTitle} ${guestName}`.trim();
+
+  const groom = document.querySelector('[data-cfg="groomNameDisplay"]')?.textContent || 'مرتضى';
+  const bride = document.querySelector('[data-cfg="brideNameDisplay"]')?.textContent || 'مريم';
+  const ringText = document.getElementById('calendar-ring-text')?.textContent || '12 جويلية 2026';
+
+  const isRtl = !isFr;
+
+  // Build clean static self-contained HTML page
+  const htmlContent = `<!DOCTYPE html>
+<html lang="${isRtl ? 'ar' : 'fr'}" dir="${isRtl ? 'rtl' : 'ltr'}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تذكار دعوة زفاف ${groom} & ${bride} — ${fullGuestSalutation}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #110d08;
+      color: #f7f0de;
+      font-family: 'Amiri', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .souvenir-container {
+      max-width: 520px;
+      width: 100%;
+      background: #fffcf8;
+      color: #2b1f0d;
+      border: 3px solid #c9a84c;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(201,168,76,0.15);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .envelope-header {
+      background: linear-gradient(135deg, #f7f0de 0%, #e2d2b0 100%);
+      border: 2px dashed #c9a84c;
+      border-radius: 16px;
+      padding: 20px 16px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .guest-salutation-title {
+      font-size: 0.95rem;
+      color: #8a6000;
+      margin-bottom: 4px;
+    }
+    .guest-salutation-name {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #5d471b;
+    }
+    .seal-badge {
+      display: inline-block;
+      margin-top: 10px;
+      background: #c9a84c;
+      color: #1a1000;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 3px 14px;
+      border-radius: 12px;
+    }
+    .basmala { font-size: 1.4rem; color: #8a6000; margin-bottom: 12px; line-height: 1.6; }
+    .divider { color: #c9a84c; letter-spacing: 4px; margin: 12px 0; font-size: 0.9rem; }
+    .invite-text { font-size: 1.1rem; color: #6b4d12; margin: 10px 0; }
+    .names {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #5d471b;
+      margin: 16px 0;
+    }
+    .names span { color: #c9a84c; margin: 0 8px; }
+    .wedding-details {
+      background: rgba(201,168,76,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 20px 0;
+      font-size: 1.05rem;
+      color: #4a3512;
+      line-height: 1.8;
+    }
+    .thanks-note {
+      font-size: 0.95rem;
+      color: #7a6035;
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .watermark {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #a08868;
+      border-top: 1px solid rgba(201,168,76,0.2);
+      padding-top: 12px;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .souvenir-container { border: 2px solid #c9a84c; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="souvenir-container">
+  <!-- ENVELOPE SOUVENIR HEADER -->
+  <div class="envelope-header">
+    <div class="guest-salutation-title">${guestTitle}</div>
+    <div class="guest-salutation-name">${guestName}</div>
+    <div class="seal-badge">✦ مغلف الدعوة التذكاري ✦</div>
+  </div>
+
+  <!-- WEDDING CARD CONTENT -->
+  <div class="basmala">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
+  <div class="divider">✦ ✦ ✦</div>
+  <p class="invite-text">يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف</p>
+  
+  <div class="names">${groom} <span>&</span> ${bride}</div>
+
+  <div class="wedding-details">
+    <strong>📅 التاريخ:</strong> ${ringText}<br>
+    <strong>📍 المكان:</strong> قصر الأفراح — طبلبة، المنستير، تونس
+  </div>
+
+  <div class="thanks-note">
+    نشكركم جزيل الشكر على حضوركم ومحبتكم دمتُم سنداً وفرحاً لنا ❤
+  </div>
+
+  <div class="watermark">
+    تذكار خاص محفوظ لمناسبة زفاف ${groom} & ${bride}
+  </div>
+</div>
+
+</body>
+</html>`;
+
+  // Trigger HTML file download
+  const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
+  a.download = `Invitation_Souvenir_${sanitizedGuest}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function downloadSouvenirImage() {
+  closeSouvenirModal();
+
+  const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
+
+  if (typeof html2canvas === 'undefined') {
+    alert(isFr ? 'La bibliothèque d\'image est en cours de chargement, veuillez réessayer.' : 'جاري تحميل مكتبة الصور، يرجى المحاولة بعد ثوانٍ.');
+    return;
+  }
+
+  // Create temporary off-screen element for capturing high resolution image
+  const tempDiv = document.createElement('div');
+  tempDiv.style.position = 'fixed';
+  tempDiv.style.left = '-9999px';
+  tempDiv.style.top = '0';
+  tempDiv.style.width = '480px';
+  tempDiv.style.background = '#fffcf8';
+  tempDiv.style.border = '3px solid #c9a84c';
+  tempDiv.style.borderRadius = '20px';
+  tempDiv.style.padding = '28px 20px';
+  tempDiv.style.fontFamily = "'Amiri', serif";
+  tempDiv.style.textAlign = 'center';
+  tempDiv.style.color = '#2b1f0d';
+  tempDiv.style.boxSizing = 'border-box';
+
+  const guestTitle = document.getElementById('guestCardTitle')?.textContent || (isFr ? 'Monsieur & Madame' : 'إلى السيد');
+  const guestName  = document.getElementById('guestBannerLabel')?.textContent || _resolvedGuestName || (isFr ? 'Nos Chers Invités' : 'ضيوفنا الكرام');
+  const groom = document.querySelector('[data-cfg="groomNameDisplay"]')?.textContent || 'مرتضى';
+  const bride = document.querySelector('[data-cfg="brideNameDisplay"]')?.textContent || 'مريم';
+  const ringText = document.getElementById('calendar-ring-text')?.textContent || '12 جويلية 2026';
+
+  tempDiv.innerHTML = `
+    <div style="background:linear-gradient(135deg, #f7f0de 0%, #e2d2b0 100%); border:2px dashed #c9a84c; border-radius:14px; padding:16px; margin-bottom:20px;">
+      <div style="font-size:0.9rem; color:#8a6000; margin-bottom:4px;">${guestTitle}</div>
+      <div style="font-size:1.6rem; font-weight:bold; color:#5d471b;">${guestName}</div>
+      <div style="display:inline-block; margin-top:8px; background:#c9a84c; color:#1a1000; font-size:0.75rem; font-weight:bold; padding:2px 10px; border-radius:10px;">✦ مغلف الدعوة التذكاري ✦</div>
+    </div>
+
+    <div style="font-size:1.25rem; color:#8a6000; margin-bottom:8px;">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
+    <div style="color:#c9a84c; letter-spacing:3px; margin:8px 0; font-size:0.85rem;">✦ ✦ ✦</div>
+    <p style="font-size:1rem; color:#6b4d12; margin:6px 0;">يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف</p>
+    
+    <div style="font-size:2.2rem; font-weight:bold; color:#5d471b; margin:12px 0;">${groom} <span style="color:#c9a84c;">&amp;</span> ${bride}</div>
+
+    <div style="background:rgba(201,168,76,0.1); border-radius:10px; padding:12px; margin:16px 0; font-size:0.95rem; color:#4a3512; line-height:1.6;">
+      <strong>📅 التاريخ:</strong> ${ringText}<br>
+      <strong>📍 المكان:</strong> قصر الأفراح — طبلبة، المنستير
+    </div>
+
+    <div style="font-size:0.85rem; color:#7a6035; margin-top:14px;">
+      نشكركم جزيل الشكر على حضوركم ومحبتكم ❤
+    </div>
+  `;
+
+  document.body.appendChild(tempDiv);
+
+  html2canvas(tempDiv, { scale: 2, backgroundColor: '#fffcf8' }).then(canvas => {
+    document.body.removeChild(tempDiv);
+    const link = document.createElement('a');
+    const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
+    link.download = `Invitation_Souvenir_${sanitizedGuest}.png`;
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }).catch(err => {
+    console.error('Error generating image:', err);
+    if (document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
+  });
 }

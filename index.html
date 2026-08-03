@@ -148,6 +148,26 @@
               </svg>
             </div>
 
+            <!-- Premium Wedding Calendar Card -->
+            <div class="calendar-card-container" id="calendar-card-container">
+              <div class="calendar-glass-card">
+                <div class="calendar-header">
+                  <div class="calendar-icon">📅</div>
+                  <div class="calendar-month-year font-amiri" id="calendar-month-year">جويلية 2026</div>
+                  <div class="calendar-subtitle font-amiri" data-tr="calendar_subtitle">تاريخ يومنا المميز</div>
+                </div>
+                <div class="calendar-grid-header font-amiri" id="calendar-grid-header">
+                  <!-- Day names loaded by JS -->
+                </div>
+                <div class="calendar-grid-days font-amiri" id="calendar-grid-days">
+                  <!-- Calendar days loaded by JS with gold circled highlight on wedding day -->
+                </div>
+                <div class="calendar-footer font-amiri">
+                  <span class="calendar-ring-badge">✨ <span id="calendar-ring-text">اليوم الموعود: 12 جويلية 2026</span> ✨</span>
+                </div>
+              </div>
+            </div>
+
             <!-- Premium Weather Card -->
             <div class="weather-card-container" id="weather-card-container">
               <div class="weather-glass-card weather-skeleton">
@@ -411,6 +431,18 @@
 
         </section>
 
+        <!-- ── SOUVENIR DOWNLOAD SECTION ── -->
+        <section id="souvenir-section" class="souvenir-section">
+          <div class="souvenir-card">
+            <div class="souvenir-badge">🎁 <span data-tr="souvenir_badge">تذكار خاص</span></div>
+            <h3 class="souvenir-title font-amiri" data-tr="souvenir_title">احفظ دعوتك للذكرى</h3>
+            <p class="souvenir-desc font-amiri" data-tr="souvenir_desc">يمكنك تحميل نسخة ثابتة من هذه الدعوة تتضمن المغلف باسمك لتبقى تذكاراً جميلاً لهذا اليوم المميّز.</p>
+            <button class="souvenir-btn" id="souvenir-main-btn" onclick="openSouvenirModal()">
+              <span class="souvenir-btn-icon">📥</span>
+              <span data-tr="souvenir_btn_text">تحميل تذكار الدعوة</span>
+            </button>
+          </div>
+        </section>
 
       </div><!-- /wedding-content -->
     </div><!-- /env-card -->
@@ -819,6 +851,36 @@
   </div>
 </div>
 
+<!-- ══ SOUVENIR MODAL ══ -->
+<div id="souvenir-modal" style="display:none;" class="souvenir-modal-overlay">
+  <div class="souvenir-modal-backdrop" onclick="closeSouvenirModal()"></div>
+  <div class="souvenir-modal-content">
+    <button class="souvenir-modal-close" onclick="closeSouvenirModal()">✕</button>
+    <div class="souvenir-modal-header">
+      <div class="souvenir-modal-icon">💌</div>
+      <h2 class="souvenir-modal-title font-amiri" data-tr="souvenir_modal_title">تحميل تذكار الدعوة</h2>
+      <p class="souvenir-modal-subtitle font-amiri" data-tr="souvenir_modal_subtitle">اختر صيغة الملف التي تفضلها لحفظ تذكار الدعوة</p>
+    </div>
+    <div class="souvenir-modal-options">
+      <button class="souvenir-option-card" onclick="downloadSouvenirImage()">
+        <div class="option-icon">🖼️</div>
+        <div class="option-info">
+          <div class="option-title font-amiri" data-tr="souvenir_opt_png_title">تحميل كصورة (PNG)</div>
+          <div class="option-desc" data-tr="souvenir_opt_png_desc">صورة عالية الجودة تحتوي على المغلف باسمك وكارت الدعوة مناسبة للحفظ في معرض الصور.</div>
+        </div>
+      </button>
+      <button class="souvenir-option-card" onclick="downloadSouvenirHtml()">
+        <div class="option-icon">📄</div>
+        <div class="option-info">
+          <div class="option-title font-amiri" data-tr="souvenir_opt_html_title">تحميل كصفحة ويب (HTML)</div>
+          <div class="option-desc" data-tr="souvenir_opt_html_desc">ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
