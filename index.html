@@ -489,14 +489,14 @@
     </svg>
 
     <!-- ② Calligraphy Names Banner (top center of envelope front) -->
-    <div class="env-names-banner" onclick="handleEnvelopeNamesClick(event)" title="انقر مرتين للتبديل بين مشاريع الزفاف الحقيقية" style="cursor:pointer; user-select:none; -webkit-user-select:none;">
-      <div class="env-banner-ornament">❧</div>
-      <div class="env-banner-names font-amiri">
-        <span class="env-banner-groom" data-cfg="groomNameDisplay">مرتضى</span>
-        <span class="env-banner-amp"> &amp; </span>
-        <span class="env-banner-bride" data-cfg="brideNameDisplay">مريم</span>
+    <div class="env-names-banner" onclick="handleEnvelopeNamesClick(event)" ondblclick="handleEnvelopeNamesDblClick(event)" title="انقر مرتين للتبديل بين مشاريع الزفاف الحقيقية" style="cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation;">
+      <div class="env-banner-ornament" onclick="handleEnvelopeNamesClick(event)">❧</div>
+      <div class="env-banner-names font-amiri" onclick="handleEnvelopeNamesClick(event)" ondblclick="handleEnvelopeNamesDblClick(event)">
+        <span class="env-banner-groom" data-cfg="groomNameDisplay" onclick="handleEnvelopeNamesClick(event)">مرتضى</span>
+        <span class="env-banner-amp" onclick="handleEnvelopeNamesClick(event)"> &amp; </span>
+        <span class="env-banner-bride" data-cfg="brideNameDisplay" onclick="handleEnvelopeNamesClick(event)">مريم</span>
       </div>
-      <div class="env-banner-ornament" style="transform:scaleX(-1)">❧</div>
+      <div class="env-banner-ornament" style="transform:scaleX(-1)" onclick="handleEnvelopeNamesClick(event)">❧</div>
     </div>
 
     <!-- ③ Horizontal dividers (golden dashed lines) -->

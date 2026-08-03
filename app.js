@@ -3837,9 +3837,13 @@ function openPwaGuestSwitcher() {
     });
 }
 
-function closePwaGuestSwitcher() {
-  const modal = document.getElementById('pwaGuestSwitcherModal');
-  if (modal) modal.style.display = 'none';
+function handleEnvelopeNamesDblClick(e) {
+  if (e) {
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
+  }
+  _envNamesClickCount = 0;
+  openWeddingSwitcherModal();
 }
 
 function applyPwaGuestFromInput() {
@@ -3850,35 +3854,14 @@ function applyPwaGuestFromInput() {
 
 function applyPwaGuest(guestName, guestType = 'ar_couple') {
   if (!guestName) return;
-  _resolvedGuestName = guestName;
-  _resolvedGuestType = guestType;
-
-  // 1. Update PWA URL in-place with ?guest=Nom&type=Type
   try {
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('guest', guestName);
-    if (guestType) newUrl.searchParams.set('type', guestType);
-    window.history.pushState({}, '', newUrl.toString());
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('guest', guestName);
+    if (guestType) currentUrl.searchParams.set('type', guestType);
+    window.location.href = currentUrl.toString();
   } catch(e) {
-    console.error('URL pushState error:', e);
-  }
-
-  // 2. Live re-render guest card & personalized invitation text inside PWA
-  _updateGuestBanner();
-  _updatePersonalizedInviteDesc();
-
-  // 3. Make sure nominative guest card banner is displayed
-  const banner = document.getElementById('guestNameBanner');
-  if (banner) banner.style.display = 'block';
-
-  closePwaGuestSwitcher();
-
-  // 4. Smoothly open envelope to unveil this guest's personalized invitation
-  if (!_envelopeOpened) {
-    setTimeout(() => { openEnvelopeNow(); }, 300);
-  } else {
-    _envelopeOpened = false;
-    setTimeout(() => { openEnvelopeNow(); }, 200);
+    console.error('PWA Guest navigation error:', e);
+    window.location.search = `?guest=${encodeURIComponent(guestName)}&type=${encodeURIComponent(guestType)}`;
   }
 }
 
