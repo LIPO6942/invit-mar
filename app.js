@@ -3661,18 +3661,23 @@ let _sealClickTimer = null;
 
 function handleSealClick(e) {
   _sealClickCount++;
-  if (_sealClickTimer) clearTimeout(_sealClickTimer);
   
   if (_sealClickCount >= 2) {
+    if (_sealClickTimer) clearTimeout(_sealClickTimer);
     _sealClickCount = 0;
-    if (e && e.stopPropagation) e.stopPropagation();
+    if (e) {
+      if (e.stopPropagation) e.stopPropagation();
+      if (e.preventDefault) e.preventDefault();
+    }
     openPwaGuestSwitcher();
     return;
   }
   
+  // Single click timer -> opens envelope normally ONLY IF NOT a double click
   _sealClickTimer = setTimeout(() => {
     _sealClickCount = 0;
-  }, 700);
+    openEnvelopeNow();
+  }, 350);
 }
 
 function openPwaGuestSwitcher() {

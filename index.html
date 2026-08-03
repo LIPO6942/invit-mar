@@ -894,63 +894,67 @@
   </div>
 </div>
 
-<!-- 🪄 Admin PWA Guest Link Switcher Modal -->
+<!-- 💌 Modal Liste des Vrais Invités du Mariage (2 Clics sur le Sceau de Cire) -->
 <div id="pwaGuestSwitcherModal" class="pwa-modal-backdrop" style="display:none;" onclick="closePwaGuestSwitcher()">
-  <div class="pwa-modal-card" style="max-width: 380px; text-align: right;" onclick="event.stopPropagation()">
-    <button class="pwa-modal-close" onclick="closePwaGuestSwitcher()">✕</button>
-    <div style="text-align: center; margin-bottom: 14px;">
-      <span style="font-size: 2.2rem;">🪄</span>
-      <h3 style="font-size: 1.3rem; color: #2b1800; margin-top: 4px;" data-tr="pwa_switcher_title">تجربة رابط ضيف آخر (PWA)</h3>
-      <p style="font-size: 0.85rem; color: #704706;" data-tr="pwa_switcher_subtitle">أدخل اسماً أو اختر ضيفاً لمشاهدة دعوتهم مباشرة داخل التطبيق</p>
+  <div class="pwa-modal-card" style="max-width: 400px; text-align: right; background: linear-gradient(145deg, #0f261b 0%, #06140e 100%); border: 2px solid #c9a84c; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.8);" onclick="event.stopPropagation()">
+    <button class="pwa-modal-close" onclick="closePwaGuestSwitcher()" style="color: #f7d070; font-size: 1.4rem;">✕</button>
+    
+    <div style="text-align: center; margin-bottom: 16px;">
+      <div style="width: 50px; height: 50px; margin: 0 auto 8px; border-radius: 50%; background: radial-gradient(circle, #f7cb4d 0%, #8a6010 100%); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(247, 203, 77, 0.4);">✉️</div>
+      <h3 style="font-size: 1.35rem; color: #fff3ad; margin-top: 4px; font-family: 'Aref Ruqaa', serif; text-shadow: 0 0 10px rgba(247, 208, 112, 0.4);">قائمة ضيوف هذا الزفاف الحقيقيين</h3>
+      <p style="font-size: 0.85rem; color: #d4b260;">اختر ضيفاً لمشاهدة دعوته الخاصة أو أدخل ضيفاً جديداً</p>
     </div>
     
-    <div style="margin-bottom: 14px;">
-      <label style="display: block; font-size: 0.88rem; font-weight: bold; color: #3d2600; margin-bottom: 6px;">كتابة اسم ضيف جديد :</label>
+    <div style="margin-bottom: 14px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid rgba(201,168,76,0.3);">
+      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: #fff3ad; margin-bottom: 6px;">✨ إضافة أو تجربة ضيف جديد :</label>
       <div style="display: flex; gap: 8px;">
-        <input type="text" id="pwaCustomGuestInput" placeholder="مثال: فاروق الدريدي" style="flex:1; padding: 10px 14px; border: 1.5px solid #c9a84c; border-radius: 12px; font-family: 'Amiri', serif; font-size: 0.95rem; outline: none; background: #fffdf8;">
-        <button onclick="applyPwaGuestFromInput()" style="padding: 10px 16px; background: linear-gradient(135deg, #c9a84c 0%, #8a6010 100%); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">تطبيق ✨</button>
+        <input type="text" id="pwaCustomGuestInput" placeholder="مثال: فريد الدريدي" style="flex:1; padding: 9px 12px; border: 1.5px solid #c9a84c; border-radius: 10px; font-family: 'Amiri', serif; font-size: 0.95rem; outline: none; background: #fffdf5; color: #1a1000;">
+        <button onclick="applyPwaGuestFromInput()" style="padding: 9px 14px; background: linear-gradient(135deg, #f7cb4d 0%, #8a6010 100%); color: #1a0f00; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">عرض ➜</button>
       </div>
     </div>
 
-    <div style="border-top: 1px solid rgba(201,168,76,0.25); padding-top: 12px; margin-top: 12px;">
-      <label style="display: block; font-size: 0.88rem; font-weight: bold; color: #3d2600; margin-bottom: 8px;">أو اختر من قائمة ضيوف تجريبية :</label>
-      <div id="pwaSavedGuestsList" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-left: 2px;">
-        <!-- Populated dynamically by JS -->
+    <div style="border-top: 1px solid rgba(201,168,76,0.3); padding-top: 12px; margin-top: 10px;">
+      <label style="display: block; font-size: 0.88rem; font-weight: bold; color: #fff3ad; margin-bottom: 8px;">👥 الضيوف المسجلون في قاعدة بيانات الزفاف :</label>
+      <div id="pwaSavedGuestsList" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-left: 2px;">
+        <!-- Populated dynamically by JS with Firebase Guests -->
       </div>
     </div>
 
-    <button onclick="closePwaGuestSwitcher()" style="width: 100%; margin-top: 16px; padding: 10px; background: #e0d0b0; color: #3d2600; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">إغلاق</button>
+    <button onclick="closePwaGuestSwitcher()" style="width: 100%; margin-top: 16px; padding: 10px; background: rgba(201,168,76,0.2); color: #f7d070; border: 1px solid rgba(201,168,76,0.4); border-radius: 12px; font-weight: bold; cursor: pointer;">إغلاق</button>
   </div>
-<!-- 🏰 Admin Wedding Switcher Modal (Appui long sur les noms des mariés) -->
+</div>
+
+<!-- 🏰 Modal Liste des Projets de Mariages (2 Clics sur les Noms des Mariés) -->
 <div id="weddingSwitcherModal" class="pwa-modal-backdrop" style="display:none;" onclick="closeWeddingSwitcher()">
-  <div class="pwa-modal-card" style="max-width: 380px; text-align: right;" onclick="event.stopPropagation()">
-    <button class="pwa-modal-close" onclick="closeWeddingSwitcher()">✕</button>
-    <div style="text-align: center; margin-bottom: 14px;">
-      <span style="font-size: 2.2rem;">🏰</span>
-      <h3 style="font-size: 1.3rem; color: #2b1800; margin-top: 4px;">التبديل إلى مشروع زفاف آخر</h3>
-      <p style="font-size: 0.85rem; color: #704706;">اختر زفافاً آخر لفتحه في PWA</p>
+  <div class="pwa-modal-card" style="max-width: 400px; text-align: right; background: linear-gradient(145deg, #0f261b 0%, #06140e 100%); border: 2px solid #c9a84c; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.8);" onclick="event.stopPropagation()">
+    <button class="pwa-modal-close" onclick="closeWeddingSwitcher()" style="color: #f7d070; font-size: 1.4rem;">✕</button>
+
+    <div style="text-align: center; margin-bottom: 16px;">
+      <div style="width: 50px; height: 50px; margin: 0 auto 8px; border-radius: 50%; background: radial-gradient(circle, #f7cb4d 0%, #8a6010 100%); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(247, 203, 77, 0.4);">🏰</div>
+      <h3 style="font-size: 1.35rem; color: #fff3ad; margin-top: 4px; font-family: 'Aref Ruqaa', serif; text-shadow: 0 0 10px rgba(247, 208, 112, 0.4);">قائمة مشاريع الزفاف المسجلة</h3>
+      <p style="font-size: 0.85rem; color: #d4b260;">اختر مشروع زفاف للفتح والمشاهدة المباشرة</p>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-      <button onclick="switchWeddingProject('invit mar')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1rem; color:#2b1800; font-weight:bold; cursor:pointer;">
-        <span>💍 حفل مرتضى & مريم</span>
-        <span style="font-size:0.8rem; color:#8a6010;">فتح ➜</span>
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;" id="weddingProjectsList">
+      <button onclick="switchWeddingProject('invit mar')" style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer;">
+        <span>💍 حفل زفاف مرتضى & مريم</span>
+        <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.3); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
       </button>
-      <button onclick="switchWeddingProject('invit watia')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1rem; color:#2b1800; font-weight:bold; cursor:pointer;">
-        <span>🌸 حفل الوطية (Watiah)</span>
-        <span style="font-size:0.8rem; color:#8a6010;">فتح ➜</span>
+      <button onclick="switchWeddingProject('invit watia')" style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer;">
+        <span>🌸 حفل زفاف الوطية (Watiah)</span>
+        <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.3); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
       </button>
     </div>
 
-    <div style="margin-top: 10px; border-top: 1px solid rgba(201,168,76,0.25); padding-top: 10px;">
-      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: #3d2600; margin-bottom: 6px;">أو إدخال مسار/اسم زفاف آخر :</label>
+    <div style="margin-top: 10px; border-top: 1px solid rgba(201,168,76,0.3); padding-top: 12px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
+      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: #fff3ad; margin-bottom: 6px;">🔗 أو إدخال مسار/رابط مشروع زفاف آخر :</label>
       <div style="display: flex; gap: 8px;">
-        <input type="text" id="customWeddingSlugInput" placeholder="مثال: watia أو invit-watia" style="flex:1; padding: 8px 12px; border: 1.5px solid #c9a84c; border-radius: 10px; font-family: 'Amiri', serif; font-size: 0.9rem; outline:none;">
-        <button onclick="switchWeddingFromInput()" style="padding: 8px 14px; background: #8a6010; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">انتقال</button>
+        <input type="text" id="customWeddingSlugInput" placeholder="مثال: watia أو invitation-2" style="flex:1; padding: 9px 12px; border: 1.5px solid #c9a84c; border-radius: 10px; font-family: 'Amiri', serif; font-size: 0.9rem; outline:none; background:#fffdf5; color:#1a1000;">
+        <button onclick="switchWeddingFromInput()" style="padding: 9px 14px; background: linear-gradient(135deg, #f7cb4d 0%, #8a6010 100%); color: #1a0f00; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">انتقال ➜</button>
       </div>
     </div>
 
-    <button onclick="closeWeddingSwitcher()" style="width: 100%; margin-top: 14px; padding: 9px; background: #e0d0b0; color: #3d2600; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">إغلاق</button>
+    <button onclick="closeWeddingSwitcher()" style="width: 100%; margin-top: 16px; padding: 10px; background: rgba(201,168,76,0.2); color: #f7d070; border: 1px solid rgba(201,168,76,0.4); border-radius: 12px; font-weight: bold; cursor: pointer;">إغلاق</button>
   </div>
 </div>
 
