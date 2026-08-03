@@ -3937,23 +3937,73 @@ body.lang-ar .animated-bride {
   filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(247, 203, 77, 0.75));
 }
 
-/* Premium Latin SVG Monogram (French invitations) */
-.latin-monogram-wrap {
+/* ── Premium Latin Script Monogram (French invitations) ── */
+.latin-script-monogram {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 2px;
+  gap: 1px;
 }
 
-.latin-mono-svg {
-  width: 80px;
-  height: 44px;
-  overflow: visible;
-  filter: drop-shadow(0 1px 4px rgba(201, 168, 76, 0.6));
+.latin-script-top-ornament {
+  font-size: 0.42rem;
+  letter-spacing: 2px;
+  color: #c9a84c;
+  opacity: 0.75;
+  line-height: 1;
+  margin-bottom: 1px;
 }
 
+.latin-script-letters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1;
+}
+
+.latin-script-letter {
+  font-family: 'Dancing Script', 'Great Vibes', cursive;
+  font-weight: 700;
+  font-size: 2.1rem;
+  line-height: 1;
+  background: linear-gradient(
+    160deg,
+    #fff7d0 0%,
+    #f7e47a 20%,
+    #c9a84c 50%,
+    #8a5e0a 80%,
+    #f7cb4d 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7))
+          drop-shadow(0 0 5px rgba(247, 203, 77, 0.45));
+  display: inline-block;
+}
+
+.latin-mono-sep {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.65rem;
+  font-style: italic;
+  color: #c9a84c;
+  opacity: 0.85;
+  margin: 0 1px;
+  align-self: center;
+  padding-bottom: 4px;
+}
+
+.latin-script-rule {
+  width: 60%;
+  height: 0.5px;
+  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  margin-top: 2px;
+  opacity: 0.7;
+}
 
 @keyframes medallionPulseGlow {
   0%, 100% {

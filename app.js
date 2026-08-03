@@ -1794,7 +1794,7 @@ function _extractGuestInitials(guestName) {
 
     return { isArabic: true, raw: raw, html: html };
   } else {
-    // Latin: premium SVG calligraphic monogram with golden flourishes
+    // Latin: premium cursive script initials (Dancing Script)
     let initial1 = 'M', initial2 = 'M';
     if (words.length >= 2) {
       initial1 = words[0].charAt(0).toUpperCase();
@@ -1808,32 +1808,23 @@ function _extractGuestInitials(guestName) {
     }
     const raw = initial2 ? `${initial1}${initial2}` : initial1;
 
-    // SVG monogram: initials in Playfair Display italic with golden filigree lines
+    // Beautiful cursive monogram: each letter as a styled calligraphic glyph
+    const sepHtml = initial2
+      ? `<span class="latin-mono-sep">&#x26;</span>`
+      : '';
     const html = `
-      <div class="latin-monogram-wrap">
-        <svg class="latin-mono-svg" viewBox="0 0 100 54" xmlns="http://www.w3.org/2000/svg" overflow="visible">
-          <defs>
-            <linearGradient id="monoGold" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f7e47a"/>
-              <stop offset="50%" stop-color="#c9a84c"/>
-              <stop offset="100%" stop-color="#a07020"/>
-            </linearGradient>
-          </defs>
-          <line x1="2" y1="27" x2="22" y2="27" stroke="#c9a84c" stroke-width="0.7" stroke-dasharray="2,2.5" opacity="0.75"/>
-          <circle cx="25" cy="27" r="1.4" fill="#c9a84c" opacity="0.9"/>
-          <circle cx="75" cy="27" r="1.4" fill="#c9a84c" opacity="0.9"/>
-          <line x1="78" y1="27" x2="98" y2="27" stroke="#c9a84c" stroke-width="0.7" stroke-dasharray="2,2.5" opacity="0.75"/>
-          <text x="50" y="36" text-anchor="middle"
-            font-family="Playfair Display, Didot, Georgia, serif"
-            font-size="28" font-style="italic" font-weight="700"
-            fill="url(#monoGold)" letter-spacing="3"
-            filter="drop-shadow(0 1px 3px rgba(201,168,76,0.5))">${raw}</text>
-        </svg>
+      <div class="latin-script-monogram">
+        <div class="latin-script-top-ornament">✦ ✦ ✦</div>
+        <div class="latin-script-letters">
+          <span class="latin-script-letter">${initial1}</span>${initial2 ? `<span class="latin-mono-sep">&amp;</span><span class="latin-script-letter">${initial2}</span>` : ''}
+        </div>
+        <div class="latin-script-rule"></div>
       </div>
     `;
     return { isArabic: false, raw, html };
   }
 }
+
 
 /** Updates the invitation description text dynamically for personalized guests */
 function _updatePersonalizedInviteDesc() {

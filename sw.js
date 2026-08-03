@@ -1,7 +1,5 @@
-const CACHE_NAME = 'invit-mar-v105';
+const CACHE_NAME = 'invit-mar-v108';
 const ASSETS_TO_CACHE = [
-  './index.html?v=105',
-  './app.js?v=105',
   './manifest.json',
   './assets/heart_wax_seal.png',
   './assets/icon-192.png',
@@ -18,7 +16,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate Event
+// Activate Event — clear all old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -34,12 +32,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event (Network First, NEVER cache HTML/JS/CSS to ensure instant updates)
+// Fetch Event — NEVER cache HTML/JS/CSS (always fresh from network)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = event.request.url;
 
-  // Always fetch JS, CSS, and HTML fresh from network!
+  // Always fetch JS, CSS, and HTML fresh from network for instant updates
   if (url.includes('.js') || url.includes('.css') || url.includes('.html') || url.endsWith('/')) {
     event.respondWith(
       fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(event.request))
@@ -47,14 +45,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Cache-first for static assets (images, fonts, etc.)
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
     })
-  );
-});
-          }
-        });
-      })
   );
 });
