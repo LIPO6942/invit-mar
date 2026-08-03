@@ -3583,10 +3583,6 @@ if ('serviceWorker' in navigator) {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPwaPrompt = e;
-  const installContainer = document.getElementById('pwaInstallContainer');
-  if (installContainer) {
-    installContainer.style.display = 'block';
-  }
 });
 
 function triggerPWAInstall() {

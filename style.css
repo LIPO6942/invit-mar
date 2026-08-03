@@ -3764,17 +3764,22 @@ body.lang-ar .animated-bride {
    ═══════════════════════════════════════════════ */
 .guest-medallion-container {
   position: absolute;
-  top: -38px;
+  bottom: -25px;
+  top: auto;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
   pointer-events: none;
 }
 
+.guest-seal-mini {
+  display: none !important; /* Replaced by the Royal Guest Initials Medallion */
+}
+
 .guest-medallion-badge {
   position: relative;
-  width: 68px;
-  height: 68px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: radial-gradient(
     circle at 35% 30%,
@@ -3786,11 +3791,11 @@ body.lang-ar .animated-bride {
     #4a2e00 100%
   );
   box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.45),
-    0 0 0 2.5px rgba(255, 235, 170, 0.95),
-    0 0 0 5px rgba(180, 130, 20, 0.65),
-    inset 0 3px 6px rgba(255, 255, 255, 0.85),
-    inset 0 -4px 8px rgba(0, 0, 0, 0.55);
+    0 6px 18px rgba(0, 0, 0, 0.45),
+    0 0 0 2px rgba(255, 235, 170, 0.95),
+    0 0 0 4px rgba(180, 130, 20, 0.65),
+    inset 0 2.5px 5px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3801,32 +3806,32 @@ body.lang-ar .animated-bride {
 .guest-medallion-badge::before {
   content: '';
   position: absolute;
-  inset: 4px;
+  inset: 3px;
   border-radius: 50%;
-  border: 1.5px dashed rgba(255, 245, 200, 0.85);
-  box-shadow: inset 0 0 8px rgba(212, 160, 23, 0.5);
+  border: 1.2px dashed rgba(255, 245, 200, 0.85);
+  box-shadow: inset 0 0 6px rgba(212, 160, 23, 0.5);
   pointer-events: none;
 }
 
 .medallion-shine {
   position: absolute;
-  top: 5px;
-  left: 10px;
-  width: 20px;
-  height: 10px;
+  top: 4px;
+  left: 8px;
+  width: 16px;
+  height: 8px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 50%;
   transform: rotate(-30deg);
-  filter: blur(1.5px);
+  filter: blur(1px);
   pointer-events: none;
 }
 
 .medallion-stars {
   position: absolute;
-  top: -9px;
-  font-size: 11px;
+  top: -8px;
+  font-size: 9px;
   color: #fff2b3;
-  text-shadow: 0 0 6px #f7d070;
+  text-shadow: 0 0 5px #f7d070;
 }
 
 /* Calligraphic Arabic Monogram Ligature Style */
@@ -3852,30 +3857,30 @@ body.lang-ar .animated-bride {
 }
 
 .ar-callig-main-flourish {
-  font-size: 2.1rem;
+  font-size: 1.65rem;
   line-height: 1;
   color: #1a0f00;
   background: linear-gradient(145deg, #4a2d04 0%, #1f1100 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
-  transform: translateY(-2px) scaleX(1.08);
+  transform: translateY(-1px) scaleX(1.05);
 }
 
 .ar-callig-sec-flourish {
-  font-size: 1.85rem;
+  font-size: 1.4rem;
   line-height: 1;
-  margin-right: -10px;
+  margin-right: -8px;
   color: #2b1a03;
   filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
-  transform: translateY(3px) rotate(-5deg);
+  transform: translateY(2px) rotate(-5deg);
 }
 
 .ar-callig-hamza-accent {
   position: absolute;
-  top: 7px;
-  right: 13px;
-  font-size: 0.85rem;
+  top: 5px;
+  right: 9px;
+  font-size: 0.7rem;
   color: #4a2d04;
   font-family: 'Amiri', serif;
   opacity: 0.95;
@@ -3883,7 +3888,7 @@ body.lang-ar .animated-bride {
 }
 
 .ar-callig-letter-a, .ar-callig-letter-b {
-  font-size: 1.75rem;
+  font-size: 1.35rem;
   font-family: 'Aref Ruqaa', 'Amiri', serif;
   font-weight: 700;
   color: #2b1800;
