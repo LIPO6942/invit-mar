@@ -3720,7 +3720,9 @@ function openWeddingSwitcherModal() {
 
   initFirebase();
 
-  // Query all real wedding invitations registered in Firebase Firestore!
+  // Base deployment URL for this app
+  const BASE_URL = 'https://invit-mar-bice.vercel.app/';
+
   _db.collection('invitations').get()
     .then(snapshot => {
       let realWeddings = [];
@@ -3728,45 +3730,43 @@ function openWeddingSwitcherModal() {
         snapshot.forEach(doc => {
           const data = doc.data() || {};
           const cfg = data.config || {};
-          const groom = cfg.gn || 'عريس';
-          const bride = cfg.bn || 'عروس';
-          const label = (groom !== 'عريس' || bride !== 'عروس')
-            ? `💍 حفل زفاف ${groom} & ${bride}`
+          const groom = cfg.gn || '';
+          const bride = cfg.bn || '';
+          const label = (groom || bride)
+            ? `💍 حفل زفاف ${groom}${groom && bride ? ' & ' : ''}${bride}`.trim()
             : `💍 حفل زفاف (${doc.id})`;
-          realWeddings.push({ id: doc.id, label: label });
+          // Build URL: if config.url is set use it, otherwise build from base URL + inv slug
+          const url = cfg.url || `${BASE_URL}?inv=${encodeURIComponent(doc.id)}`;
+          realWeddings.push({ id: doc.id, label, url });
         });
       }
 
-      // Add standard wedding slugs if not in Firestore list
-      if (!realWeddings.some(w => w.id === 'invit mar')) {
-        realWeddings.unshift({ id: 'invit mar', label: '💍 حفل زفاف مرتضى & مريم' });
-      }
-      if (!realWeddings.some(w => w.id === 'ghada-tarek')) {
-        realWeddings.unshift({ id: 'ghada-tarek', label: '💍 حفل زفاف غادة & طارق' });
-      }
-      if (!realWeddings.some(w => w.id === 'invit watia')) {
-        realWeddings.push({ id: 'invit watia', label: '🌸 حفل زفاف الوطية (Watiah)' });
+      if (realWeddings.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:14px; color:#d4b260; font-family:'Amiri',serif;">⚠️ لا توجد مشاريع زفاف مسجلة بعد في قاعدة البيانات.</div>`;
+        return;
       }
 
-      container.innerHTML = realWeddings.map(w => `
-        <button onclick="switchWeddingProject('${w.id}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer; text-align:right;">
-          <span>${w.label}</span>
-          <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
-        </button>
-      `).join('');
+      // Highlight current wedding
+      const currentInv = new URLSearchParams(window.location.search).get('inv') || '';
+
+      container.innerHTML = realWeddings.map(w => {
+        const isCurrent = w.id === currentInv;
+        const border = isCurrent ? '2px solid #f7cb4d' : '1.5px solid #c9a84c';
+        const bg = isCurrent
+          ? 'linear-gradient(135deg, rgba(247,203,77,0.3) 0%, rgba(138,96,16,0.35) 100%)'
+          : 'linear-gradient(135deg, rgba(247,203,77,0.1) 0%, rgba(138,96,16,0.15) 100%)';
+        const badge = isCurrent ? `<span style="font-size:0.72rem; color:#0a1912; background:#f7cb4d; padding:2px 8px; border-radius:6px; margin-right:6px;">الحالي</span>` : '';
+        return `
+          <button onclick="switchWeddingProject('${w.id}', '${w.url}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:${bg}; border:${border}; border-radius:12px; font-family:'Amiri',serif; font-size:1rem; color:#fff3ad; font-weight:bold; cursor:pointer; text-align:right; box-sizing:border-box;">
+            <span>${badge}${w.label}</span>
+            <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px; flex-shrink:0;">فتح ➜</span>
+          </button>
+        `;
+      }).join('');
     })
     .catch(err => {
       console.error('[Wedding Switcher] Firestore load failed:', err);
-      container.innerHTML = `
-        <button onclick="switchWeddingProject('ghada-tarek')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer;">
-          <span>💍 حفل زفاف غادة & طارق</span>
-          <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
-        </button>
-        <button onclick="switchWeddingProject('invit mar')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer;">
-          <span>💍 حفل زفاف مرتضى & مريم</span>
-          <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
-        </button>
-      `;
+      container.innerHTML = `<div style="text-align:center; padding:14px; color:#f66; font-family:'Amiri',serif;">❌ تعذر تحميل قائمة الزفاف.</div>`;
     });
 }
 
@@ -3982,15 +3982,34 @@ function closeWeddingSwitcher() {
   if (modal) modal.style.display = 'none';
 }
 
-function switchWeddingProject(slug) {
-  if (!slug) return;
-  if (slug === 'invit mar') {
-    window.location.href = 'index.html';
-  } else if (slug === 'invit watia') {
-    window.location.href = '../invit watia/index.html';
-  } else {
-    window.location.href = `../${slug}/index.html`;
+function switchWeddingProject(invSlug, customUrl) {
+  if (!invSlug && !customUrl) return;
+  
+  // Close modal
+  const modal = document.getElementById('weddingSwitcherModal');
+  if (modal) modal.style.display = 'none';
+
+  // If a direct URL is provided (from Firebase config.url), use it directly
+  if (customUrl) {
+    window.location.href = customUrl;
+    return;
   }
+
+  // Known local project paths
+  const LOCAL_MAP = {
+    'invit-mar': '../../invit mar/index.html',
+    'invit mar': './index.html',
+    'invit watia': '../../invit watia/invit-watia/index.html',
+    'invit-watia': '../../invit watia/invit-watia/index.html',
+  };
+
+  if (LOCAL_MAP[invSlug]) {
+    window.location.href = LOCAL_MAP[invSlug];
+    return;
+  }
+
+  // Fallback: try relative path using slug
+  window.location.href = `../../${invSlug}/index.html`;
 }
 
 function switchWeddingFromInput() {

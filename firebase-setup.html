@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Setup Firebase - Mise à jour URLs des Mariages</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a1912; color: #f7d070; padding: 30px; direction: rtl; }
+  h1 { font-size: 1.4rem; color: #f7cb4d; }
+  .card { background: #0f261b; border: 1px solid #c9a84c; border-radius: 14px; padding: 20px; margin: 16px 0; }
+  .ok { color: #4caf50; } .err { color: #f44336; } .pending { color: #ff9800; }
+  button { background: linear-gradient(135deg, #f7cb4d, #8a6010); color: #0a1912; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 16px; }
+  #log { font-size: 0.88rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+<h1>🔧 Setup Firebase — Mise à jour des URLs de Mariages</h1>
+<div class="card">
+  <p>Ce script va lire tous les documents dans la collection <b>invitations</b> et mettre à jour le champ <b>config.url</b> avec l'URL correcte :</p>
+  <code>https://invit-mar-bice.vercel.app/?inv={slug}</code>
+  <br><br>
+  <button onclick="runSetup()">▶️ Lancer la mise à jour Firebase</button>
+</div>
+<div class="card">
+  <div id="log">En attente...</div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",
+  authDomain:        "invit-mar.firebaseapp.com",
+  projectId:         "invit-mar",
+  storageBucket:     "invit-mar.firebasestorage.app",
+  messagingSenderId: "654872438284",
+  appId:             "1:654872438284:web:c11d6f3cdff82bf35ff029"
+};
+const BASE_URL = 'https://invit-mar-bice.vercel.app/';
+let _app, _db;
+function initFB() {
+  if (_app) return;
+  _app = firebase.initializeApp(FIREBASE_CONFIG);
+  _db = firebase.firestore();
+}
+const logEl = document.getElementById('log');
+function log(msg, cls) {
+  logEl.innerHTML += `<div class="${cls || ''}">${msg}</div>`;
+}
+async function runSetup() {
+  logEl.innerHTML = '';
+  initFB();
+  log('Connexion a Firebase Firestore...', 'pending');
+  try {
+    const snapshot = await _db.collection('invitations').get();
+    if (snapshot.empty) {
+      log('Aucun document trouve dans la collection invitations.', 'err');
+      return;
+    }
+    log(`${snapshot.size} mariage(s) trouve(s). Mise a jour en cours...`, 'ok');
+    const updates = [];
+    snapshot.forEach(doc => {
+      const data = doc.data() || {};
+      const cfg = data.config || {};
+      const groom = cfg.gn || doc.id;
+      const bride = cfg.bn || '';
+      const invUrl = BASE_URL + '?inv=' + encodeURIComponent(doc.id);
+      log(`Mise a jour: ${doc.id} (${groom}${bride ? ' and ' + bride : ''}) -> ${invUrl}`, 'pending');
+      const update = _db.collection('invitations').doc(doc.id).update({
+        'config.url': invUrl
+      }).then(() => {
+        log(`OK: ${doc.id} config.url mis a jour!`, 'ok');
+      }).catch(err => {
+        log(`ERREUR: ${doc.id} - ${err.message}`, 'err');
+      });
+      updates.push(update);
+    });
+    await Promise.all(updates);
+    log('Mise a jour complete! Tous les mariages ont maintenant un config.url correct.', 'ok');
+  } catch (err) {
+    log('Erreur Firebase: ' + err.message, 'err');
+  }
+}
+</script>
+</body>
+</html>
