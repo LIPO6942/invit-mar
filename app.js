@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /* ═══════════════════════════════════════════════════════════════════
    WEDDING INVITATION — app.js
@@ -2623,168 +2623,564 @@ function closeSouvenirModal() {
   if (modal) modal.style.display = 'none';
 }
 
-function downloadSouvenirHtml() {
-  closeSouvenirModal();
-
+function _getSouvenirData() {
   const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
-
-  // Resolve Guest Name & Salutation
   const guestTitle = document.getElementById('guestCardTitle')?.textContent || (isFr ? 'Monsieur & Madame' : 'إلى السيد');
   const guestName  = document.getElementById('guestBannerLabel')?.textContent || _resolvedGuestName || (isFr ? 'Nos Chers Invités' : 'ضيوفنا الكرام');
-  const fullGuestSalutation = `${guestTitle} ${guestName}`.trim();
-
   const groom = document.querySelector('[data-cfg="groomNameDisplay"]')?.textContent || 'مرتضى';
   const bride = document.querySelector('[data-cfg="brideNameDisplay"]')?.textContent || 'مريم';
-  const ringText = document.getElementById('calendar-ring-text')?.textContent || '12 جويلية 2026';
+  const wDate = new Date(_weddingDateTime);
+  const arMonths = ['جانفي','فيفري','مارس','أفريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const frMonths = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const arDays   = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const frDays   = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const monthName  = isFr ? frMonths[wDate.getMonth()] : arMonths[wDate.getMonth()];
+  const dayName    = isFr ? frDays[wDate.getDay()] : arDays[wDate.getDay()];
+  const dayNum     = wDate.getDate();
+  const year       = wDate.getFullYear();
+  const dateStr    = isFr ? `${dayName} ${dayNum} ${monthName} ${year}` : `${dayName} ${dayNum} ${monthName} ${year}`;
+  const groomFather = document.querySelector('[data-cfg="groomFather"]')?.textContent || '';
+  const brideFather = document.querySelector('[data-cfg="brideFather"]')?.textContent || '';
+  return { isFr, guestTitle, guestName, groom, bride, dateStr, dayNum, monthName, year, groomFather, brideFather };
+}
 
+function _buildRoyalSouvenirHTML(data) {
+  const { isFr, guestTitle, guestName, groom, bride, dateStr, dayNum, monthName, year, groomFather, brideFather } = data;
   const isRtl = !isFr;
+  const dir   = isRtl ? 'rtl' : 'ltr';
+  const lang  = isRtl ? 'ar' : 'fr';
 
-  // Build clean static self-contained HTML page
-  const htmlContent = `<!DOCTYPE html>
-<html lang="${isRtl ? 'ar' : 'fr'}" dir="${isRtl ? 'rtl' : 'ltr'}">
+  return `<!DOCTYPE html>
+<html lang="${lang}" dir="${dir}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تذكار دعوة زفاف ${groom} & ${bride} — ${fullGuestSalutation}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <title>${guestTitle} ${guestName} — ${isFr ? 'Invitation Mariage' : 'دعوة الزفاف'} ${groom} & ${bride}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@1,400;0,600;0,700&family=Dancing+Script:wght@600;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: #110d08;
-      color: #f7f0de;
-      font-family: 'Amiri', serif;
+      background: radial-gradient(ellipse at center, #1a1008 0%, #0a0502 100%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 30px 16px 40px;
+      font-family: 'Amiri', serif;
     }
-    .souvenir-container {
-      max-width: 520px;
+
+    /* ── Outer page border glow ── */
+    .page-wrapper {
       width: 100%;
-      background: #fffcf8;
-      color: #2b1f0d;
-      border: 3px solid #c9a84c;
-      border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(201,168,76,0.15);
-      padding: 32px 24px;
-      text-align: center;
+      max-width: 600px;
       position: relative;
+    }
+    .page-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 28px;
+      background: conic-gradient(from 0deg, #c9a84c, #f5e190, #c9a84c, #8a5d00, #c9a84c, #f5e190, #c9a84c);
+      animation: rotateBorder 6s linear infinite;
+      z-index: -1;
+      filter: blur(1px);
+    }
+    @keyframes rotateBorder {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Main card ── */
+    .card {
+      background: linear-gradient(160deg, #fdf8ee 0%, #f7eed9 40%, #eedfc0 100%);
+      border-radius: 26px;
+      padding: 0;
       overflow: hidden;
+      position: relative;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.6),
+        0 0 0 3px rgba(201,168,76,0.7),
+        inset 0 0 40px rgba(201,168,76,0.1);
     }
-    .envelope-header {
-      background: linear-gradient(135deg, #f7f0de 0%, #e2d2b0 100%);
-      border: 2px dashed #c9a84c;
+
+    /* ── Top Envelope Flap (SVG) ── */
+    .envelope-svg-top {
+      width: 100%;
+      display: block;
+      margin-bottom: -2px;
+    }
+
+    /* ── Silk Ribbon ── */
+    .ribbon-wrap {
+      position: relative;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: -1px 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 30%, rgba(201,168,76,0.25) 50%, rgba(201,168,76,0.15) 70%, transparent 100%);
+    }
+    .ribbon {
+      position: absolute;
+      left: 0; right: 0;
+      height: 36px;
+      background: linear-gradient(180deg, #c9a84c 0%, #a07830 25%, #f5e190 50%, #a07830 75%, #c9a84c 100%);
+      opacity: 0.92;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .ribbon-text {
+      position: relative;
+      z-index: 2;
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.15rem;
+      color: #1a1000;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+      letter-spacing: 1px;
+    }
+
+    /* ── Card body ── */
+    .card-body {
+      padding: 28px 32px 24px;
+      position: relative;
+      direction: ${dir};
+    }
+
+    /* Corner ornaments */
+    .corner {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      opacity: 0.55;
+    }
+    .corner-tl { top: 8px; ${isRtl ? 'right' : 'left'}: 8px; }
+    .corner-tr { top: 8px; ${isRtl ? 'left' : 'right'}: 8px; transform: scaleX(-1); }
+    .corner-bl { bottom: 8px; ${isRtl ? 'right' : 'left'}: 8px; transform: scaleY(-1); }
+    .corner-br { bottom: 8px; ${isRtl ? 'left' : 'right'}: 8px; transform: scale(-1,-1); }
+
+    /* Envelope nominative zone */
+    .env-address {
+      background: linear-gradient(135deg, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0.05) 100%);
+      border: 1.5px solid rgba(201,168,76,0.5);
       border-radius: 16px;
-      padding: 20px 16px;
-      margin-bottom: 28px;
+      padding: 18px 22px;
+      text-align: center;
+      margin-bottom: 24px;
       position: relative;
     }
-    .guest-salutation-title {
-      font-size: 0.95rem;
+    .env-address::before {
+      content: '✦ ✦ ✦';
+      display: block;
+      color: rgba(201,168,76,0.6);
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+    .env-address::after {
+      content: '— ✦ —';
+      display: block;
+      color: rgba(201,168,76,0.6);
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+    .env-to-label {
+      font-size: 0.9rem;
       color: #8a6000;
+      font-style: italic;
       margin-bottom: 4px;
     }
-    .guest-salutation-name {
-      font-size: 1.85rem;
-      font-weight: 700;
-      color: #5d471b;
+    .env-guest-name {
+      font-family: 'Great Vibes', 'Dancing Script', cursive;
+      font-size: 2.4rem;
+      color: #4a2e0a;
+      line-height: 1.25;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
     }
-    .seal-badge {
-      display: inline-block;
-      margin-top: 10px;
-      background: #c9a84c;
-      color: #1a1000;
-      font-size: 0.8rem;
-      font-weight: bold;
-      padding: 3px 14px;
-      border-radius: 12px;
+
+    /* Wax seal inline */
+    .seal-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 6px 0 22px;
     }
-    .basmala { font-size: 1.4rem; color: #8a6000; margin-bottom: 12px; line-height: 1.6; }
-    .divider { color: #c9a84c; letter-spacing: 4px; margin: 12px 0; font-size: 0.9rem; }
-    .invite-text { font-size: 1.1rem; color: #6b4d12; margin: 10px 0; }
-    .names {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #5d471b;
-      margin: 16px 0;
+    .seal-inline {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 38%, #f5e190 0%, #c9a84c 35%, #8a5d00 70%, #4a2e0a 100%);
+      border: 2px solid #c9a84c;
+      box-shadow:
+        0 0 0 3px rgba(201,168,76,0.3),
+        0 6px 18px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: #fffcf5;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      flex-shrink: 0;
     }
-    .names span { color: #c9a84c; margin: 0 8px; }
-    .wedding-details {
-      background: rgba(201,168,76,0.08);
-      border-radius: 12px;
-      padding: 16px;
-      margin: 20px 0;
-      font-size: 1.05rem;
-      color: #4a3512;
-      line-height: 1.8;
+    .seal-line-bar {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.6), transparent);
     }
-    .thanks-note {
-      font-size: 0.95rem;
-      color: #7a6035;
-      margin-top: 20px;
-      font-style: italic;
+
+    /* Basmala */
+    .basmala {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #6b4d12;
+      line-height: 1.7;
+      margin-bottom: 6px;
     }
-    .watermark {
-      margin-top: 24px;
+
+    /* Gold divider */
+    .gold-div {
+      text-align: center;
+      color: #c9a84c;
+      letter-spacing: 6px;
       font-size: 0.75rem;
-      color: #a08868;
-      border-top: 1px solid rgba(201,168,76,0.2);
-      padding-top: 12px;
+      margin: 10px 0;
     }
+
+    /* Invite text */
+    .invite-line {
+      text-align: center;
+      font-size: 1rem;
+      color: #7a5c25;
+      margin: 6px 0;
+    }
+
+    /* Couple names */
+    .names-block {
+      text-align: center;
+      margin: 18px 0 20px;
+    }
+    .names-main {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.2rem;
+      color: #3d2600;
+      line-height: 1.15;
+      text-shadow: 2px 2px 4px rgba(255,255,255,0.9);
+    }
+    .names-amp {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.4rem;
+      color: #c9a84c;
+      margin: 0 12px;
+      vertical-align: middle;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .names-sub {
+      font-size: 0.88rem;
+      color: #8a6000;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Details block */
+    .details-card {
+      background: linear-gradient(135deg, rgba(255,252,240,0.9) 0%, rgba(242,228,195,0.6) 100%);
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin: 6px 0 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .detail-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .detail-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #8a6000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1px;
+    }
+    .detail-val {
+      font-size: 1.05rem;
+      color: #3d2600;
+      font-weight: 600;
+    }
+    .detail-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+      margin: 2px 0;
+    }
+
+    /* Calendar mini inside card */
+    .cal-mini {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 12px;
+      padding: 8px 18px;
+      margin: 0 auto 16px;
+    }
+    .cal-day-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #8a5d00;
+      line-height: 1;
+    }
+    .cal-month-year {
+      display: flex;
+      flex-direction: column;
+      align-items: ${isRtl ? 'flex-end' : 'flex-start'};
+    }
+    .cal-month {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #5d3c00;
+    }
+    .cal-year {
+      font-size: 0.85rem;
+      color: #8a6000;
+    }
+
+    /* Thanks note */
+    .thanks {
+      text-align: center;
+      font-size: 0.92rem;
+      color: #7a6035;
+      font-style: italic;
+      line-height: 1.6;
+      padding: 0 12px;
+      margin-bottom: 16px;
+    }
+
+    /* Bottom wax seal */
+    .bottom-seal {
+      text-align: center;
+      padding: 12px 0 20px;
+    }
+    .wax-seal-big {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%,
+        #f5e190 0%, #d4a830 25%, #b8860b 50%, #7a5300 75%, #3d2600 100%);
+      border: 2.5px solid #c9a84c;
+      box-shadow:
+        0 0 0 4px rgba(201,168,76,0.25),
+        0 0 0 8px rgba(201,168,76,0.1),
+        0 10px 30px rgba(0,0,0,0.45),
+        inset 0 3px 6px rgba(255,255,255,0.25);
+      font-size: 1.6rem;
+      color: rgba(255,252,220,0.9);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      margin: 0 auto;
+    }
+    .seal-label {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: #8a6000;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Bottom envelope flap */
+    .envelope-svg-bottom {
+      width: 100%;
+      display: block;
+      margin-top: -2px;
+    }
+
+    /* Footer watermark */
+    .footer-watermark {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.72rem;
+      color: rgba(201,168,76,0.5);
+      letter-spacing: 1px;
+    }
+
     @media print {
       body { background: #fff; padding: 0; }
-      .souvenir-container { border: 2px solid #c9a84c; box-shadow: none; }
+      .page-wrapper::before { display: none; }
+      .card { box-shadow: 0 0 0 2px #c9a84c; }
     }
   </style>
 </head>
 <body>
 
-<div class="souvenir-container">
-  <!-- ENVELOPE SOUVENIR HEADER -->
-  <div class="envelope-header">
-    <div class="guest-salutation-title">${guestTitle}</div>
-    <div class="guest-salutation-name">${guestName}</div>
-    <div class="seal-badge">✦ مغلف الدعوة التذكاري ✦</div>
+<div class="page-wrapper">
+<div class="card">
+
+  <!-- Top Envelope Flap SVG -->
+  <svg class="envelope-svg-top" viewBox="0 0 600 140" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="flapGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e8d5a0"/>
+        <stop offset="100%" stop-color="#c9a84c" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+    <polygon points="0,0 600,0 300,120" fill="url(#flapGrad)" opacity="0.95"/>
+    <polygon points="0,0 600,0 300,120" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.4"/>
+    <!-- Flap decorative lines -->
+    <line x1="50" y1="10" x2="550" y2="10" stroke="#c9a84c" stroke-width="0.6" opacity="0.4"/>
+    <line x1="80" y1="20" x2="520" y2="20" stroke="#c9a84c" stroke-width="0.4" opacity="0.3"/>
+    <!-- Corner ornament dots -->
+    <circle cx="30" cy="18" r="4" fill="#c9a84c" opacity="0.5"/>
+    <circle cx="570" cy="18" r="4" fill="#c9a84c" opacity="0.5"/>
+    <!-- Center monogram on flap -->
+    <text x="300" y="58" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="28" fill="#7a5c1a" opacity="0.6">${groom[0]} &amp; ${bride[0]}</text>
+  </svg>
+
+  <!-- Ribbon -->
+  <div class="ribbon-wrap">
+    <div class="ribbon"></div>
+    <div class="ribbon-text">${isFr ? `✦ Invitation au Mariage ✦` : `✦ دعوة الزفاف ✦`}</div>
   </div>
 
-  <!-- WEDDING CARD CONTENT -->
-  <div class="basmala">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
-  <div class="divider">✦ ✦ ✦</div>
-  <p class="invite-text">يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف</p>
-  
-  <div class="names">${groom} <span>&</span> ${bride}</div>
+  <!-- Card Body -->
+  <div class="card-body">
+    <!-- Corner SVG ornaments -->
+    <svg class="corner corner-tl" viewBox="0 0 80 80" fill="none"><path d="M4,4 L36,4" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 L4,36" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 Q32,4 32,32" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/><circle cx="4" cy="4" r="4" fill="#c9a84c" opacity="0.8"/></svg>
+    <svg class="corner corner-tr" viewBox="0 0 80 80" fill="none"><path d="M4,4 L36,4" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 L4,36" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 Q32,4 32,32" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/><circle cx="4" cy="4" r="4" fill="#c9a84c" opacity="0.8"/></svg>
+    <svg class="corner corner-bl" viewBox="0 0 80 80" fill="none"><path d="M4,4 L36,4" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 L4,36" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 Q32,4 32,32" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/><circle cx="4" cy="4" r="4" fill="#c9a84c" opacity="0.8"/></svg>
+    <svg class="corner corner-br" viewBox="0 0 80 80" fill="none"><path d="M4,4 L36,4" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 L4,36" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><path d="M4,4 Q32,4 32,32" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/><circle cx="4" cy="4" r="4" fill="#c9a84c" opacity="0.8"/></svg>
 
-  <div class="wedding-details">
-    <strong>📅 التاريخ:</strong> ${ringText}<br>
-    <strong>📍 المكان:</strong> قصر الأفراح — طبلبة، المنستير، تونس
+    <!-- Nominative Envelope Zone -->
+    <div class="env-address">
+      <div class="env-to-label">${guestTitle}</div>
+      <div class="env-guest-name">${guestName}</div>
+    </div>
+
+    <!-- Inline wax seal divider -->
+    <div class="seal-line">
+      <div class="seal-line-bar"></div>
+      <div class="seal-inline">✦</div>
+      <div class="seal-line-bar"></div>
+    </div>
+
+    <!-- Basmala -->
+    <div class="basmala">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
+    <div class="gold-div">✦ ✦ ✦</div>
+
+    <!-- Invite lines -->
+    <div class="invite-line">${isFr ? `Les familles` : `تتشرف عائلتا`}</div>
+    ${groomFather ? `<div class="invite-line" style="font-weight:700; color:#4a2e0a; font-size:1.05rem;">${groomFather}</div>` : ''}
+    ${brideFather ? `<div class="invite-line" style="font-weight:700; color:#4a2e0a; font-size:1.05rem;">${brideFather}</div>` : ''}
+    <div class="invite-line" style="margin-top:8px;">${isFr ? `ont l'honneur de vous inviter au mariage de leurs enfants` : `بدعوتكم لحضور حفل زفاف نجليهما`}</div>
+
+    <!-- Couple Names -->
+    <div class="names-block">
+      <div class="names-main">
+        ${isRtl
+          ? `${groom} <span class="names-amp">&amp;</span> ${bride}`
+          : `${groom} <span class="names-amp">&amp;</span> ${bride}`}
+      </div>
+      <div class="names-sub">${isFr ? 'Mariage de' : 'زفاف مبارك'} ${groom} &amp; ${bride}</div>
+    </div>
+
+    <!-- Mini Calendar + Details -->
+    <div class="cal-mini">
+      <div class="cal-day-big">${dayNum}</div>
+      <div class="cal-month-year">
+        <div class="cal-month">${monthName}</div>
+        <div class="cal-year">${year}</div>
+      </div>
+    </div>
+
+    <div class="details-card">
+      <div class="detail-row">
+        <div class="detail-icon">📅</div>
+        <div>
+          <div class="detail-label">${isFr ? 'Date' : 'التاريخ'}</div>
+          <div class="detail-val">${dateStr}</div>
+        </div>
+      </div>
+      <div class="detail-sep"></div>
+      <div class="detail-row">
+        <div class="detail-icon">📍</div>
+        <div>
+          <div class="detail-label">${isFr ? 'Lieu' : 'المكان'}</div>
+          <div class="detail-val">${isFr ? 'Palais des Fêtes — Teboulba, Monastir, Tunisie' : 'قصر الأفراح — طبلبة، المنستير، تونس'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gold-div">— ✦ —</div>
+
+    <!-- Thanks -->
+    <div class="thanks">
+      ${isFr
+        ? 'Nous vous remercions chaleureusement pour votre présence<br>et votre affection sincère ❤'
+        : 'نشكركم جزيل الشكر على حضوركم ومحبتكم<br>دمتُم سنداً وفرحاً لنا ❤'}
+    </div>
+
+    <!-- Big wax seal bottom -->
+    <div class="bottom-seal">
+      <div class="wax-seal-big">✦</div>
+      <div class="seal-label">${isFr ? 'Sceau Royal' : 'الختم الملكي'}</div>
+    </div>
   </div>
 
-  <div class="thanks-note">
-    نشكركم جزيل الشكر على حضوركم ومحبتكم دمتُم سنداً وفرحاً لنا ❤
-  </div>
+  <!-- Bottom Envelope Flap -->
+  <svg class="envelope-svg-bottom" viewBox="0 0 600 80" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="botFlapGrad" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#e8d5a0"/>
+      </linearGradient>
+    </defs>
+    <polygon points="0,80 600,80 300,0" fill="url(#botFlapGrad)" opacity="0.85"/>
+    <polygon points="0,80 600,80 300,0" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.35"/>
+  </svg>
 
-  <div class="watermark">
-    تذكار خاص محفوظ لمناسبة زفاف ${groom} & ${bride}
-  </div>
+</div><!-- /card -->
+
+<div class="footer-watermark">
+  ${isFr ? `Souvenir Exclusif — Mariage de ${groom} & ${bride}` : `تذكار حصري — زفاف ${groom} & ${bride}`}
 </div>
+</div><!-- /page-wrapper -->
 
 </body>
 </html>`;
+}
 
-  // Trigger HTML file download
+function downloadSouvenirHtml() {
+  closeSouvenirModal();
+  const data = _getSouvenirData();
+  const htmlContent = _buildRoyalSouvenirHTML(data);
   const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
   a.href = url;
-  const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
-  a.download = `Invitation_Souvenir_${sanitizedGuest}.html`;
+  const sanitizedGuest = (data.guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
+  a.download = `Invitation_Royale_${sanitizedGuest}.html`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+
 
 function downloadSouvenirImage() {
   closeSouvenirModal();
@@ -2792,67 +3188,120 @@ function downloadSouvenirImage() {
   const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
 
   if (typeof html2canvas === 'undefined') {
-    alert(isFr ? 'La bibliothèque d\'image est en cours de chargement, veuillez réessayer.' : 'جاري تحميل مكتبة الصور، يرجى المحاولة بعد ثوانٍ.');
+    alert(isFr ? "La bibliothèque d'image est en cours de chargement, veuillez réessayer." : 'جاري تحميل مكتبة الصور، يرجى المحاولة بعد ثوانٍ.');
     return;
   }
 
-  // Create temporary off-screen element for capturing high resolution image
-  const tempDiv = document.createElement('div');
-  tempDiv.style.position = 'fixed';
-  tempDiv.style.left = '-9999px';
-  tempDiv.style.top = '0';
-  tempDiv.style.width = '480px';
-  tempDiv.style.background = '#fffcf8';
-  tempDiv.style.border = '3px solid #c9a84c';
-  tempDiv.style.borderRadius = '20px';
-  tempDiv.style.padding = '28px 20px';
-  tempDiv.style.fontFamily = "'Amiri', serif";
-  tempDiv.style.textAlign = 'center';
-  tempDiv.style.color = '#2b1f0d';
-  tempDiv.style.boxSizing = 'border-box';
+  const data = _getSouvenirData();
+  const { guestTitle, guestName, groom, bride, dateStr, dayNum, monthName, year } = data;
+  const isRtl = !isFr;
 
-  const guestTitle = document.getElementById('guestCardTitle')?.textContent || (isFr ? 'Monsieur & Madame' : 'إلى السيد');
-  const guestName  = document.getElementById('guestBannerLabel')?.textContent || _resolvedGuestName || (isFr ? 'Nos Chers Invités' : 'ضيوفنا الكرام');
-  const groom = document.querySelector('[data-cfg="groomNameDisplay"]')?.textContent || 'مرتضى';
-  const bride = document.querySelector('[data-cfg="brideNameDisplay"]')?.textContent || 'مريم';
-  const ringText = document.getElementById('calendar-ring-text')?.textContent || '12 جويلية 2026';
-
-  tempDiv.innerHTML = `
-    <div style="background:linear-gradient(135deg, #f7f0de 0%, #e2d2b0 100%); border:2px dashed #c9a84c; border-radius:14px; padding:16px; margin-bottom:20px;">
-      <div style="font-size:0.9rem; color:#8a6000; margin-bottom:4px;">${guestTitle}</div>
-      <div style="font-size:1.6rem; font-weight:bold; color:#5d471b;">${guestName}</div>
-      <div style="display:inline-block; margin-top:8px; background:#c9a84c; color:#1a1000; font-size:0.75rem; font-weight:bold; padding:2px 10px; border-radius:10px;">✦ مغلف الدعوة التذكاري ✦</div>
-    </div>
-
-    <div style="font-size:1.25rem; color:#8a6000; margin-bottom:8px;">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
-    <div style="color:#c9a84c; letter-spacing:3px; margin:8px 0; font-size:0.85rem;">✦ ✦ ✦</div>
-    <p style="font-size:1rem; color:#6b4d12; margin:6px 0;">يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف</p>
-    
-    <div style="font-size:2.2rem; font-weight:bold; color:#5d471b; margin:12px 0;">${groom} <span style="color:#c9a84c;">&amp;</span> ${bride}</div>
-
-    <div style="background:rgba(201,168,76,0.1); border-radius:10px; padding:12px; margin:16px 0; font-size:0.95rem; color:#4a3512; line-height:1.6;">
-      <strong>📅 التاريخ:</strong> ${ringText}<br>
-      <strong>📍 المكان:</strong> قصر الأفراح — طبلبة، المنستير
-    </div>
-
-    <div style="font-size:0.85rem; color:#7a6035; margin-top:14px;">
-      نشكركم جزيل الشكر على حضوركم ومحبتكم ❤
-    </div>
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `
+    position: fixed; left: -9999px; top: 0;
+    width: 560px;
+    background: linear-gradient(160deg, #fdf8ee 0%, #f7eed9 40%, #eedfc0 100%);
+    border: 3px solid #c9a84c;
+    border-radius: 24px;
+    overflow: hidden;
+    font-family: 'Amiri', serif;
+    direction: ${isRtl ? 'rtl' : 'ltr'};
+    color: #2b1f0d;
+    box-sizing: border-box;
   `;
 
-  document.body.appendChild(tempDiv);
+  wrapper.innerHTML = `
+    <svg width="560" height="120" viewBox="0 0 600 140" style="display:block; margin-bottom:-2px;" preserveAspectRatio="none">
+      <polygon points="0,0 600,0 300,120" fill="#e8d5a0" opacity="0.9"/>
+      <polygon points="0,0 600,0 300,120" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
+      <circle cx="30" cy="18" r="4" fill="#c9a84c" opacity="0.5"/>
+      <circle cx="570" cy="18" r="4" fill="#c9a84c" opacity="0.5"/>
+      <text x="300" y="62" text-anchor="middle" font-family="serif" font-size="26" fill="#7a5c1a" opacity="0.55">${groom[0]} &amp; ${bride[0]}</text>
+    </svg>
+    <div style="position:relative; height:34px; display:flex; align-items:center; justify-content:center;">
+      <div style="position:absolute; inset:0; background:linear-gradient(180deg,#c9a84c,#a07830 30%,#f5e190 50%,#a07830 70%,#c9a84c); opacity:0.9;"></div>
+      <span style="position:relative; font-family:cursive; font-size:1.1rem; color:#1a1000; z-index:2;">
+        ${isFr ? '✦ Invitation au Mariage ✦' : '✦ دعوة الزفاف ✦'}
+      </span>
+    </div>
+    <div style="padding:26px 36px 20px; position:relative; text-align:center;">
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.04)); border:1.5px solid rgba(201,168,76,0.5); border-radius:14px; padding:16px 20px; margin-bottom:20px;">
+        <div style="font-size:0.75rem; color:rgba(201,168,76,0.6); letter-spacing:4px; margin-bottom:6px;">✦ ✦ ✦</div>
+        <div style="font-size:0.88rem; color:#8a6000; font-style:italic; margin-bottom:4px;">${guestTitle}</div>
+        <div style="font-family:cursive; font-size:2.2rem; color:#4a2e0a; line-height:1.2;">${guestName}</div>
+        <div style="font-size:0.75rem; color:rgba(201,168,76,0.6); letter-spacing:3px; margin-top:6px;">— ✦ —</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px;">
+        <div style="flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.5));"></div>
+        <div style="width:46px; height:46px; border-radius:50%; background:radial-gradient(circle at 38% 35%, #f5e190 0%, #d4a830 25%, #b8860b 50%, #7a5300 80%, #3d2600 100%); border:2px solid #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,0.25), 0 6px 16px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:rgba(255,252,220,0.9);">✦</div>
+        <div style="flex:1; height:1px; background:linear-gradient(90deg,rgba(201,168,76,0.5),transparent);"></div>
+      </div>
+      <div style="font-size:1.1rem; color:#6b4d12; line-height:1.7; margin-bottom:4px;">بارك الله لهما وبارك عليهما وجمع بينهما في خير</div>
+      <div style="color:#c9a84c; letter-spacing:5px; font-size:0.7rem; margin:8px 0;">✦ ✦ ✦</div>
+      <div style="font-size:0.95rem; color:#7a5c25;">${isFr ? "Les familles vous invitent au mariage de leurs enfants" : "بدعوتكم لحضور حفل زفاف نجليهما"}</div>
+      <div style="font-family:cursive; font-size:3rem; color:#3d2600; margin:14px 0 4px; line-height:1.1;">
+        ${groom} <span style="font-size:1.4rem; color:#c9a84c; vertical-align:middle;">&amp;</span> ${bride}
+      </div>
+      <div style="display:inline-flex; align-items:center; gap:10px; background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.35); border-radius:12px; padding:8px 18px; margin:10px auto 14px;">
+        <div style="font-size:2.2rem; font-weight:800; color:#8a5d00; line-height:1;">${dayNum}</div>
+        <div style="text-align:${isRtl ? 'right' : 'left'};">
+          <div style="font-size:1rem; font-weight:700; color:#5d3c00;">${monthName}</div>
+          <div style="font-size:0.82rem; color:#8a6000;">${year}</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,252,240,0.9); border:1px solid rgba(201,168,76,0.35); border-radius:12px; padding:14px 18px; margin:4px 0 14px; text-align:${isRtl ? 'right' : 'left'};">
+        <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:8px;">
+          <span style="font-size:1.1rem;">📅</span>
+          <div>
+            <div style="font-size:0.72rem; font-weight:700; color:#8a6000; text-transform:uppercase;">${isFr ? 'Date' : 'التاريخ'}</div>
+            <div style="font-size:1rem; font-weight:600; color:#3d2600;">${dateStr}</div>
+          </div>
+        </div>
+        <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:6px 0;"></div>
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+          <span style="font-size:1.1rem;">📍</span>
+          <div>
+            <div style="font-size:0.72rem; font-weight:700; color:#8a6000; text-transform:uppercase;">${isFr ? 'Lieu' : 'المكان'}</div>
+            <div style="font-size:1rem; font-weight:600; color:#3d2600;">${isFr ? 'Palais des Fêtes — Teboulba, Monastir' : 'قصر الأفراح — طبلبة، المنستير'}</div>
+          </div>
+        </div>
+      </div>
+      <div style="color:#c9a84c; letter-spacing:4px; font-size:0.7rem; margin:4px 0 12px;">— ✦ —</div>
+      <div style="font-size:0.88rem; color:#7a6035; font-style:italic; line-height:1.6; margin-bottom:16px;">
+        ${isFr ? "Nous vous remercions chaleureusement pour votre présence ❤" : "نشكركم جزيل الشكر على حضوركم ومحبتكم ❤"}
+      </div>
+      <div style="text-align:center; padding-bottom:16px;">
+        <div style="display:inline-flex; flex-direction:column; align-items:center;">
+          <div style="width:70px; height:70px; border-radius:50%; background:radial-gradient(circle at 38% 35%, #f5e190 0%, #d4a830 25%, #b8860b 50%, #7a5300 75%, #3d2600 100%); border:2.5px solid #c9a84c; box-shadow: 0 0 0 4px rgba(201,168,76,0.2), 0 10px 28px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:rgba(255,252,220,0.9);">✦</div>
+          <div style="margin-top:6px; font-size:0.68rem; color:#8a6000; letter-spacing:2px; text-transform:uppercase;">${isFr ? 'Sceau Royal' : 'الختم الملكي'}</div>
+        </div>
+      </div>
+    </div>
+    <svg width="560" height="65" viewBox="0 0 600 80" style="display:block; margin-top:-2px;" preserveAspectRatio="none">
+      <polygon points="0,80 600,80 300,0" fill="#e8d5a0" opacity="0.75"/>
+      <polygon points="0,80 600,80 300,0" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.35"/>
+    </svg>
+  `;
 
-  html2canvas(tempDiv, { scale: 2, backgroundColor: '#fffcf8' }).then(canvas => {
-    document.body.removeChild(tempDiv);
+  document.body.appendChild(wrapper);
+
+  html2canvas(wrapper, {
+    scale: 2.5,
+    backgroundColor: '#f7eed9',
+    useCORS: true,
+    logging: false,
+  }).then(canvas => {
+    document.body.removeChild(wrapper);
     const link = document.createElement('a');
     const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
-    link.download = `Invitation_Souvenir_${sanitizedGuest}.png`;
+    link.download = `Invitation_Royale_${sanitizedGuest}.png`;
     link.href = canvas.toDataURL('image/png');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }).catch(err => {
-    console.error('Error generating image:', err);
-    if (document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
+    console.error('Souvenir image error:', err);
+    if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
   });
 }
+
