@@ -1,0 +1,30 @@
+{
+  "name": "دعوة زفاف مرتضى ومريم",
+  "short_name": "مرتضى & مريم",
+  "description": "دعوة زفاف تفاعلية وفاخرة لمرتضى ومريم",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a1912",
+  "theme_color": "#0a1912",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -24,9 +24,15 @@
 <meta name="twitter:description" content="يسعدنا دعوتكم لمشاركتنا فرحة العمر. تفضلوا بفتح الرابط لمشاهدة تفاصيل دعوتكم الخاصة وتأكيد حضوركم.">
 <meta name="twitter:image" content="https://invit-mar-bice.vercel.app/assets/luxury_wedding_hall.png">
 <meta name="description" content="يسعدنا دعوتكم لمشاركتنا فرحة العمر. تفضلوا بفتح الرابط لمشاهدة تفاصيل دعوتكم الخاصة وتأكيد حضوركم.">
+<!-- PWA Manifest & iOS Metas -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a1912">
+<meta name="apple-mobile-web-app-title" content="دعوة زفاف">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@600;700&family=Aref+Ruqaa+Ink:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@600;700&family=Aref+Ruqaa:wght@400;700&family=Aref+Ruqaa+Ink:wght@400;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -623,6 +629,20 @@
 
     <!-- ⑦ Nominative Guest Card — visible only when ?guest= URL param is present -->
     <div class="guest-name-banner" id="guestNameBanner" style="display:none">
+      <!-- Royal Gold 3D Initials Medallion Badge -->
+      <div class="guest-medallion-container" id="guestMedallionContainer">
+        <div class="guest-medallion-badge">
+          <div class="medallion-shine"></div>
+          <div class="medallion-stars">✦</div>
+          <div class="medallion-initials-art" id="guestMedallionInitials">
+            <div class="ar-callig-composition">
+              <span class="ar-callig-main-flourish">س</span>
+              <span class="ar-callig-sec-flourish">أ</span>
+              <span class="ar-callig-hamza-accent">ء</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="guest-card-inner">
         <div class="guest-card-deco">✦ ✦ ✦</div>
         <div class="guest-card-title" id="guestCardTitle">إلى السيد / للسيدة</div>
@@ -858,6 +878,28 @@
   </div>
 </div>
 
+<!-- PWA Floating Install Button -->
+<div id="pwaInstallContainer" style="display:none;" class="pwa-install-bar">
+  <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="pwa-install-btn">
+    <span class="pwa-icon">📲</span>
+    <span data-tr="pwa_install_btn">تثبيت التطبيق على الهاتف</span>
+  </button>
+</div>
+
+<!-- iOS PWA Install Instruction Modal -->
+<div id="iosPwaModal" class="pwa-modal-backdrop" style="display:none;" onclick="closeIosPwaModal()">
+  <div class="pwa-modal-card" onclick="event.stopPropagation()">
+    <button class="pwa-modal-close" onclick="closeIosPwaModal()">✕</button>
+    <div class="pwa-modal-icon">📲</div>
+    <h3 class="pwa-modal-title" data-tr="ios_pwa_title">تثبيت التطبيق على iPhone</h3>
+    <p class="pwa-modal-text" data-tr="ios_pwa_desc">لتثبيت الدعوة مباشرة على شاشة هاتفك :</p>
+    <ol class="pwa-modal-steps">
+      <li>اضغط على زر المشاركة <span class="ios-share-icon">⎋</span> أسفل متصفح Safari.</li>
+      <li>اختر <strong>"الإضافة إلى الشاشة الرئيسية"</strong> (Add to Home Screen) ➕.</li>
+    </ol>
+    <button class="pwa-modal-action-btn" onclick="closeIosPwaModal()" data-tr="got_it">حسناً، فهمت</button>
+  </div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <!-- Firebase SDK -->

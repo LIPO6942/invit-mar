@@ -1710,10 +1710,18 @@ function _applyGuestBanner(guestName, guestType) {
   const banner  = document.getElementById('guestNameBanner');
   const titleEl = document.getElementById('guestCardTitle');
   const labelEl = document.getElementById('guestBannerLabel');
+  const medallionInitialsEl = document.getElementById('guestMedallionInitials');
   if (!banner) return;
 
   if (titleEl) titleEl.textContent = title;
   if (labelEl) labelEl.textContent = name;
+
+  // Extract and render creative calligraphic initials on the 3D medallion
+  if (medallionInitialsEl) {
+    const initialsObj = _extractGuestInitials(guestName || name);
+    medallionInitialsEl.innerHTML = initialsObj.html;
+  }
+
   banner.style.display = 'flex';
   if (isLtr) banner.classList.add('ltr');
 
@@ -1735,6 +1743,69 @@ function _applyGuestBanner(guestName, guestType) {
 
   // Update personalized invitation description text
   _updatePersonalizedInviteDesc();
+}
+
+/** Extracts creative calligraphic initials for Arabic and Latin guest names */
+function _extractGuestInitials(guestName) {
+  if (!guestName || typeof guestName !== 'string') {
+    return {
+      isArabic: true,
+      raw: 'س أ',
+      html: `<div class="ar-callig-composition"><span class="ar-callig-main-flourish">س</span><span class="ar-callig-sec-flourish">أ</span><span class="ar-callig-hamza-accent">ء</span></div>`
+    };
+  }
+
+  let name = guestName.trim();
+  name = name.replace(/^(السيد|السيدة|الآنسة|الدكتور|الدكتورة|المهندس|الشيخ|Monsieur|Madame|Mademoiselle|Mr|Mrs|Dr)\b\s*/gi, '');
+  name = name.replace(/\s*(وحرمه|وأبنائه|وأسرتِه|et sa famille)\b/gi, '');
+
+  const words = name.split(/\s+/).filter(w => w.length > 0);
+  const isArabic = /[\u0600-\u06FF]/.test(name);
+
+  if (isArabic) {
+    let char1 = 'س', char2 = 'أ';
+    if (words.length >= 2) {
+      let w1 = words[0];
+      let w2 = words[words.length - 1];
+      if (w1.startsWith('ال') && w1.length > 3) w1 = w1.substring(2);
+      if (w2.startsWith('ال') && w2.length > 3) w2 = w2.substring(2);
+      char1 = w1.charAt(0);
+      char2 = w2.charAt(0);
+    } else if (words.length === 1 && words[0].length >= 2) {
+      char1 = words[0].charAt(0);
+      char2 = words[0].charAt(1);
+    } else if (words.length === 1) {
+      char1 = words[0].charAt(0);
+      char2 = 'أ';
+    }
+
+    if (char1 === 'ا' || char1 === 'إ' || char1 === 'آ') char1 = 'أ';
+    if (char2 === 'ا' || char2 === 'إ' || char2 === 'آ') char2 = 'أ';
+
+    const raw = `${char1}${char2}`;
+
+    // Highly creative overlapping calligraphic composition (matching user reference artwork e.g., ح أ or س أ)
+    const html = `
+      <div class="ar-callig-composition">
+        <span class="ar-callig-main-flourish">${char1}</span>
+        <span class="ar-callig-sec-flourish">${char2}</span>
+        <span class="ar-callig-hamza-accent">ء</span>
+      </div>
+    `;
+
+    return { isArabic: true, raw: raw, html: html };
+  } else {
+    let initials = 'M&M';
+    if (words.length >= 2) {
+      initials = words[0].charAt(0).toUpperCase() + words[words.length - 1].charAt(0).toUpperCase();
+    } else if (words.length === 1 && words[0].length >= 2) {
+      initials = words[0].substring(0, 2).toUpperCase();
+    } else if (words.length === 1) {
+      initials = words[0].charAt(0).toUpperCase();
+    }
+    const html = `<div class="latin-callig-composition"><span class="latin-initial-txt">${initials}</span></div>`;
+    return { isArabic: false, raw: initials, html: html };
+  }
 }
 
 /** Updates the invitation description text dynamically for personalized guests */
@@ -3495,4 +3566,55 @@ function downloadSouvenirImage() {
     setTimeout(triggerCapture, 300);
   }
 }
+
+/* ═══════════════════════════════════════════════
+   PWA INSTALLATION & SERVICE WORKER LOGIC
+   ═══════════════════════════════════════════════ */
+let deferredPwaPrompt = null;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+      .catch(err => console.error('[PWA] Service Worker registration failed:', err));
+  });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPwaPrompt = e;
+  const installContainer = document.getElementById('pwaInstallContainer');
+  if (installContainer) {
+    installContainer.style.display = 'block';
+  }
+});
+
+function triggerPWAInstall() {
+  const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIos) {
+    const modal = document.getElementById('iosPwaModal');
+    if (modal) modal.style.display = 'flex';
+    return;
+  }
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    deferredPwaPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('[PWA] User accepted the install prompt');
+        const installContainer = document.getElementById('pwaInstallContainer');
+        if (installContainer) installContainer.style.display = 'none';
+      }
+      deferredPwaPrompt = null;
+    });
+  } else {
+    const modal = document.getElementById('iosPwaModal');
+    if (modal) modal.style.display = 'flex';
+  }
+}
+
+function closeIosPwaModal() {
+  const modal = document.getElementById('iosPwaModal');
+  if (modal) modal.style.display = 'none';
+}
+
 

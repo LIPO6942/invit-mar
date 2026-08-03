@@ -3759,3 +3759,315 @@ body.lang-ar .animated-bride {
   letter-spacing: 0.5px;
 }
 
+/* ═══════════════════════════════════════════════
+   ROYAL GOLD 3D INITIALS MEDALLION (ENVELOPE)
+   ═══════════════════════════════════════════════ */
+.guest-medallion-container {
+  position: absolute;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.guest-medallion-badge {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #ffffff 0%,
+    #fff5cc 14%,
+    #f2cb63 32%,
+    #d99b1c 62%,
+    #8f5c00 88%,
+    #4a2e00 100%
+  );
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    0 0 0 2.5px rgba(255, 235, 170, 0.95),
+    0 0 0 5px rgba(180, 130, 20, 0.65),
+    inset 0 3px 6px rgba(255, 255, 255, 0.85),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: medallionPulseGlow 3s infinite ease-in-out;
+  overflow: visible;
+}
+
+.guest-medallion-badge::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 245, 200, 0.85);
+  box-shadow: inset 0 0 8px rgba(212, 160, 23, 0.5);
+  pointer-events: none;
+}
+
+.medallion-shine {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  width: 20px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+  filter: blur(1.5px);
+  pointer-events: none;
+}
+
+.medallion-stars {
+  position: absolute;
+  top: -9px;
+  font-size: 11px;
+  color: #fff2b3;
+  text-shadow: 0 0 6px #f7d070;
+}
+
+/* Calligraphic Arabic Monogram Ligature Style */
+.medallion-initials-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.ar-callig-composition {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Aref Ruqaa', 'Aref Ruqaa Ink', 'Amiri', serif;
+  font-weight: 700;
+  direction: rtl;
+  width: 100%;
+  height: 100%;
+}
+
+.ar-callig-main-flourish {
+  font-size: 2.1rem;
+  line-height: 1;
+  color: #1a0f00;
+  background: linear-gradient(145deg, #4a2d04 0%, #1f1100 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
+  transform: translateY(-2px) scaleX(1.08);
+}
+
+.ar-callig-sec-flourish {
+  font-size: 1.85rem;
+  line-height: 1;
+  margin-right: -10px;
+  color: #2b1a03;
+  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
+  transform: translateY(3px) rotate(-5deg);
+}
+
+.ar-callig-hamza-accent {
+  position: absolute;
+  top: 7px;
+  right: 13px;
+  font-size: 0.85rem;
+  color: #4a2d04;
+  font-family: 'Amiri', serif;
+  opacity: 0.95;
+  filter: drop-shadow(0 0.5px 0.5px rgba(255, 240, 180, 0.9));
+}
+
+.ar-callig-letter-a, .ar-callig-letter-b {
+  font-size: 1.75rem;
+  font-family: 'Aref Ruqaa', 'Amiri', serif;
+  font-weight: 700;
+  color: #2b1800;
+  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.8));
+}
+
+.ar-callig-separator {
+  font-size: 0.65rem;
+  color: #704706;
+  margin: 0 2px;
+}
+
+.latin-callig-composition {
+  font-family: 'Playfair Display', 'Dancing Script', serif;
+  font-weight: 700;
+  font-size: 1.45rem;
+  letter-spacing: 1px;
+  color: #2b1800;
+  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
+}
+
+@keyframes medallionPulseGlow {
+  0%, 100% {
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.45),
+      0 0 0 2.5px rgba(255, 235, 170, 0.95),
+      0 0 0 5px rgba(180, 130, 20, 0.65),
+      inset 0 3px 6px rgba(255, 255, 255, 0.85),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.55);
+  }
+  50% {
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.55),
+      0 0 0 3px rgba(255, 245, 190, 1),
+      0 0 16px rgba(247, 208, 112, 0.75),
+      0 0 0 6px rgba(212, 160, 23, 0.85),
+      inset 0 3px 8px rgba(255, 255, 255, 0.95),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   PWA INSTALL BUTTON & MODAL
+   ═══════════════════════════════════════════════ */
+.pwa-install-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9995;
+  width: 90%;
+  max-width: 340px;
+  animation: pwaSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pwa-install-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #133324 0%, #0a1912 100%);
+  color: #f7d070;
+  border: 1.5px solid rgba(247, 208, 112, 0.6);
+  border-radius: 30px;
+  font-family: 'Amiri', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45), 0 0 12px rgba(247, 208, 112, 0.2);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.pwa-install-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(247, 208, 112, 0.4);
+  border-color: #f7d070;
+}
+
+.pwa-icon {
+  font-size: 1.3rem;
+}
+
+/* iOS Instruction Modal */
+.pwa-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10005;
+  background: rgba(10, 6, 2, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  direction: rtl;
+  font-family: 'Amiri', serif;
+}
+
+.pwa-modal-card {
+  position: relative;
+  background: linear-gradient(145deg, #fffdfa 0%, #f7f0e4 100%);
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 22px 22px;
+  border-radius: 24px;
+  border: 2px solid #c9a84c;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.pwa-modal-close {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #704706;
+  cursor: pointer;
+}
+
+.pwa-modal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.pwa-modal-title {
+  font-size: 1.35rem;
+  color: #2b1800;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.pwa-modal-text {
+  font-size: 0.95rem;
+  color: #593c09;
+  margin-bottom: 14px;
+}
+
+.pwa-modal-steps {
+  text-align: right;
+  background: rgba(201, 168, 76, 0.1);
+  padding: 14px 20px 14px 30px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+  font-size: 0.92rem;
+  color: #3d2600;
+  line-height: 1.7;
+  border-right: 3px solid #c9a84c;
+}
+
+.ios-share-icon {
+  display: inline-block;
+  background: #c9a84c;
+  color: #fff;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.pwa-modal-action-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #c9a84c 0%, #8a6010 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.35);
+}
+
+@keyframes pwaSlideUp {
+  from {
+    transform: translate(-50%, 40px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+
