@@ -3709,18 +3709,6 @@ function handleSealClick(e) {
 }
 
 function openWeddingSwitcherModal() {
-  if (!_checkIsAdminAccess()) {
-    const pass = prompt('🔑 أدخل كلمة مرور الأدمن للتبديل بين مشاريع الزفاف (Admin Password):');
-    if (pass === 'admin2026') {
-      sessionStorage.setItem('admin_authenticated', 'true');
-    } else if (pass !== null) {
-      alert('❌ كلمة المرور خاطئة. هذه الخاصية مخصصة للآدمن فقط.');
-      return;
-    } else {
-      return;
-    }
-  }
-
   const modal = document.getElementById('weddingSwitcherModal');
   if (!modal) return;
   modal.style.display = 'flex';
@@ -3783,18 +3771,6 @@ function openWeddingSwitcherModal() {
 }
 
 function openPwaGuestSwitcher() {
-  if (!_checkIsAdminAccess()) {
-    const pass = prompt('🔑 أدخل كلمة مرور الأدمن لتجربة روابط الضيوف (Admin Password):');
-    if (pass === 'admin2026') {
-      sessionStorage.setItem('admin_authenticated', 'true');
-    } else if (pass !== null) {
-      alert('❌ كلمة المرور خاطئة. هذه الخاصية مخصصة للآدمن فقط.');
-      return;
-    } else {
-      return;
-    }
-  }
-
   const modal = document.getElementById('pwaGuestSwitcherModal');
   if (!modal) return;
   modal.style.display = 'flex';
