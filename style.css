@@ -3764,7 +3764,7 @@ body.lang-ar .animated-bride {
    ═══════════════════════════════════════════════ */
 .guest-medallion-container {
   position: absolute;
-  bottom: -25px;
+  bottom: -27px;
   top: auto;
   left: 50%;
   transform: translateX(-50%);
@@ -3778,63 +3778,64 @@ body.lang-ar .animated-bride {
 
 .guest-medallion-badge {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: radial-gradient(
-    circle at 35% 30%,
-    #ffffff 0%,
-    #fff5cc 14%,
-    #f2cb63 32%,
-    #d99b1c 62%,
-    #8f5c00 88%,
-    #4a2e00 100%
+    circle at 38% 32%,
+    #173e2d 0%,
+    #0e2a1e 40%,
+    #071911 82%,
+    #020a07 100%
   );
+  border: 2px solid #f7d070;
   box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.45),
-    0 0 0 2px rgba(255, 235, 170, 0.95),
-    0 0 0 4px rgba(180, 130, 20, 0.65),
-    inset 0 2.5px 5px rgba(255, 255, 255, 0.85),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.55);
+    0 8px 22px rgba(0, 0, 0, 0.55),
+    0 0 0 2px rgba(255, 245, 200, 0.9),
+    0 0 0 4.5px rgba(201, 168, 76, 0.85),
+    0 0 14px rgba(247, 208, 112, 0.5),
+    inset 0 3px 6px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: medallionPulseGlow 3s infinite ease-in-out;
+  animation: medallionPulseGlow 3.5s infinite ease-in-out;
   overflow: visible;
 }
 
+/* Micro-beaded Gold Filigree Inner Ring */
 .guest-medallion-badge::before {
   content: '';
   position: absolute;
   inset: 3px;
   border-radius: 50%;
-  border: 1.2px dashed rgba(255, 245, 200, 0.85);
-  box-shadow: inset 0 0 6px rgba(212, 160, 23, 0.5);
+  border: 1.5px dotted #f7d070;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.85);
   pointer-events: none;
 }
 
 .medallion-shine {
   position: absolute;
-  top: 4px;
-  left: 8px;
-  width: 16px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  top: 3px;
+  left: 9px;
+  width: 18px;
+  height: 9px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 100%);
   border-radius: 50%;
-  transform: rotate(-30deg);
+  transform: rotate(-35deg);
   filter: blur(1px);
   pointer-events: none;
 }
 
 .medallion-stars {
   position: absolute;
-  top: -8px;
-  font-size: 9px;
+  top: -10px;
+  font-size: 10px;
   color: #fff2b3;
-  text-shadow: 0 0 5px #f7d070;
+  text-shadow: 0 0 8px #f7d070;
 }
 
-/* Calligraphic Arabic Monogram Ligature Style */
+/* Calligraphic Arabic Monogram Ligature Style (Liquid 24K Gold Stamped) */
 .medallion-initials-art {
   display: flex;
   align-items: center;
@@ -3857,42 +3858,83 @@ body.lang-ar .animated-bride {
 }
 
 .ar-callig-main-flourish {
-  font-size: 1.65rem;
+  font-size: 1.85rem;
   line-height: 1;
-  color: #1a0f00;
-  background: linear-gradient(145deg, #4a2d04 0%, #1f1100 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
-  transform: translateY(-1px) scaleX(1.05);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
+  transform: translateY(-1px) scaleX(1.06);
 }
 
 .ar-callig-sec-flourish {
-  font-size: 1.4rem;
+  font-size: 1.55rem;
   line-height: 1;
-  margin-right: -8px;
-  color: #2b1a03;
-  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.85));
+  margin-right: -9px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
   transform: translateY(2px) rotate(-5deg);
 }
 
 .ar-callig-hamza-accent {
   position: absolute;
-  top: 5px;
-  right: 9px;
-  font-size: 0.7rem;
-  color: #4a2d04;
+  top: 4px;
+  right: 10px;
+  font-size: 0.75rem;
+  color: #fff2b2;
   font-family: 'Amiri', serif;
   opacity: 0.95;
-  filter: drop-shadow(0 0.5px 0.5px rgba(255, 240, 180, 0.9));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 4px #f7c948);
 }
 
 .ar-callig-letter-a, .ar-callig-letter-b {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-family: 'Aref Ruqaa', 'Amiri', serif;
   font-weight: 700;
-  color: #2b1800;
-  filter: drop-shadow(0 1px 1px rgba(255, 245, 210, 0.8));
+  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
+}
+
+.ar-callig-separator {
+  font-size: 0.7rem;
+  color: #f7d070;
+  margin: 0 2px;
+}
+
+.latin-callig-composition {
+  font-family: 'Playfair Display', 'Dancing Script', serif;
+  font-weight: 700;
+  font-size: 1.55rem;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 20%, #f7c948 45%, #c08709 75%, #fffdf2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 201, 72, 0.6));
+}
+
+@keyframes medallionPulseGlow {
+  0%, 100% {
+    box-shadow:
+      0 8px 22px rgba(0, 0, 0, 0.55),
+      0 0 0 2px rgba(255, 245, 200, 0.9),
+      0 0 0 4.5px rgba(201, 168, 76, 0.85),
+      0 0 14px rgba(247, 208, 112, 0.4),
+      inset 0 3px 6px rgba(255, 255, 255, 0.4),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.65),
+      0 0 0 2.5px rgba(255, 248, 220, 1),
+      0 0 0 5.5px rgba(230, 180, 40, 0.95),
+      0 0 22px rgba(247, 208, 112, 0.75),
+      inset 0 3.5px 8px rgba(255, 255, 255, 0.6),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.8);
+  }
 }
 
 .ar-callig-separator {
