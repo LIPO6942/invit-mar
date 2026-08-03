@@ -1794,16 +1794,44 @@ function _extractGuestInitials(guestName) {
 
     return { isArabic: true, raw: raw, html: html };
   } else {
-    let initials = 'M&M';
+    // Latin: premium SVG calligraphic monogram with golden flourishes
+    let initial1 = 'M', initial2 = 'M';
     if (words.length >= 2) {
-      initials = words[0].charAt(0).toUpperCase() + words[words.length - 1].charAt(0).toUpperCase();
+      initial1 = words[0].charAt(0).toUpperCase();
+      initial2 = words[words.length - 1].charAt(0).toUpperCase();
     } else if (words.length === 1 && words[0].length >= 2) {
-      initials = words[0].substring(0, 2).toUpperCase();
+      initial1 = words[0].charAt(0).toUpperCase();
+      initial2 = words[0].charAt(1).toUpperCase();
     } else if (words.length === 1) {
-      initials = words[0].charAt(0).toUpperCase();
+      initial1 = words[0].charAt(0).toUpperCase();
+      initial2 = '';
     }
-    const html = `<div class="latin-callig-composition"><span class="latin-initial-txt">${initials}</span></div>`;
-    return { isArabic: false, raw: initials, html: html };
+    const raw = initial2 ? `${initial1}${initial2}` : initial1;
+
+    // SVG monogram: initials in Playfair Display italic with golden filigree lines
+    const html = `
+      <div class="latin-monogram-wrap">
+        <svg class="latin-mono-svg" viewBox="0 0 100 54" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+          <defs>
+            <linearGradient id="monoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f7e47a"/>
+              <stop offset="50%" stop-color="#c9a84c"/>
+              <stop offset="100%" stop-color="#a07020"/>
+            </linearGradient>
+          </defs>
+          <line x1="2" y1="27" x2="22" y2="27" stroke="#c9a84c" stroke-width="0.7" stroke-dasharray="2,2.5" opacity="0.75"/>
+          <circle cx="25" cy="27" r="1.4" fill="#c9a84c" opacity="0.9"/>
+          <circle cx="75" cy="27" r="1.4" fill="#c9a84c" opacity="0.9"/>
+          <line x1="78" y1="27" x2="98" y2="27" stroke="#c9a84c" stroke-width="0.7" stroke-dasharray="2,2.5" opacity="0.75"/>
+          <text x="50" y="36" text-anchor="middle"
+            font-family="Playfair Display, Didot, Georgia, serif"
+            font-size="28" font-style="italic" font-weight="700"
+            fill="url(#monoGold)" letter-spacing="3"
+            filter="drop-shadow(0 1px 3px rgba(201,168,76,0.5))">${raw}</text>
+        </svg>
+      </div>
+    `;
+    return { isArabic: false, raw, html };
   }
 }
 
@@ -3662,11 +3690,12 @@ function handleEnvelopeNamesDblClick(e) {
 })();
 
 function _attachBannerListeners(envBanner) {
-  // Mobile: touchend double-tap
+  // Mobile: touchend double-tap (admin only)
   let lastTap = 0;
   envBanner.addEventListener('touchend', function(e) {
     const now = Date.now();
     if (now - lastTap > 0 && now - lastTap < 450) {
+      if (!_checkIsAdminAccess()) { lastTap = 0; return; }
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       openWeddingSwitcherModal();
@@ -3674,8 +3703,9 @@ function _attachBannerListeners(envBanner) {
     lastTap = now;
   }, { passive: false });
 
-  // Desktop: dblclick
+  // Desktop: dblclick (admin only)
   envBanner.addEventListener('dblclick', function(e) {
+    if (!_checkIsAdminAccess()) return;
     e.preventDefault();
     e.stopPropagation();
     openWeddingSwitcherModal();
@@ -3713,19 +3743,22 @@ function openWeddingSwitcherModal() {
         snapshot.forEach(doc => {
           const data = doc.data() || {};
           const cfg = data.config || {};
-          const groom = cfg.gn || '';
-          const bride = cfg.bn || '';
+          // Try all possible name fields (gn/ga for groom, bn/ba for bride)
+          const groom = cfg.gn || cfg.ga || '';
+          const bride = cfg.bn || cfg.ba || '';
           const label = (groom || bride)
-            ? `💍 حفل زفاف ${groom}${groom && bride ? ' & ' : ''}${bride}`.trim()
-            : `💍 حفل زفاف (${doc.id})`;
-          // Build URL: if config.url is set use it, otherwise build from base URL + inv slug
+            ? `💍 ${groom}${groom && bride ? ' & ' : ''}${bride}`.trim()
+            : `💍 Mariage (${doc.id})`;
           const url = cfg.url || `${BASE_URL}?inv=${encodeURIComponent(doc.id)}`;
+          console.log('[WeddingSwitcher] doc:', doc.id, '| groom:', groom, '| bride:', bride, '| url:', url);
           realWeddings.push({ id: doc.id, label, url });
         });
+      } else {
+        console.warn('[WeddingSwitcher] Firestore snapshot is EMPTY — check Firestore Security Rules (list permission needed on invitations collection)');
       }
 
       if (realWeddings.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:14px; color:#d4b260; font-family:'Amiri',serif;">⚠️ لا توجد مشاريع زفاف مسجلة بعد في قاعدة البيانات.</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:14px; color:#d4b260; font-family:'Amiri',serif;">⚠️ لا توجد مشاريع زفاف مسجلة بعد في قاعدة البيانات.<br><small style="opacity:0.6">تحقق من Firestore Security Rules</small></div>`;
         return;
       }
 
@@ -3749,9 +3782,10 @@ function openWeddingSwitcherModal() {
     })
     .catch(err => {
       console.error('[Wedding Switcher] Firestore load failed:', err);
-      container.innerHTML = `<div style="text-align:center; padding:14px; color:#f66; font-family:'Amiri',serif;">❌ تعذر تحميل قائمة الزفاف.</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:14px; color:#f66; font-family:'Amiri',serif;">❌ تعذر تحميل قائمة الزفاف.<br><small>${err.message}</small></div>`;
     });
 }
+
 
 function openPwaGuestSwitcher() {
   const modal = document.getElementById('pwaGuestSwitcherModal');
