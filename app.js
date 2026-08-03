@@ -2965,10 +2965,9 @@ function _buildRoyalSouvenirHTML(data) {
       color: #7a6035;
       font-style: italic;
       line-height: 1.6;
-      padding: 0 12px;
+padding: 0 12px;
       margin-bottom: 16px;
     }
-
     /* Bottom wax seal */
     .bottom-seal {
       text-align: center;
@@ -3180,8 +3179,6 @@ function downloadSouvenirHtml() {
   URL.revokeObjectURL(url);
 }
 
-
-
 function downloadSouvenirImage() {
   closeSouvenirModal();
 
@@ -3202,9 +3199,9 @@ function downloadSouvenirImage() {
     position: absolute;
     top: 0;
     left: -9999px;
-    width: 560px;
-    background: radial-gradient(ellipse at 50% 30%, #261b10 0%, #120c06 70%, #080402 100%);
-    padding: 35px 25px;
+    width: 540px;
+    background: radial-gradient(ellipse at 50% 30%, #22160c 0%, #110904 70%, #060301 100%);
+    padding: 30px 20px 25px;
     box-sizing: border-box;
     font-family: 'Amiri', 'Traditional Arabic', 'Playfair Display', serif;
     direction: ${dir};
@@ -3216,24 +3213,24 @@ function downloadSouvenirImage() {
   container.innerHTML = `
     <div style="position: relative; width: 100%; margin: 0 auto; text-align: center;">
 
-      <!-- ── 1. ENVELOPE TOP OPEN FLAP (Background Layer) ── -->
-      <svg width="510" height="120" viewBox="0 0 510 120" style="display: block; margin: 0 auto -50px auto; position: relative; z-index: 1;" preserveAspectRatio="none">
+      <!-- ── 1. ENVELOPE TOP OPEN FLAP (470px aligned flush with card) ── -->
+      <svg width="470" height="110" viewBox="0 0 470 110" style="display: block; margin: 0 auto -45px auto; position: relative; z-index: 1;" preserveAspectRatio="none">
         <defs>
           <linearGradient id="topFlapGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#dfcb95"/>
-            <stop offset="60%" stop-color="#caaf6b"/>
-            <stop offset="100%" stop-color="#b0934e"/>
+            <stop offset="0%" stop-color="#eadaa2"/>
+            <stop offset="60%" stop-color="#d4b472"/>
+            <stop offset="100%" stop-color="#b8954e"/>
           </linearGradient>
           <filter id="flapShadow" x="-10%" y="-10%" width="120%" height="130%">
-            <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.4"/>
           </filter>
         </defs>
         <!-- Triangle Flap pointing UP -->
-        <polygon points="0,120 510,120 255,0" fill="url(#topFlapGrad)" filter="url(#flapShadow)"/>
-        <polygon points="0,120 510,120 255,0" fill="none" stroke="#f5e0a3" stroke-width="2" opacity="0.6"/>
+        <polygon points="0,110 470,110 235,0" fill="url(#topFlapGrad)" filter="url(#flapShadow)"/>
+        <polygon points="0,110 470,110 235,0" fill="none" stroke="#fceab8" stroke-width="2" opacity="0.7"/>
         <!-- Inner flap foil trim -->
-        <polygon points="20,118 490,118 255,12" fill="none" stroke="#8c6d23" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
-        <text x="255" y="70" text-anchor="middle" font-family="serif" font-size="20" font-weight="bold" fill="#523c03" opacity="0.45">${mono}</text>
+        <polygon points="18,108 452,108 235,12" fill="none" stroke="#8c6d23" stroke-width="1" stroke-dasharray="4,4" opacity="0.45"/>
+        <text x="235" y="65" text-anchor="middle" font-family="serif" font-size="18" font-weight="bold" fill="#4a3410" opacity="0.5">${mono}</text>
       </svg>
 
       <!-- ── 2. INVITATION CARD (Sliding out of Envelope) ── -->
@@ -3244,31 +3241,30 @@ function downloadSouvenirImage() {
         margin: 0 auto;
         background: linear-gradient(155deg, #fffdf8 0%, #fbf4e4 50%, #f4e8cf 100%);
         border: 2.5px solid #d4af37;
-        border-radius: 16px;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 0 0 4px rgba(212,175,55,0.2);
-        padding: 28px 24px 70px 24px;
+        border-radius: 14px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.4), inset 0 0 0 4px rgba(212,175,55,0.2);
+        padding: 24px 22px 75px 22px;
         box-sizing: border-box;
       ">
 
-        <!-- Top Gold Ornament -->
+        <!-- Top Gold Badge -->
         <div style="
           display: inline-block;
           border: 1px solid #d4af37;
           border-radius: 20px;
-          padding: 3px 16px;
+          padding: 2px 14px;
           background: rgba(212, 175, 55, 0.08);
           color: #8c6d23;
-          font-size: 0.82rem;
+          font-size: 0.85rem;
           font-weight: bold;
-          letter-spacing: 2px;
-          margin-bottom: 14px;
+          margin-bottom: 12px;
         ">
           ✦ ${mono} ✦
         </div>
 
-        <!-- Guest Salutation Card inside -->
+        <!-- Guest Salutation Card -->
         <div style="
-          background: rgba(255, 255, 255, 0.85);
+          background: rgba(255, 255, 255, 0.9);
           border: 1.5px dashed #c59b27;
           border-radius: 12px;
           padding: 12px 16px;
@@ -3377,14 +3373,14 @@ function downloadSouvenirImage() {
 
       </div><!-- /Card -->
 
-      <!-- ── 3. ENVELOPE FRONT POCKET (Overlapping Card in 3D) ── -->
+      <!-- ── 3. ENVELOPE FRONT POCKET (470px aligned flush with card & top flap) ── -->
       <div style="
         position: relative;
         z-index: 3;
-        width: 510px;
+        width: 470px;
         margin: -80px auto 0 auto;
       ">
-        <svg width="510" height="150" viewBox="0 0 510 150" style="display: block; margin: 0 auto;" preserveAspectRatio="none">
+        <svg width="470" height="140" viewBox="0 0 470 140" style="display: block; margin: 0 auto;" preserveAspectRatio="none">
           <defs>
             <linearGradient id="pocketGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#f5e7c4"/>
@@ -3396,10 +3392,10 @@ function downloadSouvenirImage() {
             </filter>
           </defs>
           <!-- Front Pocket V-Shape -->
-          <polygon points="0,0 255,75 510,0 510,150 0,150" fill="url(#pocketGrad)" filter="url(#pocketShadow)"/>
-          <polygon points="0,0 255,75 510,0" fill="none" stroke="#fcf3d9" stroke-width="2"/>
-          <line x1="0" y1="0" x2="255" y2="75" stroke="#b89a58" stroke-width="1.2"/>
-          <line x1="510" y1="0" x2="255" y2="75" stroke="#b89a58" stroke-width="1.2"/>
+          <polygon points="0,0 235,65 470,0 470,140 0,140" fill="url(#pocketGrad)" filter="url(#pocketShadow)"/>
+          <polygon points="0,0 235,65 470,0" fill="none" stroke="#fcf3d9" stroke-width="2"/>
+          <line x1="0" y1="0" x2="235" y2="65" stroke="#b89a58" stroke-width="1.2"/>
+          <line x1="470" y1="0" x2="235" y2="65" stroke="#b89a58" stroke-width="1.2"/>
         </svg>
 
         <!-- Postal Stamp Badge (Top Right Corner of Envelope) -->
@@ -3446,14 +3442,13 @@ function downloadSouvenirImage() {
           ${mono}
         </div>
 
-        <!-- Footer Caption -->
+        <!-- Footer Caption (NO letter-spacing to prevent Arabic character overlap) -->
         <div style="
           margin-top: 15px;
           text-align: center;
-          font-size: 0.78rem;
+          font-size: 0.85rem;
           color: #d4af37;
-          letter-spacing: 1px;
-          font-style: italic;
+          font-weight: bold;
         ">
           ✦ تذكار دعوة زفاف ${groom} &amp; ${bride} ✦
         </div>
