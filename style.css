@@ -2652,6 +2652,13 @@ body.env-open .day-night-btn {
 .env-card,
 .cd-box, .slot-num,
 .section-title, .section-subtitle, .cd-label,
+.names-main, .groom-name, .bride-name, .names-divider, .seal-wrapper, #seal {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
 .tl-event, .tl-date, .tl-location, .tl-time,
 .program-content, #program-section,
 .wish-item, .guestbook-form, .guestbook-input, .guestbook-textarea,

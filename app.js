@@ -3791,30 +3791,17 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
   // 4. Smoothly open envelope to unveil this guest's personalized invitation
   if (!_envelopeOpened) {
     setTimeout(() => { openEnvelopeNow(); }, 300);
+  } else {
+    _envelopeOpened = false;
+    setTimeout(() => { openEnvelopeNow(); }, 200);
   }
 }
 
 /* ═══════════════════════════════════════════════
-   ADMIN LONG-PRESS & MULTI-TAP GESTURES (PWA)
+   ADMIN GESTURES (PWA)
    ═══════════════════════════════════════════════ */
 function initAdminLongPressGestures() {
-
-  // 1. Long-press (600ms) & Triple-tap on Wax Seal (#seal & #sealWrapper) -> Guest Switcher
-  const sealEl = document.getElementById('seal');
-  const sealWrap = document.getElementById('sealWrapper');
-  
-  if (sealEl) {
-    _attachLongPressAndMultiTap(sealEl, () => openPwaGuestSwitcher());
-  }
-  if (sealWrap) {
-    _attachLongPressAndMultiTap(sealWrap, () => openPwaGuestSwitcher());
-  }
-
-  // 2. Long-press (600ms) & Triple-tap on Couple Names Banner -> Wedding Switcher
-  const namesElements = document.querySelectorAll('.animated-names, .names-main, .groom-name, .bride-name');
-  namesElements.forEach(el => {
-    _attachLongPressAndMultiTap(el, () => openWeddingSwitcherModal());
-  });
+  // Direct HTML onclick handlers handleSealClick & handleCoupleNamesClick handle 2-click events cleanly!
 }
 
 /** Helper function to attach 100% reliable long-press (600ms) AND triple-tap handlers */
