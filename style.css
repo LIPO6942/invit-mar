@@ -4047,13 +4047,27 @@ body.lang-ar .animated-bride {
 .pwa-modal-card {
   position: relative;
   background: linear-gradient(145deg, #fffdfa 0%, #f7f0e4 100%);
-  width: 100%;
-  max-width: 360px;
-  padding: 28px 22px 22px;
-  border-radius: 24px;
+  width: 90vw;
+  max-width: 370px;
+  box-sizing: border-box;
+  padding: 22px 18px;
+  border-radius: 20px;
   border: 2px solid #c9a84c;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   text-align: center;
+  overflow-x: hidden;
+}
+
+.pwa-modal-card input,
+.pwa-modal-card button {
+  box-sizing: border-box !important;
+}
+
+#pwaCustomGuestInput, #customWeddingSlugInput {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .pwa-modal-close {

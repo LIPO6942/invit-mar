@@ -3637,47 +3637,132 @@ function handleMedallionClick(e) {
   openPwaGuestSwitcher();
 }
 
-let _coupleNameClickCount = 0;
-let _coupleNameClickTimer = null;
+let _envNamesClickCount = 0;
+let _envNamesClickTimer = null;
 
-function handleCoupleNamesClick(e) {
-  _coupleNameClickCount++;
-  if (_coupleNameClickTimer) clearTimeout(_coupleNameClickTimer);
+function handleEnvelopeNamesClick(e) {
+  if (e) {
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
+  }
+  _envNamesClickCount++;
+  if (_envNamesClickTimer) clearTimeout(_envNamesClickTimer);
   
-  if (_coupleNameClickCount >= 2) {
-    _coupleNameClickCount = 0;
-    if (e && e.stopPropagation) e.stopPropagation();
+  if (_envNamesClickCount >= 2) {
+    _envNamesClickCount = 0;
     openWeddingSwitcherModal();
     return;
   }
   
-  _coupleNameClickTimer = setTimeout(() => {
-    _coupleNameClickCount = 0;
-  }, 700);
+  _envNamesClickTimer = setTimeout(() => {
+    _envNamesClickCount = 0;
+  }, 500);
 }
 
-let _sealClickCount = 0;
 let _sealClickTimer = null;
+let _sealTapCount = 0;
 
 function handleSealClick(e) {
-  _sealClickCount++;
-  
-  if (_sealClickCount >= 2) {
-    if (_sealClickTimer) clearTimeout(_sealClickTimer);
-    _sealClickCount = 0;
-    if (e) {
-      if (e.stopPropagation) e.stopPropagation();
-      if (e.preventDefault) e.preventDefault();
-    }
-    openPwaGuestSwitcher();
-    return;
+  if (e) {
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
   }
-  
-  // Single click timer -> opens envelope normally ONLY IF NOT a double click
-  _sealClickTimer = setTimeout(() => {
-    _sealClickCount = 0;
-    openEnvelopeNow();
-  }, 350);
+
+  _sealTapCount++;
+
+  if (_sealTapCount === 1) {
+    // Single click -> wait 350ms to see if a second click arrives
+    _sealClickTimer = setTimeout(() => {
+      _sealTapCount = 0;
+      _sealClickTimer = null;
+      // Single click opens envelope normally!
+      openEnvelopeNow();
+    }, 350);
+  } else if (_sealTapCount >= 2) {
+    // Double click -> Immediately cancel single click timer and DO NOT open envelope!
+    if (_sealClickTimer) {
+      clearTimeout(_sealClickTimer);
+      _sealClickTimer = null;
+    }
+    _sealTapCount = 0;
+    
+    // Open ONLY Guest List Modal!
+    openPwaGuestSwitcher();
+  }
+}
+
+function openWeddingSwitcherModal() {
+  if (!_checkIsAdminAccess()) {
+    const pass = prompt('🔑 أدخل كلمة مرور الأدمن للتبديل بين مشاريع الزفاف (Admin Password):');
+    if (pass === 'admin2026') {
+      sessionStorage.setItem('admin_authenticated', 'true');
+    } else if (pass !== null) {
+      alert('❌ كلمة المرور خاطئة. هذه الخاصية مخصصة للآدمن فقط.');
+      return;
+    } else {
+      return;
+    }
+  }
+
+  const modal = document.getElementById('weddingSwitcherModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  const container = document.getElementById('weddingProjectsList');
+  if (!container) return;
+
+  container.innerHTML = `<div style="text-align:center; padding:15px; color:#fff3ad; font-family:'Amiri',serif;">⏳ جاري تحميل مشاريع الزفاف الحقيقية المسجلة...</div>`;
+
+  initFirebase();
+
+  // Query all real wedding invitations registered in Firebase Firestore!
+  _db.collection('invitations').get()
+    .then(snapshot => {
+      let realWeddings = [];
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          const data = doc.data() || {};
+          const cfg = data.config || {};
+          const groom = cfg.gn || 'عريس';
+          const bride = cfg.bn || 'عروس';
+          const label = (groom !== 'عريس' || bride !== 'عروس')
+            ? `💍 حفل زفاف ${groom} & ${bride}`
+            : `💍 حفل زفاف (${doc.id})`;
+          realWeddings.push({ id: doc.id, label: label });
+        });
+      }
+
+      // Add standard wedding slugs if not in Firestore list
+      if (!realWeddings.some(w => w.id === 'invit mar')) {
+        realWeddings.unshift({ id: 'invit mar', label: '💍 حفل زفاف مرتضى & مريم' });
+      }
+      if (!realWeddings.some(w => w.id === 'ghada-tarek')) {
+        realWeddings.unshift({ id: 'ghada-tarek', label: '💍 حفل زفاف غادة & طارق' });
+      }
+      if (!realWeddings.some(w => w.id === 'invit watia')) {
+        realWeddings.push({ id: 'invit watia', label: '🌸 حفل زفاف الوطية (Watiah)' });
+      }
+
+      container.innerHTML = realWeddings.map(w => `
+        <button onclick="switchWeddingProject('${w.id}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer; text-align:right;">
+          <span>${w.label}</span>
+          <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
+        </button>
+      `).join('');
+    })
+    .catch(err => {
+      console.error('[Wedding Switcher] Firestore load failed:', err);
+      container.innerHTML = `
+        <button onclick="switchWeddingProject('ghada-tarek')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer;">
+          <span>💍 حفل زفاف غادة & طارق</span>
+          <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
+        </button>
+        <button onclick="switchWeddingProject('invit mar')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px 14px; background:linear-gradient(135deg, rgba(247,203,77,0.15) 0%, rgba(138,96,16,0.2) 100%); border:1.5px solid #c9a84c; border-radius:12px; font-family:'Amiri',serif; font-size:1.02rem; color:#fff3ad; font-weight:bold; cursor:pointer;">
+          <span>💍 حفل زفاف مرتضى & مريم</span>
+          <span style="font-size:0.8rem; color:#f7cb4d; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:6px;">فتح الزفاف ➜</span>
+        </button>
+      `;
+    });
 }
 
 function openPwaGuestSwitcher() {

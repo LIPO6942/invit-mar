@@ -488,8 +488,8 @@
       <path d="M16,4 Q22,10 16,16 Q10,22 16,28" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.5"/>
     </svg>
 
-    <!-- ② Calligraphy Names Banner (top center) -->
-    <div class="env-names-banner">
+    <!-- ② Calligraphy Names Banner (top center of envelope front) -->
+    <div class="env-names-banner" onclick="handleEnvelopeNamesClick(event)" title="انقر مرتين للتبديل بين مشاريع الزفاف الحقيقية" style="cursor:pointer; user-select:none; -webkit-user-select:none;">
       <div class="env-banner-ornament">❧</div>
       <div class="env-banner-names font-amiri">
         <span class="env-banner-groom" data-cfg="groomNameDisplay">مرتضى</span>
@@ -905,11 +905,11 @@
       <p style="font-size: 0.85rem; color: #d4b260;">اختر ضيفاً لمشاهدة دعوته الخاصة أو أدخل ضيفاً جديداً</p>
     </div>
     
-    <div style="margin-bottom: 14px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid rgba(201,168,76,0.3);">
+    <div style="margin-bottom: 14px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid rgba(201,168,76,0.3); box-sizing: border-box; width: 100%;">
       <label style="display: block; font-size: 0.85rem; font-weight: bold; color: #fff3ad; margin-bottom: 6px;">✨ إضافة أو تجربة ضيف جديد :</label>
-      <div style="display: flex; gap: 8px;">
-        <input type="text" id="pwaCustomGuestInput" placeholder="مثال: فريد الدريدي" style="flex:1; padding: 9px 12px; border: 1.5px solid #c9a84c; border-radius: 10px; font-family: 'Amiri', serif; font-size: 0.95rem; outline: none; background: #fffdf5; color: #1a1000;">
-        <button onclick="applyPwaGuestFromInput()" style="padding: 9px 14px; background: linear-gradient(135deg, #f7cb4d 0%, #8a6010 100%); color: #1a0f00; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">عرض ➜</button>
+      <div style="display: flex; gap: 8px; width: 100%; box-sizing: border-box;">
+        <input type="text" id="pwaCustomGuestInput" placeholder="مثال: فريد الدريدي" style="flex:1; min-width:0; box-sizing:border-box; padding: 9px 12px; border: 1.5px solid #c9a84c; border-radius: 10px; font-family: 'Amiri', serif; font-size: 0.95rem; outline: none; background: #fffdf5; color: #1a1000;">
+        <button onclick="applyPwaGuestFromInput()" style="flex-shrink:0; box-sizing:border-box; padding: 9px 14px; background: linear-gradient(135deg, #f7cb4d 0%, #8a6010 100%); color: #1a0f00; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">عرض ➜</button>
       </div>
     </div>
 
