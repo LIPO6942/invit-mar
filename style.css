@@ -3764,7 +3764,7 @@ body.lang-ar .animated-bride {
    ═══════════════════════════════════════════════ */
 .guest-medallion-container {
   position: absolute;
-  bottom: -29px;
+  bottom: -20px;
   top: auto;
   left: 50%;
   transform: translateX(-50%);
@@ -3779,8 +3779,8 @@ body.lang-ar .animated-bride {
 
 .guest-medallion-badge {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: radial-gradient(
     circle at 35% 30%,
@@ -3789,14 +3789,14 @@ body.lang-ar .animated-bride {
     #05170f 88%,
     #020b07 100%
   );
-  border: 2px solid #fff3ad;
+  border: 1.5px solid #fff3ad;
   box-shadow:
-    0 10px 28px rgba(35, 18, 2, 0.65),
-    0 0 0 2.5px rgba(255, 240, 180, 0.95),
-    0 0 0 5.5px rgba(185, 135, 15, 0.85),
-    0 0 18px rgba(247, 208, 112, 0.6),
-    inset 0 3.5px 7px rgba(255, 255, 240, 0.9),
-    inset 0 -4px 10px rgba(0, 0, 0, 0.85);
+    0 6px 18px rgba(35, 18, 2, 0.6),
+    0 0 0 2px rgba(255, 240, 180, 0.95),
+    0 0 0 4px rgba(185, 135, 15, 0.85),
+    0 0 12px rgba(247, 208, 112, 0.55),
+    inset 0 2.5px 5px rgba(255, 255, 240, 0.9),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3808,19 +3808,19 @@ body.lang-ar .animated-bride {
 .guest-medallion-badge::before {
   content: '';
   position: absolute;
-  inset: 3.5px;
+  inset: 2.5px;
   border-radius: 50%;
-  border: 1.5px dashed #f7d070;
-  box-shadow: 0 0 8px rgba(247, 208, 112, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.85);
+  border: 1.2px dashed #f7d070;
+  box-shadow: 0 0 6px rgba(247, 208, 112, 0.4), inset 0 0 8px rgba(0, 0, 0, 0.85);
   pointer-events: none;
 }
 
 .medallion-shine {
   position: absolute;
-  top: 3px;
-  left: 10px;
-  width: 20px;
-  height: 10px;
+  top: 2px;
+  left: 7px;
+  width: 14px;
+  height: 7px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%);
   border-radius: 50%;
   transform: rotate(-35deg);
@@ -3830,13 +3830,13 @@ body.lang-ar .animated-bride {
 
 .medallion-stars {
   position: absolute;
-  top: -11px;
-  font-size: 11px;
+  top: -8px;
+  font-size: 8px;
   color: #fff2b3;
-  text-shadow: 0 0 8px #f7d070;
+  text-shadow: 0 0 6px #f7d070;
 }
 
-/* Calligraphic Arabic Monogram Ligature Style (Liquid 24K Gold Stamped) */
+/* Interlocking Calligraphic Arabic Monogram Style (Fluid & Close) */
 .medallion-initials-art {
   display: flex;
   align-items: center;
@@ -3851,62 +3851,95 @@ body.lang-ar .animated-bride {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  font-family: 'Aref Ruqaa', 'Aref Ruqaa Ink', 'Amiri', serif;
+  font-family: 'Aref Ruqaa Ink', 'Aref Ruqaa', 'Amiri', serif;
   font-weight: 900;
   direction: rtl;
   width: 100%;
   height: 100%;
 }
 
-.ar-callig-main-flourish, .ar-callig-sec-flourish, .ar-callig-letter-a, .ar-callig-letter-b {
-  font-size: 1.65rem;
+.ar-callig-main-flourish {
+  font-size: 1.35rem;
   line-height: 1;
-  font-family: 'Aref Ruqaa', 'Aref Ruqaa Ink', 'Amiri', serif;
+  font-family: 'Aref Ruqaa Ink', 'Aref Ruqaa', serif;
   font-weight: 900;
   background: linear-gradient(135deg, #ffffff 0%, #fff7d1 20%, #f7cb4d 45%, #be8405 75%, #fffdf0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 203, 77, 0.75));
+  filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(247, 203, 77, 0.75));
+  transform: translateY(-1px) scaleX(1.05);
+}
+
+.ar-callig-sec-flourish {
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-right: -6px; /* Elegant calligraphic interlocking overlap */
+  font-family: 'Aref Ruqaa Ink', 'Aref Ruqaa', serif;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7d1 20%, #f7cb4d 45%, #be8405 75%, #fffdf0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(247, 203, 77, 0.75));
+  transform: translateY(2px) rotate(-4deg);
+}
+
+.ar-callig-hamza-accent {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 0.6rem;
+  color: #fff4bd;
+  font-family: 'Amiri', serif;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 4px rgba(247, 208, 112, 0.8));
+}
+
+.ar-callig-letter-a, .ar-callig-letter-b {
+  font-size: 1.25rem;
+  font-family: 'Aref Ruqaa Ink', 'Aref Ruqaa', serif;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7d1 20%, #f7cb4d 45%, #be8405 75%, #fffdf0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(247, 203, 77, 0.75));
 }
 
 .ar-callig-separator {
-  font-size: 0.85rem;
+  font-size: 0.55rem;
   color: #fff4bd;
-  opacity: 0.9;
-  margin: 0 1px;
-  filter: drop-shadow(0 0 5px rgba(247, 208, 112, 0.8));
+  opacity: 0.85;
+  margin: 0 0px;
 }
 
 .latin-callig-composition {
   font-family: 'Playfair Display', 'Dancing Script', serif;
   font-weight: 900;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
   background: linear-gradient(135deg, #ffffff 0%, #fff7d1 20%, #f7cb4d 45%, #be8405 75%, #fffdf0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(247, 203, 77, 0.75));
+  filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(247, 203, 77, 0.75));
 }
 
 @keyframes medallionPulseGlow {
   0%, 100% {
     box-shadow:
-      0 10px 28px rgba(35, 18, 2, 0.65),
-      0 0 0 2.5px rgba(255, 240, 180, 0.95),
-      0 0 0 5.5px rgba(185, 135, 15, 0.85),
-      0 0 18px rgba(247, 208, 112, 0.6),
-      inset 0 3.5px 7px rgba(255, 255, 240, 0.9),
-      inset 0 -4px 10px rgba(0, 0, 0, 0.85);
+      0 6px 18px rgba(35, 18, 2, 0.6),
+      0 0 0 2px rgba(255, 240, 180, 0.95),
+      0 0 0 4px rgba(185, 135, 15, 0.85),
+      0 0 12px rgba(247, 208, 112, 0.55),
+      inset 0 2.5px 5px rgba(255, 255, 240, 0.9),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.85);
   }
   50% {
     box-shadow:
-      0 12px 32px rgba(35, 18, 2, 0.75),
-      0 0 0 3px rgba(255, 248, 220, 1),
-      0 0 0 6.5px rgba(230, 180, 40, 0.95),
-      0 0 26px rgba(247, 208, 112, 0.85),
-      inset 0 4px 9px rgba(255, 255, 240, 0.95),
-      inset 0 -4px 10px rgba(0, 0, 0, 0.85);
+      0 8px 22px rgba(35, 18, 2, 0.7),
+      0 0 0 2.5px rgba(255, 248, 220, 1),
+      0 0 0 5px rgba(230, 180, 40, 0.95),
+      0 0 18px rgba(247, 208, 112, 0.75),
+      inset 0 3px 7px rgba(255, 255, 240, 0.95),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.85);
   }
 }
 

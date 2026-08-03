@@ -1786,9 +1786,9 @@ function _extractGuestInitials(guestName) {
 
     const html = `
       <div class="ar-callig-composition">
-        <span class="ar-callig-letter-a">${char1}</span>
-        <span class="ar-callig-separator">·</span>
-        <span class="ar-callig-letter-b">${char2}</span>
+        <span class="ar-callig-main-flourish">${char1}</span>
+        <span class="ar-callig-sec-flourish">${char2}</span>
+        <span class="ar-callig-hamza-accent">ء</span>
       </div>
     `;
 
@@ -3720,34 +3720,53 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
 }
 
 /* ═══════════════════════════════════════════════
-   ADMIN LONG-PRESS SECRET GESTURES (PWA)
+   ADMIN LONG-PRESS & MULTI-TAP GESTURES (PWA)
    ═══════════════════════════════════════════════ */
 function initAdminLongPressGestures() {
-  // 1. Long-press (800ms) on Wax Seal (#seal & #sealWrapper) -> Opens Guest Switcher for THIS wedding
+
+  // 1. Long-press (600ms) & Triple-tap on Wax Seal (#seal & #sealWrapper) -> Guest Switcher
   const sealEl = document.getElementById('seal');
   const sealWrap = document.getElementById('sealWrapper');
   
   if (sealEl) {
-    _attachLongPress(sealEl, 800, () => openPwaGuestSwitcher());
+    _attachLongPressAndMultiTap(sealEl, () => openPwaGuestSwitcher());
   }
   if (sealWrap) {
-    _attachLongPress(sealWrap, 800, () => openPwaGuestSwitcher());
+    _attachLongPressAndMultiTap(sealWrap, () => openPwaGuestSwitcher());
   }
 
-  // 2. Long-press (800ms) on Couple Names Banner -> Opens Wedding Project Switcher
+  // 2. Long-press (600ms) & Triple-tap on Couple Names Banner -> Wedding Switcher
   const namesElements = document.querySelectorAll('.animated-names, .names-main, .groom-name, .bride-name');
   namesElements.forEach(el => {
-    _attachLongPress(el, 800, () => openWeddingSwitcherModal());
+    _attachLongPressAndMultiTap(el, () => openWeddingSwitcherModal());
   });
 }
 
-/** Helper function to attach touch/mouse long-press handlers (800ms threshold) */
-function _attachLongPress(element, durationMs = 800, callback) {
+/** Helper function to attach 100% reliable long-press (600ms) AND triple-tap handlers */
+function _attachLongPressAndMultiTap(element, callback) {
   if (!element) return;
   let timer = null;
+  let tapCount = 0;
+  let tapTimer = null;
   let startX = 0, startY = 0;
 
+  // Multi-tap detector (3 fast clicks/taps)
+  const registerTap = (e) => {
+    tapCount++;
+    if (tapTimer) clearTimeout(tapTimer);
+    if (tapCount >= 3) {
+      tapCount = 0;
+      if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+      callback(e);
+      return;
+    }
+    tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+  };
+
+  // Long-press detector (600ms threshold)
   const start = (e) => {
+    registerTap(e);
+
     const touch = e.touches ? e.touches[0] : e;
     startX = touch.clientX;
     startY = touch.clientY;
@@ -3757,7 +3776,7 @@ function _attachLongPress(element, durationMs = 800, callback) {
       timer = null;
       if (navigator.vibrate) navigator.vibrate(80);
       callback(e);
-    }, durationMs);
+    }, 600);
   };
 
   const move = (e) => {
