@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 /* ═══════════════════════════════════════════════════════════════════
    WEDDING INVITATION — app.js
@@ -3186,208 +3186,265 @@ function downloadSouvenirImage() {
   closeSouvenirModal();
 
   const isFr = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
+
   if (typeof html2canvas === 'undefined') {
-    alert(isFr ? "La bibliotheque d'image est en cours de chargement, veuillez reessayer." : 'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ù…ÙƒØªØ¨Ø© Ø§Ù„ØµÙˆØ±ØŒ ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ø¨Ø¹Ø¯ Ø«ÙˆØ§Ù†Ù.');
+    alert(isFr ? "La bibliothèque d'image est en cours de chargement, veuillez réessayer." : 'جاري تحميل مكتبة الصور، يرجى المحاولة بعد ثوانٍ.');
     return;
   }
 
   const data = _getSouvenirData();
   const { guestTitle, guestName, groom, bride, dateStr, dayNum, monthName, year } = data;
-  const isFr2 = typeof _currentLang !== 'undefined' && _currentLang === 'fr';
-  const isRtl = !isFr2;
+  const isRtl = !isFr;
   const dir = isRtl ? 'rtl' : 'ltr';
 
-  // Floral corner SVG
-  const corner = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="90" height="90">
-    <g stroke="#c9a84c" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.55">
-      <path d="M8,82 Q18,60 32,40 Q44,22 54,10"/>
-      <ellipse cx="24" cy="56" rx="8" ry="4" transform="rotate(-35,24,56)"/>
-      <ellipse cx="36" cy="38" rx="7" ry="3.5" transform="rotate(-55,36,38)"/>
-      <ellipse cx="54" cy="10" rx="6" ry="10" transform="rotate(-10,54,10)"/>
-      <ellipse cx="54" cy="10" rx="6" ry="10" transform="rotate(30,54,10)"/>
-      <ellipse cx="54" cy="10" rx="6" ry="10" transform="rotate(70,54,10)"/>
-      <ellipse cx="54" cy="10" rx="6" ry="10" transform="rotate(110,54,10)"/>
-      <circle cx="54" cy="10" r="5" fill="#f5e190" opacity="0.9" stroke="none"/>
-      <circle cx="54" cy="10" r="2.5" fill="#8a5d00" stroke="none"/>
-      <ellipse cx="38" cy="28" rx="4" ry="6" transform="rotate(-25,38,28)"/>
-      <circle cx="38" cy="22" r="3" fill="#f5e190" opacity="0.75" stroke="none"/>
-      <circle cx="15" cy="72" r="1.5" fill="#c9a84c" stroke="none"/>
-      <circle cx="42" cy="48" r="1" fill="#f5e190" stroke="none"/>
-      <circle cx="62" cy="18" r="1.5" fill="#c9a84c" stroke="none"/>
-    </g>
-  </svg>`;
-
-  const leftPad  = isRtl ? 'right' : 'left';
-  const rightPad = isRtl ? 'left'  : 'right';
-
-  // Outer photo canvas
-  const canvas = document.createElement('div');
-  canvas.style.cssText = `
-    position:fixed; left:-9999px; top:0;
-    width:600px;
-    background:radial-gradient(ellipse at 30% 30%,#2a1a08 0%,#150d04 50%,#080400 100%);
-    padding:28px 24px 20px;
-    box-sizing:border-box;
-    font-family:'Amiri',serif;
-    direction:${dir};
+  // Create clean off-screen wrapper attached to DOM for full font & layout calculation
+  const container = document.createElement('div');
+  container.style.cssText = `
+    position: absolute;
+    top: 0;
+    left: -9999px;
+    width: 520px;
+    background: #0f0a05;
+    padding: 30px;
+    box-sizing: border-box;
+    font-family: 'Amiri', 'Traditional Arabic', 'Playfair Display', serif;
+    direction: ${dir};
+    color: #2c1d11;
   `;
 
-  // Gold bokeh SVG
-  const bokeh = `<svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="40"  cy="40"  r="18" fill="rgba(201,168,76,0.04)"/>
-    <circle cx="560" cy="80"  r="25" fill="rgba(245,225,144,0.03)"/>
-    <circle cx="100" cy="500" r="20" fill="rgba(201,168,76,0.04)"/>
-    <circle cx="500" cy="450" r="30" fill="rgba(245,225,144,0.03)"/>
-    <circle cx="280" cy="60"  r="15" fill="rgba(201,168,76,0.05)"/>
-    <circle cx="80"  cy="150" r="2"  fill="rgba(245,225,144,0.3)"/>
-    <circle cx="520" cy="200" r="1.5" fill="rgba(201,168,76,0.4)"/>
-    <circle cx="450" cy="100" r="1.5" fill="rgba(201,168,76,0.35)"/>
-  </svg>`;
+  const mono = `${groom[0] || 'م'} & ${bride[0] || 'م'}`;
 
-  canvas.innerHTML = bokeh + `
+  container.innerHTML = `
     <div style="
-      position:relative;
-      background:linear-gradient(145deg,#fffef8 0%,#f8f4e8 100%);
-      border-radius:6px;
-      padding:14px 14px 48px;
-      box-shadow:0 0 0 1px rgba(180,140,60,0.3),0 4px 8px rgba(0,0,0,0.35),0 16px 40px rgba(0,0,0,0.5);
-      overflow:hidden;
+      background: linear-gradient(150deg, #fffdfa 0%, #f9f3e5 50%, #f3e9d2 100%);
+      border: 3px solid #d4af37;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 5px rgba(212, 175, 55, 0.25), 0 15px 35px rgba(0,0,0,0.4);
+      padding: 35px 25px 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     ">
-      <!-- Floral corners -->
-      <div style="position:absolute;top:0;${leftPad}:0;width:90px;height:90px;overflow:hidden;">${corner}</div>
-      <div style="position:absolute;top:0;${rightPad}:0;width:90px;height:90px;overflow:hidden;transform:scaleX(-1);">${corner}</div>
-      <div style="position:absolute;bottom:48px;${leftPad}:0;width:90px;height:90px;overflow:hidden;transform:scaleY(-1);">${corner}</div>
-      <div style="position:absolute;bottom:48px;${rightPad}:0;width:90px;height:90px;overflow:hidden;transform:scale(-1,-1);">${corner}</div>
+      <!-- Top Decorative Gold Ribbon -->
+      <div style="
+        background: linear-gradient(90deg, #b8860b 0%, #d4af37 30%, #fff8dc 50%, #d4af37 70%, #b8860b 100%);
+        height: 6px;
+        margin: -35px -25px 25px -25px;
+      "></div>
 
-      <!-- Inner card -->
-      <div style="position:relative;background:linear-gradient(160deg,#fdf8ee 0%,#f7eed9 40%,#eedfc0 100%);border:2px solid rgba(201,168,76,0.6);border-radius:4px;overflow:hidden;box-shadow:inset 0 0 20px rgba(201,168,76,0.08);">
-
-        <!-- Top flap -->
-        <svg width="100%" height="110" viewBox="0 0 572 130" style="display:block;margin-bottom:-2px;" preserveAspectRatio="none">
-          <polygon points="0,0 572,0 286,115" fill="#e8d5a0" opacity="0.88"/>
-          <polygon points="0,0 572,0 286,115" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.45"/>
-          <circle cx="24" cy="16" r="3.5" fill="#c9a84c" opacity="0.45"/>
-          <circle cx="548" cy="16" r="3.5" fill="#c9a84c" opacity="0.45"/>
-          <text x="286" y="56" text-anchor="middle" font-family="serif" font-size="24" fill="#7a5c1a" opacity="0.5">${groom[0]} &amp; ${bride[0]}</text>
-        </svg>
-
-        <!-- Ribbon -->
-        <div style="position:relative;height:32px;display:flex;align-items:center;justify-content:center;">
-          <div style="position:absolute;inset:0;background:linear-gradient(180deg,#c9a84c,#a07830 30%,#f5e190 50%,#a07830 70%,#c9a84c);opacity:0.88;"></div>
-          <span style="position:relative;font-family:cursive;font-size:1rem;color:#1a1000;z-index:2;">
-            ${isFr2 ? 'âœ¦ Invitation au Mariage âœ¦' : 'âœ¦ Ø¯Ø¹ÙˆØ© Ø§Ù„Ø²ÙØ§Ù âœ¦'}
-          </span>
-        </div>
-
-        <!-- Body -->
-        <div style="padding:22px 30px 18px;text-align:center;direction:${dir};">
-
-          <!-- Guest zone -->
-          <div style="background:linear-gradient(135deg,rgba(201,168,76,0.16),rgba(201,168,76,0.04));border:1.5px solid rgba(201,168,76,0.45);border-radius:12px;padding:14px 18px;margin-bottom:16px;">
-            <div style="font-size:0.65rem;color:rgba(201,168,76,0.6);letter-spacing:4px;margin-bottom:5px;">âœ¦ âœ¦ âœ¦</div>
-            <div style="font-size:0.82rem;color:#8a6000;font-style:italic;margin-bottom:3px;">${guestTitle}</div>
-            <div style="font-family:cursive;font-size:2rem;color:#4a2e0a;line-height:1.2;">${guestName}</div>
-            <div style="font-size:0.65rem;color:rgba(201,168,76,0.6);letter-spacing:3px;margin-top:5px;">â€” âœ¦ â€”</div>
-          </div>
-
-          <!-- Seal divider -->
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-            <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.5));"></div>
-            <div style="width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#f5e190 0%,#d4a830 25%,#b8860b 50%,#7a5300 80%,#3d2600 100%);border:1.5px solid #c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,0.2),0 5px 14px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,252,220,0.9);">âœ¦</div>
-            <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,0.5),transparent);"></div>
-          </div>
-
-          <div style="font-size:1rem;color:#6b4d12;line-height:1.7;margin-bottom:3px;">Ø¨Ø§Ø±Ùƒ Ø§Ù„Ù„Ù‡ Ù„Ù‡Ù…Ø§ ÙˆØ¨Ø§Ø±Ùƒ Ø¹Ù„ÙŠÙ‡Ù…Ø§ ÙˆØ¬Ù…Ø¹ Ø¨ÙŠÙ†Ù‡Ù…Ø§ ÙÙŠ Ø®ÙŠØ±</div>
-          <div style="color:#c9a84c;letter-spacing:4px;font-size:0.65rem;margin:6px 0;">âœ¦ âœ¦ âœ¦</div>
-          <div style="font-size:0.88rem;color:#7a5c25;margin-bottom:10px;">
-            ${isFr2 ? "Les familles vous invitent au mariage de leurs enfants" : "Ø¨Ø¯Ø¹ÙˆØªÙƒÙ… Ù„Ø­Ø¶ÙˆØ± Ø­ÙÙ„ Ø²ÙØ§Ù Ù†Ø¬Ù„ÙŠÙ‡Ù…Ø§"}
-          </div>
-
-          <!-- Names -->
-          <div style="font-family:cursive;font-size:2.7rem;color:#3d2600;margin:10px 0 4px;line-height:1.1;text-shadow:1px 1px 2px rgba(255,255,255,0.8);">
-            ${groom} <span style="font-size:1.3rem;color:#c9a84c;vertical-align:middle;">&amp;</span> ${bride}
-          </div>
-
-          <!-- Calendar badge -->
-          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:6px 14px;margin:8px auto 12px;">
-            <div style="font-size:2rem;font-weight:800;color:#8a5d00;line-height:1;">${dayNum}</div>
-            <div style="text-align:${isRtl ? 'right' : 'left'};">
-              <div style="font-size:0.92rem;font-weight:700;color:#5d3c00;">${monthName}</div>
-              <div style="font-size:0.75rem;color:#8a6000;">${year}</div>
-            </div>
-          </div>
-
-          <!-- Details -->
-          <div style="background:rgba(255,252,240,0.85);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:12px 16px;margin:4px 0 12px;text-align:${isRtl ? 'right' : 'left'};">
-            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;">
-              <span>ðŸ“…</span>
-              <div>
-                <div style="font-size:0.66rem;font-weight:700;color:#8a6000;text-transform:uppercase;">${isFr2 ? 'Date' : 'Ø§Ù„ØªØ§Ø±ÙŠØ®'}</div>
-                <div style="font-size:0.92rem;font-weight:600;color:#3d2600;">${dateStr}</div>
-              </div>
-            </div>
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);margin:4px 0;"></div>
-            <div style="display:flex;align-items:flex-start;gap:8px;">
-              <span>ðŸ“</span>
-              <div>
-                <div style="font-size:0.66rem;font-weight:700;color:#8a6000;text-transform:uppercase;">${isFr2 ? 'Lieu' : 'Ø§Ù„Ù…ÙƒØ§Ù†'}</div>
-                <div style="font-size:0.92rem;font-weight:600;color:#3d2600;">${isFr2 ? 'Palais des Fetes â€” Teboulba, Monastir' : 'Ù‚ØµØ± Ø§Ù„Ø£ÙØ±Ø§Ø­ â€” Ø·Ø¨Ù„Ø¨Ø©ØŒ Ø§Ù„Ù…Ù†Ø³ØªÙŠØ±'}</div>
-              </div>
-            </div>
-          </div>
-
-          <div style="color:#c9a84c;letter-spacing:4px;font-size:0.65rem;margin:4px 0 10px;">â€” âœ¦ â€”</div>
-          <div style="font-size:0.82rem;color:#7a6035;font-style:italic;line-height:1.55;margin-bottom:14px;">
-            ${isFr2 ? "Nous vous remercions pour votre presence â¤" : "Ù†Ø´ÙƒØ±ÙƒÙ… Ø¹Ù„Ù‰ Ø­Ø¶ÙˆØ±ÙƒÙ… ÙˆÙ…Ø­Ø¨ØªÙƒÙ… â¤"}
-          </div>
-
-          <!-- Bottom seal -->
-          <div style="text-align:center;padding-bottom:14px;">
-            <div style="display:inline-flex;flex-direction:column;align-items:center;">
-              <div style="width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#f5e190 0%,#d4a830 25%,#b8860b 50%,#7a5300 75%,#3d2600 100%);border:2px solid #c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,0.18),0 8px 22px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:rgba(255,252,220,0.9);">âœ¦</div>
-              <div style="margin-top:5px;font-size:0.62rem;color:#8a6000;letter-spacing:2px;text-transform:uppercase;">${isFr2 ? 'Sceau Royal' : 'Ø§Ù„Ø®ØªÙ… Ø§Ù„Ù…Ù„ÙƒÙŠ'}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bottom flap -->
-        <svg width="100%" height="55" viewBox="0 0 572 70" style="display:block;margin-top:-2px;" preserveAspectRatio="none">
-          <polygon points="0,70 572,70 286,0" fill="#e8d5a0" opacity="0.72"/>
-          <polygon points="0,70 572,70 286,0" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.3"/>
-        </svg>
-
-        <!-- Vignette -->
-        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(30,15,5,0.18) 100%);border-radius:4px;pointer-events:none;"></div>
+      <!-- Header Monogram Badge -->
+      <div style="
+        display: inline-block;
+        border: 1px solid #d4af37;
+        border-radius: 30px;
+        padding: 4px 18px;
+        background: rgba(212, 175, 55, 0.08);
+        color: #8c6d23;
+        font-size: 0.9rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+      ">
+        ✦ ${mono} ✦
       </div>
 
-      <!-- Polaroid caption -->
-      <div style="padding:10px 16px 6px;text-align:center;font-family:'Courier New',monospace;direction:ltr;">
-        <div style="font-size:0.72rem;color:#5a4020;letter-spacing:1.5px;opacity:0.75;">
-          âœ¦ ${groom} &amp; ${bride} Â· ${dayNum} ${monthName} ${year} Â· ${isFr2 ? 'Souvenir' : 'ØªØ°ÙƒØ§Ø±'} âœ¦
+      <!-- Envelope / Guest Salutation Card -->
+      <div style="
+        background: rgba(255, 255, 255, 0.75);
+        border: 1px dashed #c59b27;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(140, 109, 35, 0.08);
+      ">
+        <div style="font-size: 0.85rem; color: #8c6d23; margin-bottom: 4px; font-style: italic;">
+          ${guestTitle}
         </div>
+        <div style="font-size: 1.75rem; font-weight: bold; color: #4a3410; line-height: 1.3;">
+          ${guestName}
+        </div>
+        <div style="
+          display: inline-block;
+          margin-top: 8px;
+          background: #d4af37;
+          color: #1a1000;
+          font-size: 0.75rem;
+          font-weight: bold;
+          padding: 3px 12px;
+          border-radius: 10px;
+        ">
+          ${isFr ? '✦ Souvenir d\'Invitation ✦' : '✦ مغلف الدعوة التذكاري ✦'}
+        </div>
+      </div>
+
+      <!-- 3D Gold Wax Seal Center Symbol -->
+      <div style="margin: 0 auto 20px auto; width: 64px; height: 64px; position: relative;">
+        <div style="
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: radial-gradient(circle at 35% 35%, #fff1b0 0%, #d4af37 35%, #997312 70%, #523c03 100%);
+          border: 2px solid #ffd700;
+          box-shadow: 0 6px 16px rgba(82, 60, 3, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff9e6;
+          font-size: 1.4rem;
+          font-weight: bold;
+          text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        ">
+          ✦
+        </div>
+      </div>
+
+      <!-- Wedding Blessing Text -->
+      <div style="font-size: 1.15rem; color: #7a5a18; font-weight: bold; margin-bottom: 6px; line-height: 1.6;">
+        ${isFr ? "بارك الله لهما وبارك عليهما وجمع بينهما في خير" : "بارك الله لهما وبارك عليهما وجمع بينهما في خير"}
+      </div>
+
+      <div style="color: #d4af37; font-size: 0.9rem; letter-spacing: 5px; margin: 10px 0;">
+        ✦ ✦ ✦
+      </div>
+
+      <div style="font-size: 0.95rem; color: #664d1a; margin-bottom: 12px;">
+        ${isFr ? "Les familles vous invitent au mariage de leurs enfants" : "يتشرف العريسان وعائلاتهما بدعوتكم لحضور حفل الزفاف"}
+      </div>
+
+      <!-- Couple Names -->
+      <div style="
+        font-size: 2.6rem;
+        font-weight: bold;
+        color: #3b280a;
+        margin: 10px 0 16px;
+        line-height: 1.2;
+      ">
+        ${groom} <span style="color: #d4af37; font-size: 1.8rem; vertical-align: middle;">&amp;</span> ${bride}
+      </div>
+
+      <!-- Highlighted Date Badge -->
+      <div style="
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(212, 175, 55, 0.12);
+        border: 1.5px solid #d4af37;
+        border-radius: 14px;
+        padding: 10px 22px;
+        margin-bottom: 20px;
+      ">
+        <div style="font-size: 2.4rem; font-weight: 800; color: #8c6d23; line-height: 1;">
+          ${dayNum}
+        </div>
+        <div style="text-align: ${isRtl ? 'right' : 'left'};">
+          <div style="font-size: 1.1rem; font-weight: bold; color: #4a3410;">${monthName}</div>
+          <div style="font-size: 0.85rem; color: #8c6d23;">${year}</div>
+        </div>
+      </div>
+
+      <!-- Event Details Box with Clean SVG Icons -->
+      <div style="
+        background: #ffffff;
+        border: 1px solid #e0c878;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        text-align: ${isRtl ? 'right' : 'left'};
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      ">
+        <!-- Date Line -->
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+          <div style="
+            width: 32px; height: 32px; border-radius: 50%; background: #fdf7e7;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+          ">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 0.7rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
+              ${isFr ? 'Date du Mariage' : 'تاريخ حفل الزفاف'}
+            </div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #3b280a;">
+              ${dateStr}
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 1px; background: #f0e2b6; margin: 8px 0;"></div>
+
+        <!-- Venue Line -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="
+            width: 32px; height: 32px; border-radius: 50%; background: #fdf7e7;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+          ">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size: 0.7rem; font-weight: bold; color: #9c7b28; text-transform: uppercase;">
+              ${isFr ? 'Lieu de la Cérémonie' : 'مكان الحفل'}
+            </div>
+            <div style="font-size: 0.95rem; font-weight: bold; color: #3b280a;">
+              ${isFr ? 'Palais des Fêtes — Teboulba, Monastir' : 'قصر الأفراح — طبلبة، المنستير'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thanks Message -->
+      <div style="font-size: 0.9rem; color: #7a5a18; font-style: italic; margin-bottom: 20px;">
+        ${isFr ? "Nous vous remercions chaleureusement pour votre présence ❤" : "نشكركم جزيل الشكر على حضوركم ومحبتكم دمتُم سنداً وفرحاً لنا"}
+      </div>
+
+      <!-- Bottom Footer Gold Border -->
+      <div style="
+        border-top: 1px stroke #e0c878;
+        padding-top: 12px;
+        font-size: 0.75rem;
+        color: #a08442;
+        letter-spacing: 1px;
+      ">
+        ✦ تذكار خاص لمحفوظات حفل زفاف ${groom} &amp; ${bride} ✦
       </div>
     </div>
   `;
 
-  document.body.appendChild(canvas);
+  document.body.appendChild(container);
 
-  html2canvas(canvas, {
-    scale: 2.5,
-    backgroundColor: '#0a0402',
-    useCORS: true,
-    logging: false,
-    width: 600,
-  }).then(c => {
-    document.body.removeChild(canvas);
-    const link = document.createElement('a');
-    const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
-    link.download = `Invitation_Royale_${sanitizedGuest}.png`;
-    link.href = c.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }).catch(err => {
-    console.error('Souvenir image error:', err);
-    if (document.body.contains(canvas)) document.body.removeChild(canvas);
-  });
+  // Await fonts loading to avoid rendering glitches
+  const triggerCapture = () => {
+    html2canvas(container, {
+      scale: 2.5,
+      backgroundColor: '#0f0a05',
+      useCORS: true,
+      logging: false,
+    }).then(canvas => {
+      document.body.removeChild(container);
+      const link = document.createElement('a');
+      const sanitizedGuest = (guestName || 'Souvenir').replace(/[^a-z0-9_\u0600-\u06FF]/gi, '_');
+      link.download = `Invitation_Souvenir_${sanitizedGuest}.png`;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }).catch(err => {
+      console.error('Souvenir capture error:', err);
+      if (document.body.contains(container)) document.body.removeChild(container);
+    });
+  };
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => setTimeout(triggerCapture, 100));
+  } else {
+    setTimeout(triggerCapture, 300);
+  }
 }
+
