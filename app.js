@@ -3509,4 +3509,3 @@ function downloadSouvenirImage(themeId) {
     if (document.body.contains(canvas)) document.body.removeChild(canvas);
   });
 }
-}
