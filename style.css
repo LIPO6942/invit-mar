@@ -2652,9 +2652,14 @@ body.env-open .day-night-btn {
 .env-card,
 .cd-box, .slot-num,
 .section-title, .section-subtitle, .cd-label,
-.names-main, .groom-name, .bride-name, .names-divider, .seal-wrapper, #seal {
+#mainEnvelopeWrapper, #envelopeContainer, .envelope-outer, .env-card, .env-panel,
+.env-names-banner, .env-banner-names, .env-banner-groom, .env-banner-bride, .env-banner-amp,
+.names-main, .groom-name, .bride-name, .names-divider, .seal-wrapper, #seal, .guest-name-banner {
   user-select: none !important;
   -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  -webkit-touch-callout: none !important;
   touch-action: manipulation;
   cursor: pointer;
 }

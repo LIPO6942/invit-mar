@@ -1874,10 +1874,10 @@ function readAndApplyGuestParam() {
       })
       .catch(e => console.warn('[InvitApp] gid lookup failed:', e));
 
-  } else if (guestRaw) {
-    /* ── Legacy long link: guest name + type in URL ── */
-    const guestName = decodeURIComponent(guestRaw.replace(/\+/g, ' '));
-    const guestType = params.get('gt') || 'ar_couple';
+  } else if (guestRaw || sessionStorage.getItem('pwa_override_guest')) {
+    /* ── Guest link (URL or PWA override) ── */
+    const guestName = guestRaw ? decodeURIComponent(guestRaw.replace(/\+/g, ' ')) : sessionStorage.getItem('pwa_override_guest');
+    const guestType = params.get('type') || params.get('gt') || sessionStorage.getItem('pwa_override_type') || 'ar_couple';
     _applyGuestBanner(guestName, guestType);
   }
 }
@@ -3854,6 +3854,11 @@ function applyPwaGuestFromInput() {
 
 function applyPwaGuest(guestName, guestType = 'ar_couple') {
   if (!guestName) return;
+  sessionStorage.setItem('pwa_override_guest', guestName);
+  sessionStorage.setItem('pwa_override_type', guestType);
+  localStorage.setItem('pwa_override_guest', guestName);
+  localStorage.setItem('pwa_override_type', guestType);
+
   try {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set('guest', guestName);
