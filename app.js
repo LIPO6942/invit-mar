@@ -3723,34 +3723,52 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
    ADMIN LONG-PRESS SECRET GESTURES (PWA)
    ═══════════════════════════════════════════════ */
 function initAdminLongPressGestures() {
-  // 1. Long-press on Wax Seal (#seal) -> Opens Guest Switcher for THIS wedding
-  const sealEl = document.getElementById('seal') || document.getElementById('sealWrapper');
+  // 1. Long-press (800ms) on Wax Seal (#seal & #sealWrapper) -> Opens Guest Switcher for THIS wedding
+  const sealEl = document.getElementById('seal');
+  const sealWrap = document.getElementById('sealWrapper');
+  
   if (sealEl) {
-    _attachLongPress(sealEl, 2500, () => {
-      openPwaGuestSwitcher();
-    });
+    _attachLongPress(sealEl, 800, () => openPwaGuestSwitcher());
+  }
+  if (sealWrap) {
+    _attachLongPress(sealWrap, 800, () => openPwaGuestSwitcher());
   }
 
-  // 2. Long-press on Couple Names Banner (.animated-names) -> Opens Wedding Project Switcher
-  const namesEl = document.querySelector('.animated-names') || document.querySelector('.names-main');
-  if (namesEl) {
-    _attachLongPress(namesEl, 2500, () => {
-      openWeddingSwitcherModal();
-    });
-  }
+  // 2. Long-press (800ms) on Couple Names Banner -> Opens Wedding Project Switcher
+  const namesElements = document.querySelectorAll('.animated-names, .names-main, .groom-name, .bride-name');
+  namesElements.forEach(el => {
+    _attachLongPress(el, 800, () => openWeddingSwitcherModal());
+  });
 }
 
-/** Helper function to attach touch/mouse long-press handlers */
-function _attachLongPress(element, durationMs, callback) {
+/** Helper function to attach touch/mouse long-press handlers (800ms threshold) */
+function _attachLongPress(element, durationMs = 800, callback) {
+  if (!element) return;
   let timer = null;
+  let startX = 0, startY = 0;
 
   const start = (e) => {
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX;
+    startY = touch.clientY;
+
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       timer = null;
       if (navigator.vibrate) navigator.vibrate(80);
-      callback();
+      callback(e);
     }, durationMs);
+  };
+
+  const move = (e) => {
+    if (!timer) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const deltaX = Math.abs(touch.clientX - startX);
+    const deltaY = Math.abs(touch.clientY - startY);
+    if (deltaX > 15 || deltaY > 15) {
+      clearTimeout(timer);
+      timer = null;
+    }
   };
 
   const cancel = () => {
@@ -3761,9 +3779,11 @@ function _attachLongPress(element, durationMs, callback) {
   };
 
   element.addEventListener('touchstart', start, { passive: true });
+  element.addEventListener('touchmove', move, { passive: true });
   element.addEventListener('touchend', cancel, { passive: true });
   element.addEventListener('touchcancel', cancel, { passive: true });
   element.addEventListener('mousedown', start);
+  element.addEventListener('mousemove', move);
   element.addEventListener('mouseup', cancel);
   element.addEventListener('mouseleave', cancel);
 }
