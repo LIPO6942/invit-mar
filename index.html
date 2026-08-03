@@ -87,7 +87,7 @@
               </div>
             </div>
             <p class="p1-invite-text" style="margin:10px 0 4px" data-tr="invite_desc">بدعوتكم لحضور حفل زفاف نجليهما</p>
-            <div class="names-main animated-names">
+            <div class="names-main animated-names" onclick="handleCoupleNamesClick(event)" title="انقر 3 مرات للتبديل بين مشاريع الزفاف">
               <span class="groom-name animated-groom" data-cfg="groomNameDisplay">مرتضى</span>
               <span class="names-divider animated-divider" data-tr="and_char">&</span>
               <span class="bride-name animated-bride" data-cfg="brideNameDisplay">مريم</span>
@@ -668,7 +668,7 @@
     </div>
 
     <!-- ─── Gold Seal ─── -->
-    <div class="seal-wrapper" id="sealWrapper">
+    <div class="seal-wrapper" id="sealWrapper" onclick="handleSealClick(event)">
 
       <!-- ⑥ Sparkles ring (8 animated stars around seal) -->
       <div class="seal-halo"></div>

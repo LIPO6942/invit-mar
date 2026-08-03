@@ -3637,6 +3637,44 @@ function handleMedallionClick(e) {
   openPwaGuestSwitcher();
 }
 
+let _coupleNameClickCount = 0;
+let _coupleNameClickTimer = null;
+
+function handleCoupleNamesClick(e) {
+  _coupleNameClickCount++;
+  if (_coupleNameClickTimer) clearTimeout(_coupleNameClickTimer);
+  
+  if (_coupleNameClickCount >= 3) {
+    _coupleNameClickCount = 0;
+    if (e && e.stopPropagation) e.stopPropagation();
+    openWeddingSwitcherModal();
+    return;
+  }
+  
+  _coupleNameClickTimer = setTimeout(() => {
+    _coupleNameClickCount = 0;
+  }, 600);
+}
+
+let _sealClickCount = 0;
+let _sealClickTimer = null;
+
+function handleSealClick(e) {
+  _sealClickCount++;
+  if (_sealClickTimer) clearTimeout(_sealClickTimer);
+  
+  if (_sealClickCount >= 3) {
+    _sealClickCount = 0;
+    if (e && e.stopPropagation) e.stopPropagation();
+    openPwaGuestSwitcher();
+    return;
+  }
+  
+  _sealClickTimer = setTimeout(() => {
+    _sealClickCount = 0;
+  }, 600);
+}
+
 function openPwaGuestSwitcher() {
   if (!_checkIsAdminAccess()) {
     const pass = prompt('🔑 أدخل كلمة مرور الأدمن لتجربة روابط الضيوف (Admin Password):');
@@ -3652,38 +3690,61 @@ function openPwaGuestSwitcher() {
 
   const modal = document.getElementById('pwaGuestSwitcherModal');
   if (!modal) return;
-  
-  // Populate guest links
-  const container = document.getElementById('pwaSavedGuestsList');
-  if (container) {
-    const sampleGuests = [
-      { name: 'فاروق الدريدي', type: 'ar_couple_children' },
-      { name: 'سامي الطرابلسي', type: 'ar_couple' },
-      { name: 'حسام أحمد', type: 'ar_man' },
-      { name: 'مريم العمري', type: 'ar_woman' },
-      { name: 'Ayoub & Khouloud', type: 'fr_couple' }
-    ];
-
-    let firebaseGuests = [];
-    if (_confirmedInvitations && _confirmedInvitations.length > 0) {
-      _confirmedInvitations.forEach(inv => {
-        if (inv.guestName && inv.guestName !== 'عام') {
-          firebaseGuests.push({ name: inv.guestName, type: 'ar_couple' });
-        }
-      });
-    }
-
-    const allGuests = [...firebaseGuests, ...sampleGuests];
-    
-    container.innerHTML = allGuests.map(g => `
-      <button onclick="applyPwaGuest('${g.name.replace(/'/g, "\\'")}', '${g.type}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:8px 12px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); border-radius:8px; font-family:'Amiri',serif; font-size:0.92rem; color:#3d2600; cursor:pointer; text-align:right;">
-        <span>👤 ${g.name}</span>
-        <span style="font-size:0.78rem; opacity:0.85; color:#8a6010; font-weight:bold;">اختبار ➜</span>
-      </button>
-    `).join('');
-  }
-
   modal.style.display = 'flex';
+
+  const container = document.getElementById('pwaSavedGuestsList');
+  if (!container) return;
+
+  container.innerHTML = `<div style="text-align:center; padding:15px; color:#8a6010; font-family:'Amiri',serif;">⏳ جاري تحميل قائمة ضيوف هذا الزفاف الحقيقيين...</div>`;
+
+  initFirebase();
+  const params = new URLSearchParams(window.location.search);
+  const invSlug = params.get('inv') || 'default';
+
+  _db.collection('invitations').doc(invSlug).get()
+    .then(doc => {
+      let realGuests = [];
+      if (doc.exists) {
+        const data = doc.data();
+        // 1. Read guests array from Firebase Firestore (created in admin/guests.html)
+        if (Array.isArray(data.guests) && data.guests.length > 0) {
+          data.guests.forEach(g => {
+            if (g && g.name) {
+              realGuests.push({ name: g.name, type: g.type || 'ar_couple', id: g.id });
+            }
+          });
+        }
+        // 2. Read RSVPs if any
+        if (data.rsvps) {
+          Object.keys(data.rsvps).forEach(key => {
+            const r = data.rsvps[key];
+            if (r && r.name && r.name !== 'عام' && !realGuests.some(g => g.name === r.name)) {
+              realGuests.push({ name: r.name, type: 'ar_couple', id: key });
+            }
+          });
+        }
+      }
+
+      if (realGuests.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:14px; color:#704706; font-family:'Amiri',serif; font-size:0.92rem; background:rgba(201,168,76,0.1); border-radius:10px; border:1px solid rgba(201,168,76,0.3);">
+            ℹ️ لا يوجد ضيوف مضافين بعد في هذا الزفاف.<br>يمكنك كتابة اسم ضيف جديد أعلاه وتطبيقه مباشرة!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = realGuests.map(g => `
+        <button onclick="applyPwaGuest('${g.name.replace(/'/g, "\\'")}', '${g.type || 'ar_couple'}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1px solid rgba(201,168,76,0.4); border-radius:10px; font-family:'Amiri',serif; font-size:0.98rem; color:#2b1800; font-weight:bold; cursor:pointer; text-align:right;">
+          <span>👤 ${g.name}</span>
+          <span style="font-size:0.8rem; color:#8a6010; background:rgba(201,168,76,0.2); padding:3px 8px; border-radius:6px;">عرض الدعوة ➜</span>
+        </button>
+      `).join('');
+    })
+    .catch(err => {
+      console.error('[PWA Switcher] Failed to load real guests:', err);
+      container.innerHTML = `<div style="text-align:center; padding:10px; color:#a00;">❌ حدث خطأ أثناء تحميل قائمة الضيوف</div>`;
+    });
 }
 
 function closePwaGuestSwitcher() {
