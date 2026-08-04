@@ -3772,47 +3772,50 @@ function openWeddingSwitcherModal() {
   _db.collection('invitations').get()
     .then(snapshot => {
       const count = snapshot.size;
-      let realWeddings = [];
+      let allDocs = [];
 
       snapshot.forEach(doc => {
         const data = doc.data() || {};
         const cfg = data.config || {};
-        const groom = cfg.gn || cfg.ga || cfg.groomName || '';
-        const bride  = cfg.bn || cfg.ba || cfg.brideName  || '';
+        const groom = cfg.gn || cfg.ga || cfg.groomName || data.groomName || '';
+        const bride  = cfg.bn || cfg.ba || cfg.brideName  || data.brideName  || '';
         const label = (groom || bride)
           ? `💍 ${groom}${groom && bride ? ' & ' : ''}${bride}`.trim()
-          : `💍 Mariage — ${doc.id}`;
+          : `📄 ${doc.id}`;
         const url = cfg.url || `${BASE_URL}?inv=${encodeURIComponent(doc.id)}`;
-        realWeddings.push({ id: doc.id, label, url });
+        allDocs.push({ id: doc.id, label, url });
       });
 
-      if (realWeddings.length === 0) {
-        container.innerHTML =
-          '<div style="text-align:center;padding:14px;color:#f99;font-size:0.85rem;">' +
-          '⚠️ Firebase connecté mais collection vide<br>' +
-          '<small>snapshot.size = ' + count + ' | Collection = invitations</small>' +
-          '</div>';
+      // Show count + all doc IDs for diagnosis
+      const debugInfo = `<div style="font-size:0.72rem;color:#a0c080;padding:4px 8px;margin-bottom:8px;background:rgba(0,50,0,0.4);border-radius:8px;text-align:right;">
+        🔍 Firebase: ${count} document(s) trouvé(s) dans <em>invitations</em>
+      </div>`;
+
+      if (allDocs.length === 0) {
+        container.innerHTML = debugInfo +
+          '<div style="text-align:center;padding:14px;color:#f99;font-size:0.85rem;">⚠️ Collection vide ou non accessible</div>';
         return;
       }
 
       const currentInv = new URLSearchParams(window.location.search).get('inv') || '';
-      container.innerHTML = realWeddings.map(w => {
+      container.innerHTML = debugInfo + allDocs.map(w => {
         const isCurrent = w.id === currentInv;
         const border = isCurrent ? '2px solid #f7cb4d' : '1.5px solid #c9a84c';
         const bg = isCurrent
           ? 'linear-gradient(135deg, rgba(247,203,77,0.3) 0%, rgba(138,96,16,0.35) 100%)'
           : 'linear-gradient(135deg, rgba(247,203,77,0.1) 0%, rgba(138,96,16,0.15) 100%)';
         const badge = isCurrent
-          ? '<span style="font-size:0.72rem;color:#0a1912;background:#f7cb4d;padding:2px 8px;border-radius:6px;margin-right:6px;">الحالي</span>'
+          ? '<span style="font-size:0.7rem;color:#0a1912;background:#f7cb4d;padding:2px 7px;border-radius:5px;margin-left:6px;">✓ الحالي</span>'
           : '';
+        const docId = `<span style="font-size:0.65rem;color:#a0c080;display:block;margin-top:2px;direction:ltr;text-align:left;">${w.id}</span>`;
         return `<button onclick="switchWeddingProject('${w.id}','${w.url}')"
           style="display:flex;justify-content:space-between;align-items:center;width:100%;
-          padding:12px 14px;background:${bg};border:${border};border-radius:12px;
-          font-family:'Amiri',serif;font-size:1rem;color:#fff3ad;font-weight:bold;
+          padding:10px 14px;background:${bg};border:${border};border-radius:12px;
+          font-family:'Amiri',serif;font-size:0.95rem;color:#fff3ad;font-weight:bold;
           cursor:pointer;text-align:right;box-sizing:border-box;margin-bottom:6px;">
-          <span>${badge}${w.label}</span>
+          <span>${badge}${w.label}${docId}</span>
           <span style="font-size:0.8rem;color:#f7cb4d;background:rgba(0,0,0,0.4);
-            padding:4px 10px;border-radius:6px;flex-shrink:0;">فتح ➜</span>
+            padding:4px 10px;border-radius:6px;flex-shrink:0;margin-right:4px;">فتح ➜</span>
         </button>`;
       }).join('');
     })
