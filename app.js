@@ -4024,22 +4024,6 @@ function _attachLongPressAndMultiTap(element, callback) {
 }
 
 // 🏰 Wedding Switcher Modal Functions
-function openWeddingSwitcherModal() {
-  if (!_checkIsAdminAccess()) {
-    const pass = prompt('🔑 أدخل كلمة مرور الأدمن للتبديل بين مشاريع الزفاف (Admin Password):');
-    if (pass === 'admin2026') {
-      sessionStorage.setItem('admin_authenticated', 'true');
-    } else if (pass !== null) {
-      alert('❌ كلمة المرور خاطئة. هذه الخاصية مخصصة للآدمن فقط.');
-      return;
-    } else {
-      return;
-    }
-  }
-
-  const modal = document.getElementById('weddingSwitcherModal');
-  if (modal) modal.style.display = 'flex';
-}
 
 function closeWeddingSwitcher() {
   const modal = document.getElementById('weddingSwitcherModal');
