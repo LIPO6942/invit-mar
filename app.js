@@ -3893,7 +3893,6 @@ function handleEnvelopeNamesDblClick(e) {
     if (e.stopPropagation) e.stopPropagation();
     if (e.preventDefault) e.preventDefault();
   }
-  _envNamesClickCount = 0;
   openWeddingSwitcherModal();
 }
 
