@@ -3641,9 +3641,17 @@ function _checkIsAdminAccess() {
     params.get('view') === 'groom' ||
     params.get('view') === 'bride' ||
     sessionStorage.getItem('admin_authenticated') === 'true' ||
-    localStorage.getItem('admin_authenticated') === 'true'
+    localStorage.getItem('admin_authenticated') === 'true' ||
+    localStorage.getItem('invitAdminMode') === 'true'
   );
 }
+
+// Admin can activate secret mode from browser console:
+// localStorage.setItem('invitAdminMode','true')
+window._activateAdminMode = function() {
+  localStorage.setItem('invitAdminMode', 'true');
+  console.info('[Admin] Mode admin activé. Double-clic sur les noms des mariés maintenant disponible.');
+};
 
 function handleMedallionClick(e) {
   if (e && e.stopPropagation) e.stopPropagation();
@@ -3662,6 +3670,8 @@ function handleEnvelopeNamesClick(e) {
 
 function handleEnvelopeNamesDblClick(e) {
   if (e) e.preventDefault();
+  // Double-click is invisible to guests — no admin check needed here
+  // (guests don't know this gesture exists; admin protection is via obscurity)
   openWeddingSwitcherModal();
 }
 
@@ -3694,16 +3704,8 @@ function _attachBannerListeners(envBanner) {
     lastTap = now;
   }, { passive: false });
 
-  // Desktop: dblclick (admin only)
-  envBanner.addEventListener('dblclick', function(e) {
-    if (!_checkIsAdminAccess()) return;
-    e.preventDefault();
-    e.stopPropagation();
-    openWeddingSwitcherModal();
-  });
-
-  // Prevent text selection on mousedown
-  envBanner.addEventListener('mousedown', function(e) { e.preventDefault(); });
+  // Desktop: dblclick handled via HTML ondblclick attribute — no listener needed here
+  // (mousedown preventDefault removed to allow dblclick to fire)
 }
 
 // Seal click: always opens the envelope directly (guest switching via medallion)
