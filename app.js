@@ -141,6 +141,35 @@ function loadConfigFromURL() {
   const blobId  = params.get('b');     // JSONBlob ID (legacy)
   let   encoded = params.get('c');     // base64 (legacy)
 
+  // ── 1. ?admin=1 in URL → persist admin mode in localStorage + clean URL ──
+  if (params.get('admin') === '1') {
+    localStorage.setItem('invitAdminMode', 'true');
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('admin');
+    history.replaceState({}, '', cleanUrl.toString());
+    console.info('[Admin] Mode admin activé et persisté.');
+  }
+
+  // ── 2. No ?inv= param → try to restore last wedding OR show switcher ──
+  if (!invSlug && !blobId && !encoded) {
+    const lastInv = localStorage.getItem('invitLastSlug');
+    if (lastInv) {
+      // Redirect to last-used invitation automatically
+      window.location.replace(window.location.pathname + '?inv=' + encodeURIComponent(lastInv));
+      return;
+    }
+    // Admin mode active but no last slug → auto-open wedding switcher
+    if (localStorage.getItem('invitAdminMode') === 'true' || localStorage.getItem('admin_authenticated') === 'true') {
+      setTimeout(() => { if (typeof openWeddingSwitcherModal === 'function') openWeddingSwitcherModal(); }, 900);
+    }
+    return;
+  }
+
+  // ── 3. Store current slug as last-used for next PWA launch ──
+  if (invSlug) {
+    localStorage.setItem('invitLastSlug', invSlug);
+  }
+
   if (invSlug) {
     /* ── Firebase path ── */
     initFirebase();
