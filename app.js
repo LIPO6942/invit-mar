@@ -4032,7 +4032,10 @@ function closeWeddingSwitcher() {
 
 function switchWeddingProject(invSlug, customUrl) {
   if (!invSlug && !customUrl) return;
-  
+
+  // Flag: auto-open guest switcher on next page load
+  sessionStorage.setItem('autoOpenGuestSwitcher', '1');
+
   // Close modal
   const modal = document.getElementById('weddingSwitcherModal');
   if (modal) modal.style.display = 'none';
@@ -4069,6 +4072,19 @@ function switchWeddingFromInput() {
 // Kept for compatibility — long-press gestures no longer needed (handled via touchend)
 function initAdminLongPressGestures() {}
 
-
-
-
+/* ─────────────────────────────────────────────────────────────────
+   AUTO-OPEN GUEST SWITCHER after wedding navigation
+   When admin selects a wedding from the switcher, the next page load
+   will automatically open the guest/guest switcher modal
+───────────────────────────────────────────────────────────────── */
+(function _checkAutoOpenGuestSwitcher() {
+  if (sessionStorage.getItem('autoOpenGuestSwitcher') === '1') {
+    sessionStorage.removeItem('autoOpenGuestSwitcher');
+    // Wait for config to fully load before opening the guest switcher
+    setTimeout(() => {
+      if (typeof openPwaGuestSwitcher === 'function') {
+        openPwaGuestSwitcher();
+      }
+    }, 1800);
+  }
+})();
