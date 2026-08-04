@@ -3753,6 +3753,7 @@ function openWeddingSwitcherModal() {
 
   // Immediately clear hardcoded HTML and show spinner
   container.innerHTML = '<div style="text-align:center; padding:15px; color:#fff3ad; font-family:\'Amiri\',serif;">&#x23F3; جاري الاتصال بـ Firebase...</div>';
+  console.log('[SWITCHER] modal=', modal, 'container=', container);
 
   const BASE_URL = 'https://invit-mar-bice.vercel.app/';
 
@@ -3761,7 +3762,9 @@ function openWeddingSwitcherModal() {
   const apiKey    = FIREBASE_CONFIG.apiKey;
   const restUrl   = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/invitations?key=${apiKey}&pageSize=100`;
 
-  container.innerHTML = '<div style="text-align:center;padding:18px;color:#fff3ad;font-family:\'Amiri\',serif;">&#x23F3; جاري تحميل من Firebase...</div>';
+  console.log('[SWITCHER] Fetching:', restUrl);
+  // RED spinner = JS is running (diagnostic)
+  container.innerHTML = '<div style="text-align:center;padding:18px;color:#ff4444;font-family:Amiri,serif;font-weight:bold;">&#x23F3; JS actif — chargement Firebase...</div>';
 
   fetch(restUrl)
     .then(r => {
@@ -3769,6 +3772,7 @@ function openWeddingSwitcherModal() {
       return r.json();
     })
     .then(data => {
+      console.log('[SWITCHER] fetch success, data:', JSON.stringify(data).slice(0,200));
       const docs = data.documents || [];
       const count = docs.length;
 
