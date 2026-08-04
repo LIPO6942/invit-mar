@@ -3769,7 +3769,16 @@ function openWeddingSwitcherModal() {
     return;
   }
 
-  _db.collection('invitations').get()
+  // Force network (Firestore can hang in offline/cache mode)
+  try { _db.enableNetwork(); } catch(_e) {}
+
+  const _firestoreQuery = _db.collection('invitations').get();
+  const _timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('TIMEOUT_6S — règles Firestore: allow list manquant?')), 6000)
+  );
+
+  Promise.race([_firestoreQuery, _timeoutPromise])
+
     .then(snapshot => {
       const count = snapshot.size;
       let allDocs = [];
