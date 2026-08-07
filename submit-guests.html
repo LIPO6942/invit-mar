@@ -249,11 +249,13 @@ async function saveGuestListSubmit(){
   try {
     initFirebase();
     await _db.collection('invitations').doc(_slug).update({
-      guests: _guests.map(g => ({ id: g.id, name: g.name, type: g.type, createdAt: g.createdAt, views: g.views || 0 }))
+      guests: _guests.map(g => ({ id: g.id, name: g.name, type: g.type, createdAt: g.createdAt, views: g.views || 0 })),
+      hasUnsentGuests: true,
+      lastSubmittedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     renderPackTable();
     updateStats();
-    showToast(`💾 تم حفظ ${newGuestsList.length} اسم بنجاح وإرسال القائمة للمنظم!`);
+    showToast(`💾 تم حفظ ${newGuestsList.length} اسم بنجاح وإرسال إشعار للمنظم لتوليد الروابط!`);
   } catch(e) {
     console.error('Save failed:', e);
     showToast('❌ حدث خطأ أثناء الحفظ');

@@ -118,6 +118,7 @@
     <div class="nav-item"         onclick="showPage('page-date')">      <span class="nav-icon">📅</span><span class="nav-label">التاريخ</span></div>
     <div class="nav-item"         onclick="showPage('page-programme')"> <span class="nav-icon">🗓️</span><span class="nav-label">البرنامج</span></div>
     <div class="nav-item"         onclick="showPage('page-photos')">    <span class="nav-icon">📸</span><span class="nav-label">ألبوم الصور</span></div>
+    <div class="nav-item"         onclick="showPage('page-admin-guests')"> <span class="nav-icon">👥</span><span class="nav-label">إدارة المدعوين <span id="admin-guest-badge" style="display:none; background:#e74c3c; color:white; border-radius:10px; padding:2px 7px; font-size:0.68rem; font-weight:bold; margin-right:4px;">🔔 جديد</span></span></div>
     <div class="nav-item"         onclick="showPage('page-links')">     <span class="nav-icon">🔗</span><span class="nav-label">الروابط</span></div>
     <div class="nav-item"         onclick="showPage('page-qrcode')">    <span class="nav-icon">🔳</span><span class="nav-label">رمز QR</span></div>
     <div class="sidebar-bottom">
@@ -620,7 +621,49 @@
         <div style="margin-top:12px">
           <button class="btn btn-danger" style="font-size:0.78rem;padding:7px 14px" onclick="clearHistory()">🗑️ حذف كل الروابط</button>
         </div>
+    <!-- ▸ PAGE — Admin Guests Management & Notifications -->
+    <div class="page" id="page-admin-guests">
+      <div class="page-title">👥 إدارة المدعوين وتوليد الروابط</div>
+      <div class="page-subtitle">متابعة الأسماء المعبأة من العروسين وتوليد روابطهم الشخصية وإرسالها</div>
+
+      <!-- Real-time Notification Banner -->
+      <div id="admin-notification-banner" style="display:none; background:linear-gradient(135deg, rgba(231,76,60,0.2) 0%, rgba(201,168,76,0.15) 100%); border:1.5px solid #e74c3c; border-radius:14px; padding:14px 18px; margin-bottom:20px; box-shadow:0 6px 20px rgba(231,76,60,0.25);">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <span style="font-size:1.6rem;">🔔</span>
+          <div style="flex:1; min-width:200px;">
+            <div style="font-weight:bold; color:#ff6b6b; font-size:1rem;" id="admin-notif-title">تنبيه: قام العروسان بتعبئة أسماء جديدة!</div>
+            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;" id="admin-notif-sub">يرجى مراجعة الأسماء أدناه وتوليد الروابط لإرسالها للعروسين.</div>
+          </div>
+          <button class="btn btn-primary" onclick="generateAllCurrentGuestLinks()" style="background:linear-gradient(135deg,#27ae60,#2ecc71); border:none; padding:10px 18px; font-weight:bold;">⚡ اعتماد الروابط الآن وإغلاق التنبيه</button>
+        </div>
       </div>
+
+      <!-- Wedding Selector Card -->
+      <div class="card">
+        <div class="card-title">💍 اختر حفل الزفاف لإدارة مدعويه</div>
+        <div style="display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; align-items:center;">
+          <select id="adminGuestWeddingSelect" onchange="onAdminGuestWeddingChange(this.value)" style="flex:1; min-width:200px; padding:11px; background:rgba(0,0,0,0.3); color:white; border:1px solid var(--border); border-radius:10px; font-size:0.95rem;">
+            <option value="">-- اختر الزفاف --</option>
+          </select>
+          <button onclick="loadAdminGuestList()" class="btn btn-outline" style="padding:11px 16px; border-color:var(--gold); color:var(--gold);">🔄 تحديث القائمة</button>
+        </div>
+      </div>
+
+      <!-- Guest Table & Batch Actions Card -->
+      <div class="card" id="adminGuestCard" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div class="card-title" style="margin-bottom:0;">📋 أسماء المدعوين (<span id="adminGuestCount">0</span> مدعو)</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="shareAllLinksToCoupleWhatsApp()" style="background:#25d366; color:white; border:none; padding:8px 14px; font-size:0.82rem;">💬 إرسال جميع الروابط للعروسين</button>
+            <button class="btn btn-outline" onclick="exportAdminGuestsExcel()" style="border-color:var(--gold); color:var(--gold); padding:8px 14px; font-size:0.82rem;">📊 تصدير Excel</button>
+          </div>
+        </div>
+
+        <div id="adminGuestTableContainer" style="display:flex; flex-direction:column; gap:8px; max-height:500px; overflow-y:auto; padding-right:4px;">
+          <!-- Dynamically populated guest cards with generated link & share actions -->
+        </div>
+      </div>
+
     </div>
 
     <!-- ▸ PAGE 6 — QR Code -->
@@ -944,6 +987,7 @@ function initAdmin() {
   loadSaved();
   renderEvents();
   renderLinksHistory();
+  checkUnsentGuestNotifications();
   // Init date preview from default value
   const wdEl = document.getElementById('weddingDate');
   if (wdEl && wdEl.value) autoFillDateDisplay(wdEl.value);
@@ -2486,6 +2530,215 @@ function showToast(msg) {
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
   }
+}
+
+// ── Real-Time Notification & Admin Guest Management ──
+window._adminUnsentNotifications = [];
+
+function checkUnsentGuestNotifications() {
+  initFirebase();
+  _db.collection('invitations').onSnapshot(snap => {
+    window._adminUnsentNotifications = [];
+    snap.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.hasUnsentGuests === true) {
+        window._adminUnsentNotifications.push({ slug: doc.id, data: data });
+      }
+    });
+
+    const badge = document.getElementById('admin-guest-badge');
+    const banner = document.getElementById('admin-notification-banner');
+    const notifTitle = document.getElementById('admin-notif-title');
+    const notifSub = document.getElementById('admin-notif-sub');
+
+    if (window._adminUnsentNotifications.length > 0) {
+      if (badge) badge.style.display = 'inline-block';
+      if (banner) {
+        banner.style.display = 'block';
+        const notif = window._adminUnsentNotifications[0];
+        const groom = notif.data.config?.ga || notif.data.config?.gf2 || '';
+        const bride = notif.data.config?.ba || notif.data.config?.bf2 || '';
+        const coupleStr = groom && bride ? `${groom} & ${bride}` : notif.slug;
+        const guestCount = Array.isArray(notif.data.guests) ? notif.data.guests.length : 0;
+        
+        if (notifTitle) notifTitle.textContent = `🔔 تنبيه جديد: قام العروسان (${coupleStr}) بتحديث قائمة المدعوين (${guestCount} مدعو)!`;
+        if (notifSub) notifSub.textContent = `يرجى مراجعة الأسماء أدناه وتوليد روابطهم الشخصية لإرسالها للعروسين.`;
+      }
+    } else {
+      if (badge) badge.style.display = 'none';
+      if (banner) banner.style.display = 'none';
+    }
+
+    loadAdminGuestList();
+  }, err => console.error('checkUnsentGuestNotifications:', err));
+}
+
+async function loadAdminGuestList() {
+  const select = document.getElementById('adminGuestWeddingSelect');
+  if (!select) return;
+
+  try {
+    initFirebase();
+    const snap = await _db.collection('invitations').get();
+    if (snap.empty) {
+      select.innerHTML = '<option value="">لا توجد دعوات محفوظة</option>';
+      return;
+    }
+
+    let optionsHtml = '<option value="">-- اختر الزفاف --</option>';
+    snap.docs.forEach(doc => {
+      const d = doc.data();
+      const cfg = d.config || {};
+      const groom = cfg.ga || cfg.gf2 || '';
+      const bride = cfg.ba || cfg.bf2 || '';
+      const nameStr = groom && bride ? `${groom} & ${bride}` : doc.id;
+      const count = Array.isArray(d.guests) ? d.guests.length : 0;
+      const hasUnsent = d.hasUnsentGuests === true;
+      const flag = hasUnsent ? ' 🔔 (تحديث جديد)' : '';
+      
+      optionsHtml += `<option value="${doc.id}" ${hasUnsent ? 'style="color:#e74c3c;font-weight:bold;"' : ''}>💍 ${nameStr} (${count} مدعو)${flag}</option>`;
+    });
+    select.innerHTML = optionsHtml;
+
+    if (window._adminUnsentNotifications && window._adminUnsentNotifications.length > 0) {
+      select.value = window._adminUnsentNotifications[0].slug;
+      onAdminGuestWeddingChange(select.value);
+    }
+  } catch (e) {
+    console.error('loadAdminGuestList:', e);
+  }
+}
+
+let _currentAdminWeddingSlug = null;
+let _currentAdminWeddingData = null;
+
+async function onAdminGuestWeddingChange(slug) {
+  _currentAdminWeddingSlug = slug;
+  const container = document.getElementById('adminGuestTableContainer');
+  const card = document.getElementById('adminGuestCard');
+  const countEl = document.getElementById('adminGuestCount');
+  if (!container || !card) return;
+
+  if (!slug) {
+    card.style.display = 'none';
+    return;
+  }
+
+  try {
+    initFirebase();
+    const doc = await _db.collection('invitations').doc(slug).get();
+    if (!doc.exists) {
+      card.style.display = 'none';
+      return;
+    }
+
+    _currentAdminWeddingData = doc.data();
+    const guests = Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : [];
+    if (countEl) countEl.textContent = guests.length;
+    card.style.display = 'block';
+
+    if (!guests.length) {
+      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">لم يقم العروسان بإضافة أي أسماء بعد</div>';
+      return;
+    }
+
+    const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
+    const FORMULAS_MAP = [
+      {value:'ar_couple',          label:'إلى السيد ... وحرمه',           emoji:'👨‍👩‍👧'},
+      {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', emoji:'👨‍👩‍👦‍👦'},
+      {value:'ar_man',             label:'إلى السيد ...',              emoji:'👔'},
+      {value:'ar_woman',           label:'إلى السيدة ...',             emoji:'👗'},
+      {value:'ar_friend_m',        label:'إلى عْشيري ...',            emoji:'🤝'},
+      {value:'ar_friend_f',        label:'إلى عْشيرتي ...',           emoji:'👩‍🤝‍👩'},
+      {value:'fr_couple',          label:'M. et Mme ...',            emoji:'💑'},
+      {value:'fr_man',             label:'Monsieur ...',              emoji:'🤵'},
+      {value:'fr_woman',           label:'Madame ...',                emoji:'👰'},
+      {value:'fr_friend_m',        label:'Pour mon Ami ...',          emoji:'👨‍🤝‍👨'},
+      {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
+    ];
+
+    container.innerHTML = guests.map((g, i) => {
+      const link = `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(g.id)}`;
+      const formulaObj = FORMULAS_MAP.find(f => f.value === g.type);
+      const emoji = formulaObj ? formulaObj.emoji : '👤';
+      const label = formulaObj ? formulaObj.label : g.type;
+
+      return `
+        <div style="display:flex; gap:10px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid rgba(201,168,76,0.2); border-radius:12px; padding:10px 14px; flex-wrap:wrap;">
+          <span style="font-size:0.85rem; color:var(--gold); font-weight:bold; width:26px; text-align:center;">${i+1}</span>
+          <div style="flex:1; min-width:140px;">
+            <div style="font-weight:bold; color:#fff; font-size:0.95rem;">${escHtml(g.name)}</div>
+            <div style="font-size:0.76rem; color:var(--gold-light); margin-top:2px;">${emoji} ${label}</div>
+          </div>
+          <div style="font-family:monospace; font-size:0.72rem; color:var(--text-muted); background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; flex:1.5; min-width:180px; word-break:break-all;">${link}</div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:5px 10px; font-size:0.76rem;">📋 نسخ</button>
+            <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ${g.name} ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:5px 10px; font-size:0.76rem;">💬 واتساب</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (e) {
+    console.error('onAdminGuestWeddingChange:', e);
+  }
+}
+
+async function generateAllCurrentGuestLinks() {
+  if (!_currentAdminWeddingSlug) return;
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({
+      hasUnsentGuests: false
+    });
+    showToast('⚡ تم اعتماد وتوليد جميع الروابط وإغلاق التنبيه بنجاح!');
+    checkUnsentGuestNotifications();
+  } catch (e) {
+    console.error('generateAllCurrentGuestLinks:', e);
+  }
+}
+
+function shareAllLinksToCoupleWhatsApp() {
+  if (!_currentAdminWeddingData || !_currentAdminWeddingSlug) return;
+  const guests = Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : [];
+  if (!guests.length) { showToast('⚠️ لا توجد أسماء لإرسالها'); return; }
+
+  const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
+  const cfg = _currentAdminWeddingData.config || {};
+  const groom = cfg.ga || cfg.gf2 || 'العريس';
+  const bride = cfg.ba || cfg.bf2 || 'العروسة';
+
+  let msg = `💍 *روابط دعوات زفاف ${groom} & ${bride}* 💍\n\nإليكم جميع روابط الدعوات الشخصية لضيوفكم جاهزة ومصممة بالأسماء:\n\n`;
+  guests.forEach((g, i) => {
+    const link = `${baseUrl}?inv=${encodeURIComponent(_currentAdminWeddingSlug)}&gid=${encodeURIComponent(g.id)}`;
+    msg += `📌 *${i+1}. ${g.name}*\n🔗 ${link}\n\n`;
+  });
+
+  msg += `نتمنى لكم حفل زفاف سعيد ومبارك! 🌸`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function exportAdminGuestsExcel() {
+  if (!_currentAdminWeddingData || !_currentAdminWeddingSlug) return;
+  const guests = Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : [];
+  if (!guests.length) { showToast('⚠️ لا توجد أسماء للتصدير'); return; }
+
+  const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
+  let csvContent = "\uFEFFالرقم;اسم المدعو;الصيغة / اللقب;رابط الدعوة الشخصي\n";
+
+  guests.forEach((g, i) => {
+    const link = `${baseUrl}?inv=${encodeURIComponent(_currentAdminWeddingSlug)}&gid=${encodeURIComponent(g.id)}`;
+    csvContent += `${i + 1};"${g.name.replace(/"/g, '""')}";"${g.type}";"${link}"\n`;
+  });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `روابط_مدعوي_الزفاف_${_currentAdminWeddingSlug}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('📊 تم تصدير ملف Excel بنجاح!');
 }
 </script>
 </body>
