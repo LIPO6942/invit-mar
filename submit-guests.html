@@ -8,12 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0602;--bg2:#130e04;--card:rgba(255,248,220,0.04);--card-h:rgba(255,248,220,0.07);--border:rgba(201,168,76,0.2);--border-h:rgba(201,168,76,0.45);--gold:#c9a84c;--gold-l:#e8cc7a;--text:#f5e6c0;--muted:#a08868;--danger:#e74c3c;--success:#2ecc71}
+:root{--bg:#0a0602;--bg2:#130e04;--card:rgba(255,248,220,0.04);--border:rgba(201,168,76,0.2);--border-h:rgba(201,168,76,0.45);--gold:#c9a84c;--gold-l:#e8cc7a;--text:#f5e6c0;--muted:#a08868;--danger:#e74c3c;--warn:#f0b429;--success:#2ecc71}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-tap-highlight-color:transparent}
 body{font-family:'Amiri',serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(201,168,76,0.06) 0%,transparent 70%);pointer-events:none;z-index:0}
-
 #login-screen{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;z-index:1}
 .login-card{background:rgba(255,248,220,0.04);border:1px solid var(--border);border-radius:24px;padding:44px 32px 36px;width:100%;max-width:380px;text-align:center;backdrop-filter:blur(12px);box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:fadeInUp 0.6s ease both}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -26,7 +25,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .login-btn{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);color:#1a1000;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
 .login-btn:hover{opacity:0.92}.login-btn:active{transform:scale(0.98)}
 .login-error{color:var(--danger);font-size:0.85rem;margin-top:10px;min-height:20px}
-
 #main-app{max-width:680px;margin:0 auto;padding:20px 14px 80px;position:relative;z-index:1}
 .app-header{background:rgba(10,6,2,0.92);border:1px solid var(--border);border-radius:20px;padding:20px;text-align:center;margin-bottom:20px;backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,0.4)}
 .header-couple{font-size:1.5rem;color:var(--gold);font-weight:700}
@@ -34,19 +32,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .stats-row{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 .stat-pill{background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:20px;padding:5px 16px;font-size:0.82rem;color:var(--gold-l)}
 .stat-pill strong{color:var(--gold)}
-
+.lang-banner{display:flex;align-items:center;gap:8px;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.25);border-radius:10px;padding:8px 14px;font-size:0.82rem;color:#82e0aa;margin-bottom:14px}
 .section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:20px}
 .section-title{font-size:1.1rem;color:var(--gold);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .help-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.18);border-radius:12px;padding:12px 16px;font-size:0.84rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
 .help-box strong{color:var(--gold-l)}
-
 .f-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:0.95rem;font-family:'Amiri',serif;outline:none;transition:border-color 0.2s}
 .f-input:focus{border-color:var(--gold)}
 .btn-primary{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);color:#1a1000;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
 .btn-primary:hover{opacity:0.92}.btn-primary:active{transform:scale(0.98)}
-
 .bulk-textarea{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:0.9rem;font-family:'Amiri',serif;outline:none;resize:vertical;min-height:110px;line-height:1.6;margin-bottom:12px}
-
+.name-warn{font-size:0.74rem;color:var(--warn);margin-top:3px;display:flex;align-items:flex-start;gap:4px;line-height:1.4}
+.name-warn span{flex:1}
+#val-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+#val-modal-box{background:#1a1106;border:1px solid rgba(201,168,76,0.4);border-radius:18px;padding:24px;max-width:500px;width:100%;display:flex;flex-direction:column;gap:14px}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(20,14,4,0.97);border:1px solid var(--border);color:var(--text);padding:12px 24px;border-radius:30px;font-size:0.9rem;opacity:0;transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -68,36 +67,46 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div id="main-app" style="display:none">
   <div class="app-header">
     <div class="header-couple" id="header-couple">💍 حفل الزفاف</div>
-    <div class="header-sub">صفحة تعبئة قائمة ضيوفكم الخاصة</div>
+    <div class="header-sub" id="header-sub">صفحة تعبئة قائمة ضيوفكم الخاصة</div>
     <div class="stats-row">
-      <div class="stat-pill">📝 الأسماء المعبأة: <strong id="stat-total">0</strong></div>
-      <div class="stat-pill">📦 سعة الباقة: <strong id="stat-links">0/0</strong></div>
+      <div class="stat-pill" id="stat-filled-pill">📝 <span id="stat-total">0</span></div>
+      <div class="stat-pill">📦 <span id="stat-links">0/0</span></div>
     </div>
   </div>
 
   <div class="section">
-    <div class="section-title">📊 جدول تعبئة أسماء الباقة</div>
-    <div class="help-box">
-      <strong>طريقة التعبئة:</strong> أدخل أسماء ضيوفك مباشرة في الجدول أدناه واختر اللقب المناسب لكل اسم، ثم اضغط <strong>« حفظ القائمة »</strong>. يمكنك حفظ جزء من القائمة والعودة لاحقاً لإكمال الباقي.
-    </div>
+    <div class="section-title" id="section-title">📊 جدول تعبئة أسماء الباقة</div>
+    <div class="lang-banner" id="lang-banner" style="display:none"></div>
+    <div class="help-box" id="help-box"></div>
 
-    <!-- Quick Paste Collapse -->
     <details style="margin-bottom:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:12px; padding:10px 14px;">
-      <summary style="cursor:pointer; color:var(--gold-l); font-size:0.9rem; font-weight:bold;">
-        📋 هل لديك قائمة جاهزة؟ (نسخ - لصق سريع) ▾
-      </summary>
+      <summary style="cursor:pointer; color:var(--gold-l); font-size:0.9rem; font-weight:bold;" id="paste-summary">📋 ▾</summary>
       <div style="margin-top:10px;">
-        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:6px;">الصق الأسماء هنا (اسم في كل سطر)، وسيتم ملء الجدول تلقائياً:</div>
-        <textarea id="bulk-paste-area" class="bulk-textarea" placeholder="أحمد بن علي&#10;خالد العمري&#10;محمد الرياحي&#10;..."></textarea>
-        <button class="btn-primary" onclick="applyBulkPaste()" style="padding:10px; font-size:0.88rem;">📥 تعبئة الجدول من النص</button>
+        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:6px;" id="paste-hint"></div>
+        <textarea id="bulk-paste-area" class="bulk-textarea"></textarea>
+        <button class="btn-primary" onclick="applyBulkPaste()" style="padding:10px; font-size:0.88rem;" id="paste-btn">📥</button>
       </div>
     </details>
 
-    <div id="pack-rows-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px; max-height:480px; overflow-y:auto; padding-left:4px;">
-      <!-- Dynamically generated rows -->
-    </div>
+    <div id="pack-rows-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px; max-height:480px; overflow-y:auto; padding-left:4px;"></div>
 
-    <button class="btn-primary" onclick="saveGuestListSubmit()" style="font-size:1.1rem; padding:15px;">💾 حفظ القائمة وإرسالها للمنظم</button>
+    <button class="btn-primary" onclick="saveGuestListSubmit()" style="font-size:1.1rem; padding:15px;" id="save-btn">💾</button>
+  </div>
+</div>
+
+<!-- Validation modal -->
+<div id="val-modal" style="display:none">
+  <div id="val-modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;color:var(--warn);font-size:1rem;" id="val-modal-title">⚠️</h3>
+      <button onclick="document.getElementById('val-modal').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <p style="margin:0;font-size:0.84rem;color:var(--muted);" id="val-modal-msg"></p>
+    <div id="val-modal-list" style="font-size:0.82rem;color:var(--warn);max-height:180px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:10px;padding:10px 14px;line-height:1.8;"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="document.getElementById('val-modal').style.display='none'" style="flex:1;padding:11px;background:rgba(240,180,41,0.15);border:1px solid rgba(240,180,41,0.4);color:var(--warn);border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.9rem;" id="val-fix-btn">✏️</button>
+      <button onclick="forceSave()" style="flex:1;padding:11px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.9rem;font-weight:700;" id="val-force-btn">💾</button>
+    </div>
   </div>
 </div>
 
@@ -110,21 +119,76 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 const FIREBASE_CONFIG={apiKey:"AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",authDomain:"invit-mar.firebaseapp.com",projectId:"invit-mar",storageBucket:"invit-mar.firebasestorage.app",messagingSenderId:"654872438284",appId:"1:654872438284:web:c11d6f3cdff82bf35ff029"};
 let _fbApp=null,_db=null;
 function initFirebase(){if(_fbApp)return;_fbApp=firebase.initializeApp(FIREBASE_CONFIG);_db=firebase.firestore()}
-let _slug='',_invData=null,_guests=[],_pack=9999;
+let _slug='',_invData=null,_guests=[],_pack=9999,_lang='ar',_pendingList=null;
 
-const FORMULAS=[
-  {value:'ar_couple',          label:'إلى السيد ... وحرمه',           emoji:'👨‍👩‍👧'},
-  {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', emoji:'👨‍👩‍👦‍👦'},
-  {value:'ar_man',             label:'إلى السيد ...',              emoji:'👔'},
-  {value:'ar_woman',           label:'إلى السيدة ...',             emoji:'👗'},
-  {value:'ar_friend_m',        label:'إلى عْشيري ...',            emoji:'🤝'},
-  {value:'ar_friend_f',        label:'إلى عْشيرتي ...',           emoji:'👩‍🤝‍👩'},
-  {value:'fr_couple',          label:'M. et Mme ...',            emoji:'💑'},
-  {value:'fr_man',             label:'Monsieur ...',              emoji:'🤵'},
-  {value:'fr_woman',           label:'Madame ...',                emoji:'👰'},
-  {value:'fr_friend_m',        label:'Pour mon Ami ...',          emoji:'👨‍🤝‍👨'},
-  {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
+const ALL_FORMULAS=[
+  {value:'ar_couple',          lang:'ar',label:'إلى السيد ... وحرمه'},
+  {value:'ar_couple_children', lang:'ar',label:'إلى السيد ... وحرمه وأبنائه'},
+  {value:'ar_man',             lang:'ar',label:'إلى السيد ...'},
+  {value:'ar_woman',           lang:'ar',label:'إلى السيدة ...'},
+  {value:'ar_friend_m',        lang:'ar',label:'إلى عْشيري ...'},
+  {value:'ar_friend_f',        lang:'ar',label:'إلى عْشيرتي ...'},
+  {value:'fr_couple',          lang:'fr',label:'M. et Mme ...'},
+  {value:'fr_man',             lang:'fr',label:'Monsieur ...'},
+  {value:'fr_woman',           lang:'fr',label:'Madame ...'},
+  {value:'fr_friend_m',        lang:'fr',label:'Pour mon Ami ...'},
+  {value:'fr_friend_f',        lang:'fr',label:'Pour mon Amie ...'},
 ];
+
+function isArabicName(s){return /[\u0600-\u06FF]/.test(s||'');}
+function isLatinName(s){return /[A-Za-z\u00C0-\u00FF]/.test(s||'');}
+
+const I18N={
+  ar:{
+    headerSub:'صفحة تعبئة قائمة ضيوفكم الخاصة',
+    sectionTitle:'📊 جدول تعبئة أسماء الباقة',
+    helpText:'<strong>طريقة التعبئة:</strong> أدخل أسماء ضيوفك <strong>بالعربية</strong> واختر اللقب المناسب، ثم اضغط <strong>« حفظ القائمة »</strong>. يمكنك الحفظ جزئياً والعودة لاحقاً.',
+    placeholder:'اسم المدعو بالعربية...',
+    statFilled:'📝 الأسماء المعبأة:',
+    pasteSummary:'📋 هل لديك قائمة جاهزة؟ (نسخ - لصق سريع) ▾',
+    pasteHint:'الصق الأسماء هنا (اسم في كل سطر)، وسيتم ملء الجدول تلقائياً:',
+    pastePlaceholder:'أحمد بن علي\nخالد العمري\nمحمد الرياحي\n...',
+    pasteBtn:'📥 تعبئة الجدول من النص',
+    saveBtn:'💾 حفظ القائمة وإرسالها للمنظم',
+    langBanner:'🌐 لغة الزفاف: عربي — يُرجى كتابة الأسماء بالعربية',
+    warnName:(n)=>`⚠️ الاسم "${n}" مكتوب بحروف لاتينية — يُرجى كتابته بالعربية.`,
+    valTitle:'⚠️ بعض الأسماء مكتوبة بحروف لاتينية',
+    valMsg:'الأسماء التالية لا تتوافق مع لغة الزفاف (عربي). يُرجى تصحيحها قبل الحفظ، أو اضغط «حفظ رغم ذلك» لإرسالها كما هي:',
+    fixBtn:'✏️ تصحيح الأسماء',
+    forceBtn:'💾 حفظ رغم ذلك',
+    saveSuccess:(n)=>`💾 تم حفظ ${n} اسم بنجاح وإرسال إشعار للمنظم!`,
+    saveError:'❌ حدث خطأ أثناء الحفظ',
+    emptyPaste:'⚠️ الصق الأسماء أولاً',
+    pasteSuccess:(n)=>`✅ تم وضع ${n} اسم في الجدول. اضغط حفظ لاعتمادها.`,
+  },
+  fr:{
+    headerSub:'Page réservée aux mariés pour saisir leurs invités',
+    sectionTitle:'📊 Tableau des invités',
+    helpText:'<strong>Comment remplir :</strong> Entrez les noms de vos invités <strong>en français</strong> et choisissez le titre approprié, puis cliquez sur <strong>« Enregistrer »</strong>. Vous pouvez enregistrer partiellement et revenir plus tard.',
+    placeholder:'Nom du convive en français...',
+    statFilled:'📝 Noms renseignés :',
+    pasteSummary:'📋 Vous avez une liste prête ? (copier-coller rapide) ▾',
+    pasteHint:'Collez les noms ici (un nom par ligne) :',
+    pastePlaceholder:'Jean Dupont\nMarie Martin\nPierre Leroy\n...',
+    pasteBtn:'📥 Remplir le tableau',
+    saveBtn:'💾 Enregistrer et envoyer à l\'organisateur',
+    langBanner:'🌐 Langue du mariage : Français — veuillez écrire les noms en français',
+    warnName:(n)=>`⚠️ Le nom "${n}" semble être en arabe — veuillez l'écrire en français.`,
+    valTitle:'⚠️ Certains noms semblent être en arabe',
+    valMsg:'Les noms suivants ne correspondent pas à la langue du mariage (Français). Veuillez les corriger ou enregistrer quand même :',
+    fixBtn:'✏️ Corriger les noms',
+    forceBtn:'💾 Enregistrer quand même',
+    saveSuccess:(n)=>`💾 ${n} invité(s) enregistré(s) — l'organisateur a été notifié !`,
+    saveError:'❌ Erreur lors de l\'enregistrement',
+    emptyPaste:'⚠️ Collez des noms d\'abord',
+    pasteSuccess:(n)=>`✅ ${n} noms renseignés. Cliquez sur Enregistrer.`,
+  }
+};
+
+function tx(key,...args){
+  const v=(I18N[_lang]||I18N.ar)[key];
+  return typeof v==='function'?v(...args):v;
+}
 
 window.addEventListener('DOMContentLoaded',()=>{
   const params=new URLSearchParams(window.location.search);
@@ -137,136 +201,204 @@ window.addEventListener('DOMContentLoaded',()=>{
     return;
   }
   document.getElementById('pwd-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-
-  if(autoKey){
-    document.getElementById('pwd-input').value=autoKey;
-    doLogin();
-  }
+  if(autoKey){document.getElementById('pwd-input').value=autoKey;doLogin();}
 });
 
 async function doLogin(){
   const pwd=document.getElementById('pwd-input').value.trim();
   const errEl=document.getElementById('login-error');
   errEl.textContent='';
-  if(!pwd){errEl.textContent='⚠️ أدخل كلمة المرور';return}
+  if(!pwd){errEl.textContent='⚠️ أدخل كلمة المرور / Entrez le mot de passe';return}
   try{
     initFirebase();
     const doc=await _db.collection('invitations').doc(_slug).get();
     if(!doc.exists){errEl.textContent='❌ الدعوة غير موجودة — تحقق من الرابط';return}
     _invData=doc.data();
+    _lang=((_invData.config&&_invData.config.la)||'ar').toLowerCase();
     const correctPwd=(_invData.couplePassword||'').trim();
     if(!correctPwd){errEl.textContent='⚠️ لم يتم تعيين كلمة مرور — تواصل مع المنظم';return}
-    if(pwd!==correctPwd){errEl.textContent='❌ كلمة المرور غير صحيحة';document.getElementById('pwd-input').value='';return}
+    if(pwd!==correctPwd){errEl.textContent='❌ كلمة المرور غير صحيحة / Mot de passe incorrect';document.getElementById('pwd-input').value='';return}
     document.getElementById('login-screen').style.display='none';
     document.getElementById('main-app').style.display='block';
     initForm();
-  }catch(err){console.error(err);errEl.textContent='❌ خطأ في الاتصال — تحقق من الإنترنت'}
+  }catch(err){console.error(err);errEl.textContent='❌ خطأ في الاتصال';}
 }
 
 function initForm(){
   const cfg=_invData.config||{};
-  const groom=cfg.gf2||cfg.ga||'العريس';
-  const bride=cfg.bf2||cfg.ba||'العروسة';
+  _lang=(cfg.la||'ar').toLowerCase();
+  const isFr=_lang==='fr';
+
+  const groom=isFr?(cfg.gf2||cfg.ga||'Le Marié'):(cfg.ga||cfg.gf2||'العريس');
+  const bride =isFr?(cfg.bf2||cfg.ba||'La Mariée'):(cfg.ba||cfg.bf2||'العروسة');
+
+  // Apply direction
+  document.documentElement.lang=_lang;
+  document.documentElement.dir=isFr?'ltr':'rtl';
+
+  // Apply i18n
   document.getElementById('header-couple').textContent=`💍 ${groom} & ${bride}`;
-  document.title=`تعبئة مدعوي ${groom} & ${bride}`;
+  document.getElementById('header-sub').textContent=tx('headerSub');
+  document.getElementById('section-title').textContent=tx('sectionTitle');
+  document.getElementById('help-box').innerHTML=tx('helpText');
+  document.getElementById('paste-summary').textContent=tx('pasteSummary');
+  document.getElementById('paste-hint').textContent=tx('pasteHint');
+  document.getElementById('bulk-paste-area').placeholder=tx('pastePlaceholder');
+  document.getElementById('paste-btn').textContent=tx('pasteBtn');
+  document.getElementById('save-btn').textContent=tx('saveBtn');
+  document.getElementById('stat-filled-pill').innerHTML=tx('statFilled')+' <strong id="stat-total">0</strong>';
+  document.getElementById('val-modal-title').textContent=tx('valTitle');
+  document.getElementById('val-modal-msg').textContent=tx('valMsg');
+  document.getElementById('val-fix-btn').textContent=tx('fixBtn');
+  document.getElementById('val-force-btn').textContent=tx('forceBtn');
+  document.title=`${isFr?'Liste des convives':'تعبئة مدعوي'} ${groom} & ${bride}`;
+
+  // Language banner
+  const banner=document.getElementById('lang-banner');
+  banner.style.display='flex';
+  banner.textContent=tx('langBanner');
+
   _pack=_invData.pack||9999;
   _guests=Array.isArray(_invData.guests)?[..._invData.guests]:[];
   renderPackTable();
   updateStats();
 }
 
+function getFormulas(){return ALL_FORMULAS.filter(f=>f.lang===_lang);}
+function getDefaultType(){return _lang==='fr'?'fr_couple':'ar_couple';}
+
 function updateStats(){
-  const t=_guests.length;
+  const n=_guests.length;
   const packLabel=_pack>=9999?'∞':_pack;
-  document.getElementById('stat-total').textContent=t;
-  document.getElementById('stat-links').textContent=t+'/'+packLabel;
+  const el=document.getElementById('stat-total');
+  if(el)el.textContent=n;
+  document.getElementById('stat-links').textContent=n+'/'+packLabel;
+}
+
+function hasMismatch(nameVal){
+  if(!nameVal.trim())return false;
+  return(_lang==='fr'&&isArabicName(nameVal))||
+         (_lang==='ar'&&isLatinName(nameVal)&&!isArabicName(nameVal));
 }
 
 function renderPackTable(){
-  const container = document.getElementById('pack-rows-container');
-  if(!container) return;
-  const targetCount = (_pack && _pack < 9999) ? _pack : Math.max(_guests.length + 5, 20);
-  
-  let html = '';
-  for(let i = 0; i < targetCount; i++) {
-    const existing = _guests[i] || { name: '', type: 'ar_couple' };
-    const optionsHtml = FORMULAS.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
-    
-    html += `
-      <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid rgba(201,168,76,0.2); border-radius:12px; padding:8px 10px;">
-        <span style="font-size:0.82rem; color:var(--gold); font-weight:bold; width:24px; text-align:center; flex-shrink:0;">${i+1}</span>
-        <input type="text" class="pack-name-input f-input" data-index="${i}" value="${escHtml(existing.name || '')}" placeholder="اسم المدعو..." style="flex:1; min-width:110px; padding:8px 10px; font-size:0.9rem;">
-        <select class="pack-type-select f-input" data-index="${i}" style="width:160px; padding:8px 6px; font-size:0.8rem; background:#181005; color:var(--text); flex-shrink:0;">
-          ${optionsHtml}
-        </select>
-      </div>
-    `;
+  const container=document.getElementById('pack-rows-container');
+  if(!container)return;
+  const FORMULAS=getFormulas();
+  const defaultType=getDefaultType();
+  const targetCount=(_pack&&_pack<9999)?_pack:Math.max(_guests.length+5,20);
+  let html='';
+  for(let i=0;i<targetCount;i++){
+    const existing=_guests[i]||{name:'',type:defaultType};
+    const nameVal=existing.name||'';
+    const hasName=!!nameVal.trim();
+    const storedType=existing.type||defaultType;
+    const matchedType=FORMULAS.some(f=>f.value===storedType)?storedType:defaultType;
+    const optionsHtml=FORMULAS.map(f=>`<option value="${f.value}" ${f.value===matchedType?'selected':''}>${f.label}</option>`).join('');
+    const mismatch=hasMismatch(nameVal);
+    const borderColor=mismatch?'rgba(240,180,41,0.55)':(hasName?'rgba(46,204,113,0.35)':'rgba(201,168,76,0.2)');
+    const inputBorder=mismatch?'border-color:rgba(240,180,41,0.7);background:rgba(240,180,41,0.04);':'';
+    const warnHtml=mismatch?`<div class="name-warn"><span>⚠️</span><span>${tx('warnName',escHtml(nameVal))}</span></div>`:'';
+    html+=`
+      <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(0,0,0,0.25);border:1px solid ${borderColor};border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:1px;" id="row-${i}">
+        <span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;padding-top:10px;">${i+1}</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <input type="text" class="pack-name-input f-input" data-index="${i}" value="${escHtml(nameVal)}" placeholder="${tx('placeholder')}" dir="${_lang==='fr'?'ltr':'rtl'}" style="flex:1;min-width:110px;padding:8px 10px;font-size:0.9rem;${inputBorder}" oninput="validateNameInput(this,${i})">
+            <select class="pack-type-select f-input" data-index="${i}" style="min-width:150px;padding:8px 6px;font-size:0.8rem;background:#181005;color:var(--text);flex-shrink:0;">${optionsHtml}</select>
+          </div>
+          <div id="warn-${i}">${warnHtml}</div>
+        </div>
+      </div>`;
   }
-  container.innerHTML = html;
+  container.innerHTML=html;
+}
+
+function validateNameInput(input,idx){
+  const val=input.value.trim();
+  const row=document.getElementById('row-'+idx);
+  const warnEl=document.getElementById('warn-'+idx);
+  if(!val){
+    if(row)row.style.borderColor='rgba(201,168,76,0.2)';
+    input.style.borderColor='';input.style.background='';
+    if(warnEl)warnEl.innerHTML='';
+    return;
+  }
+  if(hasMismatch(val)){
+    input.style.borderColor='rgba(240,180,41,0.7)';
+    input.style.background='rgba(240,180,41,0.04)';
+    if(row)row.style.borderColor='rgba(240,180,41,0.55)';
+    if(warnEl)warnEl.innerHTML=`<div class="name-warn"><span>⚠️</span><span>${tx('warnName',escHtml(val))}</span></div>`;
+  } else {
+    input.style.borderColor='rgba(46,204,113,0.5)';
+    input.style.background='';
+    if(row)row.style.borderColor='rgba(46,204,113,0.35)';
+    if(warnEl)warnEl.innerHTML='';
+  }
 }
 
 function applyBulkPaste(){
-  const ta = document.getElementById('bulk-paste-area');
-  const raw = ta.value.trim();
-  if(!raw){ showToast('⚠️ الصق الأسماء أولاً'); return; }
-  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  if(!lines.length){ showToast('⚠️ لا توجد أسماء صالحة'); return; }
+  const ta=document.getElementById('bulk-paste-area');
+  const raw=ta.value.trim();
+  if(!raw){showToast(tx('emptyPaste'));return;}
+  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  if(!lines.length)return;
+  const inputs=document.querySelectorAll('.pack-name-input');
+  lines.forEach((name,i)=>{if(inputs[i]){inputs[i].value=name;validateNameInput(inputs[i],i);}});
+  showToast(tx('pasteSuccess',lines.length));
+}
 
-  const inputs = document.querySelectorAll('.pack-name-input');
-  lines.forEach((name, i) => {
-    if(inputs[i]) inputs[i].value = name;
+function collectGuests(){
+  const nameInputs=document.querySelectorAll('.pack-name-input');
+  const typeSelects=document.querySelectorAll('.pack-type-select');
+  const list=[];const now=Date.now();
+  nameInputs.forEach((input,i)=>{
+    const name=input.value.trim();
+    const type=typeSelects[i]?typeSelects[i].value:getDefaultType();
+    if(name){
+      const existing=_guests[i];
+      if(existing){list.push({...existing,name,type});}
+      else{list.push({id:(now+i).toString(36)+Math.random().toString(36).slice(2,5),name,type,createdAt:new Date().toISOString()});}
+    }
   });
-  showToast(`✅ تم وضع ${lines.length} اسم في الجدول. اضغط حفظ اعتمادها.`);
+  return list;
 }
 
 async function saveGuestListSubmit(){
-  const nameInputs = document.querySelectorAll('.pack-name-input');
-  const typeSelects = document.querySelectorAll('.pack-type-select');
+  const list=collectGuests();
+  const mismatches=list.filter(g=>hasMismatch(g.name));
+  if(mismatches.length>0){
+    _pendingList=list;
+    document.getElementById('val-modal-list').innerHTML=mismatches.map((g,i)=>`${i+1}. <strong>${escHtml(g.name)}</strong>`).join('<br>');
+    document.getElementById('val-modal').style.display='flex';
+    return;
+  }
+  await doSave(list);
+}
 
-  const newGuestsList = [];
-  const now = Date.now();
+async function forceSave(){
+  document.getElementById('val-modal').style.display='none';
+  if(_pendingList)await doSave(_pendingList);
+  _pendingList=null;
+}
 
-  nameInputs.forEach((input, i) => {
-    const name = input.value.trim();
-    const type = typeSelects[i] ? typeSelects[i].value : 'ar_couple';
-    if(name) {
-      const existing = _guests[i];
-      if(existing) {
-        newGuestsList.push({ ...existing, name, type });
-      } else {
-        newGuestsList.push({
-          id: (now + i).toString(36) + Math.random().toString(36).slice(2, 5),
-          name,
-          type,
-          createdAt: new Date().toISOString()
-        });
-      }
-    }
-  });
-
-  _guests = newGuestsList;
-
-  try {
+async function doSave(list){
+  _guests=list;
+  try{
     initFirebase();
     await _db.collection('invitations').doc(_slug).update({
-      guests: _guests.map(g => ({ id: g.id, name: g.name, type: g.type, createdAt: g.createdAt, views: g.views || 0 })),
-      hasUnsentGuests: true,
-      lastSubmittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      guests:_guests.map(g=>({id:g.id,name:g.name,type:g.type,createdAt:g.createdAt,views:g.views||0})),
+      hasUnsentGuests:true,
+      lastSubmittedAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     renderPackTable();
     updateStats();
-    showToast(`💾 تم حفظ ${newGuestsList.length} اسم بنجاح وإرسال إشعار للمنظم لتوليد الروابط!`);
-  } catch(e) {
-    console.error('Save failed:', e);
-    showToast('❌ حدث خطأ أثناء الحفظ');
-  }
+    showToast(tx('saveSuccess',list.length));
+  }catch(e){console.error('Save failed:',e);showToast(tx('saveError'));}
 }
 
-function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function showToast(msg){
-  const t = document.getElementById('toast');
-  if(t){ t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showToast(msg){const t=document.getElementById('toast');if(t){t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}}
 </script>
 </body>
 </html>
