@@ -400,38 +400,7 @@ function _getGuestFormattedName(isFr) {
 }
 
 function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
-  let startDate = new Date();
-  
-  if (dateRaw) {
-    if (typeof dateRaw === 'string' && dateRaw.includes('/')) {
-      const parts = dateRaw.split('/').map(p => p.trim());
-      if (parts.length === 3) {
-        const d = parseInt(parts[0], 10);
-        const m = parseInt(parts[1], 10) - 1;
-        const y = parseInt(parts[2], 10);
-        startDate = new Date(y, m, d);
-      }
-    } else if (typeof dateRaw === 'string' && dateRaw.includes('-')) {
-      startDate = new Date(dateRaw);
-    }
-  }
-
-  if (timeRaw && typeof timeRaw === 'string' && !isNaN(startDate.getTime())) {
-    const timeParts = timeRaw.split(':');
-    if (timeParts.length >= 2) {
-      const h = parseInt(timeParts[0], 10);
-      const m = parseInt(timeParts[1], 10);
-      if (!isNaN(h) && !isNaN(m)) {
-        startDate.setHours(h, m, 0, 0);
-      }
-    }
-  }
-
-  if (isNaN(startDate.getTime())) {
-    const defaultDateTime = (typeof _weddingDateTime !== 'undefined' && _weddingDateTime) ? _weddingDateTime : '2026-07-16T20:00:00';
-    startDate = new Date(defaultDateTime);
-  }
-
+  const startDate = _parseEventDateTimeHelper(dateRaw, timeRaw);
   const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
 
   const startUtc = formatToGCalUTC(startDate);
@@ -449,10 +418,10 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
 
   const defaultDetails = isFr
     ? `${guestHeader}Nous avons l'honneur de vous inviter à notre célébration de mariage !\n\n` +
-      `📌 Rappel : Veuillez enregistrer cet événement dans votre Google Calendar. Rappels conseillés : 24h avant et 1h avant l'événement.\n\n` +
+      `📌 Rappel : Veuillez enregistrer cet événement dans votre Google Calendar.\n\n` +
       `Lien de votre invitation personnelle : ${window.location.href}`
     : `${guestHeader}يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\n` +
-      `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
+      `تذكير: يرجى حفظ المناسبة في Calendrier Google.\n\n` +
       `رابط دعوتك الخاصة: ${window.location.href}`;
 
   const finalDetails = details || defaultDetails;
@@ -474,22 +443,31 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
 let _currentCalEventData = null;
 
 function _parseEventDateTimeHelper(dateRaw, timeRaw) {
-  let startDate = new Date();
-  if (dateRaw) {
-    if (typeof dateRaw === 'string' && dateRaw.includes('/')) {
+  let startDate = null;
+
+  if (dateRaw && typeof dateRaw === 'string') {
+    if (dateRaw.includes('/')) {
       const parts = dateRaw.split('/').map(p => p.trim());
       if (parts.length === 3) {
         const d = parseInt(parts[0], 10);
         const m = parseInt(parts[1], 10) - 1;
         const y = parseInt(parts[2], 10);
-        startDate = new Date(y, m, d);
+        if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
+          startDate = new Date(y, m, d);
+        }
       }
-    } else if (typeof dateRaw === 'string' && dateRaw.includes('-')) {
-      startDate = new Date(dateRaw);
+    } else if (dateRaw.includes('-')) {
+      const parsed = new Date(dateRaw);
+      if (!isNaN(parsed.getTime())) startDate = parsed;
     }
   }
 
-  if (timeRaw && typeof timeRaw === 'string' && !isNaN(startDate.getTime())) {
+  if (!startDate || isNaN(startDate.getTime())) {
+    const defaultDateTime = (typeof _weddingDateTime !== 'undefined' && _weddingDateTime) ? _weddingDateTime : '2026-07-16T20:00:00';
+    startDate = new Date(defaultDateTime);
+  }
+
+  if (timeRaw && typeof timeRaw === 'string') {
     const timeParts = timeRaw.split(':');
     if (timeParts.length >= 2) {
       const h = parseInt(timeParts[0], 10);
@@ -500,9 +478,6 @@ function _parseEventDateTimeHelper(dateRaw, timeRaw) {
     }
   }
 
-  if (isNaN(startDate.getTime())) {
-    startDate = new Date(typeof _weddingDateTime !== 'undefined' && _weddingDateTime ? _weddingDateTime : '2026-07-16T20:00:00');
-  }
   return startDate;
 }
 
@@ -599,7 +574,6 @@ function triggerGoogleCalendarWebFromModal() {
   if (!_currentCalEventData) return;
   const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
 
-  // Collect selected reminder chips
   const activeChips = document.querySelectorAll('.cal-chip.active');
   const selectedReminders = [];
   activeChips.forEach(chip => {
@@ -615,17 +589,13 @@ function triggerGoogleCalendarWebFromModal() {
     reminderHeader = isFr
       ? `📌 Rappels choisis par l'invité : ${selectedReminders.join(', ')}\n\n`
       : `📌 التنبيهات المحددة من الضيف: ${selectedReminders.join(' ، ')}\n\n`;
-  } else {
-    reminderHeader = isFr
-      ? `📌 Rappels conseillés : 1 jour avant (24h) et 1 heure avant l'événement.\n\n`
-      : `📌 التنبيهات المقترحة: قبل يوم واحد وقبل ساعة واحدة من الموعد.\n\n`;
   }
 
   const title = _currentCalEventData.title;
   const location = _currentCalEventData.location;
   const details = reminderHeader + (_currentCalEventData.details || '');
-  const dateRaw = _currentCalEventData.dateStr;
-  const timeRaw = _currentCalEventData.timeStr;
+  const dateRaw = _currentCalEventData.rawDate;
+  const timeRaw = _currentCalEventData.rawTime;
 
   const finalGcalUrl = buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details);
 
@@ -651,7 +621,7 @@ function openMainGoogleCalendar() {
   }
 
   const location = (typeof _weatherLocation !== 'undefined' && _weatherLocation) ? _weatherLocation : (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
-  let startDate = _parseEventDateTimeHelper(null, null);
+  const startDate = _parseEventDateTimeHelper(null, null);
   const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
 
   const dateStr = startDate.toLocaleDateString(isFr ? 'fr-FR' : 'ar-TN', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -668,8 +638,6 @@ function openMainGoogleCalendar() {
     ? `${guestHeader}Nous avons l'honneur de vous inviter à notre célébration de mariage !\n\nLien de votre invitation personnelle : ${window.location.href}`
     : `${guestHeader}يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\nرابط دعوتك الخاصة: ${window.location.href}`;
 
-  const gcalUrl = buildGoogleCalendarUrl(title, typeof _weddingDateTime !== 'undefined' ? _weddingDateTime : null, null, location, details);
-
   openCalendarModal({
     title: title,
     dateStr: dateStr,
@@ -678,7 +646,8 @@ function openMainGoogleCalendar() {
     details: details,
     startDate: startDate,
     endDate: endDate,
-    gcalUrl: gcalUrl
+    rawDate: null,
+    rawTime: null
   });
 }
 
@@ -723,8 +692,6 @@ function openEventGoogleCalendar(btn) {
 
   const startDate = _parseEventDateTimeHelper(eventDate, eventTime);
   const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
-
-  const gcalUrl = buildGoogleCalendarUrl(fullTitle, eventDate, eventTime, eventLocation, details);
 
   openCalendarModal({
     title: fullTitle,
