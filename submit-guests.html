@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0602;--bg2:#130e04;--card:rgba(255,248,220,0.04);--border:rgba(201,168,76,0.2);--border-h:rgba(201,168,76,0.45);--gold:#c9a84c;--gold-l:#e8cc7a;--text:#f5e6c0;--muted:#a08868;--danger:#e74c3c;--warn:#f0b429;--success:#2ecc71}
+:root{--bg:#0a0602;--card:rgba(255,248,220,0.04);--border:rgba(201,168,76,0.2);--gold:#c9a84c;--gold-l:#e8cc7a;--text:#f5e6c0;--muted:#a08868;--danger:#e74c3c;--warn:#f0b429;--success:#2ecc71}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-tap-highlight-color:transparent}
 body{font-family:'Amiri',serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden}
@@ -41,12 +41,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .f-input:focus{border-color:var(--gold)}
 .btn-primary{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);color:#1a1000;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
 .btn-primary:hover{opacity:0.92}.btn-primary:active{transform:scale(0.98)}
-.views-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;color:rgba(200,180,120,0.7);background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:20px;padding:2px 8px;margin-top:3px;white-space:nowrap;flex-shrink:0}
+.views-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;color:rgba(200,180,120,0.7);background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
 .views-badge.opened{color:#82e0aa;background:rgba(46,204,113,0.08);border-color:rgba(46,204,113,0.25)}
 .name-warn{font-size:0.74rem;color:var(--warn);margin-top:3px;display:flex;align-items:flex-start;gap:4px;line-height:1.4}
 .name-warn span{flex:1}
 #val-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
-#val-modal-box{background:#1a1106;border:1px solid rgba(201,168,76,0.4);border-radius:18px;padding:24px;max-width:500px;width:100%;display:flex;flex-direction:column;gap:14px}
+#dup-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#1a1106;border:1px solid rgba(201,168,76,0.4);border-radius:18px;padding:24px;max-width:500px;width:100%;display:flex;flex-direction:column;gap:14px}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(20,14,4,0.97);border:1px solid var(--border);color:var(--text);padding:12px 24px;border-radius:30px;font-size:0.9rem;opacity:0;transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -70,7 +71,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="header-couple" id="header-couple">💍 حفل الزفاف</div>
     <div class="header-sub" id="header-sub">صفحة تعبئة قائمة ضيوفكم الخاصة</div>
     <div class="stats-row">
-      <div class="stat-pill" id="stat-filled-pill">📝 <span id="stat-total">0</span></div>
+      <div class="stat-pill" id="stat-filled-pill">📝 <strong id="stat-total">0</strong></div>
       <div class="stat-pill">📦 <span id="stat-links">0/0</span></div>
     </div>
   </div>
@@ -79,31 +80,33 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="section-title" id="section-title">📊 جدول تعبئة أسماء الباقة</div>
     <div class="lang-banner" id="lang-banner" style="display:none"></div>
     <div class="help-box" id="help-box"></div>
-    <div id="pack-rows-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px; max-height:480px; overflow-y:auto; padding-left:4px;"></div>
-    <button class="btn-primary" onclick="saveGuestListSubmit()" style="font-size:1.1rem; padding:15px;" id="save-btn">💾</button>
+    <div id="pack-rows-container" style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;max-height:520px;overflow-y:auto;padding-left:4px;"></div>
+    <button class="btn-primary" onclick="saveGuestListSubmit()" style="font-size:1.1rem;padding:15px;" id="save-btn">💾</button>
   </div>
 </div>
 
-<!-- Duplicate detection modal -->
-<div id="dup-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
-  <div style="background:#1a1106;border:1px solid rgba(240,180,41,0.45);border-radius:18px;padding:24px;max-width:480px;width:100%;display:flex;flex-direction:column;gap:14px;">
+<!-- Duplicate modal -->
+<div id="dup-modal" style="display:none">
+  <div class="modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <h3 style="margin:0;color:var(--warn);font-size:1rem;" id="dup-modal-title">🔁</h3>
+      <h3 style="margin:0;color:var(--warn);font-size:1rem;" id="dup-title">🔁</h3>
       <button onclick="document.getElementById('dup-modal').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.3rem;cursor:pointer;">✕</button>
     </div>
-    <p style="margin:0;font-size:0.84rem;color:var(--muted);" id="dup-modal-msg"></p>
-    <div id="dup-modal-list" style="font-size:0.82rem;color:var(--warn);max-height:160px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:10px;padding:10px 14px;line-height:1.9;"></div>
+    <p style="margin:0;font-size:0.84rem;color:var(--muted);" id="dup-msg"></p>
+    <div id="dup-list" style="font-size:0.82rem;color:var(--warn);max-height:160px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:10px;padding:10px 14px;line-height:1.9;"></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button onclick="document.getElementById('dup-modal').style.display='none'" style="flex:1;padding:11px;background:rgba(240,180,41,0.15);border:1px solid rgba(240,180,41,0.4);color:var(--warn);border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.9rem;" id="dup-fix-btn">✏️</button>
       <button onclick="proceedAfterDupCheck()" style="flex:1;padding:11px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.9rem;font-weight:700;" id="dup-force-btn">💾</button>
     </div>
   </div>
 </div>
+
+<!-- Language/mismatch modal -->
 <div id="val-modal" style="display:none">
-  <div id="val-modal-box">
+  <div class="modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <h3 style="margin:0;color:var(--warn);font-size:1rem;" id="val-modal-title">⚠️</h3>
-      <button onclick="document.getElementById('val-modal').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+      <button onclick="document.getElementById('val-modal').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.3rem;cursor:pointer;">✕</button>
     </div>
     <p style="margin:0;font-size:0.84rem;color:var(--muted);" id="val-modal-msg"></p>
     <div id="val-modal-list" style="font-size:0.82rem;color:var(--warn);max-height:180px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:10px;padding:10px 14px;line-height:1.8;"></div>
@@ -122,353 +125,340 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 'use strict';
 const FIREBASE_CONFIG={apiKey:"AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",authDomain:"invit-mar.firebaseapp.com",projectId:"invit-mar",storageBucket:"invit-mar.firebasestorage.app",messagingSenderId:"654872438284",appId:"1:654872438284:web:c11d6f3cdff82bf35ff029"};
 let _fbApp=null,_db=null;
-function initFirebase(){if(_fbApp)return;_fbApp=firebase.initializeApp(FIREBASE_CONFIG);_db=firebase.firestore()}
-let _slug='',_invData=null,_guests=[],_pack=9999,_lang='ar',_pendingList=null;
+function initFirebase(){if(_fbApp)return;_fbApp=firebase.initializeApp(FIREBASE_CONFIG);_db=firebase.firestore();}
+let _slug='',_invData=null,_guests=[],_pack=9999,_lang='ar',_pendingList=null,_pendingAfterDupCheck=null;
 
 const ALL_FORMULAS=[
-  {value:'ar_couple',          lang:'ar',label:'إلى السيد ... وحرمه'},
-  {value:'ar_couple_children', lang:'ar',label:'إلى السيد ... وحرمه وأبنائه'},
-  {value:'ar_man',             lang:'ar',label:'إلى السيد ...'},
-  {value:'ar_woman',           lang:'ar',label:'إلى السيدة ...'},
-  {value:'ar_friend_m',        lang:'ar',label:'إلى عْشيري ...'},
-  {value:'ar_friend_f',        lang:'ar',label:'إلى عْشيرتي ...'},
-  {value:'fr_couple',          lang:'fr',label:'M. et Mme ...'},
-  {value:'fr_man',             lang:'fr',label:'Monsieur ...'},
-  {value:'fr_woman',           lang:'fr',label:'Madame ...'},
-  {value:'fr_friend_m',        lang:'fr',label:'Pour mon Ami ...'},
-  {value:'fr_friend_f',        lang:'fr',label:'Pour mon Amie ...'},
+  {value:'ar_couple',          lang:'ar', label:'\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f ... \u0648\u062d\u0631\u0645\u0647'},
+  {value:'ar_couple_children', lang:'ar', label:'\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f ... \u0648\u062d\u0631\u0645\u0647 \u0648\u0623\u0628\u0646\u0627\u0626\u0647'},
+  {value:'ar_man',             lang:'ar', label:'\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f ...'},
+  {value:'ar_woman',           lang:'ar', label:'\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f\u0629 ...'},
+  {value:'ar_friend_m',        lang:'ar', label:'\u0625\u0644\u0649 \u0639\u0634\u064a\u0631\u064a ...'},
+  {value:'ar_friend_f',        lang:'ar', label:'\u0625\u0644\u0649 \u0639\u0634\u064a\u0631\u062a\u064a ...'},
+  {value:'fr_couple',          lang:'fr', label:'M. et Mme ...'},
+  {value:'fr_man',             lang:'fr', label:'Monsieur ...'},
+  {value:'fr_woman',           lang:'fr', label:'Madame ...'},
+  {value:'fr_friend_m',        lang:'fr', label:'Pour mon Ami ...'},
+  {value:'fr_friend_f',        lang:'fr', label:'Pour mon Amie ...'},
 ];
+
+const SALUTS={
+  ar_couple:         function(n){return '\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f '+n+' \u0648\u062d\u0631\u0645\u0647 \u0627\u0644\u0643\u0631\u064a\u0645\u0629';},
+  ar_couple_children:function(n){return '\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f '+n+' \u0648\u062d\u0631\u0645\u0647 \u0627\u0644\u0643\u0631\u064a\u0645\u0629 \u0648\u0623\u0628\u0646\u0627\u0626\u0647\u0645';},
+  ar_man:            function(n){return '\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f '+n+' \u0627\u0644\u0645\u062d\u062a\u0631\u0645';},
+  ar_woman:          function(n){return '\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f\u0629 '+n+' \u0627\u0644\u0641\u0627\u0636\u0644\u0629';},
+  ar_friend_m:       function(n){return '\u0625\u0644\u0649 \u0639\u0634\u064a\u0631\u064a \u0648\u0635\u062f\u064a\u0642\u064a \u0627\u0644\u0639\u0632\u064a\u0632 '+n;},
+  ar_friend_f:       function(n){return '\u0625\u0644\u0649 \u0639\u0634\u064a\u0631\u062a\u064a \u0648\u0635\u062f\u064a\u0642\u062a\u064a \u0627\u0644\u0639\u0632\u064a\u0632\u0629 '+n;},
+  fr_couple:         function(n){return '\u00c0 M. et Mme '+n;},
+  fr_man:            function(n){return 'Monsieur '+n;},
+  fr_woman:          function(n){return 'Madame '+n;},
+  fr_friend_m:       function(n){return 'Pour mon cher ami '+n;},
+  fr_friend_f:       function(n){return 'Pour ma ch\u00e8re amie '+n;},
+};
 
 function isArabicName(s){return /[\u0600-\u06FF]/.test(s||'');}
 function isLatinName(s){return /[A-Za-z\u00C0-\u00FF]/.test(s||'');}
+function getFormulas(){return ALL_FORMULAS.filter(function(f){return f.lang===_lang;});}
+function getDefaultType(){return _lang==='fr'?'fr_couple':'ar_couple';}
 
-const I18N={
+// i18n strings — NO tricky quote escaping, all plain
+var LBL={
   ar:{
-    headerSub:'صفحة تعبئة قائمة ضيوفكم الخاصة',
-    sectionTitle:'📊 جدول تعبئة أسماء الباقة',
-    helpText:'<strong>طريقة التعبئة:</strong> أدخل أسماء ضيوفك <strong>بالعربية</strong> واختر اللقب المناسب، ثم اضغط <strong>« حفظ القائمة »</strong>. يمكنك الحفظ جزئياً والعودة لاحقاً.',
-    placeholder:'اسم المدعو بالعربية...',
-    statFilled:'📝 الأسماء المعبأة:',
-    saveBtn:'💾 حفظ القائمة وإرسالها للمنظم',
-    langBanner:'🌐 لغة الزفاف: عربي — يُرجى كتابة الأسماء بالعربية',
-    warnName:(n)=>`⚠️ الاسم "${n}" مكتوب بحروف لاتينية — يُرجى كتابته بالعربية.`,
-    valTitle:'⚠️ بعض الأسماء مكتوبة بحروف لاتينية',
-    valMsg:'الأسماء التالية لا تتوافق مع لغة الزفاف (عربي). يُرجى تصحيحها قبل الحفظ، أو اضغط «حفظ رغم ذلك» لإرسالها كما هي:',
-    fixBtn:'✏️ تصحيح الأسماء',
-    forceBtn:'💾 حفظ رغم ذلك',
-    saveSuccess:(n)=>`💾 تم حفظ ${n} اسم بنجاح وإرسال إشعار للمنظم!`,
-    saveError:'❌ حدث خطأ أثناء الحفظ',
-    dupTitle:'🔁 أسماء مكررة في القائمة',
-    dupMsg:'تم اكتشاف الأسماء التالية أكثر من مرة. يُرجى مراجعتها قبل الحفظ:',
-    dupFix:'✏️ مراجعة القائمة',
-    dupForce:'💾 حفظ رغم التكرار',
-    viewsNone:'لم يُفتح بعد',
-    viewsCount:(n)=>`فُتح ${n} مرة`,
+    headerSub:'\u0635\u0641\u062d\u0629 \u062a\u0639\u0628\u0626\u0629 \u0642\u0627\u0626\u0645\u0629 \u0636\u064a\u0648\u0641\u0643\u0645 \u0627\u0644\u062e\u0627\u0635\u0629',
+    sectionTitle:'\ud83d\udcca \u062c\u062f\u0648\u0644 \u062a\u0639\u0628\u0626\u0629 \u0623\u0633\u0645\u0627\u0621 \u0627\u0644\u0628\u0627\u0642\u0629',
+    helpText:'<strong>\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629:</strong> \u0623\u062f\u062e\u0644 \u0623\u0633\u0645\u0627\u0621 \u0636\u064a\u0648\u0641\u0643 <strong>\u0628\u0627\u0644\u0639\u0631\u0628\u064a\u0629</strong> \u0648\u0627\u062e\u062a\u0631 \u0627\u0644\u0644\u0642\u0628 \u0627\u0644\u0645\u0646\u0627\u0633\u0628\u060c \u062b\u0645 \u0627\u0636\u063a\u0637 <strong>\u00ab \u062d\u0641\u0638 \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u00bb</strong>.',
+    placeholder:'\u0627\u0633\u0645 \u0627\u0644\u0645\u062f\u0639\u0648 \u0628\u0627\u0644\u0639\u0631\u0628\u064a\u0629...',
+    statFilled:'\ud83d\udcdd \u0627\u0644\u0623\u0633\u0645\u0627\u0621 \u0627\u0644\u0645\u0639\u0628\u0623\u0629:',
+    saveBtn:'\ud83d\udcbe \u062d\u0641\u0638 \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0648\u0625\u0631\u0633\u0627\u0644\u0647\u0627 \u0644\u0644\u0645\u0646\u0638\u0645',
+    langBanner:'\ud83c\udf10 \u0644\u063a\u0629 \u0627\u0644\u0632\u0641\u0627\u0641: \u0639\u0631\u0628\u064a \u2014 \u064a\u064f\u0631\u062c\u0649 \u0643\u062a\u0627\u0628\u0629 \u0627\u0644\u0623\u0633\u0645\u0627\u0621 \u0628\u0627\u0644\u0639\u0631\u0628\u064a\u0629',
+    warnLang:'\u26a0\ufe0f \u0627\u0644\u0627\u0633\u0645 \u0645\u0643\u062a\u0648\u0628 \u0628\u062d\u0631\u0648\u0641 \u0644\u0627\u062a\u064a\u0646\u064a\u0629 \u2014 \u064a\u064f\u0631\u062c\u0649 \u0643\u062a\u0627\u0628\u062a\u0647 \u0628\u0627\u0644\u0639\u0631\u0628\u064a\u0629.',
+    valTitle:'\u26a0\ufe0f \u0628\u0639\u0636 \u0627\u0644\u0623\u0633\u0645\u0627\u0621 \u0628\u062d\u0631\u0648\u0641 \u0644\u0627\u062a\u064a\u0646\u064a\u0629',
+    valMsg:'\u064a\u064f\u0631\u062c\u0649 \u062a\u0635\u062d\u064a\u062d\u0647\u0627 \u0623\u0648 \u0627\u0636\u063a\u0637 \u00ab\u062d\u0641\u0638 \u0631\u063a\u0645 \u0630\u0644\u0643\u00bb:',
+    valFix:'\u270f\ufe0f \u062a\u0635\u062d\u064a\u062d \u0627\u0644\u0623\u0633\u0645\u0627\u0621',
+    valForce:'\ud83d\udcbe \u062d\u0641\u0638 \u0631\u063a\u0645 \u0630\u0644\u0643',
+    dupTitle:'\ud83d\udd01 \u0623\u0633\u0645\u0627\u0621 \u0645\u0643\u0631\u0631\u0629',
+    dupMsg:'\u062a\u0645 \u0627\u0643\u062a\u0634\u0627\u0641 \u0623\u0633\u0645\u0627\u0621 \u0645\u0643\u0631\u0631\u0629. \u064a\u064f\u0631\u062c\u0649 \u0645\u0631\u0627\u062c\u0639\u062a\u0647\u0627:',
+    dupFix:'\u270f\ufe0f \u0645\u0631\u0627\u062c\u0639\u0629',
+    dupForce:'\ud83d\udcbe \u062d\u0641\u0638 \u0631\u063a\u0645 \u0627\u0644\u062a\u0643\u0631\u0627\u0631',
+    saveOk:function(n){return '\ud83d\udcbe \u062a\u0645 \u062d\u0641\u0638 '+n+' \u0627\u0633\u0645 \u0628\u0646\u062c\u0627\u062d!';},
+    saveErr:'\u274c \u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638',
+    viewsNone:'\u0644\u0645 \u064a\u064f\u0641\u062a\u062d \u0628\u0639\u062f',
+    viewsCount:function(n){return '\u0641\u064f\u062a\u062d '+n+' \u0645\u0631\u0629';},
+    pendingLabel:'\u23f3 \u0641\u064a \u0627\u0646\u062a\u0638\u0627\u0631 \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629',
+    approvedLabel:'\u2705 \u062a\u0645\u062a \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629',
+    copyBtn:'\ud83d\udccb \u0646\u0633\u062e \u0627\u0644\u0631\u0633\u0627\u0644\u0629',
+    copiedToast:'\ud83d\udccb \u062a\u0645 \u0646\u0633\u062e \u0627\u0644\u0631\u0633\u0627\u0644\u0629!',
   },
   fr:{
-    headerSub:'Page réservée aux mariés pour saisir leurs invités',
-    sectionTitle:'📊 Tableau des invités',
-    helpText:'<strong>Comment remplir :</strong> Entrez les noms de vos invités <strong>en français</strong> et choisissez le titre approprié, puis cliquez sur <strong>« Enregistrer »</strong>. Vous pouvez enregistrer partiellement et revenir plus tard.',
-    placeholder:'Nom du convive en français...',
-    statFilled:'📝 Noms renseignés :',
-    saveBtn:'💾 Enregistrer et envoyer à l\'organisateur',
-    langBanner:'🌐 Langue du mariage : Français — veuillez écrire les noms en français',
-    warnName:(n)=>`⚠️ Le nom "${n}" semble être en arabe — veuillez l'écrire en français.`,
-    valTitle:'⚠️ Certains noms semblent être en arabe',
-    valMsg:'Les noms suivants ne correspondent pas à la langue du mariage (Français). Veuillez les corriger ou enregistrer quand même :',
-    fixBtn:'✏️ Corriger les noms',
-    forceBtn:'💾 Enregistrer quand même',
-    saveSuccess:(n)=>`💾 ${n} invité(s) enregistré(s) — l'organisateur a été notifié !`,
-    saveError:'❌ Erreur lors de l\'enregistrement',
-    dupTitle:'🔁 Noms en double dans la liste',
-    dupMsg:'Les noms suivants apparaissent plusieurs fois. Veuillez vérifier avant d\'enregistrer :',
-    dupFix:'✏️ Vérifier la liste',
-    dupForce:'💾 Enregistrer quand même',
+    headerSub:'Page r\u00e9serv\u00e9e aux mari\u00e9s pour saisir leurs invit\u00e9s',
+    sectionTitle:'\ud83d\udcca Tableau des invit\u00e9s',
+    helpText:'<strong>Comment remplir :</strong> Entrez les noms de vos invit\u00e9s <strong>en fran\u00e7ais</strong> et choisissez le titre, puis cliquez sur <strong>\u00ab Enregistrer \u00bb</strong>.',
+    placeholder:'Nom du convive en fran\u00e7ais...',
+    statFilled:'\ud83d\udcdd Noms renseign\u00e9s :',
+    saveBtn:'\ud83d\udcbe Enregistrer et envoyer \u00e0 l\u2019organisateur',
+    langBanner:'\ud83c\udf10 Langue du mariage : Fran\u00e7ais \u2014 veuillez \u00e9crire les noms en fran\u00e7ais',
+    warnLang:'\u26a0\ufe0f Ce nom semble \u00eatre en arabe \u2014 veuillez l\u2019\u00e9crire en fran\u00e7ais.',
+    valTitle:'\u26a0\ufe0f Certains noms semblent \u00eatre en arabe',
+    valMsg:'Veuillez les corriger ou enregistrer quand m\u00eame :',
+    valFix:'\u270f\ufe0f Corriger',
+    valForce:'\ud83d\udcbe Enregistrer quand m\u00eame',
+    dupTitle:'\ud83d\udd01 Noms en double',
+    dupMsg:'Les noms suivants apparaissent plusieurs fois :',
+    dupFix:'\u270f\ufe0f V\u00e9rifier',
+    dupForce:'\ud83d\udcbe Enregistrer quand m\u00eame',
+    saveOk:function(n){return '\ud83d\udcbe '+n+' invit\u00e9(s) enregistr\u00e9(s)!';},
+    saveErr:'\u274c Erreur lors de l\u2019enregistrement',
     viewsNone:'Pas encore ouvert',
-    viewsCount:(n)=>`Ouvert ${n} fois`,
+    viewsCount:function(n){return 'Ouvert '+n+' fois';},
+    pendingLabel:'\u23f3 En attente d\u2019approbation',
+    approvedLabel:'\u2705 Approuv\u00e9',
+    copyBtn:'\ud83d\udccb Copier le message',
+    copiedToast:'\ud83d\udccb Message copi\u00e9 !',
   }
 };
+function lbl(k){return (LBL[_lang]||LBL.ar)[k];}
 
-function tx(key,...args){
-  const v=(I18N[_lang]||I18N.ar)[key];
-  return typeof v==='function'?v(...args):v;
-}
-
-window.addEventListener('DOMContentLoaded',()=>{
-  const params=new URLSearchParams(window.location.search);
+window.addEventListener('DOMContentLoaded',function(){
+  var params=new URLSearchParams(window.location.search);
   _slug=params.get('inv')||params.get('w')||'';
-  const autoKey=params.get('key')||params.get('pwd')||'';
+  var autoKey=params.get('key')||params.get('pwd')||'';
   if(!_slug){
-    document.getElementById('login-sub').innerHTML='⚠️ رابط غير صالح<br>تواصل مع المنظم للحصول على الرابط الصحيح';
+    document.getElementById('login-sub').innerHTML='&#x26A0;&#xFE0F; \u0631\u0627\u0628\u0637 \u063a\u064a\u0631 \u0635\u0627\u0644\u062d';
     document.getElementById('pwd-input').disabled=true;
     document.querySelector('.login-btn').disabled=true;
     return;
   }
-  document.getElementById('pwd-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+  document.getElementById('pwd-input').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
   if(autoKey){document.getElementById('pwd-input').value=autoKey;doLogin();}
 });
 
 async function doLogin(){
-  const pwd=document.getElementById('pwd-input').value.trim();
-  const errEl=document.getElementById('login-error');
+  var pwd=document.getElementById('pwd-input').value.trim();
+  var errEl=document.getElementById('login-error');
   errEl.textContent='';
-  if(!pwd){errEl.textContent='⚠️ أدخل كلمة المرور / Entrez le mot de passe';return}
+  if(!pwd){errEl.textContent='\u26a0\ufe0f \u0623\u062f\u062e\u0644 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631';return;}
   try{
     initFirebase();
-    const doc=await _db.collection('invitations').doc(_slug).get();
-    if(!doc.exists){errEl.textContent='❌ الدعوة غير موجودة — تحقق من الرابط';return}
+    var doc=await _db.collection('invitations').doc(_slug).get();
+    if(!doc.exists){errEl.textContent='\u274c \u0627\u0644\u062f\u0639\u0648\u0629 \u063a\u064a\u0631 \u0645\u0648\u062c\u0648\u062f\u0629';return;}
     _invData=doc.data();
     _lang=((_invData.config&&_invData.config.la)||'ar').toLowerCase();
-    const correctPwd=(_invData.couplePassword||'').trim();
-    if(!correctPwd){errEl.textContent='⚠️ لم يتم تعيين كلمة مرور — تواصل مع المنظم';return}
-    if(pwd!==correctPwd){errEl.textContent='❌ كلمة المرور غير صحيحة / Mot de passe incorrect';document.getElementById('pwd-input').value='';return}
+    var correctPwd=(_invData.couplePassword||'').trim();
+    if(!correctPwd){errEl.textContent='\u26a0\ufe0f \u0644\u0645 \u064a\u062a\u0645 \u062a\u0639\u064a\u064a\u0646 \u0643\u0644\u0645\u0629 \u0645\u0631\u0648\u0631';return;}
+    if(pwd!==correctPwd){errEl.textContent='\u274c \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u063a\u064a\u0631 \u0635\u062d\u064a\u062d\u0629';document.getElementById('pwd-input').value='';return;}
     document.getElementById('login-screen').style.display='none';
     document.getElementById('main-app').style.display='block';
     initForm();
-  }catch(err){console.error(err);errEl.textContent='❌ خطأ في الاتصال';}
+  }catch(err){console.error(err);errEl.textContent='\u274c \u062e\u0637\u0623 \u0641\u064a \u0627\u0644\u0627\u062a\u0635\u0627\u0644';}
 }
 
 function initForm(){
-  const cfg=_invData.config||{};
+  var cfg=_invData.config||{};
   _lang=(cfg.la||'ar').toLowerCase();
-  const isFr=_lang==='fr';
+  var isFr=_lang==='fr';
+  var groom=isFr?(cfg.gf2||cfg.ga||'Le Mari\u00e9'):(cfg.ga||cfg.gf2||'\u0627\u0644\u0639\u0631\u064a\u0633');
+  var bride =isFr?(cfg.bf2||cfg.ba||'La Mari\u00e9e'):(cfg.ba||cfg.bf2||'\u0627\u0644\u0639\u0631\u0648\u0633\u0629');
 
-  const groom=isFr?(cfg.gf2||cfg.ga||'Le Marié'):(cfg.ga||cfg.gf2||'العريس');
-  const bride =isFr?(cfg.bf2||cfg.ba||'La Mariée'):(cfg.ba||cfg.bf2||'العروسة');
-
-  // Apply direction
   document.documentElement.lang=_lang;
   document.documentElement.dir=isFr?'ltr':'rtl';
 
-  // Apply i18n
-  document.getElementById('header-couple').textContent=`💍 ${groom} & ${bride}`;
-  document.getElementById('header-sub').textContent=tx('headerSub');
-  document.getElementById('section-title').textContent=tx('sectionTitle');
-  document.getElementById('help-box').innerHTML=tx('helpText');
-  document.getElementById('paste-summary').textContent=tx('pasteSummary');
-  document.getElementById('paste-hint').textContent=tx('pasteHint');
-  document.getElementById('bulk-paste-area').placeholder=tx('pastePlaceholder');
-  document.getElementById('paste-btn').textContent=tx('pasteBtn');
-  document.getElementById('save-btn').textContent=tx('saveBtn');
-  document.getElementById('stat-filled-pill').innerHTML=tx('statFilled')+' <strong id="stat-total">0</strong>';
-  document.getElementById('val-modal-title').textContent=tx('valTitle');
-  document.getElementById('val-modal-msg').textContent=tx('valMsg');
-  document.getElementById('val-fix-btn').textContent=tx('fixBtn');
-  document.getElementById('val-force-btn').textContent=tx('forceBtn');
-  // Duplicate modal i18n
-  document.getElementById('dup-modal-title').textContent=tx('dupTitle');
-  document.getElementById('dup-modal-msg').textContent=tx('dupMsg');
-  document.getElementById('dup-fix-btn').textContent=tx('dupFix');
-  document.getElementById('dup-force-btn').textContent=tx('dupForce');
-  document.title=`${isFr?'Liste des convives':'تعبئة مدعوي'} ${groom} & ${bride}`;
+  document.getElementById('header-couple').textContent='\ud83d\udc8d '+groom+' & '+bride;
+  document.getElementById('header-sub').textContent=lbl('headerSub');
+  document.getElementById('section-title').textContent=lbl('sectionTitle');
+  document.getElementById('help-box').innerHTML=lbl('helpText');
+  document.getElementById('save-btn').textContent=lbl('saveBtn');
+  document.getElementById('stat-filled-pill').innerHTML=lbl('statFilled')+' <strong id="stat-total">0</strong>';
+  document.getElementById('val-modal-title').textContent=lbl('valTitle');
+  document.getElementById('val-modal-msg').textContent=lbl('valMsg');
+  document.getElementById('val-fix-btn').textContent=lbl('valFix');
+  document.getElementById('val-force-btn').textContent=lbl('valForce');
+  document.getElementById('dup-title').textContent=lbl('dupTitle');
+  document.getElementById('dup-msg').textContent=lbl('dupMsg');
+  document.getElementById('dup-fix-btn').textContent=lbl('dupFix');
+  document.getElementById('dup-force-btn').textContent=lbl('dupForce');
+  document.title=(isFr?'Liste des convives':'\u062a\u0639\u0628\u0626\u0629 \u0645\u062f\u0639\u0648\u064a')+' '+groom+' & '+bride;
 
-  // Language banner
-  const banner=document.getElementById('lang-banner');
+  var banner=document.getElementById('lang-banner');
   banner.style.display='flex';
-  banner.textContent=tx('langBanner');
+  banner.textContent=lbl('langBanner');
 
   _pack=_invData.pack||9999;
-  _guests=Array.isArray(_invData.guests)?[..._invData.guests]:[];
+  _guests=Array.isArray(_invData.guests)?[].concat(_invData.guests):[];
   renderPackTable();
   updateStats();
 }
 
-function getFormulas(){return ALL_FORMULAS.filter(f=>f.lang===_lang);}
-function getDefaultType(){return _lang==='fr'?'fr_couple':'ar_couple';}
-
-// ── Build full personalized invitation message (same logic as admin) ──
-function buildGuestMsg(name, type, link) {
-  const cfg = _invData.config || {};
-  const isFr = _lang === 'fr';
-  const groom = isFr ? (cfg.gf2 || cfg.ga || 'Le Marié') : (cfg.ga || cfg.gf2 || 'العريس');
-  const bride  = isFr ? (cfg.bf2 || cfg.ba || 'La Mariée') : (cfg.ba || cfg.bf2 || 'العروسة');
-  const date   = cfg.wdd || cfg.wd || '';
-
-  const formula = ALL_FORMULAS.find(f => f.value === type) || ALL_FORMULAS.find(f => f.lang === _lang);
-  const salutations = {
-    'ar_couple':          (n) => `إلى السيد ${n} وحرمه الكريمة`,
-    'ar_couple_children': (n) => `إلى السيد ${n} وحرمه الكريمة وأبنائهم`,
-    'ar_man':             (n) => `إلى السيد ${n} المحترم`,
-    'ar_woman':           (n) => `إلى السيدة ${n} الفاضلة`,
-    'ar_friend_m':        (n) => `إلى عشيري وصديقي العزيز ${n}`,
-    'ar_friend_f':        (n) => `إلى عشيرتي وصديقتي العزيزة ${n}`,
-    'fr_couple':          (n) => `À M. et Mme ${n}`,
-    'fr_man':             (n) => `Monsieur ${n}`,
-    'fr_woman':           (n) => `Madame ${n}`,
-    'fr_friend_m':        (n) => `Pour mon cher ami ${n}`,
-    'fr_friend_f':        (n) => `Pour ma chère amie ${n}`,
-  };
-  const salut = (salutations[type] || salutations['ar_couple'])(name);
-
-  if (isFr) {
-    return [
-      `💍 *${salut}*`,
-      ``,
-      `Nous avons le grand plaisir de vous inviter à célébrer le mariage de`,
-      `*${groom}* et *${bride}*`,
-      date ? `📅 ${date}` : null,
-      ``,
-      `Votre invitation personnalisée a été préparée spécialement pour vous :`,
-      ``,
-      `✨ *Votre invitation personnalisée :*`,
-      `🔗 ${link}`,
-      ``,
-      `Nous serons honorés de votre présence 🌸`,
-    ].filter(l => l !== null).join('\n');
-  } else {
-    return [
-      `💍 *${salut}*`,
-      ``,
-      `يسعدنا وبكل الفخر والسرور دعوتكم لحضور`,
-      `حفل زفاف *${groom}* و *${bride}*`,
-      date ? `📅 ${date}` : null,
-      ``,
-      `لقد تم تحضير دعوتكم الشخصية المصممة خصيصاً لكم،`,
-      `يمكنكم الاطلاع عليها عبر الرابط التالي:`,
-      ``,
-      `✨ *دعوتكم الشخصية:*`,
-      `🔗 ${link}`,
-      ``,
-      `نتشرف بحضوركم وكرم مشاركتكم لهذا اليوم المميز 🌸`,
-    ].filter(l => l !== null).join('\n');
-  }
-}
-
 function updateStats(){
-  const n=_guests.length;
-  const packLabel=_pack>=9999?'∞':_pack;
-  const el=document.getElementById('stat-total');
+  var n=_guests.filter(function(g){return g.name&&g.name.trim();}).length;
+  var packLabel=_pack>=9999?'\u221e':_pack;
+  var el=document.getElementById('stat-total');
   if(el)el.textContent=n;
   document.getElementById('stat-links').textContent=n+'/'+packLabel;
 }
 
-function hasMismatch(nameVal){
-  if(!nameVal.trim())return false;
-  return(_lang==='fr'&&isArabicName(nameVal))||
-         (_lang==='ar'&&isLatinName(nameVal)&&!isArabicName(nameVal));
+function hasMismatch(v){
+  if(!(v||'').trim())return false;
+  return(_lang==='fr'&&isArabicName(v))||(_lang==='ar'&&isLatinName(v)&&!isArabicName(v));
+}
+
+// Build personalized invitation message for an approved guest
+function buildGuestMsg(name,type,link){
+  var cfg=_invData&&_invData.config||{};
+  var isFr=_lang==='fr';
+  var groom=isFr?(cfg.gf2||cfg.ga||'Le Mari\u00e9'):(cfg.ga||cfg.gf2||'\u0627\u0644\u0639\u0631\u064a\u0633');
+  var bride =isFr?(cfg.bf2||cfg.ba||'La Mari\u00e9e'):(cfg.ba||cfg.bf2||'\u0627\u0644\u0639\u0631\u0648\u0633\u0629');
+  var date=cfg.wdd||cfg.wd||'';
+  var salutFn=SALUTS[type]||SALUTS['ar_couple'];
+  var salut=salutFn(name);
+  var lines;
+  if(isFr){
+    lines=[
+      '\ud83d\udc8d *'+salut+'*','',
+      'Nous avons le grand plaisir de vous inviter \u00e0 c\u00e9l\u00e9brer le mariage de',
+      '*'+groom+'* et *'+bride+'*',
+      date?'\ud83d\udcc5 '+date:null,'',
+      'Votre invitation personnalis\u00e9e a \u00e9t\u00e9 pr\u00e9par\u00e9e sp\u00e9cialement pour vous :','',
+      '\u2728 *Votre invitation personnalis\u00e9e :*','\ud83d\udd17 '+link,'',
+      'Nous serons honor\u00e9s de votre pr\u00e9sence \ud83c\udf38',
+    ];
+  } else {
+    lines=[
+      '\ud83d\udc8d *'+salut+'*','',
+      '\u064a\u0633\u0639\u062f\u0646\u0627 \u0648\u0628\u0643\u0644 \u0627\u0644\u0641\u062e\u0631 \u062f\u0639\u0648\u062a\u0643\u0645 \u0644\u062d\u0636\u0648\u0631',
+      '\u062d\u0641\u0644 \u0632\u0641\u0627\u0641 *'+groom+'* \u0648 *'+bride+'*',
+      date?'\ud83d\udcc5 '+date:null,'',
+      '\u062f\u0639\u0648\u062a\u0643\u0645 \u0627\u0644\u0634\u062e\u0635\u064a\u0629 \u062c\u0627\u0647\u0632\u0629\u060c \u064a\u0645\u0643\u0646\u0643\u0645 \u0641\u062a\u062d\u0647\u0627 \u0639\u0628\u0631:','',
+      '\u2728 *\u062f\u0639\u0648\u062a\u0643\u0645 \u0627\u0644\u0634\u062e\u0635\u064a\u0629:*','\ud83d\udd17 '+link,'',
+      '\u0646\u062a\u0634\u0631\u0641 \u0628\u062d\u0636\u0648\u0631\u0643\u0645 \ud83c\udf38',
+    ];
+  }
+  return lines.filter(function(l){return l!==null;}).join('\n');
 }
 
 function renderPackTable(){
-  const container=document.getElementById('pack-rows-container');
+  var container=document.getElementById('pack-rows-container');
   if(!container)return;
-  const FORMULAS=getFormulas();
-  const defaultType=getDefaultType();
-  const baseUrl=window.location.href.split('?')[0].replace('submit-guests.html','index.html');
-  const targetCount=(_pack&&_pack<9999)?_pack:Math.max(_guests.length+5,20);
-  let html='';
-  for(let i=0;i<targetCount;i++){
-    const existing=_guests[i]||{name:'',type:defaultType};
-    const nameVal=existing.name||'';
-    const hasName=!!nameVal.trim();
-    const views=existing.views||0;
-    const isApproved=existing.status==='approved';
-    const storedType=existing.type||defaultType;
-    const matchedType=FORMULAS.some(f=>f.value===storedType)?storedType:defaultType;
+  var FORMULAS=getFormulas();
+  var defaultType=getDefaultType();
+  var baseUrl=window.location.href.split('?')[0].replace('submit-guests.html','index.html');
+  var targetCount=(_pack&&_pack<9999)?_pack:Math.max(_guests.length+5,20);
+  var html='';
+
+  for(var i=0;i<targetCount;i++){
+    var existing=_guests[i]||{name:'',type:defaultType};
+    var nameVal=existing.name||'';
+    var hasName=!!(nameVal.trim());
+    var views=existing.views||0;
+    var isApproved=existing.status==='approved';
+    var storedType=existing.type||defaultType;
+    var matchedType=FORMULAS.some(function(f){return f.value===storedType;})?storedType:defaultType;
+    var formulaLabel='';
+    for(var fi=0;fi<FORMULAS.length;fi++){if(FORMULAS[fi].value===matchedType){formulaLabel=FORMULAS[fi].label;break;}}
 
     // ── APPROVED: frozen read-only row ──
-    if(isApproved && hasName){
-      const guestId=existing.id||'';
-      const link=guestId?`${baseUrl}?inv=${encodeURIComponent(_slug)}&gid=${encodeURIComponent(guestId)}`:'#';
-      const msg=link!=='#'?buildGuestMsg(nameVal,matchedType,link):'';
-      const formulaLabel=FORMULAS.find(f=>f.value===matchedType)?.label||(FORMULAS[0]?.label||'');
-      html+=`
-        <div style="display:flex;gap:8px;align-items:center;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.35);border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:1px;">
-          <span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;">${i+1}</span>
-          <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px;">
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-              <span style="font-size:0.92rem;color:#fff;font-weight:bold;flex:1;">${escHtml(nameVal)}</span>
-              <span style="font-size:0.75rem;color:var(--muted);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:2px 8px;white-space:nowrap;">${escHtml(formulaLabel)}</span>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-              <span style="font-size:0.72rem;color:#82e0aa;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.25);border-radius:20px;padding:2px 9px;white-space:nowrap;">✅ ${_lang==='fr'?'Approuvé par l\'organisateur':'تمت الموافقة من طرف المنظم'}</span>
-              <span style="display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;color:${views>0?'#82e0aa':'rgba(200,180,120,0.6)'};background:${views>0?'rgba(46,204,113,0.08)':'rgba(201,168,76,0.06)'};border:1px solid ${views>0?'rgba(46,204,113,0.25)':'rgba(201,168,76,0.15)'};border-radius:20px;padding:2px 9px;white-space:nowrap;">👁️ ${views>0?tx('viewsCount',views):tx('viewsNone')}</span>
-            </div>
-            ${msg ? `
-            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;">
-              <button onclick="(function(){
-                navigator.clipboard.writeText(${JSON.stringify(msg)}).then(()=>showToast('${_lang==='fr'?'📋 Message copié !':'📋 تم نسخ الرسالة!'}'));
-              })()" style="flex:1;min-width:120px;padding:7px 12px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.85rem;font-weight:bold;">
-                📋 ${_lang==='fr'?'Copier le message':'نسخ الرسالة'}
-              </button>
-              <button onclick="(function(){
-                window.open('https://wa.me/?text='+encodeURIComponent(${JSON.stringify(msg)}),'_blank');
-              })()" style="flex-shrink:0;padding:7px 12px;background:#25d366;color:white;border:none;border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.85rem;">
-                💬
-              </button>
-            </div>` : ''}
-          </div>
-        </div>`;
+    if(isApproved&&hasName){
+      var guestId=existing.id||'';
+      var link=guestId?(baseUrl+'?inv='+encodeURIComponent(_slug)+'&gid='+encodeURIComponent(guestId)):'#';
+      var msg=link!=='#'?buildGuestMsg(nameVal,matchedType,link):'';
+      var escapedMsg=msg.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      var viewsText=views>0?lbl('viewsCount')(views):lbl('viewsNone');
+      html+='<div style="display:flex;gap:8px;align-items:center;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.35);border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:4px;">';
+      html+='<span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;">'+(i+1)+'</span>';
+      html+='<div style="flex:1;display:flex;flex-direction:column;gap:5px;min-width:200px;">';
+      html+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
+      html+='<span style="font-size:0.92rem;color:#fff;font-weight:bold;flex:1;">'+escHtml(nameVal)+'</span>';
+      html+='<span style="font-size:0.75rem;color:var(--muted);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:2px 8px;">'+escHtml(formulaLabel)+'</span>';
+      html+='</div>';
+      html+='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
+      html+='<span style="font-size:0.72rem;color:#82e0aa;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.25);border-radius:20px;padding:2px 9px;">'+lbl('approvedLabel')+'</span>';
+      html+='<span style="font-size:0.72rem;color:'+(views>0?'#82e0aa':'rgba(200,180,120,0.6)')+';background:'+(views>0?'rgba(46,204,113,0.08)':'rgba(201,168,76,0.06)')+';border:1px solid '+(views>0?'rgba(46,204,113,0.25)':'rgba(201,168,76,0.15)')+';border-radius:20px;padding:2px 9px;">\uD83D\uDC41\uFE0F '+viewsText+'</span>';
+      html+='</div>';
+      if(msg){
+        html+='<div style="display:flex;gap:5px;flex-wrap:wrap;">';
+        html+='<button onclick="(function(){navigator.clipboard.writeText(\''+escapedMsg+'\').then(function(){showToast(\''+lbl('copiedToast')+'\');});})()" style="flex:1;min-width:120px;padding:7px 12px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:\'Amiri\',serif;font-size:0.85rem;font-weight:bold;">'+lbl('copyBtn')+'</button>';
+        html+='<button onclick="(function(){window.open(\'https://wa.me/?text=\'+encodeURIComponent(\''+escapedMsg+'\'),\'_blank\');})()" style="flex-shrink:0;padding:7px 12px;background:#25d366;color:white;border:none;border-radius:10px;cursor:pointer;font-family:\'Amiri\',serif;font-size:0.85rem;">\uD83D\uDCAC</button>';
+        html+='</div>';
+      }
+      html+='</div></div>';
       continue;
     }
 
     // ── PENDING / EMPTY: editable row ──
-    const optionsHtml=FORMULAS.map(f=>`<option value="${f.value}" ${f.value===matchedType?'selected':''}>${f.label}</option>`).join('');
-    const mismatch=hasMismatch(nameVal);
-    const borderColor=mismatch?'rgba(240,180,41,0.55)':(hasName?'rgba(201,168,76,0.3)':'rgba(201,168,76,0.2)');
-    const inputBorder=mismatch?'border-color:rgba(240,180,41,0.7);background:rgba(240,180,41,0.04);':'';
-    const warnHtml=mismatch?`<div class="name-warn"><span>⚠️</span><span>${tx('warnName',escHtml(nameVal))}</span></div>`:'';
-    const viewsBadge=hasName?`<span class="views-badge${views>0?' opened':''}">
-      ${views>0?'👁️ '+tx('viewsCount',views):'👁️ '+tx('viewsNone')}
-    </span>`:'';
-    const pendingBadge=hasName?`<span style="font-size:0.72rem;color:rgba(240,180,41,0.8);background:rgba(240,180,41,0.07);border:1px solid rgba(240,180,41,0.25);border-radius:20px;padding:2px 9px;white-space:nowrap;">⏳ ${_lang==='fr'?'En attente d\'approbation':'في انتظار الموافقة'}</span>`:'';
-    html+=`
-      <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(0,0,0,0.25);border:1px solid ${borderColor};border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:1px;" id="row-${i}">
-        <span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;padding-top:10px;">${i+1}</span>
-        <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px;">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-            <input type="text" class="pack-name-input f-input" data-index="${i}" value="${escHtml(nameVal)}" placeholder="${tx('placeholder')}" dir="${_lang==='fr'?'ltr':'rtl'}" style="flex:1;min-width:110px;padding:8px 10px;font-size:0.9rem;${inputBorder}" oninput="validateNameInput(this,${i})">
-            <select class="pack-type-select f-input" data-index="${i}" style="min-width:150px;padding:8px 6px;font-size:0.8rem;background:#181005;color:var(--text);flex-shrink:0;">${optionsHtml}</select>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-            ${pendingBadge}
-            ${viewsBadge}
-            <div id="warn-${i}" style="flex:1;">${warnHtml}</div>
-          </div>
-        </div>
-      </div>`;
+    var optionsHtml='';
+    for(var fi2=0;fi2<FORMULAS.length;fi2++){
+      var f=FORMULAS[fi2];
+      optionsHtml+='<option value="'+f.value+'"'+(f.value===matchedType?' selected':'')+'>'+f.label+'</option>';
+    }
+    var mismatch=hasMismatch(nameVal);
+    var borderColor=mismatch?'rgba(240,180,41,0.55)':(hasName?'rgba(201,168,76,0.3)':'rgba(201,168,76,0.2)');
+    var inputBorder=mismatch?'border-color:rgba(240,180,41,0.7);background:rgba(240,180,41,0.04);':'';
+    var warnHtml=mismatch?'<div class="name-warn"><span>\u26a0\ufe0f</span><span>'+lbl('warnLang')+'</span></div>':'';
+    var viewsBadge=hasName?'<span class="views-badge'+(views>0?' opened':'')+'>\uD83D\uDC41\uFE0F '+(views>0?lbl('viewsCount')(views):lbl('viewsNone'))+'</span>':'';
+    var pendingBadge=hasName?'<span style="font-size:0.72rem;color:rgba(240,180,41,0.8);background:rgba(240,180,41,0.07);border:1px solid rgba(240,180,41,0.25);border-radius:20px;padding:2px 9px;">'+lbl('pendingLabel')+'</span>':'';
+    var dirAttr=_lang==='fr'?'ltr':'rtl';
+    html+='<div style="display:flex;gap:8px;align-items:flex-start;background:rgba(0,0,0,0.25);border:1px solid '+borderColor+';border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:4px;" id="row-'+i+'">';
+    html+='<span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;padding-top:10px;">'+(i+1)+'</span>';
+    html+='<div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px;">';
+    html+='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
+    html+='<input type="text" class="pack-name-input f-input" data-index="'+i+'" value="'+escHtml(nameVal)+'" placeholder="'+lbl('placeholder')+'" dir="'+dirAttr+'" style="flex:1;min-width:110px;padding:8px 10px;font-size:0.9rem;'+inputBorder+'" oninput="validateNameInput(this,'+i+')">';
+    html+='<select class="pack-type-select f-input" data-index="'+i+'" style="min-width:150px;padding:8px 6px;font-size:0.8rem;background:#181005;color:var(--text);flex-shrink:0;">'+optionsHtml+'</select>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">'+pendingBadge+viewsBadge+'<div id="warn-'+i+'" style="flex:1;">'+warnHtml+'</div></div>';
+    html+='</div></div>';
   }
   container.innerHTML=html;
 }
 
 function validateNameInput(input,idx){
-  const val=input.value.trim();
-  const row=document.getElementById('row-'+idx);
-  const warnEl=document.getElementById('warn-'+idx);
+  var val=input.value.trim();
+  var row=document.getElementById('row-'+idx);
+  var warnEl=document.getElementById('warn-'+idx);
   if(!val){
     if(row)row.style.borderColor='rgba(201,168,76,0.2)';
     input.style.borderColor='';input.style.background='';
-    if(warnEl)warnEl.innerHTML='';
-    return;
+    if(warnEl)warnEl.innerHTML='';return;
   }
   if(hasMismatch(val)){
-    input.style.borderColor='rgba(240,180,41,0.7)';
-    input.style.background='rgba(240,180,41,0.04)';
+    input.style.borderColor='rgba(240,180,41,0.7)';input.style.background='rgba(240,180,41,0.04)';
     if(row)row.style.borderColor='rgba(240,180,41,0.55)';
-    if(warnEl)warnEl.innerHTML=`<div class="name-warn"><span>⚠️</span><span>${tx('warnName',escHtml(val))}</span></div>`;
+    if(warnEl)warnEl.innerHTML='<div class="name-warn"><span>\u26a0\ufe0f</span><span>'+lbl('warnLang')+'</span></div>';
   } else {
-    input.style.borderColor='rgba(46,204,113,0.5)';
-    input.style.background='';
+    input.style.borderColor='rgba(46,204,113,0.5)';input.style.background='';
     if(row)row.style.borderColor='rgba(46,204,113,0.35)';
     if(warnEl)warnEl.innerHTML='';
   }
 }
 
-// ── Duplicate detection ──
-function findDuplicates(list){
-  const seen={};
-  list.forEach(g=>{const k=(g.name||'').trim().toLowerCase();if(k)seen[k]=(seen[k]||0)+1;});
-  return list.filter(g=>seen[(g.name||'').trim().toLowerCase()]>1).map(g=>g.name);
+function collectGuests(){
+  var nameInputs=document.querySelectorAll('.pack-name-input');
+  var typeSelects=document.querySelectorAll('.pack-type-select');
+  var list=[];var now=Date.now();
+  nameInputs.forEach(function(input,i){
+    var name=input.value.trim();
+    var type=typeSelects[i]?typeSelects[i].value:getDefaultType();
+    if(name){
+      var existing=_guests[i];
+      if(existing){list.push(Object.assign({},existing,{name:name,type:type}));}
+      else{list.push({id:(now+i).toString(36)+Math.random().toString(36).slice(2,5),name:name,type:type,status:'pending',createdAt:new Date().toISOString()});}
+    }
+  });
+  return list;
 }
 
-let _pendingAfterDupCheck=null;
+function findDuplicates(list){
+  var seen={};
+  list.forEach(function(g){var k=(g.name||'').trim().toLowerCase();if(k)seen[k]=(seen[k]||0)+1;});
+  var dups=[];
+  list.forEach(function(g){var k=(g.name||'').trim().toLowerCase();if(seen[k]>1&&dups.indexOf(g.name)===-1)dups.push(g.name);});
+  return dups;
+}
 
 async function saveGuestListSubmit(){
-  const list=collectGuests();
-  // Step 1: duplicate check (couple-side)
-  const dups=[...new Set(findDuplicates(list))];
+  var list=collectGuests();
+  var dups=findDuplicates(list);
   if(dups.length>0){
     _pendingAfterDupCheck=list;
-    document.getElementById('dup-modal-list').innerHTML=dups.map((n,i)=>`${i+1}. <strong>${escHtml(n)}</strong>`).join('<br>');
+    document.getElementById('dup-list').innerHTML=dups.map(function(n,i){return (i+1)+'. <strong>'+escHtml(n)+'</strong>';}).join('<br>');
     document.getElementById('dup-modal').style.display='flex';
     return;
   }
@@ -477,16 +467,15 @@ async function saveGuestListSubmit(){
 
 async function proceedAfterDupCheck(){
   document.getElementById('dup-modal').style.display='none';
-  if(_pendingAfterDupCheck) await checkLangAndSave(_pendingAfterDupCheck);
+  if(_pendingAfterDupCheck)await checkLangAndSave(_pendingAfterDupCheck);
   _pendingAfterDupCheck=null;
 }
 
 async function checkLangAndSave(list){
-  // Step 2: language mismatch check
-  const mismatches=list.filter(g=>hasMismatch(g.name));
+  var mismatches=list.filter(function(g){return hasMismatch(g.name);});
   if(mismatches.length>0){
     _pendingList=list;
-    document.getElementById('val-modal-list').innerHTML=mismatches.map((g,i)=>`${i+1}. <strong>${escHtml(g.name)}</strong>`).join('<br>');
+    document.getElementById('val-modal-list').innerHTML=mismatches.map(function(g,i){return (i+1)+'. <strong>'+escHtml(g.name)+'</strong>';}).join('<br>');
     document.getElementById('val-modal').style.display='flex';
     return;
   }
@@ -504,18 +493,18 @@ async function doSave(list){
   try{
     initFirebase();
     await _db.collection('invitations').doc(_slug).update({
-      guests:_guests.map(g=>({id:g.id,name:g.name,type:g.type,createdAt:g.createdAt,views:g.views||0})),
+      guests:_guests.map(function(g){return {id:g.id,name:g.name,type:g.type,status:g.status||'pending',createdAt:g.createdAt,views:g.views||0};}),
       hasUnsentGuests:true,
       lastSubmittedAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     renderPackTable();
     updateStats();
-    showToast(tx('saveSuccess',list.length));
-  }catch(e){console.error('Save failed:',e);showToast(tx('saveError'));}
+    showToast(lbl('saveOk')(list.length));
+  }catch(e){console.error('Save failed:',e);showToast(lbl('saveErr'));}
 }
 
 function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function showToast(msg){const t=document.getElementById('toast');if(t){t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}}
+function showToast(msg){var t=document.getElementById('toast');if(t){t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3500);}}
 </script>
 </body>
 </html>
