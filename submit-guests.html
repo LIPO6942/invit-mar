@@ -410,7 +410,7 @@ function renderPackTable(){
     const viewsBadge=hasName?`<span class="views-badge${views>0?' opened':''}">
       ${views>0?'👁️ '+tx('viewsCount',views):'👁️ '+tx('viewsNone')}
     </span>`:'';
-    const pendingBadge=hasName?`<span style="font-size:0.72rem;color:rgba(240,180,41,0.8);background:rgba(240,180,41,0.07);border:1px solid rgba(240,180,41,0.25);border-radius:20px;padding:2px 9px;white-space:nowrap;">⏳ ${_lang==='fr'?'En attente d\'approbation':'في انتظار الموافقة'}</span>`:''
+    const pendingBadge=hasName?`<span style="font-size:0.72rem;color:rgba(240,180,41,0.8);background:rgba(240,180,41,0.07);border:1px solid rgba(240,180,41,0.25);border-radius:20px;padding:2px 9px;white-space:nowrap;">⏳ ${_lang==='fr'?'En attente d\'approbation':'في انتظار الموافقة'}</span>`:'';
     html+=`
       <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(0,0,0,0.25);border:1px solid ${borderColor};border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:1px;" id="row-${i}">
         <span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;padding-top:10px;">${i+1}</span>
