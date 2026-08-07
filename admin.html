@@ -2659,20 +2659,41 @@ async function onAdminGuestWeddingChange(slug) {
     return;
   }
 
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted)">⏳ جاري تحميل البيانات من السيرفر...</div>';
+  card.style.display = 'block';
+
   try {
     initFirebase();
-    const doc = await _db.collection('invitations').doc(slug).get();
-    if (!doc.exists) {
-      card.style.display = 'none';
+    const docSnap = await _db.collection('invitations').doc(slug).get();
+    if (!docSnap.exists) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:#e74c3c">❌ الدعوة غير موجودة على السيرفر</div>';
       return;
     }
 
-    _currentAdminWeddingData = doc.data();
-    card.style.display = 'block';
+    const rawData = docSnap.data();
+    _currentAdminWeddingData = rawData;
 
-    const packSize = _currentAdminWeddingData.pack || 60;
-    const guests = Array.isArray(_currentAdminWeddingData.guests) ? [..._currentAdminWeddingData.guests] : [];
+    // Debug: show raw data info
+    const guestsRaw = rawData.guests;
+    const packSize = rawData.pack || 60;
+    const guestsIsArray = Array.isArray(guestsRaw);
+    const guests = guestsIsArray ? [...guestsRaw] : [];
+
     if (countEl) countEl.textContent = `${guests.length} / ${packSize} مدعو`;
+
+    // Debug banner (temporary — remove once confirmed working)
+    const debugHtml = `
+      <div style="background:rgba(52,152,219,0.12); border:1px solid rgba(52,152,219,0.35); border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:0.78rem; color:#7fb3d3;">
+        🔍 <strong>تشخيص Firebase:</strong> &nbsp;
+        slug = <code>${slug}</code> &nbsp;|&nbsp;
+        guests field type = <code>${guestsRaw === undefined ? 'undefined ⚠️' : guestsIsArray ? 'array ✅' : typeof guestsRaw}</code> &nbsp;|&nbsp;
+        guests count = <code>${guests.length}</code> &nbsp;|&nbsp;
+        pack = <code>${packSize}</code> &nbsp;|&nbsp;
+        hasGuestsField = <code>${'guests' in rawData ? 'yes' : 'no ⚠️'}</code>
+        ${!('guests' in rawData) ? `<br><span style="color:#f39c12;font-weight:bold;">⚠️ هذه الدعوة القديمة لا تحتوي على حقل guests — اضغط على « إضافة حقل guests » لإنشائه</span>
+        <button onclick="fixLegacyGuestsField('${slug}')" style="margin-right:10px; background:rgba(230,126,34,0.2); border:1px solid rgba(230,126,34,0.5); color:#f39c12; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:0.8rem;">🔧 إنشاء حقل guests</button>` : ''}
+      </div>
+    `;
 
     const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
     const FORMULAS_MAP = [
@@ -2689,7 +2710,7 @@ async function onAdminGuestWeddingChange(slug) {
       {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
     ];
 
-    let html = '';
+    let html = debugHtml;
     const targetCount = (packSize && packSize < 9999) ? packSize : Math.max(guests.length + 5, 20);
 
     for(let i = 0; i < targetCount; i++) {
@@ -2783,6 +2804,18 @@ function applyAdminBulkPaste() {
     if (inputs[i]) inputs[i].value = name;
   });
   showToast(`✅ تم ملء ${lines.length} اسم في الجدول. اضغط «حفظ القائمة وتوليد جميع الروابط».`);
+}
+
+async function fixLegacyGuestsField(slug) {
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(slug).update({ guests: [] });
+    showToast('✅ تم إنشاء حقل guests بنجاح! يمكنك الآن إضافة المدعوين.');
+    onAdminGuestWeddingChange(slug);
+  } catch(e) {
+    console.error('fixLegacyGuestsField:', e);
+    showToast('❌ فشل إنشاء الحقل: ' + e.message);
+  }
 }
 
 async function adminSaveGuestEdit(guestId) {
