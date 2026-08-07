@@ -2693,18 +2693,67 @@ async function onAdminGuestWeddingChange(slug) {
 
     const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
     const FORMULAS_MAP = [
-      {value:'ar_couple',          label:'إلى السيد ... وحرمه',           emoji:'👨‍👩‍👧'},
-      {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', emoji:'👨‍👩‍👦‍👦'},
-      {value:'ar_man',             label:'إلى السيد ...',              emoji:'👔'},
-      {value:'ar_woman',           label:'إلى السيدة ...',             emoji:'👗'},
-      {value:'ar_friend_m',        label:'إلى عْشيري ...',            emoji:'🤝'},
-      {value:'ar_friend_f',        label:'إلى عْشيرتي ...',           emoji:'👩‍🤝‍👩'},
-      {value:'fr_couple',          label:'M. et Mme ...',            emoji:'💑'},
-      {value:'fr_man',             label:'Monsieur ...',              emoji:'🤵'},
-      {value:'fr_woman',           label:'Madame ...',                emoji:'👰'},
-      {value:'fr_friend_m',        label:'Pour mon Ami ...',          emoji:'👨‍🤝‍👨'},
-      {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
+      {value:'ar_couple',          label:'إلى السيد ... وحرمه',           salut: (n)=>`إلى السيد ${n} وحرمه الكريمة`},
+      {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', salut: (n)=>`إلى السيد ${n} وحرمه الكريمة وأبنائهم`},
+      {value:'ar_man',             label:'إلى السيد ...',                salut: (n)=>`إلى السيد ${n} المحترم`},
+      {value:'ar_woman',           label:'إلى السيدة ...',               salut: (n)=>`إلى السيدة ${n} الفاضلة`},
+      {value:'ar_friend_m',        label:'إلى عْشيري ...',              salut: (n)=>`إلى عشيري وصديقي العزيز ${n}`},
+      {value:'ar_friend_f',        label:'إلى عْشيرتي ...',             salut: (n)=>`إلى عشيرتي وصديقتي العزيزة ${n}`},
+      {value:'fr_couple',          label:'M. et Mme ...',               salut: (n)=>`À M. et Mme ${n}`},
+      {value:'fr_man',             label:'Monsieur ...',                 salut: (n)=>`Monsieur ${n}`},
+      {value:'fr_woman',           label:'Madame ...',                   salut: (n)=>`Madame ${n}`},
+      {value:'fr_friend_m',        label:'Pour mon Ami ...',             salut: (n)=>`Pour mon cher ami ${n}`},
+      {value:'fr_friend_f',        label:'Pour mon amie ...',            salut: (n)=>`Pour ma chère amie ${n}`},
     ];
+
+    // Get wedding details for personalized messages
+    const cfg = rawData.config || {};
+    const groomName = cfg.ga || cfg.gf2 || 'العريس';
+    const brideName = cfg.ba || cfg.bf2 || 'العروسة';
+    const weddingDate = cfg.wdd || cfg.wd || '';   // wdd = display date, wd = ISO date
+
+    // Build personalized message for a given guest
+    window._buildGuestMsg = function(name, type, link) {
+      const formula = FORMULAS_MAP.find(f => f.value === type) || FORMULAS_MAP[0];
+      const salutation = formula.salut(name);
+      const isFr = type.startsWith('fr_');
+
+      if (isFr) {
+        return [
+          `💍 *${salutation}*`,
+          ``,
+          `Nous avons le plaisir de vous convier à la célébration du mariage de`,
+          `*${groomName}* & *${brideName}*`,
+          weddingDate ? `📅 ${weddingDate}` : '',
+          ``,
+          `Votre invitation personnelle vous attend sur le lien ci-dessous. Elle a été préparée spécialement pour vous.`,
+          ``,
+          `✨ *Votre invitation :*`,
+          `🔗 ${link}`,
+          ``,
+          `Nous serions très honorés de votre présence. 🌸`
+        ].filter(l => l !== null).join('\n');
+      } else {
+        return [
+          `💍 *${salutation}*`,
+          ``,
+          `يسعدنا وبكل الفخر والسرور دعوتكم لحضور`,
+          `حفل زفاف *${groomName}* و *${brideName}*`,
+          weddingDate ? `📅 ${weddingDate}` : '',
+          ``,
+          `لقد تم تحضير دعوتكم الشخصية المصممة خصيصاً لكم،`,
+          `يمكنكم الاطلاع عليها عبر الرابط التالي:`,
+          ``,
+          `✨ *دعوتكم الشخصية:*`,
+          `🔗 ${link}`,
+          ``,
+          `نتشرف بحضوركم وكرم مشاركتكم لهذا اليوم المميز 🌸`
+        ].filter(l => l !== null).join('\n');
+      }
+    };
+    window._formulasMap  = FORMULAS_MAP;
+    window._baseUrl      = baseUrl;
+    window._currentSlug  = slug;
 
     let html = legacyWarning;
     const targetCount = (packSize && packSize < 9999) ? packSize : Math.max(guests.length + 5, 20);
@@ -2714,27 +2763,60 @@ async function onAdminGuestWeddingChange(slug) {
       const hasName = !!(existing.name && existing.name.trim());
       const guestId = existing.id || ((Date.now() + i).toString(36) + Math.random().toString(36).slice(2, 5));
       const link = hasName ? `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(guestId)}` : '';
-      
-      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
+      const safeLink = escHtml(link);
+      const safeId   = escHtml(guestId);
+      const safeName = escHtml(existing.name || '');
+      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.label}</option>`).join('');
 
       const linkBadge = hasName ? `
-        <div style="display:flex; gap:6px; align-items:center;">
-          <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:5px 9px; font-size:0.75rem;">📋 نسخ الرابط</button>
-          <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ' + document.getElementById('ag-name-${i}').value + ' ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:5px 9px; font-size:0.75rem;">💬 واتساب</button>
+        <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap; margin-top:4px; width:100%;">
+          <button
+            onclick="(function(){
+              var inp=document.getElementById('ag-name-${i}');
+              var sel=document.getElementById('ag-type-${i}');
+              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||'ar_couple'}', '${link}');
+              navigator.clipboard.writeText(msg).then(()=>showToast('📋 تم نسخ الرسالة الكاملة!'));
+            })()"
+            class="btn btn-outline" style="padding:5px 11px; font-size:0.75rem; flex:1; min-width:100px;">
+            📋 نسخ الرسالة
+          </button>
+          <button
+            onclick="(function(){
+              var inp=document.getElementById('ag-name-${i}');
+              var sel=document.getElementById('ag-type-${i}');
+              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||'ar_couple'}', '${link}');
+              window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+            })()"
+            class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:5px 11px; font-size:0.75rem; flex:1; min-width:80px;">
+            💬 واتساب
+          </button>
+          <button
+            onclick="(function(){
+              var inp=document.getElementById('ag-name-${i}');
+              var sel=document.getElementById('ag-type-${i}');
+              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||'ar_couple'}', '${link}');
+              if(navigator.share){navigator.share({text:msg}).catch(()=>{});}
+              else { navigator.clipboard.writeText(msg).then(()=>showToast('📋 نسخ للإرسال عبر Messenger أو أي تطبيق آخر!')); }
+            })()"
+            class="btn btn-ghost" style="padding:5px 9px; font-size:0.78rem; flex-shrink:0;" title="مشاركة / Messenger">
+            📤 مشاركة
+          </button>
         </div>
-      ` : `<span style="font-size:0.75rem; color:var(--text-muted);">⏳ شـاغر</span>`;
+      ` : `<span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; display:block;">⏳ شـاغر — أدخل اسم المدعو ثم احفظ</span>`;
 
       html += `
-        <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid ${hasName ? 'rgba(46,204,113,0.35)' : 'rgba(201,168,76,0.2)'}; border-radius:12px; padding:8px 10px; flex-wrap:wrap;" data-gid="${guestId}">
-          <span style="font-size:0.82rem; color:var(--gold); font-weight:bold; width:26px; text-align:center; flex-shrink:0;">${i+1}</span>
+        <div style="display:flex; gap:8px; align-items:flex-start; background:rgba(0,0,0,0.25); border:1px solid ${hasName ? 'rgba(46,204,113,0.35)' : 'rgba(201,168,76,0.2)'}; border-radius:12px; padding:10px 12px; flex-wrap:wrap; margin-bottom:2px;" data-gid="${safeId}">
+          <span style="font-size:0.82rem; color:var(--gold); font-weight:bold; width:26px; text-align:center; flex-shrink:0; padding-top:9px;">${i+1}</span>
           
-          <input type="text" id="ag-name-${i}" class="admin-pack-name-input f-input" data-index="${i}" value="${escHtml(existing.name || '')}" placeholder="اسم المدعو..." style="flex:1; min-width:140px; padding:7px 10px; font-size:0.88rem; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:#fff; border-radius:8px;">
-          
-          <select id="ag-type-${i}" class="admin-pack-type-select f-input" data-index="${i}" style="width:160px; padding:7px 6px; font-size:0.78rem; background:#181005; color:var(--gold-light); border:1px solid var(--border); border-radius:8px; flex-shrink:0;">
-            ${optionsHtml}
-          </select>
-
-          ${linkBadge}
+          <div style="flex:1; display:flex; flex-direction:column; gap:5px; min-width:200px;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <input type="text" id="ag-name-${i}" class="admin-pack-name-input f-input" data-index="${i}" value="${safeName}" placeholder="اسم المدعو..." style="flex:1; min-width:140px; padding:7px 10px; font-size:0.88rem; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:#fff; border-radius:8px;">
+              <select id="ag-type-${i}" class="admin-pack-type-select f-input" data-index="${i}" style="min-width:160px; padding:7px 6px; font-size:0.78rem; background:#181005; color:var(--gold-light); border:1px solid var(--border); border-radius:8px; flex-shrink:0;">
+                ${optionsHtml}
+              </select>
+            </div>
+            ${linkBadge}
+          </div>
         </div>
       `;
     }
@@ -2743,6 +2825,7 @@ async function onAdminGuestWeddingChange(slug) {
 
   } catch (e) {
     console.error('onAdminGuestWeddingChange:', e);
+    container.innerHTML = `<div style="color:#e74c3c;padding:16px;">❌ خطأ: ${e.message}</div>`;
   }
 }
 
@@ -2915,16 +2998,54 @@ function shareAllLinksToCoupleWhatsApp() {
   const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
   const cfg = _currentAdminWeddingData.config || {};
   const groom = cfg.ga || cfg.gf2 || 'العريس';
-  const bride = cfg.ba || cfg.bf2 || 'العروسة';
+  const bride  = cfg.ba || cfg.bf2 || 'العروسة';
 
-  let msg = `💍 *روابط دعوات زفاف ${groom} & ${bride}* 💍\n\nإليكم جميع روابط الدعوات الشخصية لضيوفكم جاهزة ومصممة بالأسماء:\n\n`;
+  // Build a block per guest with full personalized message separated by a divider
+  const buildMsg = window._buildGuestMsg;
+  let blocks = [];
   guests.forEach((g, i) => {
     const link = `${baseUrl}?inv=${encodeURIComponent(_currentAdminWeddingSlug)}&gid=${encodeURIComponent(g.id)}`;
-    msg += `📌 *${i+1}. ${g.name}*\n🔗 ${link}\n\n`;
+    if (buildMsg) {
+      blocks.push(`——— ${i+1}. ${g.name} ———\n` + buildMsg(g.name, g.type || 'ar_couple', link));
+    } else {
+      blocks.push(`📌 *${i+1}. ${g.name}*\n🔗 ${link}`);
+    }
   });
 
-  msg += `نتمنى لكم حفل زفاف سعيد ومبارك! 🌸`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  const fullMsg = `💍 *روابط دعوات زفاف ${groom} & ${bride}*\n` +
+    `✨ إليكم الرسائل الجاهزة للإرسال لكل مدعو:\n\n` +
+    blocks.join('\n\n━━━━━━━━━━━━━━━━━━━\n\n');
+
+  // Show modal with copy option + WhatsApp
+  showShareModal(fullMsg);
+}
+
+function showShareModal(text) {
+  // Remove existing modal
+  const existing = document.getElementById('share-modal-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'share-modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  overlay.innerHTML = `
+    <div style="background:#1a1106;border:1px solid rgba(201,168,76,0.4);border-radius:18px;padding:24px;max-width:560px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="margin:0;color:var(--gold);font-size:1.05rem;">📤 إرسال الروابط الشخصية للعروسين</h3>
+        <button onclick="document.getElementById('share-modal-overlay').remove()" style="background:none;border:none;color:#aaa;font-size:1.4rem;cursor:pointer;line-height:1;">✕</button>
+      </div>
+      <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">الرسائل أسفله جاهزة للإرسال — انسخها وأرسلها عبر واتساب أو ماسنجر أو أي تطبيق آخر.</p>
+      <textarea id="share-modal-text" readonly style="flex:1;min-height:260px;resize:vertical;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;color:#e8d9a0;font-size:0.8rem;padding:12px;font-family:monospace;line-height:1.6;">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="navigator.clipboard.writeText(document.getElementById('share-modal-text').value).then(()=>showToast('📋 تم نسخ جميع الرسائل!'))" class="btn btn-outline" style="flex:1;min-width:120px;">📋 نسخ الكل</button>
+        <button onclick="window.open('https://wa.me/?text='+encodeURIComponent(document.getElementById('share-modal-text').value),'_blank')" class="btn btn-primary" style="flex:1;min-width:120px;background:#25d366;color:white;border:none;">💬 واتساب</button>
+        <button onclick="if(navigator.share){navigator.share({text:document.getElementById('share-modal-text').value}).catch(()=>{});}else{navigator.clipboard.writeText(document.getElementById('share-modal-text').value).then(()=>showToast('📋 تم النسخ — أرسله عبر ماسنجر أو أي تطبيق!'));}" class="btn btn-ghost" style="flex:1;min-width:120px;">📤 مشاركة</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  // Auto-select textarea
+  setTimeout(()=>{ const ta=document.getElementById('share-modal-text'); if(ta) ta.select(); }, 100);
 }
 
 function exportAdminGuestsExcel() {
