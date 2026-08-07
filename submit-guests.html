@@ -127,6 +127,7 @@ const FIREBASE_CONFIG={apiKey:"AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",authDoma
 let _fbApp=null,_db=null;
 function initFirebase(){if(_fbApp)return;_fbApp=firebase.initializeApp(FIREBASE_CONFIG);_db=firebase.firestore();}
 let _slug='',_invData=null,_guests=[],_pack=9999,_lang='ar',_pendingList=null,_pendingAfterDupCheck=null;
+var _msgStore={}; // stores built messages keyed by row index, for approved guests
 
 const ALL_FORMULAS=[
   {value:'ar_couple',          lang:'ar', label:'\u0625\u0644\u0649 \u0627\u0644\u0633\u064a\u062f ... \u0648\u062d\u0631\u0645\u0647'},
@@ -335,6 +336,24 @@ function buildGuestMsg(name,type,link){
   return lines.filter(function(l){return l!==null;}).join('\n');
 }
 
+// Global helpers for approved guest buttons (avoids inline escaping issues)
+function copyGuestMsg(idx){
+  var msg=_msgStore[idx];
+  if(!msg)return;
+  navigator.clipboard.writeText(msg).then(function(){showToast(lbl('copiedToast'));}).catch(function(){
+    // fallback
+    var ta=document.createElement('textarea');
+    ta.value=msg;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    showToast(lbl('copiedToast'));
+  });
+}
+function waGuestMsg(idx){
+  var msg=_msgStore[idx];
+  if(!msg)return;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
 function renderPackTable(){
   var container=document.getElementById('pack-rows-container');
   if(!container)return;
@@ -343,6 +362,7 @@ function renderPackTable(){
   var baseUrl=window.location.href.split('?')[0].replace('submit-guests.html','index.html');
   var targetCount=(_pack&&_pack<9999)?_pack:Math.max(_guests.length+5,20);
   var html='';
+  _msgStore={}; // reset message store on each render
 
   for(var i=0;i<targetCount;i++){
     var existing=_guests[i]||{name:'',type:defaultType};
@@ -360,7 +380,7 @@ function renderPackTable(){
       var guestId=existing.id||'';
       var link=guestId?(baseUrl+'?inv='+encodeURIComponent(_slug)+'&gid='+encodeURIComponent(guestId)):'#';
       var msg=link!=='#'?buildGuestMsg(nameVal,matchedType,link):'';
-      var escapedMsg=msg.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      _msgStore[i]=msg;
       var viewsText=views>0?lbl('viewsCount')(views):lbl('viewsNone');
       html+='<div style="display:flex;gap:8px;align-items:center;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.35);border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:4px;">';
       html+='<span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;">'+(i+1)+'</span>';
@@ -375,8 +395,8 @@ function renderPackTable(){
       html+='</div>';
       if(msg){
         html+='<div style="display:flex;gap:5px;flex-wrap:wrap;">';
-        html+='<button onclick="(function(){navigator.clipboard.writeText(\''+escapedMsg+'\').then(function(){showToast(\''+lbl('copiedToast')+'\');});})()" style="flex:1;min-width:120px;padding:7px 12px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:\'Amiri\',serif;font-size:0.85rem;font-weight:bold;">'+lbl('copyBtn')+'</button>';
-        html+='<button onclick="(function(){window.open(\'https://wa.me/?text=\'+encodeURIComponent(\''+escapedMsg+'\'),\'_blank\');})()" style="flex-shrink:0;padding:7px 12px;background:#25d366;color:white;border:none;border-radius:10px;cursor:pointer;font-family:\'Amiri\',serif;font-size:0.85rem;">\uD83D\uDCAC</button>';
+        html+='<button onclick="copyGuestMsg('+i+')" style="flex:1;min-width:120px;padding:7px 12px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:\'Amiri\',serif;font-size:0.85rem;font-weight:bold;">'+lbl('copyBtn')+'</button>';
+        html+='<button onclick="waGuestMsg('+i+')" style="flex-shrink:0;padding:7px 12px;background:#25d366;color:white;border:none;border-radius:10px;cursor:pointer;font-family:\'Amiri\',serif;font-size:0.85rem;">\uD83D\uDCAC</button>';
         html+='</div>';
       }
       html+='</div></div>';
