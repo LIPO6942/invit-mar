@@ -2655,12 +2655,9 @@ async function onAdminGuestWeddingChange(slug) {
     if (countEl) countEl.textContent = guests.length;
     card.style.display = 'block';
 
-    if (!guests.length) {
-      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">لم يقم العروسان بإضافة أي أسماء بعد</div>';
-      return;
-    }
-
     const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
+    const submitUrl = window.location.href.split('?')[0].replace('admin.html', 'submit-guests.html') + '?inv=' + slug + '&key=' + encodeURIComponent(_currentAdminWeddingData.couplePassword || '');
+    
     const FORMULAS_MAP = [
       {value:'ar_couple',          label:'إلى السيد ... وحرمه',           emoji:'👨‍👩‍👧'},
       {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', emoji:'👨‍👩‍👦‍👦'},
@@ -2675,6 +2672,20 @@ async function onAdminGuestWeddingChange(slug) {
       {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
     ];
 
+    if (!guests.length) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:28px 16px; background:rgba(0,0,0,0.2); border-radius:14px; border:1px dashed var(--border);">
+          <div style="font-size:2.4rem; margin-bottom:8px;">💌</div>
+          <div style="font-size:1rem; font-weight:bold; color:var(--gold-light);">لم يقم العروسان بإضافة أسماء بعد في هذه الباقة</div>
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-top:4px; margin-bottom:16px;">يمكنك إرسال رابط تعبئة الأسماء للعروسين ليقوموا بملئها، أو إضافة أسماء مباشرة من هنا.</div>
+          <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="window.open('https://wa.me/?text='+encodeURIComponent('💍 مرحبًا، إليكم رابط تعبئة قائمة ضيوف حفل الزفاف:\\n🔗 ${submitUrl}'),'_blank')" style="background:#25d366; color:white; border:none; padding:10px 16px; font-size:0.85rem;">💬 إرسال رابط التعبئة للعروسين</button>
+            <button class="btn btn-outline" onclick="adminAddGuestPrompt()" style="border-color:var(--gold); color:var(--gold); padding:10px 16px; font-size:0.85rem;">➕ إضافة مدعو الآن كـ الأدمن</button>
+          </div>
+        </div>`;
+      return;
+    }
+
     container.innerHTML = guests.map((g, i) => {
       const link = `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(g.id)}`;
       const formulaObj = FORMULAS_MAP.find(f => f.value === g.type);
@@ -2688,10 +2699,11 @@ async function onAdminGuestWeddingChange(slug) {
             <div style="font-weight:bold; color:#fff; font-size:0.95rem;">${escHtml(g.name)}</div>
             <div style="font-size:0.76rem; color:var(--gold-light); margin-top:2px;">${emoji} ${label}</div>
           </div>
-          <div style="font-family:monospace; font-size:0.72rem; color:var(--text-muted); background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; flex:1.5; min-width:180px; word-break:break-all;">${link}</div>
+          <div style="font-family:monospace; font-size:0.72rem; color:var(--text-muted); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px; flex:1.5; min-width:180px; word-break:break-all;">${link}</div>
           <div style="display:flex; gap:6px;">
-            <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:5px 10px; font-size:0.76rem;">📋 نسخ</button>
-            <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ${g.name} ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:5px 10px; font-size:0.76rem;">💬 واتساب</button>
+            <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:6px 11px; font-size:0.76rem;">📋 نسخ</button>
+            <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ${g.name} ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:6px 11px; font-size:0.76rem;">💬 واتساب</button>
+            <button onclick="adminDeleteGuest('${g.id}')" class="btn btn-ghost" style="color:#ff6b6b; padding:6px 9px; font-size:0.76rem;" title="حذف المدعو">🗑️</button>
           </div>
         </div>
       `;
@@ -2699,6 +2711,52 @@ async function onAdminGuestWeddingChange(slug) {
 
   } catch (e) {
     console.error('onAdminGuestWeddingChange:', e);
+  }
+}
+
+async function adminAddGuestPrompt() {
+  if (!_currentAdminWeddingSlug) return;
+  const name = prompt('أدخل اسم المدعو الجديد:');
+  if (!name || !name.trim()) return;
+
+  const now = Date.now();
+  const newGuest = {
+    id: now.toString(36) + Math.random().toString(36).slice(2, 5),
+    name: name.trim(),
+    type: 'ar_couple',
+    createdAt: new Date().toISOString()
+  };
+
+  const guests = Array.isArray(_currentAdminWeddingData.guests) ? [..._currentAdminWeddingData.guests] : [];
+  guests.push(newGuest);
+
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({
+      guests: guests
+    });
+    showToast('✅ تمت إضافة المدعو بنجاح!');
+    onAdminGuestWeddingChange(_currentAdminWeddingSlug);
+  } catch (e) {
+    console.error('adminAddGuestPrompt failed:', e);
+    showToast('❌ فشل إضافة المدعو');
+  }
+}
+
+async function adminDeleteGuest(guestId) {
+  if (!_currentAdminWeddingSlug || !confirm('هل تريد حذف هذا المدعو؟')) return;
+  const guests = (Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : []).filter(g => g.id !== guestId);
+
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({
+      guests: guests
+    });
+    showToast('🗑️ تم الحذف بنجاح');
+    onAdminGuestWeddingChange(_currentAdminWeddingSlug);
+  } catch (e) {
+    console.error('adminDeleteGuest failed:', e);
+    showToast('❌ فشل الحذف');
   }
 }
 
