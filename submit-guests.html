@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>تعبئة قائمة المدعوين 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0602;--bg2:#130e04;--card:rgba(255,248,220,0.04);--card-h:rgba(255,248,220,0.07);--border:rgba(201,168,76,0.2);--border-h:rgba(201,168,76,0.45);--gold:#c9a84c;--gold-l:#e8cc7a;--text:#f5e6c0;--muted:#a08868;--danger:#e74c3c;--success:#2ecc71}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-tap-highlight-color:transparent}
+body{font-family:'Amiri',serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(201,168,76,0.06) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+#login-screen{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;z-index:1}
+.login-card{background:rgba(255,248,220,0.04);border:1px solid var(--border);border-radius:24px;padding:44px 32px 36px;width:100%;max-width:380px;text-align:center;backdrop-filter:blur(12px);box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:fadeInUp 0.6s ease both}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-icon{font-size:3.2rem;margin-bottom:16px}
+.login-title{font-size:1.7rem;color:var(--gold);font-weight:700;margin-bottom:5px}
+.login-sub{font-size:0.88rem;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.ornament{text-align:center;color:rgba(201,168,76,0.3);font-size:0.7rem;letter-spacing:6px;margin:6px 0 18px}
+.login-input{width:100%;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:12px;padding:13px 18px;color:var(--text);font-size:1.1rem;margin-bottom:14px;outline:none;text-align:center;letter-spacing:5px;font-family:monospace;transition:border-color 0.2s}
+.login-input:focus{border-color:var(--gold)}
+.login-btn{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);color:#1a1000;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
+.login-btn:hover{opacity:0.92}.login-btn:active{transform:scale(0.98)}
+.login-error{color:var(--danger);font-size:0.85rem;margin-top:10px;min-height:20px}
+
+#main-app{max-width:680px;margin:0 auto;padding:20px 14px 80px;position:relative;z-index:1}
+.app-header{background:rgba(10,6,2,0.92);border:1px solid var(--border);border-radius:20px;padding:20px;text-align:center;margin-bottom:20px;backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+.header-couple{font-size:1.5rem;color:var(--gold);font-weight:700}
+.header-sub{font-size:0.88rem;color:var(--muted);margin-top:4px}
+.stats-row{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.stat-pill{background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:20px;padding:5px 16px;font-size:0.82rem;color:var(--gold-l)}
+.stat-pill strong{color:var(--gold)}
+
+.section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:20px}
+.section-title{font-size:1.1rem;color:var(--gold);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.help-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.18);border-radius:12px;padding:12px 16px;font-size:0.84rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.help-box strong{color:var(--gold-l)}
+
+.f-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:0.95rem;font-family:'Amiri',serif;outline:none;transition:border-color 0.2s}
+.f-input:focus{border-color:var(--gold)}
+.btn-primary{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);color:#1a1000;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
+.btn-primary:hover{opacity:0.92}.btn-primary:active{transform:scale(0.98)}
+
+.bulk-textarea{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:0.9rem;font-family:'Amiri',serif;outline:none;resize:vertical;min-height:110px;line-height:1.6;margin-bottom:12px}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(20,14,4,0.97);border:1px solid var(--border);color:var(--text);padding:12px 24px;border-radius:30px;font-size:0.9rem;opacity:0;transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">💌</div>
+    <div class="login-title">تعبئة قائمة المدعوين</div>
+    <div class="ornament">✦ ✦ ✦</div>
+    <div class="login-sub" id="login-sub">صفحة مخصصة للعروسين<br>لتعبئة أسماء ضيوفهم بسهولة</div>
+    <input id="pwd-input" class="login-input" type="password" placeholder="••••••" dir="ltr" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">دخول ✨</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="main-app" style="display:none">
+  <div class="app-header">
+    <div class="header-couple" id="header-couple">💍 حفل الزفاف</div>
+    <div class="header-sub">صفحة تعبئة قائمة ضيوفكم الخاصة</div>
+    <div class="stats-row">
+      <div class="stat-pill">📝 الأسماء المعبأة: <strong id="stat-total">0</strong></div>
+      <div class="stat-pill">📦 سعة الباقة: <strong id="stat-links">0/0</strong></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 جدول تعبئة أسماء الباقة</div>
+    <div class="help-box">
+      <strong>طريقة التعبئة:</strong> أدخل أسماء ضيوفك مباشرة في الجدول أدناه واختر اللقب المناسب لكل اسم، ثم اضغط <strong>« حفظ القائمة »</strong>. يمكنك حفظ جزء من القائمة والعودة لاحقاً لإكمال الباقي.
+    </div>
+
+    <!-- Quick Paste Collapse -->
+    <details style="margin-bottom:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:12px; padding:10px 14px;">
+      <summary style="cursor:pointer; color:var(--gold-l); font-size:0.9rem; font-weight:bold;">
+        📋 هل لديك قائمة جاهزة؟ (نسخ - لصق سريع) ▾
+      </summary>
+      <div style="margin-top:10px;">
+        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:6px;">الصق الأسماء هنا (اسم في كل سطر)، وسيتم ملء الجدول تلقائياً:</div>
+        <textarea id="bulk-paste-area" class="bulk-textarea" placeholder="أحمد بن علي&#10;خالد العمري&#10;محمد الرياحي&#10;..."></textarea>
+        <button class="btn-primary" onclick="applyBulkPaste()" style="padding:10px; font-size:0.88rem;">📥 تعبئة الجدول من النص</button>
+      </div>
+    </details>
+
+    <div id="pack-rows-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px; max-height:480px; overflow-y:auto; padding-left:4px;">
+      <!-- Dynamically generated rows -->
+    </div>
+
+    <button class="btn-primary" onclick="saveGuestListSubmit()" style="font-size:1.1rem; padding:15px;">💾 حفظ القائمة وإرسالها للمنظم</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+'use strict';
+const FIREBASE_CONFIG={apiKey:"AIzaSyDiX0BwIT9wQKnlNHk0ADLgtI5eOUwF-1E",authDomain:"invit-mar.firebaseapp.com",projectId:"invit-mar",storageBucket:"invit-mar.firebasestorage.app",messagingSenderId:"654872438284",appId:"1:654872438284:web:c11d6f3cdff82bf35ff029"};
+let _fbApp=null,_db=null;
+function initFirebase(){if(_fbApp)return;_fbApp=firebase.initializeApp(FIREBASE_CONFIG);_db=firebase.firestore()}
+let _slug='',_invData=null,_guests=[],_pack=9999;
+
+const FORMULAS=[
+  {value:'ar_couple',          label:'إلى السيد ... وحرمه',           emoji:'👨‍👩‍👧'},
+  {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', emoji:'👨‍👩‍👦‍👦'},
+  {value:'ar_man',             label:'إلى السيد ...',              emoji:'👔'},
+  {value:'ar_woman',           label:'إلى السيدة ...',             emoji:'👗'},
+  {value:'ar_friend_m',        label:'إلى عْشيري ...',            emoji:'🤝'},
+  {value:'ar_friend_f',        label:'إلى عْشيرتي ...',           emoji:'👩‍🤝‍👩'},
+  {value:'fr_couple',          label:'M. et Mme ...',            emoji:'💑'},
+  {value:'fr_man',             label:'Monsieur ...',              emoji:'🤵'},
+  {value:'fr_woman',           label:'Madame ...',                emoji:'👰'},
+  {value:'fr_friend_m',        label:'Pour mon Ami ...',          emoji:'👨‍🤝‍👨'},
+  {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
+];
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const params=new URLSearchParams(window.location.search);
+  _slug=params.get('inv')||params.get('w')||'';
+  const autoKey=params.get('key')||params.get('pwd')||'';
+  if(!_slug){
+    document.getElementById('login-sub').innerHTML='⚠️ رابط غير صالح<br>تواصل مع المنظم للحصول على الرابط الصحيح';
+    document.getElementById('pwd-input').disabled=true;
+    document.querySelector('.login-btn').disabled=true;
+    return;
+  }
+  document.getElementById('pwd-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+  if(autoKey){
+    document.getElementById('pwd-input').value=autoKey;
+    doLogin();
+  }
+});
+
+async function doLogin(){
+  const pwd=document.getElementById('pwd-input').value.trim();
+  const errEl=document.getElementById('login-error');
+  errEl.textContent='';
+  if(!pwd){errEl.textContent='⚠️ أدخل كلمة المرور';return}
+  try{
+    initFirebase();
+    const doc=await _db.collection('invitations').doc(_slug).get();
+    if(!doc.exists){errEl.textContent='❌ الدعوة غير موجودة — تحقق من الرابط';return}
+    _invData=doc.data();
+    const correctPwd=(_invData.couplePassword||'').trim();
+    if(!correctPwd){errEl.textContent='⚠️ لم يتم تعيين كلمة مرور — تواصل مع المنظم';return}
+    if(pwd!==correctPwd){errEl.textContent='❌ كلمة المرور غير صحيحة';document.getElementById('pwd-input').value='';return}
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('main-app').style.display='block';
+    initForm();
+  }catch(err){console.error(err);errEl.textContent='❌ خطأ في الاتصال — تحقق من الإنترنت'}
+}
+
+function initForm(){
+  const cfg=_invData.config||{};
+  const groom=cfg.gf2||cfg.ga||'العريس';
+  const bride=cfg.bf2||cfg.ba||'العروسة';
+  document.getElementById('header-couple').textContent=`💍 ${groom} & ${bride}`;
+  document.title=`تعبئة مدعوي ${groom} & ${bride}`;
+  _pack=_invData.pack||9999;
+  _guests=Array.isArray(_invData.guests)?[..._invData.guests]:[];
+  renderPackTable();
+  updateStats();
+}
+
+function updateStats(){
+  const t=_guests.length;
+  const packLabel=_pack>=9999?'∞':_pack;
+  document.getElementById('stat-total').textContent=t;
+  document.getElementById('stat-links').textContent=t+'/'+packLabel;
+}
+
+function renderPackTable(){
+  const container = document.getElementById('pack-rows-container');
+  if(!container) return;
+  const targetCount = (_pack && _pack < 9999) ? _pack : Math.max(_guests.length + 5, 20);
+  
+  let html = '';
+  for(let i = 0; i < targetCount; i++) {
+    const existing = _guests[i] || { name: '', type: 'ar_couple' };
+    const optionsHtml = FORMULAS.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
+    
+    html += `
+      <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid rgba(201,168,76,0.2); border-radius:12px; padding:8px 10px;">
+        <span style="font-size:0.82rem; color:var(--gold); font-weight:bold; width:24px; text-align:center; flex-shrink:0;">${i+1}</span>
+        <input type="text" class="pack-name-input f-input" data-index="${i}" value="${escHtml(existing.name || '')}" placeholder="اسم المدعو..." style="flex:1; min-width:110px; padding:8px 10px; font-size:0.9rem;">
+        <select class="pack-type-select f-input" data-index="${i}" style="width:160px; padding:8px 6px; font-size:0.8rem; background:#181005; color:var(--text); flex-shrink:0;">
+          ${optionsHtml}
+        </select>
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function applyBulkPaste(){
+  const ta = document.getElementById('bulk-paste-area');
+  const raw = ta.value.trim();
+  if(!raw){ showToast('⚠️ الصق الأسماء أولاً'); return; }
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if(!lines.length){ showToast('⚠️ لا توجد أسماء صالحة'); return; }
+
+  const inputs = document.querySelectorAll('.pack-name-input');
+  lines.forEach((name, i) => {
+    if(inputs[i]) inputs[i].value = name;
+  });
+  showToast(`✅ تم وضع ${lines.length} اسم في الجدول. اضغط حفظ اعتمادها.`);
+}
+
+async function saveGuestListSubmit(){
+  const nameInputs = document.querySelectorAll('.pack-name-input');
+  const typeSelects = document.querySelectorAll('.pack-type-select');
+
+  const newGuestsList = [];
+  const now = Date.now();
+
+  nameInputs.forEach((input, i) => {
+    const name = input.value.trim();
+    const type = typeSelects[i] ? typeSelects[i].value : 'ar_couple';
+    if(name) {
+      const existing = _guests[i];
+      if(existing) {
+        newGuestsList.push({ ...existing, name, type });
+      } else {
+        newGuestsList.push({
+          id: (now + i).toString(36) + Math.random().toString(36).slice(2, 5),
+          name,
+          type,
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
+  });
+
+  _guests = newGuestsList;
+
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(_slug).update({
+      guests: _guests.map(g => ({ id: g.id, name: g.name, type: g.type, createdAt: g.createdAt, views: g.views || 0 }))
+    });
+    renderPackTable();
+    updateStats();
+    showToast(`💾 تم حفظ ${newGuestsList.length} اسم بنجاح وإرسال القائمة للمنظم!`);
+  } catch(e) {
+    console.error('Save failed:', e);
+    showToast('❌ حدث خطأ أثناء الحفظ');
+  }
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  if(t){ t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+}
+</script>
+</body>
+</html>

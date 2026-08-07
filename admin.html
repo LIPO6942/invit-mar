@@ -2067,7 +2067,7 @@ async function generateLink() {
     await saveInvitationToFirebase(invSlug, cfg, selectedPack, guestName, finalPwd, !!existingSlug);
 
     const inviteUrl  = `${base}?inv=${invSlug}`;
-    const guestsBase = base.replace('index.html', 'guests.html').replace(INVITATION_FILE, 'guests.html');
+    const guestsBase = base.replace('index.html', 'submit-guests.html').replace(INVITATION_FILE, 'submit-guests.html');
     const guestsLink = `${guestsBase}?inv=${invSlug}`;
     _longUrl = _shortUrl = inviteUrl;
     _guestsUrl = guestsLink;
@@ -2162,7 +2162,7 @@ async function renderLinksHistory() {
 
     c.innerHTML = syncHeader + hist.map(h => {
       const invUrl = baseUrl + '/' + INVITATION_FILE + '?inv=' + h.id;
-      const guestsUrl = baseUrl + '/guests.html?inv=' + h.id;
+      const guestsUrl = baseUrl + '/submit-guests.html?inv=' + h.id;
       const guestsUrlDirect = guestsUrl + '&key=' + encodeURIComponent(h.couplePassword);
       const packPct   = h.ps > 0 ? Math.min(100, Math.round((h.guestsUsed / h.ps) * 100)) : 0;
       const packFull  = h.guestsUsed >= h.ps;
@@ -2407,7 +2407,7 @@ function shareHistLink(url) {
 
 function shareGuestsLink(url, pwd, clientName) {
   const cleanName = clientName || 'العميل';
-  const msg = encodeURIComponent(`💍 مرحبًا ${cleanName}،\n\nإليك رابط إدارة وتوليد دعوات ضيوفك على واتساب:\n🔗 ${url}\n\n🔑 كلمة المرور الخاصة بك للدخول: ${pwd}\n\nيرجى حفظ هذا الرابط وكلمة المرور لإضافة ضيوفك ومتابعة تأكيدات الحضور.`);
+  const msg = encodeURIComponent(`💍 مرحبًا ${cleanName}،\n\nإليك رابط تعبئة قائمة ضيوف حفل الزفاف الخاص بكم:\n🔗 ${url}\n\n🔑 كلمة المرور الخاصة بكم: ${pwd}\n\nيرجى فتح الرابط لتعبئة أسماء ضيوفكم والألقاب المفضلة، وحفظ القائمة لإرسالها للمنظم.`);
   window.open('https://wa.me/?text=' + msg, '_blank');
 }
 
