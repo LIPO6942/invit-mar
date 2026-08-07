@@ -912,6 +912,9 @@ function buildInvSlug(groomFr, brideFr) {
   return `${g}-${b}-${year}`;
 }
 
+// ── Utility ──
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 // ── Firebase Firestore operations ──
 async function saveInvitationToFirebase(slug, cfg, pack, guestName, couplePwd, isUpdate = false) {
   initFirebase();
