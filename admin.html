@@ -655,16 +655,30 @@
       <!-- Guest Table & Batch Actions Card -->
       <div class="card" id="adminGuestCard" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-          <div class="card-title" style="margin-bottom:0;">📋 أسماء المدعوين (<span id="adminGuestCount">0</span> مدعو)</div>
+          <div class="card-title" style="margin-bottom:0;">📋 أسماء المدعوين (<span id="adminGuestCount">0</span>)</div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="shareAllLinksToCoupleWhatsApp()" style="background:#25d366; color:white; border:none; padding:8px 14px; font-size:0.82rem;">💬 إرسال جميع الروابط للعروسين</button>
             <button class="btn btn-outline" onclick="exportAdminGuestsExcel()" style="border-color:var(--gold); color:var(--gold); padding:8px 14px; font-size:0.82rem;">📊 تصدير Excel</button>
           </div>
         </div>
 
-        <div id="adminGuestTableContainer" style="display:flex; flex-direction:column; gap:8px; max-height:500px; overflow-y:auto; padding-right:4px;">
-          <!-- Dynamically populated guest cards with generated link & share actions -->
+        <!-- Quick Paste Collapse for Admin -->
+        <details style="margin-bottom:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:12px; padding:10px 14px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:0.88rem; font-weight:bold;">
+            📋 هل لديك قائمة أسماء جاهزة من العروسين؟ (نسخ - لصق سريع) ▾
+          </summary>
+          <div style="margin-top:10px;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">الصق الأسماء هنا (اسم في كل سطر)، وسيتم تعبئة جدول الباقة أدناه تلقائياً:</div>
+            <textarea id="admin-bulk-paste-area" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:10px; padding:10px; color:#fff; font-size:0.88rem; font-family:'Amiri',serif; resize:vertical; min-height:90px;" placeholder="أحمد بن علي&#10;خالد العمري&#10;محمد الرياحي&#10;..."></textarea>
+            <button class="btn btn-primary" onclick="applyAdminBulkPaste()" style="margin-top:8px; padding:8px 14px; font-size:0.85rem;">📥 تعبئة الجدول من النص</button>
+          </div>
+        </details>
+
+        <div id="adminGuestTableContainer" style="display:flex; flex-direction:column; gap:8px; max-height:480px; overflow-y:auto; padding-right:4px; margin-bottom:16px;">
+          <!-- Dynamically populated grid rows -->
         </div>
+
+        <button class="btn btn-primary" onclick="saveAdminPackGrid()" style="width:100%; padding:13px; font-size:1.05rem; font-weight:bold; background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); color:#1a1000;">💾 حفظ القائمة وتوليد جميع الروابط</button>
       </div>
 
     </div>
@@ -2654,13 +2668,13 @@ async function onAdminGuestWeddingChange(slug) {
     }
 
     _currentAdminWeddingData = doc.data();
-    const guests = Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : [];
-    if (countEl) countEl.textContent = guests.length;
     card.style.display = 'block';
 
+    const packSize = _currentAdminWeddingData.pack || 60;
+    const guests = Array.isArray(_currentAdminWeddingData.guests) ? [..._currentAdminWeddingData.guests] : [];
+    if (countEl) countEl.textContent = `${guests.length} / ${packSize} مدعو`;
+
     const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
-    const submitUrl = window.location.href.split('?')[0].replace('admin.html', 'submit-guests.html') + '?inv=' + slug + '&key=' + encodeURIComponent(_currentAdminWeddingData.couplePassword || '');
-    
     const FORMULAS_MAP = [
       {value:'ar_couple',          label:'إلى السيد ... وحرمه',           emoji:'👨‍👩‍👧'},
       {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', emoji:'👨‍👩‍👦‍👦'},
@@ -2675,61 +2689,100 @@ async function onAdminGuestWeddingChange(slug) {
       {value:'fr_friend_f',        label:'Pour mon amie ...',         emoji:'👩‍🤝‍👩'},
     ];
 
-    if (!guests.length) {
-      container.innerHTML = `
-        <div style="text-align:center; padding:28px 16px; background:rgba(0,0,0,0.2); border-radius:14px; border:1px dashed var(--border);">
-          <div style="font-size:2.4rem; margin-bottom:8px;">💌</div>
-          <div style="font-size:1rem; font-weight:bold; color:var(--gold-light);">لم يقم العروسان بإضافة أسماء بعد في هذه الباقة</div>
-          <div style="font-size:0.82rem; color:var(--text-muted); margin-top:4px; margin-bottom:16px;">يمكنك إرسال رابط تعبئة الأسماء للعروسين ليقوموا بملئها، أو إضافة أسماء مباشرة من هنا.</div>
-          <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="window.open('https://wa.me/?text='+encodeURIComponent('💍 مرحبًا، إليكم رابط تعبئة قائمة ضيوف حفل الزفاف:\\n🔗 ${submitUrl}'),'_blank')" style="background:#25d366; color:white; border:none; padding:10px 16px; font-size:0.85rem;">💬 إرسال رابط التعبئة للعروسين</button>
-            <button class="btn btn-outline" onclick="adminAddGuestPrompt()" style="border-color:var(--gold); color:var(--gold); padding:10px 16px; font-size:0.85rem;">➕ إضافة مدعو الآن كـ الأدمن</button>
-          </div>
-        </div>`;
-      return;
-    }
+    let html = '';
+    const targetCount = (packSize && packSize < 9999) ? packSize : Math.max(guests.length + 5, 20);
 
-    container.innerHTML = guests.map((g, i) => {
-      const link = `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(g.id)}`;
-      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === (g.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
+    for(let i = 0; i < targetCount; i++) {
+      const existing = guests[i] || { name: '', type: 'ar_couple', id: '' };
+      const hasName = !!(existing.name && existing.name.trim());
+      const guestId = existing.id || ((Date.now() + i).toString(36) + Math.random().toString(36).slice(2, 5));
+      const link = hasName ? `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(guestId)}` : '';
+      
+      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
 
-      return `
-        <div style="display:flex; gap:10px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid rgba(201,168,76,0.2); border-radius:12px; padding:10px 14px; flex-wrap:wrap;">
-          <span style="font-size:0.85rem; color:var(--gold); font-weight:bold; width:26px; text-align:center;">${i+1}</span>
+      const linkBadge = hasName ? `
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:5px 9px; font-size:0.75rem;">📋 نسخ الرابط</button>
+          <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ' + document.getElementById('ag-name-${i}').value + ' ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:5px 9px; font-size:0.75rem;">💬 واتساب</button>
+        </div>
+      ` : `<span style="font-size:0.75rem; color:var(--text-muted);">⏳ شـاغر</span>`;
+
+      html += `
+        <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid ${hasName ? 'rgba(46,204,113,0.35)' : 'rgba(201,168,76,0.2)'}; border-radius:12px; padding:8px 10px; flex-wrap:wrap;" data-gid="${guestId}">
+          <span style="font-size:0.82rem; color:var(--gold); font-weight:bold; width:26px; text-align:center; flex-shrink:0;">${i+1}</span>
           
-          <!-- Editable Name -->
-          <div style="display:flex; flex-direction:column; gap:4px;">
-            <label style="font-size:0.68rem; color:var(--text-muted);">اسم المدعو:</label>
-            <input type="text" id="ag-name-${g.id}" value="${escHtml(g.name)}" style="background:rgba(0,0,0,0.35); border:1px solid var(--border); color:#fff; padding:6px 10px; border-radius:8px; font-size:0.9rem; font-family:'Amiri',serif; min-width:140px;">
-          </div>
+          <input type="text" id="ag-name-${i}" class="admin-pack-name-input f-input" data-index="${i}" value="${escHtml(existing.name || '')}" placeholder="اسم المدعو..." style="flex:1; min-width:140px; padding:7px 10px; font-size:0.88rem; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:#fff; border-radius:8px;">
+          
+          <select id="ag-type-${i}" class="admin-pack-type-select f-input" data-index="${i}" style="width:160px; padding:7px 6px; font-size:0.78rem; background:#181005; color:var(--gold-light); border:1px solid var(--border); border-radius:8px; flex-shrink:0;">
+            ${optionsHtml}
+          </select>
 
-          <!-- Editable Salutation Title -->
-          <div style="display:flex; flex-direction:column; gap:4px;">
-            <label style="font-size:0.68rem; color:var(--text-muted);">اللقب / الصيغة:</label>
-            <select id="ag-type-${g.id}" style="background:#181005; border:1px solid var(--border); color:var(--gold-light); padding:6px 8px; border-radius:8px; font-size:0.8rem; font-family:'Amiri',serif; min-width:160px;">
-              ${optionsHtml}
-            </select>
-          </div>
-
-          <!-- Save Button -->
-          <button onclick="adminSaveGuestEdit('${g.id}')" class="btn btn-outline" style="border-color:#2ecc71; color:#2ecc71; padding:6px 10px; font-size:0.78rem; margin-top:14px;" title="حفظ التعديلات">💾 حفظ</button>
-
-          <!-- Personal Link -->
-          <div style="font-family:monospace; font-size:0.7rem; color:var(--text-muted); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px; flex:1; min-width:170px; word-break:break-all; margin-top:14px;">${link}</div>
-
-          <!-- Actions -->
-          <div style="display:flex; gap:6px; margin-top:14px;">
-            <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:6px 11px; font-size:0.76rem;">📋 نسخ</button>
-            <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ' + document.getElementById('ag-name-${g.id}').value + ' ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:6px 11px; font-size:0.76rem;">💬 واتساب</button>
-            <button onclick="adminDeleteGuest('${g.id}')" class="btn btn-ghost" style="color:#ff6b6b; padding:6px 9px; font-size:0.76rem;" title="حذف المدعو">🗑️</button>
-          </div>
+          ${linkBadge}
         </div>
       `;
-    }).join('');
+    }
+
+    container.innerHTML = html;
 
   } catch (e) {
     console.error('onAdminGuestWeddingChange:', e);
   }
+}
+
+async function saveAdminPackGrid() {
+  if (!_currentAdminWeddingSlug || !_currentAdminWeddingData) return;
+  const nameInputs = document.querySelectorAll('.admin-pack-name-input');
+  const typeSelects = document.querySelectorAll('.admin-pack-type-select');
+
+  const existingGuests = Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : [];
+  const newGuestsList = [];
+  const now = Date.now();
+
+  nameInputs.forEach((input, i) => {
+    const name = input.value.trim();
+    const type = typeSelects[i] ? typeSelects[i].value : 'ar_couple';
+    if (name) {
+      const existing = existingGuests[i];
+      if (existing) {
+        newGuestsList.push({ ...existing, name, type });
+      } else {
+        newGuestsList.push({
+          id: (now + i).toString(36) + Math.random().toString(36).slice(2, 5),
+          name,
+          type,
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
+  });
+
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({
+      guests: newGuestsList,
+      hasUnsentGuests: false
+    });
+    showToast(`💾 تم حفظ ${newGuestsList.length} مدعو وتوليد جميع روابطهم بنجاح!`);
+    onAdminGuestWeddingChange(_currentAdminWeddingSlug);
+  } catch (e) {
+    console.error('saveAdminPackGrid failed:', e);
+    showToast('❌ حدث خطأ أثناء الحفظ');
+  }
+}
+
+function applyAdminBulkPaste() {
+  const ta = document.getElementById('admin-bulk-paste-area');
+  if (!ta) return;
+  const raw = ta.value.trim();
+  if (!raw) { showToast('⚠️ الصق الأسماء أولاً'); return; }
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (!lines.length) { showToast('⚠️ لا توجد أسماء صالحة'); return; }
+
+  const inputs = document.querySelectorAll('.admin-pack-name-input');
+  lines.forEach((name, i) => {
+    if (inputs[i]) inputs[i].value = name;
+  });
+  showToast(`✅ تم ملء ${lines.length} اسم في الجدول. اضغط «حفظ القائمة وتوليد جميع الروابط».`);
 }
 
 async function adminSaveGuestEdit(guestId) {
