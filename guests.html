@@ -139,6 +139,25 @@ details[open] .chevron{transform:rotate(180deg)}
     </details>
   </div>
 
+  <div class="section" id="quick-pack-section">
+    <details id="quick-grid-details" open>
+      <summary>
+        <span>📊 جدول التعبئة السريعة للباقة (Tableau de Saisie du Pack)</span>
+        <span class="chevron">▾</span>
+      </summary>
+      <div class="help-box">
+        <strong>طريقة التعبئة السريعة:</strong> أدخل أسماء ضيوفك مباشرة في الجدول أدناه واختر اللقب المناسب لكل اسم، ثم اضغط حفظ.
+      </div>
+      <div id="quick-pack-rows" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px; max-height:420px; overflow-y:auto; padding-left:4px;">
+        <!-- Dynamically populated rows -->
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn-primary" onclick="saveQuickPackGrid()" style="flex:2;">💾 حفظ جميع أسماء الباقة</button>
+        <button class="btn-primary btn-green" onclick="exportGuestsExcel()" style="flex:1;">📊 تصدير Excel</button>
+      </div>
+    </details>
+  </div>
+
   <div class="section">
     <div class="section-title">
       📋 قائمة المدعوين
@@ -220,7 +239,8 @@ function buildGuestLink(guestId){
 }
 window.addEventListener('DOMContentLoaded',()=>{
   const params=new URLSearchParams(window.location.search);
-  _slug=params.get('inv')||'';
+  _slug=params.get('inv')||params.get('w')||'';
+  const autoKey=params.get('key')||params.get('pwd')||'';
   if(!_slug){
     document.getElementById('login-sub').innerHTML='⚠️ رابط غير صالح<br>تواصل مع المنظم للحصول على الرابط الصحيح';
     document.getElementById('pwd-input').disabled=true;
@@ -230,6 +250,11 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('pwd-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
   renderFormulaGrid('add-formula-grid','add');
   renderFormulaGrid('bulk-formula-grid','bulk');
+
+  if(autoKey){
+    document.getElementById('pwd-input').value=autoKey;
+    doLogin();
+  }
 });
 function renderFormulaGrid(containerId,mode){
   const grid=document.getElementById(containerId);
@@ -272,8 +297,98 @@ function initApp(){
   _pack=_invData.pack||9999;
   _guests=Array.isArray(_invData.guests)?[..._invData.guests]:[];
   renderGuestList();
+  renderQuickPackGrid();
   updateStats();
   checkPackUI();
+}
+
+function renderQuickPackGrid(){
+  const container = document.getElementById('quick-pack-rows');
+  if(!container) return;
+  const targetCount = (_pack && _pack < 9999) ? _pack : Math.max(_guests.length + 5, 20);
+  
+  let html = '';
+  for(let i = 0; i < targetCount; i++) {
+    const existing = _guests[i] || { name: '', type: 'ar_couple' };
+    const hasLink = !!(existing.name && existing.id);
+    const statusTag = hasLink 
+      ? `<span title="تم إنشاء وتوليد الرابط بنجاح" style="font-size:0.72rem; color:#2ecc71; background:rgba(46,204,113,0.12); padding:3px 7px; border-radius:8px; flex-shrink:0; font-weight:bold;">✅ تم التوليد</span>`
+      : `<span style="font-size:0.72rem; color:var(--muted); background:rgba(255,255,255,0.05); padding:3px 7px; border-radius:8px; flex-shrink:0;">⏳ شـاغر</span>`;
+    const optionsHtml = FORMULAS.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
+    
+    html += `
+      <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid ${hasLink ? 'rgba(46,204,113,0.35)' : 'rgba(201,168,76,0.2)'}; border-radius:12px; padding:8px 10px;">
+        <span style="font-size:0.8rem; color:var(--gold); font-weight:bold; width:24px; text-align:center; flex-shrink:0;">${i+1}</span>
+        <input type="text" class="quick-name-input f-input" data-index="${i}" value="${escHtml(existing.name || '')}" placeholder="اسم المدعو..." style="flex:1; min-width:110px; padding:8px 10px; font-size:0.9rem;">
+        <select class="quick-type-select f-input" data-index="${i}" style="width:160px; padding:8px 6px; font-size:0.8rem; background:#181005; color:var(--text); flex-shrink:0;">
+          ${optionsHtml}
+        </select>
+        ${statusTag}
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function saveQuickPackGrid(){
+  const nameInputs = document.querySelectorAll('.quick-name-input');
+  const typeSelects = document.querySelectorAll('.quick-type-select');
+
+  const newGuestsList = [];
+  const now = Date.now();
+
+  nameInputs.forEach((input, i) => {
+    const name = input.value.trim();
+    const type = typeSelects[i] ? typeSelects[i].value : 'ar_couple';
+    if(name) {
+      const existing = _guests[i];
+      if(existing) {
+        newGuestsList.push({ ...existing, name, type });
+      } else {
+        newGuestsList.push({
+          id: (now + i).toString(36) + Math.random().toString(36).slice(2, 5),
+          name,
+          type,
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
+  });
+
+  _guests = newGuestsList;
+  saveGuests().then(() => {
+    renderGuestList();
+    renderQuickPackGrid();
+    updateStats();
+    checkPackUI();
+    showToast(`💾 تم الحفظ! تم توليد ${newGuestsList.length} رابط بنجاح. يمكنك العودة لاحقاً لإكمال باقي الباقة.`);
+  }).catch(() => {
+    showToast('❌ حدث خطأ أثناء حفظ الجدول');
+  });
+}
+
+function exportGuestsExcel(){
+  if(!_guests || !_guests.length){
+    showToast('⚠️ لا توجد أسماء للتصدير');
+    return;
+  }
+
+  let csvContent = "\uFEFFالرقم;اسم المدعو;الصيغة / اللقب;رابط الدعوة الشخصي\n";
+  _guests.forEach((g, i) => {
+    const formulaObj = FORMULAS.find(f => f.value === g.type);
+    const label = formulaObj ? formulaObj.label : g.type;
+    const link = buildGuestLink(g.id);
+    csvContent += `${i + 1};"${g.name.replace(/"/g, '""')}";"${label}";"${link}"\n`;
+  });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `قائمة_مدعوي_الزفاف_${_slug}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('📊 تم تصدير ملف Excel بنجاح!');
 }
 function updateStats(){
   const t=_guests.length;
@@ -301,9 +416,9 @@ function addGuest(){
   nameEl.value='';
   nameEl.focus();
   saveGuests().then(()=>{
-    renderGuestList();updateStats();checkPackUI();showToast('✅ تمت إضافة '+name);
+    renderGuestList();renderQuickPackGrid();updateStats();checkPackUI();showToast('✅ تمت إضافة '+name);
     setTimeout(()=>{document.getElementById('guest-list')?.lastElementChild?.scrollIntoView({behavior:'smooth',block:'nearest'})},150);
-  }).catch(()=>{_guests.pop();renderGuestList();updateStats()});
+  }).catch(()=>{_guests.pop();renderGuestList();renderQuickPackGrid();updateStats()});
 }
 function bulkImport(){
   const ta=document.getElementById('bulk-textarea');
@@ -326,8 +441,8 @@ function bulkImport(){
   saveGuests().then(()=>{
     ta.value='';
     document.getElementById('bulk-details').open=false;
-    renderGuestList();updateStats();checkPackUI();showToast('✅ تمت إضافة '+names.length+' مدعو');
-  }).catch(()=>{_guests.splice(_guests.length-newG.length,newG.length);renderGuestList();updateStats()});
+    renderGuestList();renderQuickPackGrid();updateStats();checkPackUI();showToast('✅ تمت إضافة '+names.length+' مدعو');
+  }).catch(()=>{_guests.splice(_guests.length-newG.length,newG.length);renderGuestList();renderQuickPackGrid();updateStats()});
 }
 function deleteGuest(id){
   if(!confirm('هل تريد حذف هذا المدعو نهائياً؟'))return;
