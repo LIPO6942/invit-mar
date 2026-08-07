@@ -2149,21 +2149,21 @@ async function renderLinksHistory() {
       return;
     }
     const prodUrl = val('prodUrlInput');
-    let base;
+    let baseUrl;
     if (prodUrl) {
       let cleanProd = prodUrl.trim();
       if (!cleanProd.startsWith('http')) cleanProd = 'https://' + cleanProd;
-      if (cleanProd.endsWith('/')) base = cleanProd + INVITATION_FILE;
-      else if (cleanProd.endsWith(INVITATION_FILE)) base = cleanProd;
-      else base = cleanProd + '/' + INVITATION_FILE;
+      if (cleanProd.endsWith('/')) baseUrl = cleanProd.replace(/\/$/, '');
+      else if (cleanProd.endsWith(INVITATION_FILE)) baseUrl = cleanProd.replace(INVITATION_FILE, '').replace(/\/$/, '');
+      else baseUrl = cleanProd;
     } else {
-      base = window.location.href.replace('admin.html', INVITATION_FILE);
+      baseUrl = window.location.href.split('/').slice(0, -1).join('/');
     }
-    const guestsBase = base.replace('index.html','guests.html').replace(INVITATION_FILE,'guests.html');
 
     c.innerHTML = syncHeader + hist.map(h => {
-      const invUrl    = base + '?inv=' + h.id;
-      const guestsUrl = guestsBase + '?inv=' + h.id;
+      const invUrl = baseUrl + '/' + INVITATION_FILE + '?inv=' + h.id;
+      const guestsUrl = baseUrl + '/guests.html?inv=' + h.id;
+      const guestsUrlDirect = guestsUrl + '&key=' + encodeURIComponent(h.couplePassword);
       const packPct   = h.ps > 0 ? Math.min(100, Math.round((h.guestsUsed / h.ps) * 100)) : 0;
       const packFull  = h.guestsUsed >= h.ps;
       const packColor = packFull ? '#e74c3c' : h.guestsUsed > h.ps * 0.8 ? '#f39c12' : '#2ecc71';
