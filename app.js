@@ -469,6 +469,198 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+let _currentCalEventData = null;
+
+function _parseEventDateTimeHelper(dateRaw, timeRaw) {
+  let startDate = new Date();
+  if (dateRaw) {
+    if (typeof dateRaw === 'string' && dateRaw.includes('/')) {
+      const parts = dateRaw.split('/').map(p => p.trim());
+      if (parts.length === 3) {
+        const d = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const y = parseInt(parts[2], 10);
+        startDate = new Date(y, m, d);
+      }
+    } else if (typeof dateRaw === 'string' && dateRaw.includes('-')) {
+      startDate = new Date(dateRaw);
+    }
+  }
+
+  if (timeRaw && typeof timeRaw === 'string' && !isNaN(startDate.getTime())) {
+    const timeParts = timeRaw.split(':');
+    if (timeParts.length >= 2) {
+      const h = parseInt(timeParts[0], 10);
+      const m = parseInt(timeParts[1], 10);
+      if (!isNaN(h) && !isNaN(m)) {
+        startDate.setHours(h, m, 0, 0);
+      }
+    }
+  }
+
+  if (isNaN(startDate.getTime())) {
+    startDate = new Date(typeof _weddingDateTime !== 'undefined' && _weddingDateTime ? _weddingDateTime : '2026-07-16T20:00:00');
+  }
+  return startDate;
+}
+
+function openCalendarModal(data) {
+  _currentCalEventData = data;
+  const overlay = document.getElementById('calendar-modal-overlay');
+  if (!overlay) return;
+
+  const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
+  const isTn = document.body.classList.contains('lang-tn');
+
+  const titleEl = document.getElementById('cal-modal-title');
+  const subtitleEl = document.getElementById('cal-modal-subtitle');
+  const badgeEl = document.getElementById('cal-modal-badge');
+  const eventTitleEl = document.getElementById('cal-modal-event-title');
+  const dateEl = document.getElementById('cal-modal-event-date');
+  const timeEl = document.getElementById('cal-modal-event-time');
+  const locEl = document.getElementById('cal-modal-event-location');
+  const reminderEl = document.getElementById('cal-modal-reminder-pill');
+
+  const optIcsTitle = document.getElementById('cal-opt-ics-title');
+  const optIcsDesc = document.getElementById('cal-opt-ics-desc');
+  const optGcalTitle = document.getElementById('cal-opt-gcal-title');
+  const optGcalDesc = document.getElementById('cal-opt-gcal-desc');
+  const optOutlookTitle = document.getElementById('cal-opt-outlook-title');
+  const optOutlookDesc = document.getElementById('cal-opt-outlook-desc');
+
+  if (isFr) {
+    if (titleEl) titleEl.textContent = 'Enregistrer dans votre calendrier';
+    if (subtitleEl) subtitleEl.textContent = 'Choisissez l\'option qui vous convient sans quitter la page';
+    if (badgeEl) badgeEl.textContent = '✨ Jour J - Invitation Mariage';
+    if (reminderEl) reminderEl.textContent = '🔔 Rappels recommandés : 24h & 1h avant l\'événement';
+    if (optIcsTitle) optIcsTitle.textContent = '📲 Enregistrer sur le téléphone / App (.ics)';
+    if (optIcsDesc) optIcsDesc.textContent = 'Ouvre le calendrier natif (iPhone, Android, Apple Calendar, Outlook) sans quitter la page';
+    if (optGcalTitle) optGcalTitle.textContent = '🌐 Google Calendar (Web)';
+    if (optGcalDesc) optGcalDesc.textContent = 'Ajouter directement sur votre compte Google Calendar en ligne';
+    if (optOutlookTitle) optOutlookTitle.textContent = '✉️ Outlook / Office 365 (Web)';
+    if (optOutlookDesc) optOutlookDesc.textContent = 'Ajouter sur votre compte Microsoft Outlook Web';
+  } else if (isTn) {
+    if (titleEl) titleEl.textContent = 'احفظ الموعد في الكالندريي';
+    if (subtitleEl) subtitleEl.textContent = 'اختار كيفاش تحب تحفظ العرس في تليفونك';
+    if (badgeEl) badgeEl.textContent = '✨ يوم العرس المميز';
+    if (reminderEl) reminderEl.textContent = '🔔 نوتيفيكاسيون قبل بنهار وقبل بساعة مالموعد';
+    if (optIcsTitle) optIcsTitle.textContent = '📲 حفظ مباشر في التليفون (.ics)';
+    if (optIcsDesc) optIcsDesc.textContent = 'يحل نيشان في كالندريي تليفونك (iPhone, Android, Outlook) من غير ما تخرج';
+    if (optGcalTitle) optGcalTitle.textContent = '🌐 Google Calendar (ويب)';
+    if (optGcalDesc) optGcalDesc.textContent = 'حفظ في حساب Google Calendar أونلاين';
+    if (optOutlookTitle) optOutlookTitle.textContent = '✉️ Outlook / Office 365 (ويب)';
+    if (optOutlookDesc) optOutlookDesc.textContent = 'حفظ في حساب Microsoft Outlook أونلاين';
+  } else {
+    if (titleEl) titleEl.textContent = 'حفظ الموعد في التقويم';
+    if (subtitleEl) subtitleEl.textContent = 'اختر طريقة الحفظ المناسبة لجهازك دون مغادرة الصفحة';
+    if (badgeEl) badgeEl.textContent = '✨ اليوم المميّز - حفل الزفاف';
+    if (reminderEl) reminderEl.textContent = '🔔 تذكير مقترح: قبل يوم واحد (24h) وقبل ساعة واحدة من الموعد';
+    if (optIcsTitle) optIcsTitle.textContent = '📲 حفظ مباشر في الهاتف (.ics)';
+    if (optIcsDesc) optIcsDesc.textContent = 'يفتح تقويم جهازك مباشرة (iPhone, Android, Apple Calendar, Outlook) دون مغادرة الصفحة';
+    if (optGcalTitle) optGcalTitle.textContent = '🌐 Google Calendar (ويب)';
+    if (optGcalDesc) optGcalDesc.textContent = 'إضافة مباشرة إلى حساب Google Calendar الخاص بك عبر الإنترنت';
+    if (optOutlookTitle) optOutlookTitle.textContent = '✉️ Outlook / Office 365 (ويب)';
+    if (optOutlookDesc) optOutlookDesc.textContent = 'إضافة إلى حساب Microsoft Outlook الخاص بك عبر الإنترنت';
+  }
+
+  if (eventTitleEl) eventTitleEl.textContent = data.title || 'Mariage';
+  if (dateEl) dateEl.textContent = data.dateStr || '';
+  if (timeEl) timeEl.textContent = data.timeStr || '';
+  if (locEl) locEl.textContent = data.location || '';
+
+  const modalCard = overlay.querySelector('.cal-modal-content');
+  if (modalCard) {
+    modalCard.style.direction = isFr ? 'ltr' : 'rtl';
+  }
+
+  overlay.style.display = 'flex';
+}
+
+function closeCalendarModal() {
+  const overlay = document.getElementById('calendar-modal-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function triggerIcsDownloadFromModal() {
+  if (!_currentCalEventData) return;
+  const { title, startDate, endDate, location, details } = _currentCalEventData;
+
+  const formatDate = (dateObj) => {
+    return dateObj.toISOString().replace(/-|:|\.\d+/g, '');
+  };
+
+  const escapeIcs = (str) => {
+    if (!str) return '';
+    return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  };
+
+  const icsLines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Mariage Invitation App//NONSGML v1.0//FR',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:wedding-${Date.now()}@invitation`,
+    `DTSTAMP:${formatDate(new Date())}`,
+    `DTSTART:${formatDate(startDate)}`,
+    `DTEND:${formatDate(endDate)}`,
+    `SUMMARY:${escapeIcs(title)}`,
+    `DESCRIPTION:${escapeIcs(details)}`,
+    `LOCATION:${escapeIcs(location)}`,
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Rappel Mariage (24h avant)',
+    'TRIGGER:-P1D',
+    'END:VALARM',
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Rappel Mariage (1h avant)',
+    'TRIGGER:-PT1H',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ];
+
+  const blob = new Blob([icsLines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  const safeFilename = (title || 'Event').replace(/[^a-zA-Z0-9_\-]/g, '_');
+  link.setAttribute('download', `${safeFilename}.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  closeCalendarModal();
+}
+
+function triggerGoogleCalendarWebFromModal() {
+  if (!_currentCalEventData || !_currentCalEventData.gcalUrl) return;
+  window.open(_currentCalEventData.gcalUrl, '_blank', 'noopener,noreferrer');
+  closeCalendarModal();
+}
+
+function triggerOutlookWebFromModal() {
+  if (!_currentCalEventData) return;
+  const { title, startDate, endDate, location, details } = _currentCalEventData;
+  const startIso = startDate ? startDate.toISOString() : new Date().toISOString();
+  const endIso = endDate ? endDate.toISOString() : new Date().toISOString();
+
+  const params = new URLSearchParams({
+    path: '/calendar/action/compose',
+    rru: 'addevent',
+    subject: title || '',
+    startdt: startIso,
+    enddt: endIso,
+    location: location || '',
+    body: details || ''
+  });
+
+  const outlookUrl = `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+  window.open(outlookUrl, '_blank', 'noopener,noreferrer');
+  closeCalendarModal();
+}
+
 function openMainGoogleCalendar() {
   const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
   const brideEl = document.querySelector('[data-cfg="brideNameDisplay"]');
@@ -486,9 +678,36 @@ function openMainGoogleCalendar() {
     if (guestSalutation) title += ` (خاصة بـ ${guestSalutation})`;
   }
 
-  const location = _weatherLocation || (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
-  const url = buildGoogleCalendarUrl(title, _weddingDateTime, null, location, null);
-  window.open(url, '_blank', 'noopener,noreferrer');
+  const location = (typeof _weatherLocation !== 'undefined' && _weatherLocation) ? _weatherLocation : (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
+  let startDate = _parseEventDateTimeHelper(null, null);
+  const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
+
+  const dateStr = startDate.toLocaleDateString(isFr ? 'fr-FR' : 'ar-TN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const timeStr = startDate.toLocaleTimeString(isFr ? 'fr-FR' : 'ar-TN', { hour: '2-digit', minute: '2-digit' });
+
+  let guestHeader = '';
+  if (guestSalutation) {
+    guestHeader = isFr
+      ? `Bienvenue ${guestSalutation} ! 🌸\n`
+      : `أهلاً وسهلاً بك ${guestSalutation} 🌸\n`;
+  }
+
+  const details = isFr
+    ? `${guestHeader}Nous avons l'honneur de vous inviter à notre célébration de mariage !\n\nLien de votre invitation personnelle : ${window.location.href}`
+    : `${guestHeader}يسرنا ويشرفنا دعوتكم لحضور حفلنا!\n\nرابط دعوتك الخاصة: ${window.location.href}`;
+
+  const gcalUrl = buildGoogleCalendarUrl(title, typeof _weddingDateTime !== 'undefined' ? _weddingDateTime : null, null, location, details);
+
+  openCalendarModal({
+    title: title,
+    dateStr: dateStr,
+    timeStr: timeStr,
+    location: location,
+    details: details,
+    startDate: startDate,
+    endDate: endDate,
+    gcalUrl: gcalUrl
+  });
 }
 
 function openEventGoogleCalendar(btn) {
@@ -516,7 +735,7 @@ function openEventGoogleCalendar(btn) {
     : `${eventTitle} - ${groomName} & ${brideName}`.trim();
 
   if (guestSalutation) {
-    fullTitle += isFr ? ` (${guestSalutation})` : ` (${guestSalutation})`;
+    fullTitle += ` (${guestSalutation})`;
   }
 
   let guestHeader = '';
@@ -527,17 +746,24 @@ function openEventGoogleCalendar(btn) {
   }
 
   const details = isFr
-    ? `${guestHeader}Invitation pour la cérémonie : ${eventTitle}.\n\n` +
-      `📌 Rappel : N'oubliez pas d'enregistrer l'événement dans votre Google Calendar. Notification de rappel conseillée : 1 jour avant et 1 heure avant l'événement.\n\n` +
-      `Lieu : ${eventLocation}\n` +
-      `Lien de votre invitation personnelle : ${window.location.href}`
-    : `${guestHeader}دعوة لحضور ${eventTitle}.\n\n` +
-      `تذكير: يرجى حفظ المناسبة في Calendrier Google. تذكير مقترح: قبل يوم واحد (24 ساعة) وقبل ساعة واحدة من الموعد.\n\n` +
-      `المكان: ${eventLocation}\n` +
-      `رابط دعوتك الخاصة: ${window.location.href}`;
+    ? `${guestHeader}Invitation pour la cérémonie : ${eventTitle}.\nLieu : ${eventLocation}\nLien de votre invitation personnelle : ${window.location.href}`
+    : `${guestHeader}دعوة لحضور ${eventTitle}.\nالمكان: ${eventLocation}\nرابط دعوتك الخاصة: ${window.location.href}`;
 
-  const url = buildGoogleCalendarUrl(fullTitle, eventDate, eventTime, eventLocation, details);
-  window.open(url, '_blank', 'noopener,noreferrer');
+  const startDate = _parseEventDateTimeHelper(eventDate, eventTime);
+  const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
+
+  const gcalUrl = buildGoogleCalendarUrl(fullTitle, eventDate, eventTime, eventLocation, details);
+
+  openCalendarModal({
+    title: fullTitle,
+    dateStr: eventDate || startDate.toLocaleDateString(isFr ? 'fr-FR' : 'ar-TN'),
+    timeStr: eventTime || '20:00',
+    location: eventLocation,
+    details: details,
+    startDate: startDate,
+    endDate: endDate,
+    gcalUrl: gcalUrl
+  });
 }
 
 function rebuildTimelineFromConfig(events) {

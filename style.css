@@ -4220,4 +4220,229 @@ body.lang-ar .animated-bride {
   }
 }
 
+/* ─── IN-APP CALENDAR SELECTION MODAL ─── */
+.cal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.cal-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 6, 2, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.cal-modal-content {
+  position: relative;
+  background: linear-gradient(145deg, #ffffff, #fffdf8);
+  border: 2px solid var(--gold, #c9a84c);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 440px;
+  padding: 26px 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  z-index: 10;
+  font-family: 'Amiri', serif;
+  box-sizing: border-box;
+  animation: calModalFadeIn 0.3s ease-out;
+}
+
+@keyframes calModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.cal-modal-close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #7a6035;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cal-modal-close:hover {
+  background: #c9a84c;
+  color: #ffffff;
+}
+
+.cal-modal-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.cal-modal-icon {
+  font-size: 2.4rem;
+  margin-bottom: 2px;
+}
+
+.cal-modal-title {
+  font-size: 1.45rem;
+  color: #4e2f0d;
+  margin: 0;
+  font-weight: 700;
+}
+
+.cal-modal-subtitle {
+  font-size: 0.85rem;
+  color: #8c6d3f;
+  margin-top: 4px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cal-event-card {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.03));
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.cal-event-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #7a6035;
+  background: rgba(201, 168, 76, 0.2);
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cal-event-name {
+  font-size: 1.3rem;
+  color: #4e2f0d;
+  margin: 4px 0 8px;
+  font-weight: bold;
+}
+
+.cal-event-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.88rem;
+  color: #6b5536;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cal-info-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-reminder-pill {
+  margin-top: 10px;
+  background: #fef7e7;
+  border: 1px dashed #e6c669;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  color: #855d14;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cal-modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cal-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(201, 168, 76, 0.4);
+  background: #ffffff;
+  cursor: pointer;
+  text-align: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cal-option-btn:hover {
+  transform: translateY(-2px);
+  border-color: #c9a84c;
+  box-shadow: 0 6px 16px rgba(201, 168, 76, 0.25);
+  background: #fffcf5;
+}
+
+.cal-option-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.cal-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cal-option-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #4e2f0d;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cal-option-desc {
+  font-size: 0.78rem;
+  color: #7a6035;
+  line-height: 1.35;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cal-option-primary {
+  background: linear-gradient(135deg, #4e2f0d, #7a4f1d);
+  color: #ffffff;
+  border-color: #c9a84c;
+  box-shadow: 0 4px 14px rgba(78, 47, 13, 0.3);
+}
+
+.cal-option-primary .cal-option-title {
+  color: #ffe6a3 !important;
+}
+
+.cal-option-primary .cal-option-desc {
+  color: #e6d5b8 !important;
+}
+
+.cal-option-primary:hover {
+  background: linear-gradient(135deg, #3d2307, #664115);
+  box-shadow: 0 6px 18px rgba(78, 47, 13, 0.45);
+}
+
 

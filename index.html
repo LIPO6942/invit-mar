@@ -875,9 +875,71 @@
     <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; scrollbar-width:thin;" id="rsvp-guests-scroll-list">
       <!-- Confirmed guest names will go here dynamically -->
     </div>
+
+<!-- Dedicated In-App Calendar Modal -->
+<div id="calendar-modal-overlay" class="cal-modal-overlay" style="display:none;">
+  <div class="cal-modal-backdrop" onclick="closeCalendarModal()"></div>
+  <div class="cal-modal-content">
+    <button class="cal-modal-close" onclick="closeCalendarModal()" aria-label="Fermer">✕</button>
+
+    <div class="cal-modal-header">
+      <div class="cal-modal-icon">📅</div>
+      <h2 class="cal-modal-title font-amiri" id="cal-modal-title">Enregistrer dans votre calendrier</h2>
+      <p class="cal-modal-subtitle" id="cal-modal-subtitle">Choisissez l'option qui vous convient</p>
+    </div>
+
+    <div class="cal-event-card">
+      <div class="cal-event-badge" id="cal-modal-badge">✨ Événement</div>
+      <h3 class="cal-event-name font-amiri" id="cal-modal-event-title">Mariage</h3>
+      <div class="cal-event-info">
+        <div class="cal-info-item">
+          <span class="cal-info-icon">📆</span>
+          <span id="cal-modal-event-date">--</span>
+        </div>
+        <div class="cal-info-item">
+          <span class="cal-info-icon">⏰</span>
+          <span id="cal-modal-event-time">--</span>
+        </div>
+        <div class="cal-info-item">
+          <span class="cal-info-icon">📍</span>
+          <span id="cal-modal-event-location">--</span>
+        </div>
+      </div>
+      <div class="cal-reminder-pill" id="cal-modal-reminder-pill">
+        🔔 Rappel recommandé : 24h & 1h avant l'événement
+      </div>
+    </div>
+
+    <div class="cal-modal-options">
+      <!-- Option 1: Native .ics (iPhone / Android / Outlook) -->
+      <button class="cal-option-btn cal-option-primary" onclick="triggerIcsDownloadFromModal()">
+        <div class="cal-option-icon">📲</div>
+        <div class="cal-option-text">
+          <div class="cal-option-title" id="cal-opt-ics-title">Enregistrer sur le téléphone / App (.ics)</div>
+          <div class="cal-option-desc" id="cal-opt-ics-desc">Ouvre le calendrier natif (iPhone, Android, Apple Calendar, Outlook) sans quitter la page</div>
+        </div>
+      </button>
+
+      <!-- Option 2: Google Calendar Web -->
+      <button class="cal-option-btn" onclick="triggerGoogleCalendarWebFromModal()">
+        <div class="cal-option-icon">🌐</div>
+        <div class="cal-option-text">
+          <div class="cal-option-title" id="cal-opt-gcal-title">Google Calendar (Web)</div>
+          <div class="cal-option-desc" id="cal-opt-gcal-desc">Ajouter directement sur votre compte Google Calendar en ligne</div>
+        </div>
+      </button>
+
+      <!-- Option 3: Outlook Web -->
+      <button class="cal-option-btn" onclick="triggerOutlookWebFromModal()">
+        <div class="cal-option-icon">✉️</div>
+        <div class="cal-option-text">
+          <div class="cal-option-title" id="cal-opt-outlook-title">Outlook / Office 365 (Web)</div>
+          <div class="cal-option-desc" id="cal-opt-outlook-desc">Ajouter sur votre compte Microsoft Outlook Web</div>
+        </div>
+      </button>
+    </div>
   </div>
 </div>
-
 
 <!-- iOS PWA Install Instruction Modal -->
 <div id="iosPwaModal" class="pwa-modal-backdrop" style="display:none;" onclick="closeIosPwaModal()">
