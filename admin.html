@@ -720,13 +720,13 @@
 
   <!-- ── Mobile Bottom Navigation (visible only on small screens) ── -->
   <nav class="mobile-bottom-nav" id="mobileBottomNav">
-    <div class="mbn-item active" onclick="showPage('page-couple')"    data-page="page-couple">    <span class="mbn-icon">💑</span><span class="mbn-label">العروسان</span></div>
-    <div class="mbn-item"        onclick="showPage('page-families')"  data-page="page-families">  <span class="mbn-icon">👨‍👩‍👦</span><span class="mbn-label">العائلات</span></div>
-    <div class="mbn-item"        onclick="showPage('page-date')"      data-page="page-date">      <span class="mbn-icon">📅</span><span class="mbn-label">التاريخ</span></div>
-    <div class="mbn-item"        onclick="showPage('page-programme')" data-page="page-programme"> <span class="mbn-icon">🗓️</span><span class="mbn-label">البرنامج</span></div>
-    <div class="mbn-item"        onclick="showPage('page-photos')"    data-page="page-photos">    <span class="mbn-icon">📸</span><span class="mbn-label">الصور</span></div>
-    <div class="mbn-item"        onclick="showPage('page-links')"     data-page="page-links">     <span class="mbn-icon">🔗</span><span class="mbn-label">الروابط</span></div>
-    <div class="mbn-item"        onclick="showPage('page-qrcode')"    data-page="page-qrcode">    <span class="mbn-icon">🔳</span><span class="mbn-label">QR</span></div>
+    <div class="mbn-item active" onclick="showPage('page-couple')"       data-page="page-couple">       <span class="mbn-icon">💑</span><span class="mbn-label">العروسان</span></div>
+    <div class="mbn-item"        onclick="showPage('page-families')"     data-page="page-families">     <span class="mbn-icon">👨‍👩‍👦</span><span class="mbn-label">العائلات</span></div>
+    <div class="mbn-item"        onclick="showPage('page-date')"         data-page="page-date">         <span class="mbn-icon">📅</span><span class="mbn-label">التاريخ</span></div>
+    <div class="mbn-item"        onclick="showPage('page-programme')"    data-page="page-programme">    <span class="mbn-icon">🗓️</span><span class="mbn-label">البرنامج</span></div>
+    <div class="mbn-item"        onclick="showPage('page-photos')"       data-page="page-photos">       <span class="mbn-icon">📸</span><span class="mbn-label">الصور</span></div>
+    <div class="mbn-item"        onclick="showPage('page-admin-guests')" data-page="page-admin-guests"><span class="mbn-icon">👥</span><span class="mbn-label">المدعوين</span></div>
+    <div class="mbn-item"        onclick="showPage('page-links')"        data-page="page-links">        <span class="mbn-icon">🔗</span><span class="mbn-label">الروابط</span></div>
   </nav>
 
 </div>
@@ -966,10 +966,13 @@ function showPage(id) {
     'page-date': 2,
     'page-programme': 3,
     'page-photos': 4,
-    'page-links': 5,
-    'page-qrcode': 6
+    'page-admin-guests': 5,
+    'page-links': 6,
+    'page-qrcode': 7
   };
-  document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+  if (map[id] != null && document.querySelectorAll('.nav-item')[map[id]]) {
+    document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+  }
   // Sync mobile bottom nav
   document.querySelectorAll('.mbn-item').forEach(n => n.classList.remove('active'));
   const mbnItem = document.querySelector('.mbn-item[data-page="' + id + '"]');
@@ -979,6 +982,7 @@ function showPage(id) {
   if (mc) mc.scrollTop = 0;
   window.scrollTo(0, 0);
   if (id === 'page-programme') renderEvents();
+  if (id === 'page-admin-guests') loadAdminGuestList();
   if (id === 'page-qrcode') { generatePromoQr(); updateFlyerFooter(); }
 }
 
@@ -2581,28 +2585,42 @@ async function loadAdminGuestList() {
     initFirebase();
     const snap = await _db.collection('invitations').get();
     if (snap.empty) {
-      select.innerHTML = '<option value="">لا توجد دعوات محفوظة</option>';
+      select.innerHTML = '<option value="">لا توجد دعوات محفوظة في السيرفر</option>';
       return;
     }
 
     let optionsHtml = '<option value="">-- اختر الزفاف --</option>';
+    let firstSlug = '';
+    
     snap.docs.forEach(doc => {
       const d = doc.data();
       const cfg = d.config || {};
-      const groom = cfg.ga || cfg.gf2 || '';
+      const groom = cfg.ga || cfg.gf2 || d.guestName || '';
       const bride = cfg.ba || cfg.bf2 || '';
-      const nameStr = groom && bride ? `${groom} & ${bride}` : doc.id;
+      let nameStr = (groom || bride) ? `${groom} ${bride ? '& ' + bride : ''}`.trim() : doc.id;
+      if (!nameStr) nameStr = doc.id;
+      
       const count = Array.isArray(d.guests) ? d.guests.length : 0;
       const hasUnsent = d.hasUnsentGuests === true;
       const flag = hasUnsent ? ' 🔔 (تحديث جديد)' : '';
       
-      optionsHtml += `<option value="${doc.id}" ${hasUnsent ? 'style="color:#e74c3c;font-weight:bold;"' : ''}>💍 ${nameStr} (${count} مدعو)${flag}</option>`;
+      if (!firstSlug) firstSlug = doc.id;
+      optionsHtml += `<option value="${doc.id}">💍 ${nameStr} (${count} مدعو)${flag}</option>`;
     });
     select.innerHTML = optionsHtml;
 
-    if (window._adminUnsentNotifications && window._adminUnsentNotifications.length > 0) {
-      select.value = window._adminUnsentNotifications[0].slug;
-      onAdminGuestWeddingChange(select.value);
+    let targetSlug = select.value;
+    if (!targetSlug) {
+      if (window._adminUnsentNotifications && window._adminUnsentNotifications.length > 0) {
+        targetSlug = window._adminUnsentNotifications[0].slug;
+      } else {
+        targetSlug = firstSlug;
+      }
+    }
+
+    if (targetSlug) {
+      select.value = targetSlug;
+      onAdminGuestWeddingChange(targetSlug);
     }
   } catch (e) {
     console.error('loadAdminGuestList:', e);
