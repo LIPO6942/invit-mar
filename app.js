@@ -361,9 +361,6 @@ function formatTo24h(timeStr, ampmStr) {
    GOOGLE CALENDAR INTEGRATION
 ──────────────────────────────────────────────── */
 
-var _weddingDateTime = '2026-07-16T20:00:00';
-var _weatherLocation = 'Téboulba, Tunisie';
-
 function formatToGCalUTC(dateObj) {
   const pad = num => String(num).padStart(2, '0');
   const year = dateObj.getUTCFullYear();
