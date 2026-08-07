@@ -678,7 +678,10 @@
           <!-- Dynamically populated grid rows -->
         </div>
 
-        <button class="btn btn-primary" onclick="saveAdminPackGrid()" style="width:100%; padding:13px; font-size:1.05rem; font-weight:bold; background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); color:#1a1000;">💾 حفظ القائمة وتوليد جميع الروابط</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+          <button class="btn btn-primary" onclick="saveAdminPackGrid()" style="flex:2; min-width:180px; padding:13px; font-size:1rem; font-weight:bold; background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); color:#1a1000;">💾 حفظ القائمة وتوليد جميع الروابط</button>
+          <button class="btn btn-outline" onclick="approveAllGuests()" style="flex:1; min-width:140px; padding:13px; font-size:0.95rem; font-weight:bold; border-color:rgba(46,204,113,0.5); color:#82e0aa; background:rgba(46,204,113,0.08);">✅ الموافقة على الجميع</button>
+        </div>
       </div>
 
     </div>
@@ -2775,12 +2778,20 @@ async function onAdminGuestWeddingChange(slug) {
       const safeLink   = escHtml(link);
       const safeId     = escHtml(guestId);
       const safeName   = escHtml(existing.name || '');
+      const isApproved = existing.status === 'approved';
       // Match guestType to available formulas (in case wedding lang changed)
       const matchedType = FORMULAS_MAP.some(f => f.value === guestType) ? guestType : defaultType;
       const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === matchedType ? 'selected' : ''}>${f.label}</option>`).join('');
 
+      // Status badge + approve button
+      const statusBadge = hasName ? (isApproved
+        ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.72rem;color:#82e0aa;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.35);border-radius:20px;padding:2px 10px;white-space:nowrap;">✅ ${weddingLang==='fr'?'Approuvé':'موافق عليه'}</span>`
+        : `<button onclick="approveGuest('${guestId}', ${i})" style="font-size:0.72rem;padding:3px 10px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.4);color:#82e0aa;border-radius:20px;cursor:pointer;white-space:nowrap;">${weddingLang==='fr'?'✅ Approuver':'✅ موافقة'}</button>`
+      ) : '';
+
       const linkBadge = hasName ? `
         <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap; margin-top:4px; width:100%;">
+          ${statusBadge}
           <button
             onclick="(function(){
               var inp=document.getElementById('ag-name-${i}');
@@ -2903,6 +2914,7 @@ async function saveAdminPackGrid() {
           id: (now + i).toString(36) + Math.random().toString(36).slice(2, 5),
           name,
           type,
+          status: 'pending',
           createdAt: new Date().toISOString()
         });
       }
@@ -2920,6 +2932,47 @@ async function saveAdminPackGrid() {
   } catch (e) {
     console.error('saveAdminPackGrid failed:', e);
     showToast('❌ حدث خطأ أثناء الحفظ');
+  }
+}
+
+// ── Approve a single guest ──
+async function approveGuest(guestId, rowIdx) {
+  if (!_currentAdminWeddingSlug || !_currentAdminWeddingData) return;
+  try {
+    initFirebase();
+    const guests = Array.isArray(_currentAdminWeddingData.guests) ? [..._currentAdminWeddingData.guests] : [];
+    const idx = guests.findIndex(g => g.id === guestId);
+    if (idx === -1) { showToast('❌ لم يُعثر على المدعو'); return; }
+    guests[idx] = { ...guests[idx], status: 'approved', approvedAt: new Date().toISOString() };
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({ guests });
+    _currentAdminWeddingData = { ..._currentAdminWeddingData, guests };
+    showToast(`✅ تمت الموافقة على المدعو #${rowIdx + 1}`);
+    onAdminGuestWeddingChange(_currentAdminWeddingSlug); // refresh table
+  } catch (e) {
+    console.error('approveGuest failed:', e);
+    showToast('❌ فشل تحديث حالة المدعو: ' + e.message);
+  }
+}
+
+// ── Approve ALL guests of the current wedding ──
+async function approveAllGuests() {
+  if (!_currentAdminWeddingSlug || !_currentAdminWeddingData) return;
+  const guests = Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : [];
+  const namedGuests = guests.filter(g => g.name && g.name.trim());
+  if (!namedGuests.length) { showToast('⚠️ لا يوجد مدعوون للموافقة عليهم'); return; }
+  try {
+    initFirebase();
+    const now = new Date().toISOString();
+    const updatedGuests = guests.map(g =>
+      (g.name && g.name.trim()) ? { ...g, status: 'approved', approvedAt: g.approvedAt || now } : g
+    );
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({ guests: updatedGuests });
+    _currentAdminWeddingData = { ..._currentAdminWeddingData, guests: updatedGuests };
+    showToast(`✅ تمت الموافقة على ${namedGuests.length} مدعو دفعة واحدة!`);
+    onAdminGuestWeddingChange(_currentAdminWeddingSlug);
+  } catch (e) {
+    console.error('approveAllGuests failed:', e);
+    showToast('❌ فشلت الموافقة الشاملة: ' + e.message);
   }
 }
 
