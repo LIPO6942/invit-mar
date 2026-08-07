@@ -2692,25 +2692,33 @@ async function onAdminGuestWeddingChange(slug) {
     ` : '';
 
     const baseUrl = window.location.href.split('?')[0].replace('admin.html', 'index.html');
-    const FORMULAS_MAP = [
-      {value:'ar_couple',          label:'إلى السيد ... وحرمه',           salut: (n)=>`إلى السيد ${n} وحرمه الكريمة`},
-      {value:'ar_couple_children', label:'إلى السيد ... وحرمه وأبنائه', salut: (n)=>`إلى السيد ${n} وحرمه الكريمة وأبنائهم`},
-      {value:'ar_man',             label:'إلى السيد ...',                salut: (n)=>`إلى السيد ${n} المحترم`},
-      {value:'ar_woman',           label:'إلى السيدة ...',               salut: (n)=>`إلى السيدة ${n} الفاضلة`},
-      {value:'ar_friend_m',        label:'إلى عْشيري ...',              salut: (n)=>`إلى عشيري وصديقي العزيز ${n}`},
-      {value:'ar_friend_f',        label:'إلى عْشيرتي ...',             salut: (n)=>`إلى عشيرتي وصديقتي العزيزة ${n}`},
-      {value:'fr_couple',          label:'M. et Mme ...',               salut: (n)=>`À M. et Mme ${n}`},
-      {value:'fr_man',             label:'Monsieur ...',                 salut: (n)=>`Monsieur ${n}`},
-      {value:'fr_woman',           label:'Madame ...',                   salut: (n)=>`Madame ${n}`},
-      {value:'fr_friend_m',        label:'Pour mon Ami ...',             salut: (n)=>`Pour mon cher ami ${n}`},
-      {value:'fr_friend_f',        label:'Pour mon amie ...',            salut: (n)=>`Pour ma chère amie ${n}`},
+
+    // Full formulas map — will be filtered by wedding language
+    const ALL_FORMULAS = [
+      {value:'ar_couple',          lang:'ar', label:'إلى السيد ... وحرمه',           salut: (n)=>`إلى السيد ${n} وحرمه الكريمة`},
+      {value:'ar_couple_children', lang:'ar', label:'إلى السيد ... وحرمه وأبنائه',  salut: (n)=>`إلى السيد ${n} وحرمه الكريمة وأبنائهم`},
+      {value:'ar_man',             lang:'ar', label:'إلى السيد ...',                 salut: (n)=>`إلى السيد ${n} المحترم`},
+      {value:'ar_woman',           lang:'ar', label:'إلى السيدة ...',                salut: (n)=>`إلى السيدة ${n} الفاضلة`},
+      {value:'ar_friend_m',        lang:'ar', label:'إلى عْشيري ...',               salut: (n)=>`إلى عشيري وصديقي العزيز ${n}`},
+      {value:'ar_friend_f',        lang:'ar', label:'إلى عْشيرتي ...',              salut: (n)=>`إلى عشيرتي وصديقتي العزيزة ${n}`},
+      {value:'fr_couple',          lang:'fr', label:'M. et Mme ...',                salut: (n)=>`À M. et Mme ${n}`},
+      {value:'fr_man',             lang:'fr', label:'Monsieur ...',                  salut: (n)=>`Monsieur ${n}`},
+      {value:'fr_woman',           lang:'fr', label:'Madame ...',                    salut: (n)=>`Madame ${n}`},
+      {value:'fr_friend_m',        lang:'fr', label:'Pour mon Ami ...',              salut: (n)=>`Pour mon cher ami ${n}`},
+      {value:'fr_friend_f',        lang:'fr', label:'Pour mon amie ...',             salut: (n)=>`Pour ma chère amie ${n}`},
     ];
 
     // Get wedding details for personalized messages
     const cfg = rawData.config || {};
-    const groomName = cfg.ga || cfg.gf2 || 'العريس';
-    const brideName = cfg.ba || cfg.bf2 || 'العروسة';
-    const weddingDate = cfg.wdd || cfg.wd || '';   // wdd = display date, wd = ISO date
+    const weddingLang   = (cfg.la || 'ar').toLowerCase();   // 'ar' | 'fr'
+    const groomName     = weddingLang === 'fr' ? (cfg.gf2 || cfg.ga || 'Le Marié')   : (cfg.ga || cfg.gf2 || 'العريس');
+    const brideName     = weddingLang === 'fr' ? (cfg.bf2 || cfg.ba || 'La Mariée')  : (cfg.ba || cfg.bf2 || 'العروسة');
+    const weddingDate   = cfg.wdd || cfg.wd || '';   // wdd = display date, wd = ISO date
+
+    // Keep only formulas matching the wedding language
+    const FORMULAS_MAP  = ALL_FORMULAS.filter(f => f.lang === weddingLang);
+    const defaultType   = weddingLang === 'fr' ? 'fr_couple' : 'ar_couple';
+
 
     // Build personalized message for a given guest
     window._buildGuestMsg = function(name, type, link) {
@@ -2759,14 +2767,17 @@ async function onAdminGuestWeddingChange(slug) {
     const targetCount = (packSize && packSize < 9999) ? packSize : Math.max(guests.length + 5, 20);
 
     for(let i = 0; i < targetCount; i++) {
-      const existing = guests[i] || { name: '', type: 'ar_couple', id: '' };
-      const hasName = !!(existing.name && existing.name.trim());
-      const guestId = existing.id || ((Date.now() + i).toString(36) + Math.random().toString(36).slice(2, 5));
-      const link = hasName ? `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(guestId)}` : '';
-      const safeLink = escHtml(link);
-      const safeId   = escHtml(guestId);
-      const safeName = escHtml(existing.name || '');
-      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === (existing.type || 'ar_couple') ? 'selected' : ''}>${f.label}</option>`).join('');
+      const existing   = guests[i] || { name: '', type: defaultType, id: '' };
+      const guestType  = existing.type || defaultType;   // use language-aware default
+      const hasName    = !!(existing.name && existing.name.trim());
+      const guestId    = existing.id || ((Date.now() + i).toString(36) + Math.random().toString(36).slice(2, 5));
+      const link       = hasName ? `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(guestId)}` : '';
+      const safeLink   = escHtml(link);
+      const safeId     = escHtml(guestId);
+      const safeName   = escHtml(existing.name || '');
+      // Match guestType to available formulas (in case wedding lang changed)
+      const matchedType = FORMULAS_MAP.some(f => f.value === guestType) ? guestType : defaultType;
+      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === matchedType ? 'selected' : ''}>${f.label}</option>`).join('');
 
       const linkBadge = hasName ? `
         <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap; margin-top:4px; width:100%;">
@@ -2774,7 +2785,7 @@ async function onAdminGuestWeddingChange(slug) {
             onclick="(function(){
               var inp=document.getElementById('ag-name-${i}');
               var sel=document.getElementById('ag-type-${i}');
-              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||'ar_couple'}', '${link}');
+              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||defaultType}', '${link}');
               navigator.clipboard.writeText(msg).then(()=>showToast('📋 تم نسخ الرسالة الكاملة!'));
             })()"
             class="btn btn-outline" style="padding:5px 11px; font-size:0.75rem; flex:1; min-width:100px;">
@@ -2784,7 +2795,7 @@ async function onAdminGuestWeddingChange(slug) {
             onclick="(function(){
               var inp=document.getElementById('ag-name-${i}');
               var sel=document.getElementById('ag-type-${i}');
-              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||'ar_couple'}', '${link}');
+              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||defaultType}', '${link}');
               window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
             })()"
             class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:5px 11px; font-size:0.75rem; flex:1; min-width:80px;">
@@ -2794,7 +2805,7 @@ async function onAdminGuestWeddingChange(slug) {
             onclick="(function(){
               var inp=document.getElementById('ag-name-${i}');
               var sel=document.getElementById('ag-type-${i}');
-              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||'ar_couple'}', '${link}');
+              var msg=window._buildGuestMsg(inp?inp.value:'${safeName}', sel?sel.value:'${existing.type||defaultType}', '${link}');
               if(navigator.share){navigator.share({text:msg}).catch(()=>{});}
               else { navigator.clipboard.writeText(msg).then(()=>showToast('📋 نسخ للإرسال عبر Messenger أو أي تطبيق آخر!')); }
             })()"
@@ -2802,19 +2813,39 @@ async function onAdminGuestWeddingChange(slug) {
             📤 مشاركة
           </button>
         </div>
-      ` : `<span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; display:block;">⏳ شـاغر — أدخل اسم المدعو ثم احفظ</span>`;
+      ` : `<span style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; display:block;">${weddingLang === 'fr' ? '⏳ Vide — entrez le nom puis enregistrez' : '⏳ شـاغر — أدخل اسم المدعو ثم احفظ'}</span>`;
+      // Detect name/language mismatch
+      // Arabic Unicode range: \u0600-\u06FF
+      const nameVal = existing.name || '';
+      const hasArabicScript = /[\u0600-\u06FF]/.test(nameVal);
+      const hasMismatch = hasName && (
+        (weddingLang === 'fr' && hasArabicScript) ||   // fr wedding but Arabic name
+        (weddingLang === 'ar' && !hasArabicScript)      // ar wedding but Latin name
+      );
+      const mismatchBadge = hasMismatch ? `
+        <div style="background:rgba(243,156,18,0.12); border:1px solid rgba(243,156,18,0.4); border-radius:8px; padding:4px 10px; font-size:0.74rem; color:#f0b429; display:flex; gap:6px; align-items:center; margin-top:2px;">
+          <span>⚠️</span>
+          <span>${weddingLang === 'fr'
+            ? `Le nom "<strong>${escHtml(nameVal)}</strong>" semble être en arabe — veuillez le corriger en français avant d'envoyer.`
+            : `الاسم "<strong>${escHtml(nameVal)}</strong>" يبدو مكتوباً بحروف لاتينية — يُرجى تصحيحه بالعربية قبل الإرسال.`
+          }</span>
+        </div>
+      ` : '';
+
+      const borderColor = hasMismatch ? 'rgba(243,156,18,0.5)' : (hasName ? 'rgba(46,204,113,0.35)' : 'rgba(201,168,76,0.2)');
 
       html += `
-        <div style="display:flex; gap:8px; align-items:flex-start; background:rgba(0,0,0,0.25); border:1px solid ${hasName ? 'rgba(46,204,113,0.35)' : 'rgba(201,168,76,0.2)'}; border-radius:12px; padding:10px 12px; flex-wrap:wrap; margin-bottom:2px;" data-gid="${safeId}">
+        <div style="display:flex; gap:8px; align-items:flex-start; background:rgba(0,0,0,0.25); border:1px solid ${borderColor}; border-radius:12px; padding:10px 12px; flex-wrap:wrap; margin-bottom:2px;" data-gid="${safeId}">
           <span style="font-size:0.82rem; color:var(--gold); font-weight:bold; width:26px; text-align:center; flex-shrink:0; padding-top:9px;">${i+1}</span>
           
           <div style="flex:1; display:flex; flex-direction:column; gap:5px; min-width:200px;">
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <input type="text" id="ag-name-${i}" class="admin-pack-name-input f-input" data-index="${i}" value="${safeName}" placeholder="اسم المدعو..." style="flex:1; min-width:140px; padding:7px 10px; font-size:0.88rem; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:#fff; border-radius:8px;">
+              <input type="text" id="ag-name-${i}" class="admin-pack-name-input f-input" data-index="${i}" value="${safeName}" placeholder="${weddingLang === 'fr' ? 'Nom du convive...' : 'اسم المدعو...'}" style="flex:1; min-width:140px; padding:7px 10px; font-size:0.88rem; background:rgba(0,0,0,0.3); border:1px solid ${hasMismatch ? 'rgba(243,156,18,0.6)' : 'var(--border)'}; color:#fff; border-radius:8px;">
               <select id="ag-type-${i}" class="admin-pack-type-select f-input" data-index="${i}" style="min-width:160px; padding:7px 6px; font-size:0.78rem; background:#181005; color:var(--gold-light); border:1px solid var(--border); border-radius:8px; flex-shrink:0;">
                 ${optionsHtml}
               </select>
             </div>
+            ${mismatchBadge}
             ${linkBadge}
           </div>
         </div>
