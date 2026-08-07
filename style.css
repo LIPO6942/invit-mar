@@ -4445,4 +4445,61 @@ body.lang-ar .animated-bride {
   box-shadow: 0 6px 18px rgba(78, 47, 13, 0.45);
 }
 
+/* Reminder selection chips */
+.cal-reminder-selection {
+  margin: 14px 0 18px;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 16px;
+  padding: 14px;
+  text-align: center;
+}
+
+.cal-reminder-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #5d471b;
+  margin-bottom: 10px;
+}
+
+.cal-reminder-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(201, 168, 76, 0.4);
+  background: #ffffff;
+  color: #6b5536;
+  font-size: 0.82rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.cal-chip:hover {
+  border-color: #c9a84c;
+  background: #fffcf5;
+}
+
+.cal-chip.active {
+  background: linear-gradient(135deg, #c9a84c 0%, #8a6010 100%);
+  color: #ffffff;
+  border-color: #8a6010;
+  box-shadow: 0 3px 10px rgba(201, 168, 76, 0.35);
+  font-weight: bold;
+}
+
+.cal-chip.active .chip-icon {
+  transform: scale(1.1);
+}
+
 

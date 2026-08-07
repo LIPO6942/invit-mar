@@ -912,8 +912,28 @@
           <span id="cal-modal-event-location">--</span>
         </div>
       </div>
-      <div class="cal-reminder-pill" id="cal-modal-reminder-pill">
-        🔔 Rappel recommandé : 24h & 1h avant l'événement
+    </div>
+
+    <!-- Interactive Reminder Selection Section -->
+    <div class="cal-reminder-selection">
+      <div class="cal-reminder-title font-amiri" id="cal-reminder-select-title">🔔 Choisissez vos rappels préférés :</div>
+      <div class="cal-reminder-chips">
+        <label class="cal-chip active" onclick="toggleCalReminderChip(this)" data-reminder="2d">
+          <span class="chip-icon">⏱️</span>
+          <span class="chip-label" id="chip-lbl-2d">2 jours avant (48h)</span>
+        </label>
+        <label class="cal-chip active" onclick="toggleCalReminderChip(this)" data-reminder="1d">
+          <span class="chip-icon">📅</span>
+          <span class="chip-label" id="chip-lbl-1d">1 jour avant (24h)</span>
+        </label>
+        <label class="cal-chip" onclick="toggleCalReminderChip(this)" data-reminder="2h">
+          <span class="chip-icon">⏳</span>
+          <span class="chip-label" id="chip-lbl-2h">2 heures avant</span>
+        </label>
+        <label class="cal-chip active" onclick="toggleCalReminderChip(this)" data-reminder="1h">
+          <span class="chip-icon">⏰</span>
+          <span class="chip-label" id="chip-lbl-1h">1 heure avant</span>
+        </label>
       </div>
     </div>
 

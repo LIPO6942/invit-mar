@@ -526,25 +526,43 @@ function openCalendarModal(data) {
   const optGcalTitle = document.getElementById('cal-opt-gcal-title');
   const optGcalDesc = document.getElementById('cal-opt-gcal-desc');
 
+  const chip2d = document.getElementById('chip-lbl-2d');
+  const chip1d = document.getElementById('chip-lbl-1d');
+  const chip2h = document.getElementById('chip-lbl-2h');
+  const chip1h = document.getElementById('chip-lbl-1h');
+  const remTitle = document.getElementById('cal-reminder-select-title');
+
   if (isFr) {
     if (titleEl) titleEl.textContent = 'Enregistrer dans Google Calendar';
     if (subtitleEl) subtitleEl.textContent = 'Ajoutez l\'événement à votre Google Calendar en 1 clic';
     if (badgeEl) badgeEl.textContent = '✨ Jour J - Invitation Mariage';
-    if (reminderEl) reminderEl.textContent = '🔔 Rappels recommandés : 24h & 1h avant l\'événement';
+    if (remTitle) remTitle.textContent = '🔔 Choisissez vos rappels préférés :';
+    if (chip2d) chip2d.textContent = '2 jours avant (48h)';
+    if (chip1d) chip1d.textContent = '1 jour avant (24h)';
+    if (chip2h) chip2h.textContent = '2 heures avant';
+    if (chip1h) chip1h.textContent = '1 heure avant';
     if (optGcalTitle) optGcalTitle.textContent = 'Ouvrir Google Calendar 📅';
     if (optGcalDesc) optGcalDesc.textContent = 'Enregistrer l\'événement avec tous les détails (lieu, heure et rappels)';
   } else if (isTn) {
     if (titleEl) titleEl.textContent = 'احفظ الموعد في Google Calendar';
     if (subtitleEl) subtitleEl.textContent = 'زيد العرس في Google Calendar بنزلة واحدة';
     if (badgeEl) badgeEl.textContent = '✨ يوم العرس المميز';
-    if (reminderEl) reminderEl.textContent = '🔔 نوتيفيكاسيون قبل بنهار وقبل بساعة مالموعد';
+    if (remTitle) remTitle.textContent = '🔔 اختار النوتيفيكاسيونات اللي تحب يفكروك :';
+    if (chip2d) chip2d.textContent = 'قبل بنهارين (48h)';
+    if (chip1d) chip1d.textContent = 'قبل بنهار (24h)';
+    if (chip2h) chip2h.textContent = 'قبل بساعتين (2h)';
+    if (chip1h) chip1h.textContent = 'قبل بساعة (1h)';
     if (optGcalTitle) optGcalTitle.textContent = 'حل Google Calendar 📅';
     if (optGcalDesc) optGcalDesc.textContent = 'احفظ الموعد بالتفاصيل (الوقت، البلاصة والنوتيفيكاسيون)';
   } else {
     if (titleEl) titleEl.textContent = 'حفظ الموعد في Google Calendar';
     if (subtitleEl) subtitleEl.textContent = 'أضف المناسبة إلى تقويم Google بنقرة واحدة';
     if (badgeEl) badgeEl.textContent = '✨ اليوم المميّز - حفل الزفاف';
-    if (reminderEl) reminderEl.textContent = '🔔 تذكير مقترح: قبل يوم واحد (24h) وقبل ساعة واحدة من الموعد';
+    if (remTitle) remTitle.textContent = '🔔 اختر التنبيهات المفضلّة للتذكير:';
+    if (chip2d) chip2d.textContent = 'قبل يومين (48 ساعة)';
+    if (chip1d) chip1d.textContent = 'قبل يوم واحد (24 ساعة)';
+    if (chip2h) chip2h.textContent = 'قبل ساعتين (2h)';
+    if (chip1h) chip1h.textContent = 'قبل ساعة واحدة (1h)';
     if (optGcalTitle) optGcalTitle.textContent = 'فتح Google Calendar 📅';
     if (optGcalDesc) optGcalDesc.textContent = 'حفظ المناسبة مع التفاصيل الكاملة (المكان، الوقت والتنبيهات)';
   }
@@ -567,83 +585,46 @@ function closeCalendarModal() {
   if (overlay) overlay.style.display = 'none';
 }
 
-function triggerIcsDownloadFromModal() {
-  if (!_currentCalEventData) return;
-  const { title, startDate, endDate, location, details } = _currentCalEventData;
-
-  const formatDate = (dateObj) => {
-    return dateObj.toISOString().replace(/-|:|\.\d+/g, '');
-  };
-
-  const escapeIcs = (str) => {
-    if (!str) return '';
-    return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
-  };
-
-  const icsLines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Mariage Invitation App//NONSGML v1.0//FR',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    'BEGIN:VEVENT',
-    `UID:wedding-${Date.now()}@invitation`,
-    `DTSTAMP:${formatDate(new Date())}`,
-    `DTSTART:${formatDate(startDate)}`,
-    `DTEND:${formatDate(endDate)}`,
-    `SUMMARY:${escapeIcs(title)}`,
-    `DESCRIPTION:${escapeIcs(details)}`,
-    `LOCATION:${escapeIcs(location)}`,
-    'BEGIN:VALARM',
-    'ACTION:DISPLAY',
-    'DESCRIPTION:Rappel Mariage (24h avant)',
-    'TRIGGER:-P1D',
-    'END:VALARM',
-    'BEGIN:VALARM',
-    'ACTION:DISPLAY',
-    'DESCRIPTION:Rappel Mariage (1h avant)',
-    'TRIGGER:-PT1H',
-    'END:VALARM',
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ];
-
-  const blob = new Blob([icsLines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = window.URL.createObjectURL(blob);
-  const safeFilename = (title || 'Event').replace(/[^a-zA-Z0-9_\-]/g, '_');
-  link.setAttribute('download', `${safeFilename}.ics`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  closeCalendarModal();
+function toggleCalReminderChip(chipEl) {
+  if (!chipEl) return;
+  chipEl.classList.toggle('active');
 }
 
 function triggerGoogleCalendarWebFromModal() {
-  if (!_currentCalEventData || !_currentCalEventData.gcalUrl) return;
-  window.open(_currentCalEventData.gcalUrl, '_blank', 'noopener,noreferrer');
-  closeCalendarModal();
-}
-
-function triggerOutlookWebFromModal() {
   if (!_currentCalEventData) return;
-  const { title, startDate, endDate, location, details } = _currentCalEventData;
-  const startIso = startDate ? startDate.toISOString() : new Date().toISOString();
-  const endIso = endDate ? endDate.toISOString() : new Date().toISOString();
+  const isFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
 
-  const params = new URLSearchParams({
-    path: '/calendar/action/compose',
-    rru: 'addevent',
-    subject: title || '',
-    startdt: startIso,
-    enddt: endIso,
-    location: location || '',
-    body: details || ''
+  // Collect selected reminder chips
+  const activeChips = document.querySelectorAll('.cal-chip.active');
+  const selectedReminders = [];
+  activeChips.forEach(chip => {
+    const type = chip.getAttribute('data-reminder');
+    if (type === '2d') selectedReminders.push(isFr ? '2 jours avant (48h)' : 'قبل يومين (48h)');
+    if (type === '1d') selectedReminders.push(isFr ? '1 jour avant (24h)' : 'قبل يوم واحد (24h)');
+    if (type === '2h') selectedReminders.push(isFr ? '2 heures avant' : 'قبل ساعتين (2h)');
+    if (type === '1h') selectedReminders.push(isFr ? '1 heure avant' : 'قبل ساعة واحدة (1h)');
   });
 
-  const outlookUrl = `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
-  window.open(outlookUrl, '_blank', 'noopener,noreferrer');
+  let reminderHeader = '';
+  if (selectedReminders.length > 0) {
+    reminderHeader = isFr
+      ? `📌 Rappels choisis par l'invité : ${selectedReminders.join(', ')}\n\n`
+      : `📌 التنبيهات المحددة من الضيف: ${selectedReminders.join(' ، ')}\n\n`;
+  } else {
+    reminderHeader = isFr
+      ? `📌 Rappels conseillés : 1 jour avant (24h) et 1 heure avant l'événement.\n\n`
+      : `📌 التنبيهات المقترحة: قبل يوم واحد وقبل ساعة واحدة من الموعد.\n\n`;
+  }
+
+  const title = _currentCalEventData.title;
+  const location = _currentCalEventData.location;
+  const details = reminderHeader + (_currentCalEventData.details || '');
+  const dateRaw = _currentCalEventData.dateStr;
+  const timeRaw = _currentCalEventData.timeStr;
+
+  const finalGcalUrl = buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details);
+
+  window.open(finalGcalUrl, '_blank', 'noopener,noreferrer');
   closeCalendarModal();
 }
 
