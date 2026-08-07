@@ -4473,33 +4473,50 @@ body.lang-ar .animated-bride {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 8px 14px;
   border-radius: 20px;
-  border: 1.5px solid rgba(201, 168, 76, 0.4);
-  background: #ffffff;
-  color: #6b5536;
-  font-size: 0.82rem;
+  font-size: 0.83rem;
   font-family: system-ui, -apple-system, sans-serif;
   cursor: pointer;
   user-select: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+/* Active / Enabled State = GREEN */
+.cal-chip.active {
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #1b5e20 !important;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35) !important;
+}
+
+.cal-chip.active .chip-status-icon::after {
+  content: ' ✓';
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-left: 2px;
+}
+
+/* Inactive / Disabled State = RED */
+.cal-chip.inactive, .cal-chip:not(.active) {
+  background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #b71c1c !important;
+  box-shadow: 0 3px 10px rgba(211, 47, 47, 0.25) !important;
+  opacity: 0.88;
+}
+
+.cal-chip.inactive .chip-status-icon::after, .cal-chip:not(.active) .chip-status-icon::after {
+  content: ' ✕';
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-left: 2px;
 }
 
 .cal-chip:hover {
-  border-color: #c9a84c;
-  background: #fffcf5;
-}
-
-.cal-chip.active {
-  background: linear-gradient(135deg, #c9a84c 0%, #8a6010 100%);
-  color: #ffffff;
-  border-color: #8a6010;
-  box-shadow: 0 3px 10px rgba(201, 168, 76, 0.35);
-  font-weight: bold;
-}
-
-.cal-chip.active .chip-icon {
-  transform: scale(1.1);
+  transform: translateY(-2px) scale(1.03);
 }
 
 

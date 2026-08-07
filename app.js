@@ -588,6 +588,11 @@ function closeCalendarModal() {
 function toggleCalReminderChip(chipEl) {
   if (!chipEl) return;
   chipEl.classList.toggle('active');
+  if (chipEl.classList.contains('active')) {
+    chipEl.classList.remove('inactive');
+  } else {
+    chipEl.classList.add('inactive');
+  }
 }
 
 function triggerGoogleCalendarWebFromModal() {
