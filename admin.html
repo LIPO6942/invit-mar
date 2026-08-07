@@ -2691,21 +2691,36 @@ async function onAdminGuestWeddingChange(slug) {
 
     container.innerHTML = guests.map((g, i) => {
       const link = `${baseUrl}?inv=${encodeURIComponent(slug)}&gid=${encodeURIComponent(g.id)}`;
-      const formulaObj = FORMULAS_MAP.find(f => f.value === g.type);
-      const emoji = formulaObj ? formulaObj.emoji : '👤';
-      const label = formulaObj ? formulaObj.label : g.type;
+      const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === (g.type || 'ar_couple') ? 'selected' : ''}>${f.emoji} ${f.label}</option>`).join('');
 
       return `
         <div style="display:flex; gap:10px; align-items:center; background:rgba(0,0,0,0.25); border:1px solid rgba(201,168,76,0.2); border-radius:12px; padding:10px 14px; flex-wrap:wrap;">
           <span style="font-size:0.85rem; color:var(--gold); font-weight:bold; width:26px; text-align:center;">${i+1}</span>
-          <div style="flex:1; min-width:140px;">
-            <div style="font-weight:bold; color:#fff; font-size:0.95rem;">${escHtml(g.name)}</div>
-            <div style="font-size:0.76rem; color:var(--gold-light); margin-top:2px;">${emoji} ${label}</div>
+          
+          <!-- Editable Name -->
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:0.68rem; color:var(--text-muted);">اسم المدعو:</label>
+            <input type="text" id="ag-name-${g.id}" value="${escHtml(g.name)}" style="background:rgba(0,0,0,0.35); border:1px solid var(--border); color:#fff; padding:6px 10px; border-radius:8px; font-size:0.9rem; font-family:'Amiri',serif; min-width:140px;">
           </div>
-          <div style="font-family:monospace; font-size:0.72rem; color:var(--text-muted); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px; flex:1.5; min-width:180px; word-break:break-all;">${link}</div>
-          <div style="display:flex; gap:6px;">
+
+          <!-- Editable Salutation Title -->
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:0.68rem; color:var(--text-muted);">اللقب / الصيغة:</label>
+            <select id="ag-type-${g.id}" style="background:#181005; border:1px solid var(--border); color:var(--gold-light); padding:6px 8px; border-radius:8px; font-size:0.8rem; font-family:'Amiri',serif; min-width:160px;">
+              ${optionsHtml}
+            </select>
+          </div>
+
+          <!-- Save Button -->
+          <button onclick="adminSaveGuestEdit('${g.id}')" class="btn btn-outline" style="border-color:#2ecc71; color:#2ecc71; padding:6px 10px; font-size:0.78rem; margin-top:14px;" title="حفظ التعديلات">💾 حفظ</button>
+
+          <!-- Personal Link -->
+          <div style="font-family:monospace; font-size:0.7rem; color:var(--text-muted); background:rgba(0,0,0,0.3); padding:6px 10px; border-radius:6px; flex:1; min-width:170px; word-break:break-all; margin-top:14px;">${link}</div>
+
+          <!-- Actions -->
+          <div style="display:flex; gap:6px; margin-top:14px;">
             <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('📋 تم نسخ الرابط!'))" class="btn btn-outline" style="padding:6px 11px; font-size:0.76rem;">📋 نسخ</button>
-            <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ${g.name} ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:6px 11px; font-size:0.76rem;">💬 واتساب</button>
+            <button onclick="window.open('https://wa.me/?text='+encodeURIComponent('✨ دعوة زفاف خاصة بـ ' + document.getElementById('ag-name-${g.id}').value + ' ✨\\n\\n🔗 ${link}'),'_blank')" class="btn btn-primary" style="background:#25d366; color:white; border:none; padding:6px 11px; font-size:0.76rem;">💬 واتساب</button>
             <button onclick="adminDeleteGuest('${g.id}')" class="btn btn-ghost" style="color:#ff6b6b; padding:6px 9px; font-size:0.76rem;" title="حذف المدعو">🗑️</button>
           </div>
         </div>
@@ -2714,6 +2729,39 @@ async function onAdminGuestWeddingChange(slug) {
 
   } catch (e) {
     console.error('onAdminGuestWeddingChange:', e);
+  }
+}
+
+async function adminSaveGuestEdit(guestId) {
+  if (!_currentAdminWeddingSlug || !_currentAdminWeddingData) return;
+  const nameInput = document.getElementById('ag-name-' + guestId);
+  const typeSelect = document.getElementById('ag-type-' + guestId);
+  if (!nameInput || !typeSelect) return;
+
+  const newName = nameInput.value.trim();
+  const newType = typeSelect.value;
+  if (!newName) {
+    showToast('⚠️ أدخل اسم المدعو أولاً');
+    return;
+  }
+
+  const guests = (Array.isArray(_currentAdminWeddingData.guests) ? _currentAdminWeddingData.guests : []).map(g => {
+    if (g.id === guestId) {
+      return { ...g, name: newName, type: newType };
+    }
+    return g;
+  });
+
+  try {
+    initFirebase();
+    await _db.collection('invitations').doc(_currentAdminWeddingSlug).update({
+      guests: guests
+    });
+    showToast('💾 تم تعديل اسم المدعو واللقب بنجاح!');
+    onAdminGuestWeddingChange(_currentAdminWeddingSlug);
+  } catch (e) {
+    console.error('adminSaveGuestEdit failed:', e);
+    showToast('❌ حدث خطأ أثناء التعديل');
   }
 }
 
