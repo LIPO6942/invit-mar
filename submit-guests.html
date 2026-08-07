@@ -41,7 +41,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .f-input:focus{border-color:var(--gold)}
 .btn-primary{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);color:#1a1000;border:none;border-radius:12px;padding:14px;font-size:1.05rem;font-weight:700;font-family:'Amiri',serif;cursor:pointer;transition:opacity 0.2s,transform 0.1s}
 .btn-primary:hover{opacity:0.92}.btn-primary:active{transform:scale(0.98)}
-.bulk-textarea{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:0.9rem;font-family:'Amiri',serif;outline:none;resize:vertical;min-height:110px;line-height:1.6;margin-bottom:12px}
+.views-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;color:rgba(200,180,120,0.7);background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);border-radius:20px;padding:2px 8px;margin-top:3px;white-space:nowrap;flex-shrink:0}
+.views-badge.opened{color:#82e0aa;background:rgba(46,204,113,0.08);border-color:rgba(46,204,113,0.25)}
 .name-warn{font-size:0.74rem;color:var(--warn);margin-top:3px;display:flex;align-items:flex-start;gap:4px;line-height:1.4}
 .name-warn span{flex:1}
 #val-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -78,23 +79,26 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="section-title" id="section-title">📊 جدول تعبئة أسماء الباقة</div>
     <div class="lang-banner" id="lang-banner" style="display:none"></div>
     <div class="help-box" id="help-box"></div>
-
-    <details style="margin-bottom:16px; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:12px; padding:10px 14px;">
-      <summary style="cursor:pointer; color:var(--gold-l); font-size:0.9rem; font-weight:bold;" id="paste-summary">📋 ▾</summary>
-      <div style="margin-top:10px;">
-        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:6px;" id="paste-hint"></div>
-        <textarea id="bulk-paste-area" class="bulk-textarea"></textarea>
-        <button class="btn-primary" onclick="applyBulkPaste()" style="padding:10px; font-size:0.88rem;" id="paste-btn">📥</button>
-      </div>
-    </details>
-
     <div id="pack-rows-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px; max-height:480px; overflow-y:auto; padding-left:4px;"></div>
-
     <button class="btn-primary" onclick="saveGuestListSubmit()" style="font-size:1.1rem; padding:15px;" id="save-btn">💾</button>
   </div>
 </div>
 
-<!-- Validation modal -->
+<!-- Duplicate detection modal -->
+<div id="dup-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#1a1106;border:1px solid rgba(240,180,41,0.45);border-radius:18px;padding:24px;max-width:480px;width:100%;display:flex;flex-direction:column;gap:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;color:var(--warn);font-size:1rem;" id="dup-modal-title">🔁</h3>
+      <button onclick="document.getElementById('dup-modal').style.display='none'" style="background:none;border:none;color:#aaa;font-size:1.3rem;cursor:pointer;">✕</button>
+    </div>
+    <p style="margin:0;font-size:0.84rem;color:var(--muted);" id="dup-modal-msg"></p>
+    <div id="dup-modal-list" style="font-size:0.82rem;color:var(--warn);max-height:160px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:10px;padding:10px 14px;line-height:1.9;"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="document.getElementById('dup-modal').style.display='none'" style="flex:1;padding:11px;background:rgba(240,180,41,0.15);border:1px solid rgba(240,180,41,0.4);color:var(--warn);border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.9rem;" id="dup-fix-btn">✏️</button>
+      <button onclick="proceedAfterDupCheck()" style="flex:1;padding:11px;background:linear-gradient(135deg,#c9a84c,#e8cc7a);color:#1a1000;border:none;border-radius:10px;cursor:pointer;font-family:'Amiri',serif;font-size:0.9rem;font-weight:700;" id="dup-force-btn">💾</button>
+    </div>
+  </div>
+</div>
 <div id="val-modal" style="display:none">
   <div id="val-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -145,10 +149,6 @@ const I18N={
     helpText:'<strong>طريقة التعبئة:</strong> أدخل أسماء ضيوفك <strong>بالعربية</strong> واختر اللقب المناسب، ثم اضغط <strong>« حفظ القائمة »</strong>. يمكنك الحفظ جزئياً والعودة لاحقاً.',
     placeholder:'اسم المدعو بالعربية...',
     statFilled:'📝 الأسماء المعبأة:',
-    pasteSummary:'📋 هل لديك قائمة جاهزة؟ (نسخ - لصق سريع) ▾',
-    pasteHint:'الصق الأسماء هنا (اسم في كل سطر)، وسيتم ملء الجدول تلقائياً:',
-    pastePlaceholder:'أحمد بن علي\nخالد العمري\nمحمد الرياحي\n...',
-    pasteBtn:'📥 تعبئة الجدول من النص',
     saveBtn:'💾 حفظ القائمة وإرسالها للمنظم',
     langBanner:'🌐 لغة الزفاف: عربي — يُرجى كتابة الأسماء بالعربية',
     warnName:(n)=>`⚠️ الاسم "${n}" مكتوب بحروف لاتينية — يُرجى كتابته بالعربية.`,
@@ -158,8 +158,12 @@ const I18N={
     forceBtn:'💾 حفظ رغم ذلك',
     saveSuccess:(n)=>`💾 تم حفظ ${n} اسم بنجاح وإرسال إشعار للمنظم!`,
     saveError:'❌ حدث خطأ أثناء الحفظ',
-    emptyPaste:'⚠️ الصق الأسماء أولاً',
-    pasteSuccess:(n)=>`✅ تم وضع ${n} اسم في الجدول. اضغط حفظ لاعتمادها.`,
+    dupTitle:'🔁 أسماء مكررة في القائمة',
+    dupMsg:'تم اكتشاف الأسماء التالية أكثر من مرة. يُرجى مراجعتها قبل الحفظ:',
+    dupFix:'✏️ مراجعة القائمة',
+    dupForce:'💾 حفظ رغم التكرار',
+    viewsNone:'لم يُفتح بعد',
+    viewsCount:(n)=>`فُتح ${n} مرة`,
   },
   fr:{
     headerSub:'Page réservée aux mariés pour saisir leurs invités',
@@ -167,10 +171,6 @@ const I18N={
     helpText:'<strong>Comment remplir :</strong> Entrez les noms de vos invités <strong>en français</strong> et choisissez le titre approprié, puis cliquez sur <strong>« Enregistrer »</strong>. Vous pouvez enregistrer partiellement et revenir plus tard.',
     placeholder:'Nom du convive en français...',
     statFilled:'📝 Noms renseignés :',
-    pasteSummary:'📋 Vous avez une liste prête ? (copier-coller rapide) ▾',
-    pasteHint:'Collez les noms ici (un nom par ligne) :',
-    pastePlaceholder:'Jean Dupont\nMarie Martin\nPierre Leroy\n...',
-    pasteBtn:'📥 Remplir le tableau',
     saveBtn:'💾 Enregistrer et envoyer à l\'organisateur',
     langBanner:'🌐 Langue du mariage : Français — veuillez écrire les noms en français',
     warnName:(n)=>`⚠️ Le nom "${n}" semble être en arabe — veuillez l'écrire en français.`,
@@ -180,8 +180,12 @@ const I18N={
     forceBtn:'💾 Enregistrer quand même',
     saveSuccess:(n)=>`💾 ${n} invité(s) enregistré(s) — l'organisateur a été notifié !`,
     saveError:'❌ Erreur lors de l\'enregistrement',
-    emptyPaste:'⚠️ Collez des noms d\'abord',
-    pasteSuccess:(n)=>`✅ ${n} noms renseignés. Cliquez sur Enregistrer.`,
+    dupTitle:'🔁 Noms en double dans la liste',
+    dupMsg:'Les noms suivants apparaissent plusieurs fois. Veuillez vérifier avant d\'enregistrer :',
+    dupFix:'✏️ Vérifier la liste',
+    dupForce:'💾 Enregistrer quand même',
+    viewsNone:'Pas encore ouvert',
+    viewsCount:(n)=>`Ouvert ${n} fois`,
   }
 };
 
@@ -251,6 +255,11 @@ function initForm(){
   document.getElementById('val-modal-msg').textContent=tx('valMsg');
   document.getElementById('val-fix-btn').textContent=tx('fixBtn');
   document.getElementById('val-force-btn').textContent=tx('forceBtn');
+  // Duplicate modal i18n
+  document.getElementById('dup-modal-title').textContent=tx('dupTitle');
+  document.getElementById('dup-modal-msg').textContent=tx('dupMsg');
+  document.getElementById('dup-fix-btn').textContent=tx('dupFix');
+  document.getElementById('dup-force-btn').textContent=tx('dupForce');
   document.title=`${isFr?'Liste des convives':'تعبئة مدعوي'} ${groom} & ${bride}`;
 
   // Language banner
@@ -292,6 +301,7 @@ function renderPackTable(){
     const existing=_guests[i]||{name:'',type:defaultType};
     const nameVal=existing.name||'';
     const hasName=!!nameVal.trim();
+    const views=existing.views||0;
     const storedType=existing.type||defaultType;
     const matchedType=FORMULAS.some(f=>f.value===storedType)?storedType:defaultType;
     const optionsHtml=FORMULAS.map(f=>`<option value="${f.value}" ${f.value===matchedType?'selected':''}>${f.label}</option>`).join('');
@@ -299,15 +309,22 @@ function renderPackTable(){
     const borderColor=mismatch?'rgba(240,180,41,0.55)':(hasName?'rgba(46,204,113,0.35)':'rgba(201,168,76,0.2)');
     const inputBorder=mismatch?'border-color:rgba(240,180,41,0.7);background:rgba(240,180,41,0.04);':'';
     const warnHtml=mismatch?`<div class="name-warn"><span>⚠️</span><span>${tx('warnName',escHtml(nameVal))}</span></div>`:'';
+    // Views badge — only shown if guest already saved
+    const viewsBadge=hasName?`<span class="views-badge${views>0?' opened':''}">
+      ${views>0?'👁️ '+tx('viewsCount',views):'👁️ '+tx('viewsNone')}
+    </span>`:'';
     html+=`
       <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(0,0,0,0.25);border:1px solid ${borderColor};border-radius:12px;padding:10px 12px;flex-wrap:wrap;margin-bottom:1px;" id="row-${i}">
         <span style="font-size:0.82rem;color:var(--gold);font-weight:bold;width:24px;text-align:center;flex-shrink:0;padding-top:10px;">${i+1}</span>
         <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:200px;">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
             <input type="text" class="pack-name-input f-input" data-index="${i}" value="${escHtml(nameVal)}" placeholder="${tx('placeholder')}" dir="${_lang==='fr'?'ltr':'rtl'}" style="flex:1;min-width:110px;padding:8px 10px;font-size:0.9rem;${inputBorder}" oninput="validateNameInput(this,${i})">
             <select class="pack-type-select f-input" data-index="${i}" style="min-width:150px;padding:8px 6px;font-size:0.8rem;background:#181005;color:var(--text);flex-shrink:0;">${optionsHtml}</select>
           </div>
-          <div id="warn-${i}">${warnHtml}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            ${viewsBadge}
+            <div id="warn-${i}" style="flex:1;">${warnHtml}</div>
+          </div>
         </div>
       </div>`;
   }
@@ -337,35 +354,36 @@ function validateNameInput(input,idx){
   }
 }
 
-function applyBulkPaste(){
-  const ta=document.getElementById('bulk-paste-area');
-  const raw=ta.value.trim();
-  if(!raw){showToast(tx('emptyPaste'));return;}
-  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
-  if(!lines.length)return;
-  const inputs=document.querySelectorAll('.pack-name-input');
-  lines.forEach((name,i)=>{if(inputs[i]){inputs[i].value=name;validateNameInput(inputs[i],i);}});
-  showToast(tx('pasteSuccess',lines.length));
+// ── Duplicate detection ──
+function findDuplicates(list){
+  const seen={};
+  list.forEach(g=>{const k=(g.name||'').trim().toLowerCase();if(k)seen[k]=(seen[k]||0)+1;});
+  return list.filter(g=>seen[(g.name||'').trim().toLowerCase()]>1).map(g=>g.name);
 }
 
-function collectGuests(){
-  const nameInputs=document.querySelectorAll('.pack-name-input');
-  const typeSelects=document.querySelectorAll('.pack-type-select');
-  const list=[];const now=Date.now();
-  nameInputs.forEach((input,i)=>{
-    const name=input.value.trim();
-    const type=typeSelects[i]?typeSelects[i].value:getDefaultType();
-    if(name){
-      const existing=_guests[i];
-      if(existing){list.push({...existing,name,type});}
-      else{list.push({id:(now+i).toString(36)+Math.random().toString(36).slice(2,5),name,type,createdAt:new Date().toISOString()});}
-    }
-  });
-  return list;
-}
+let _pendingAfterDupCheck=null;
 
 async function saveGuestListSubmit(){
   const list=collectGuests();
+  // Step 1: duplicate check (couple-side)
+  const dups=[...new Set(findDuplicates(list))];
+  if(dups.length>0){
+    _pendingAfterDupCheck=list;
+    document.getElementById('dup-modal-list').innerHTML=dups.map((n,i)=>`${i+1}. <strong>${escHtml(n)}</strong>`).join('<br>');
+    document.getElementById('dup-modal').style.display='flex';
+    return;
+  }
+  await checkLangAndSave(list);
+}
+
+async function proceedAfterDupCheck(){
+  document.getElementById('dup-modal').style.display='none';
+  if(_pendingAfterDupCheck) await checkLangAndSave(_pendingAfterDupCheck);
+  _pendingAfterDupCheck=null;
+}
+
+async function checkLangAndSave(list){
+  // Step 2: language mismatch check
   const mismatches=list.filter(g=>hasMismatch(g.name));
   if(mismatches.length>0){
     _pendingList=list;

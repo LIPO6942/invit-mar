@@ -2845,14 +2845,36 @@ async function onAdminGuestWeddingChange(slug) {
                 ${optionsHtml}
               </select>
             </div>
-            ${mismatchBadge}
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:2px;">
+              <!-- Views badge -->
+              ${hasName ? `<span style="display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;color:${existing.views>0?'#82e0aa':'rgba(200,180,120,0.6)'};background:${existing.views>0?'rgba(46,204,113,0.08)':'rgba(201,168,76,0.06)'};border:1px solid ${existing.views>0?'rgba(46,204,113,0.25)':'rgba(201,168,76,0.15)'};border-radius:20px;padding:2px 9px;white-space:nowrap;">👁️ ${existing.views>0?(weddingLang==='fr'?`Ouvert ${existing.views} fois`:`فُتح ${existing.views} مرة`):(weddingLang==='fr'?'Pas encore ouvert':'لم يُفتح بعد')}</span>` : ''}
+              <div style="flex:1;">${mismatchBadge}</div>
+            </div>
             ${linkBadge}
           </div>
         </div>
       `;
     }
 
-    container.innerHTML = html;
+    // ── Duplicate detection (admin-side 2nd check) ──
+    const allNames = guests.map(g=>(g.name||'').trim().toLowerCase()).filter(Boolean);
+    const seen = {};
+    allNames.forEach(n=>{ seen[n]=(seen[n]||0)+1; });
+    const dupNames = [...new Set(guests.filter(g=>seen[(g.name||'').trim().toLowerCase()]>1).map(g=>g.name))];
+    if (dupNames.length > 0) {
+      const dupBanner = `
+        <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.4);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:0.8rem;color:#e98989;display:flex;gap:8px;align-items:flex-start;">
+          <span style="font-size:1.1rem;">🔁</span>
+          <div>
+            <strong>${weddingLang==='fr'?'Noms en double détectés (contrôle admin)':'أسماء مكررة في القائمة (تحقق أدمن)'} :</strong><br>
+            ${dupNames.map(n=>`<span style="background:rgba(231,76,60,0.15);padding:1px 6px;border-radius:4px;margin:1px;display:inline-block;">${escHtml(n)}</span>`).join(' ')}
+          </div>
+        </div>
+      `;
+      container.innerHTML = dupBanner + html;
+    } else {
+      container.innerHTML = html;
+    }
 
   } catch (e) {
     console.error('onAdminGuestWeddingChange:', e);
