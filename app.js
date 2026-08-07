@@ -523,46 +523,30 @@ function openCalendarModal(data) {
   const locEl = document.getElementById('cal-modal-event-location');
   const reminderEl = document.getElementById('cal-modal-reminder-pill');
 
-  const optIcsTitle = document.getElementById('cal-opt-ics-title');
-  const optIcsDesc = document.getElementById('cal-opt-ics-desc');
   const optGcalTitle = document.getElementById('cal-opt-gcal-title');
   const optGcalDesc = document.getElementById('cal-opt-gcal-desc');
-  const optOutlookTitle = document.getElementById('cal-opt-outlook-title');
-  const optOutlookDesc = document.getElementById('cal-opt-outlook-desc');
 
   if (isFr) {
-    if (titleEl) titleEl.textContent = 'Enregistrer dans votre calendrier';
-    if (subtitleEl) subtitleEl.textContent = 'Choisissez l\'option qui vous convient sans quitter la page';
+    if (titleEl) titleEl.textContent = 'Enregistrer dans Google Calendar';
+    if (subtitleEl) subtitleEl.textContent = 'Ajoutez l\'événement à votre Google Calendar en 1 clic';
     if (badgeEl) badgeEl.textContent = '✨ Jour J - Invitation Mariage';
     if (reminderEl) reminderEl.textContent = '🔔 Rappels recommandés : 24h & 1h avant l\'événement';
-    if (optIcsTitle) optIcsTitle.textContent = '📲 Enregistrer sur le téléphone / App (.ics)';
-    if (optIcsDesc) optIcsDesc.textContent = 'Ouvre le calendrier natif (iPhone, Android, Apple Calendar, Outlook) sans quitter la page';
-    if (optGcalTitle) optGcalTitle.textContent = '🌐 Google Calendar (Web)';
-    if (optGcalDesc) optGcalDesc.textContent = 'Ajouter directement sur votre compte Google Calendar en ligne';
-    if (optOutlookTitle) optOutlookTitle.textContent = '✉️ Outlook / Office 365 (Web)';
-    if (optOutlookDesc) optOutlookDesc.textContent = 'Ajouter sur votre compte Microsoft Outlook Web';
+    if (optGcalTitle) optGcalTitle.textContent = 'Ouvrir Google Calendar 📅';
+    if (optGcalDesc) optGcalDesc.textContent = 'Enregistrer l\'événement avec tous les détails (lieu, heure et rappels)';
   } else if (isTn) {
-    if (titleEl) titleEl.textContent = 'احفظ الموعد في الكالندريي';
-    if (subtitleEl) subtitleEl.textContent = 'اختار كيفاش تحب تحفظ العرس في تليفونك';
+    if (titleEl) titleEl.textContent = 'احفظ الموعد في Google Calendar';
+    if (subtitleEl) subtitleEl.textContent = 'زيد العرس في Google Calendar بنزلة واحدة';
     if (badgeEl) badgeEl.textContent = '✨ يوم العرس المميز';
     if (reminderEl) reminderEl.textContent = '🔔 نوتيفيكاسيون قبل بنهار وقبل بساعة مالموعد';
-    if (optIcsTitle) optIcsTitle.textContent = '📲 حفظ مباشر في التليفون (.ics)';
-    if (optIcsDesc) optIcsDesc.textContent = 'يحل نيشان في كالندريي تليفونك (iPhone, Android, Outlook) من غير ما تخرج';
-    if (optGcalTitle) optGcalTitle.textContent = '🌐 Google Calendar (ويب)';
-    if (optGcalDesc) optGcalDesc.textContent = 'حفظ في حساب Google Calendar أونلاين';
-    if (optOutlookTitle) optOutlookTitle.textContent = '✉️ Outlook / Office 365 (ويب)';
-    if (optOutlookDesc) optOutlookDesc.textContent = 'حفظ في حساب Microsoft Outlook أونلاين';
+    if (optGcalTitle) optGcalTitle.textContent = 'حل Google Calendar 📅';
+    if (optGcalDesc) optGcalDesc.textContent = 'احفظ الموعد بالتفاصيل (الوقت، البلاصة والنوتيفيكاسيون)';
   } else {
-    if (titleEl) titleEl.textContent = 'حفظ الموعد في التقويم';
-    if (subtitleEl) subtitleEl.textContent = 'اختر طريقة الحفظ المناسبة لجهازك دون مغادرة الصفحة';
+    if (titleEl) titleEl.textContent = 'حفظ الموعد في Google Calendar';
+    if (subtitleEl) subtitleEl.textContent = 'أضف المناسبة إلى تقويم Google بنقرة واحدة';
     if (badgeEl) badgeEl.textContent = '✨ اليوم المميّز - حفل الزفاف';
     if (reminderEl) reminderEl.textContent = '🔔 تذكير مقترح: قبل يوم واحد (24h) وقبل ساعة واحدة من الموعد';
-    if (optIcsTitle) optIcsTitle.textContent = '📲 حفظ مباشر في الهاتف (.ics)';
-    if (optIcsDesc) optIcsDesc.textContent = 'يفتح تقويم جهازك مباشرة (iPhone, Android, Apple Calendar, Outlook) دون مغادرة الصفحة';
-    if (optGcalTitle) optGcalTitle.textContent = '🌐 Google Calendar (ويب)';
-    if (optGcalDesc) optGcalDesc.textContent = 'إضافة مباشرة إلى حساب Google Calendar الخاص بك عبر الإنترنت';
-    if (optOutlookTitle) optOutlookTitle.textContent = '✉️ Outlook / Office 365 (ويب)';
-    if (optOutlookDesc) optOutlookDesc.textContent = 'إضافة إلى حساب Microsoft Outlook الخاص بك عبر الإنترنت';
+    if (optGcalTitle) optGcalTitle.textContent = 'فتح Google Calendar 📅';
+    if (optGcalDesc) optGcalDesc.textContent = 'حفظ المناسبة مع التفاصيل الكاملة (المكان، الوقت والتنبيهات)';
   }
 
   if (eventTitleEl) eventTitleEl.textContent = data.title || 'Mariage';
