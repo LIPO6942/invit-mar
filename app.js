@@ -361,6 +361,9 @@ function formatTo24h(timeStr, ampmStr) {
    GOOGLE CALENDAR INTEGRATION
 ──────────────────────────────────────────────── */
 
+var _weddingDateTime = '2026-07-16T20:00:00';
+var _weatherLocation = 'Téboulba, Tunisie';
+
 function formatToGCalUTC(dateObj) {
   const pad = num => String(num).padStart(2, '0');
   const year = dateObj.getUTCFullYear();
@@ -428,7 +431,8 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
   }
 
   if (isNaN(startDate.getTime())) {
-    startDate = new Date(_weddingDateTime || '2026-07-16T20:00:00');
+    const defaultDateTime = (typeof _weddingDateTime !== 'undefined' && _weddingDateTime) ? _weddingDateTime : '2026-07-16T20:00:00';
+    startDate = new Date(defaultDateTime);
   }
 
   const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
@@ -455,7 +459,8 @@ function buildGoogleCalendarUrl(title, dateRaw, timeRaw, location, details) {
       `رابط دعوتك الخاصة: ${window.location.href}`;
 
   const finalDetails = details || defaultDetails;
-  const finalLocation = location || _weatherLocation || (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
+  const defaultLoc = (typeof _weatherLocation !== 'undefined' && _weatherLocation) ? _weatherLocation : (isFr ? 'Téboulba, Tunisie' : 'طبلبة، تونس');
+  const finalLocation = location || defaultLoc;
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',
