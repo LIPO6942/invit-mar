@@ -2131,31 +2131,30 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   max-width: 280px;
 }
 
-/* ── Calligraphic Monogram of Couple's Initials ── */
-.arch-monogram-wrap {
+/* ── Animated Infinity Knot of Eternal Love ── */
+.arch-infinity-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 2px;
+  margin: 4px auto 0px;
   width: 100%;
 }
 
-.monogram-svg {
-  width: 160px;
-  height: 80px;
+.infinity-svg {
+  width: 180px;
+  height: 90px;
   overflow: visible;
-  animation: monogramFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.85));
+  animation: infinityBreath 4s ease-in-out infinite;
 }
 
-@keyframes monogramFloat {
+@keyframes infinityBreath {
   0%, 100% {
-    transform: translateY(0px);
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.85)) drop-shadow(0 0 14px rgba(212,160,23,0.6));
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(212,160,23,0.55));
   }
   50% {
-    transform: translateY(-3px);
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.9)) drop-shadow(0 0 22px rgba(251,191,36,0.85));
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 18px rgba(251,191,36,0.9)) drop-shadow(0 0 30px rgba(255,210,50,0.5));
   }
 }
 

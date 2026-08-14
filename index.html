@@ -71,60 +71,158 @@
             <!-- ── Elegant Calligraphic Monogram & Basmala ── -->
             <div class="arch-top-crest">
 
-              <!-- Monogram: Couple's initials in gold calligraphy -->
-              <div class="arch-monogram-wrap" id="archMonogramWrap">
-                <svg class="monogram-svg" id="monogramSvg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+              <!-- ∞ Animated Infinity Knot of Eternal Love -->
+              <div class="arch-infinity-wrap" id="archInfinityWrap">
+                <svg class="infinity-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" overflow="visible">
                   <defs>
-                    <linearGradient id="monoGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%"  stop-color="#fffbe0"/>
-                      <stop offset="22%" stop-color="#fde68a"/>
-                      <stop offset="45%" stop-color="#d4a017"/>
-                      <stop offset="68%" stop-color="#fcd34d"/>
-                      <stop offset="85%" stop-color="#fef3c7"/>
+                    <!-- Base gold gradient for the ribbon -->
+                    <linearGradient id="infGold1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%"   stop-color="#fffbe0"/>
+                      <stop offset="20%"  stop-color="#f5c842"/>
+                      <stop offset="45%"  stop-color="#b8860b"/>
+                      <stop offset="70%"  stop-color="#fcd34d"/>
                       <stop offset="100%" stop-color="#92400e"/>
                     </linearGradient>
-                    <linearGradient id="monoGoldDark" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%"  stop-color="#92400e"/>
-                      <stop offset="50%" stop-color="#d97706"/>
-                      <stop offset="100%" stop-color="#fbbf24"/>
+                    <linearGradient id="infGold2" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%"   stop-color="#fef3c7"/>
+                      <stop offset="40%"  stop-color="#d97706"/>
+                      <stop offset="100%" stop-color="#fde68a"/>
                     </linearGradient>
-                    <filter id="monoGlow" x="-30%" y="-30%" width="160%" height="160%">
-                      <feGaussianBlur stdDeviation="3.5" result="blur"/>
-                      <feFlood flood-color="rgba(251,191,36,0.55)" result="col"/>
-                      <feComposite in="col" in2="blur" operator="in" result="glow"/>
-                      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    <!-- Traveling light gradient (shimmer comet) -->
+                    <linearGradient id="cometGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"   stop-color="rgba(255,255,255,0)" />
+                      <stop offset="60%"  stop-color="rgba(255,245,180,0.7)"/>
+                      <stop offset="100%" stop-color="rgba(255,255,255,1)"/>
+                    </linearGradient>
+                    <!-- Soft outer glow filter -->
+                    <filter id="infGlow" x="-40%" y="-40%" width="180%" height="180%">
+                      <feGaussianBlur stdDeviation="4" result="b1"/>
+                      <feFlood flood-color="#fbbf24" flood-opacity="0.6" result="col"/>
+                      <feComposite in="col" in2="b1" operator="in" result="glow"/>
+                      <feMerge>
+                        <feMergeNode in="glow"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                    <!-- Sharp sparkle filter -->
+                    <filter id="sparkleFilter" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur stdDeviation="1.8" result="b"/>
+                      <feFlood flood-color="#fff8c0" flood-opacity="1" result="c"/>
+                      <feComposite in="c" in2="b" operator="in" result="g"/>
+                      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
                     </filter>
                   </defs>
 
-                  <!-- Ornamental flourish left -->
-                  <path d="M 10,45 C 18,30 28,28 34,38 C 38,44 36,50 30,50 C 26,50 24,46 28,44" fill="none" stroke="url(#monoGold)" stroke-width="1.2" opacity="0.7"/>
-                  <path d="M 10,45 C 15,55 22,58 28,54" fill="none" stroke="url(#monoGold)" stroke-width="1" opacity="0.5"/>
+                  <!-- ══ INFINITY PATH DEFINITION ══
+                       Lemniscate of Bernoulli centred at (100,50), rx=65, ry=28
+                       Path goes: right-loop clockwise, cross centre, left-loop clockwise -->
 
-                  <!-- Ornamental flourish right -->
-                  <path d="M 170,45 C 162,30 152,28 146,38 C 142,44 144,50 150,50 C 154,50 156,46 152,44" fill="none" stroke="url(#monoGold)" stroke-width="1.2" opacity="0.7"/>
-                  <path d="M 170,45 C 165,55 158,58 152,54" fill="none" stroke="url(#monoGold)" stroke-width="1" opacity="0.5"/>
+                  <!-- Shadow / depth layer -->
+                  <path id="infPath"
+                    d="M 100,50
+                       C 100,22 135,22 165,50
+                       C 135,78 100,78 100,50
+                       C 100,22 65,22  35,50
+                       C 65,78  100,78 100,50 Z"
+                    fill="none"
+                    stroke="rgba(0,0,0,0.35)"
+                    stroke-width="7"
+                    stroke-linecap="round"
+                    transform="translate(1,3)"
+                  />
 
-                  <!-- Divider ampersand center -->
-                  <text x="90" y="58" text-anchor="middle" font-family="'Playfair Display', 'Georgia', serif" font-size="22" font-style="italic" fill="url(#monoGold)" filter="url(#monoGlow)" opacity="0.9">&amp;</text>
+                  <!-- Main ribbon — back layer (inner shadow) -->
+                  <path
+                    d="M 100,50
+                       C 100,22 135,22 165,50
+                       C 135,78 100,78 100,50
+                       C 100,22 65,22  35,50
+                       C 65,78  100,78 100,50 Z"
+                    fill="none"
+                    stroke="url(#infGold2)"
+                    stroke-width="9"
+                    stroke-linecap="round"
+                    opacity="0.55"
+                  />
 
-                  <!-- Groom initial - LEFT (large calligraphic) -->
-                  <text id="monoInitialGroom" x="52" y="65" text-anchor="middle"
-                    font-family="'Playfair Display', 'IM Fell English', 'Georgia', serif"
-                    font-size="58" font-weight="700" font-style="italic"
-                    fill="url(#monoGold)" filter="url(#monoGlow)"
-                    letter-spacing="-2">T</text>
+                  <!-- Main ribbon — front shiny layer -->
+                  <path
+                    d="M 100,50
+                       C 100,22 135,22 165,50
+                       C 135,78 100,78 100,50
+                       C 100,22 65,22  35,50
+                       C 65,78  100,78 100,50 Z"
+                    fill="none"
+                    stroke="url(#infGold1)"
+                    stroke-width="6"
+                    stroke-linecap="round"
+                    filter="url(#infGlow)"
+                  />
 
-                  <!-- Bride initial - RIGHT (large calligraphic) -->
-                  <text id="monoInitialBride" x="128" y="65" text-anchor="middle"
-                    font-family="'Playfair Display', 'IM Fell English', 'Georgia', serif"
-                    font-size="58" font-weight="700" font-style="italic"
-                    fill="url(#monoGold)" filter="url(#monoGlow)"
-                    letter-spacing="-2">G</text>
+                  <!-- ══ TRAVELING LIGHT COMET along the ∞ path ══ -->
+                  <circle r="4.5" fill="white" filter="url(#sparkleFilter)" opacity="0.95">
+                    <animateMotion
+                      dur="3s"
+                      repeatCount="indefinite"
+                      rotate="auto"
+                    >
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                    <animate attributeName="r" values="4.5;6;4.5" dur="3s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.95;1;0.95" dur="3s" repeatCount="indefinite"/>
+                  </circle>
 
-                  <!-- Fine horizontal rule under initials -->
-                  <line x1="38" y1="72" x2="142" y2="72" stroke="url(#monoGold)" stroke-width="0.7" opacity="0.55"/>
-                  <!-- Decorative diamond dots -->
-                  <polygon points="88,69 90,71 92,69 90,67" fill="url(#monoGold)" opacity="0.9"/>
+                  <!-- Comet tail glow -->
+                  <circle r="8" fill="rgba(255,240,140,0.35)" filter="url(#infGlow)">
+                    <animateMotion dur="3s" repeatCount="indefinite">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                  </circle>
+
+                  <!-- ══ 2nd COMET offset by half lap ══ -->
+                  <circle r="3.5" fill="#fff5a0" filter="url(#sparkleFilter)" opacity="0.85">
+                    <animateMotion dur="3s" begin="-1.5s" repeatCount="indefinite" rotate="auto">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                    <animate attributeName="r" values="3.5;5;3.5" dur="3s" begin="-1.5s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle r="6" fill="rgba(255,220,80,0.25)" filter="url(#infGlow)">
+                    <animateMotion dur="3s" begin="-1.5s" repeatCount="indefinite">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                  </circle>
+
+                  <!-- ══ STATIC SPARKLES at key positions ══ -->
+                  <!-- Right lobe tip -->
+                  <g filter="url(#sparkleFilter)">
+                    <polygon points="165,50 163,46 167,46" fill="#fffbe0" opacity="0.7">
+                      <animate attributeName="opacity" values="0.7;1;0.4;1;0.7" dur="2.4s" repeatCount="indefinite"/>
+                    </polygon>
+                    <line x1="165" y1="43" x2="165" y2="57" stroke="white" stroke-width="0.8" opacity="0.5">
+                      <animate attributeName="opacity" values="0.5;1;0.2;1;0.5" dur="2.4s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="158" y1="50" x2="172" y2="50" stroke="white" stroke-width="0.8" opacity="0.5">
+                      <animate attributeName="opacity" values="0.5;1;0.2;1;0.5" dur="2.4s" repeatCount="indefinite"/>
+                    </line>
+                  </g>
+                  <!-- Left lobe tip -->
+                  <g filter="url(#sparkleFilter)">
+                    <polygon points="35,50 33,46 37,46" fill="#fffbe0" opacity="0.7">
+                      <animate attributeName="opacity" values="0.4;1;0.7;1;0.4" dur="2.1s" repeatCount="indefinite"/>
+                    </polygon>
+                    <line x1="35" y1="43" x2="35" y2="57" stroke="white" stroke-width="0.8" opacity="0.5">
+                      <animate attributeName="opacity" values="0.2;1;0.5;1;0.2" dur="2.1s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="28" y1="50" x2="42" y2="50" stroke="white" stroke-width="0.8" opacity="0.5">
+                      <animate attributeName="opacity" values="0.2;1;0.5;1;0.2" dur="2.1s" repeatCount="indefinite"/>
+                    </line>
+                  </g>
+                  <!-- Centre knot crossover dot -->
+                  <circle cx="100" cy="50" r="4" fill="#fde68a" filter="url(#infGlow)">
+                    <animate attributeName="r" values="4;5.5;4" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="100" cy="50" r="1.8" fill="white" opacity="0.95"/>
                 </svg>
               </div>
 
