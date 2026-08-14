@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -264,132 +264,215 @@
             </div>
             <div class="shimmer-line"></div>
 
-            <!-- 💛❤️ Tattoo Style: Groom ♡ Bride — animated calligraphy + self-drawing heart -->
+            <!-- ❤️ ECG Heartbeat — ligne cardiaque animée avec cœur et initiales -->
+            <!-- Hidden data elements so app.js can still set names via tspan IDs -->
+            <svg style="display:none" aria-hidden="true">
+              <text><tspan id="ecgGroomTspan">مرتضى</tspan></text>
+              <text><tspan id="ecgBrideTspan">مريم</tspan></text>
+            </svg>
             <div class="ecg-heart-container" id="ecgHeartContainer">
-              <svg class="ecg-heart-svg" viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg" overflow="visible">
-                <defs>
-                  <!-- Gold gradient for names -->
-                  <linearGradient id="nameGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%"   stop-color="#fffbe0"/>
-                    <stop offset="28%"  stop-color="#f5c842"/>
-                    <stop offset="60%"  stop-color="#c8860a"/>
-                    <stop offset="100%" stop-color="#fde68a"/>
-                  </linearGradient>
-                  <!-- Blood red gradient for heart -->
-                  <linearGradient id="heartRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%"  stop-color="#6B0000"/>
-                    <stop offset="100%" stop-color="#c0392b"/>
-                  </linearGradient>
-                  <!-- Gold glow for names -->
-                  <filter id="nameGlowF" x="-25%" y="-60%" width="150%" height="220%">
-                    <feGaussianBlur stdDeviation="3.5" result="b"/>
-                    <feFlood flood-color="#d4a017" flood-opacity="0.6" result="c"/>
-                    <feComposite in="c" in2="b" operator="in" result="g"/>
-                    <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-                  <!-- Red glow for heart -->
-                  <filter id="heartGlowF" x="-60%" y="-80%" width="220%" height="260%">
-                    <feGaussianBlur stdDeviation="3" result="b"/>
-                    <feFlood flood-color="#8B0000" flood-opacity="0.65" result="c"/>
-                    <feComposite in="c" in2="b" operator="in" result="g"/>
-                    <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-
-                  <!-- ClipPath: groom name reveal (positioned x:185→305) -->
-                  <clipPath id="groomReveal" clipPathUnits="userSpaceOnUse">
-                    <rect x="185" y="-8" height="76" width="0">
-                      <animate attributeName="width"
-                        values="0;0;120;120;120;0"
-                        keyTimes="0;0.12;0.38;0.78;0.88;1"
-                        dur="10s" repeatCount="indefinite"/>
-                    </rect>
-                  </clipPath>
-
-                  <!-- ClipPath: bride name reveal (positioned x:15→135) -->
-                  <clipPath id="brideReveal" clipPathUnits="userSpaceOnUse">
-                    <rect x="15" y="-8" height="76" width="0">
-                      <animate attributeName="width"
-                        values="0;0;0;120;120;0"
-                        keyTimes="0;0.12;0.50;0.68;0.88;1"
-                        dur="10s" repeatCount="indefinite"/>
-                    </rect>
-                  </clipPath>
-                </defs>
-
-                <!-- Fine dashed baseline (ECG flat line) -->
-                <line x1="5" y1="34" x2="315" y2="34"
-                  stroke="rgba(212,160,23,0.2)" stroke-width="0.8"
-                  stroke-dasharray="4 7" stroke-linecap="round"/>
-
-                <!-- ══ GROOM NAME — right side (Arabic RTL, طارق) ══ -->
-                <g clip-path="url(#groomReveal)">
-                  <text x="245" y="46" text-anchor="middle"
-                    font-family="'Amiri','Scheherazade New',serif"
-                    font-size="33" font-weight="700" font-style="italic"
-                    fill="url(#nameGold)"
-                    filter="url(#nameGlowF)"
-                    id="ecgNameGroom">
-                    <tspan id="ecgGroomTspan">طارق</tspan>
-                  </text>
-                </g>
-
-                <!-- ══ HEART — center, blood red self-drawing ══ -->
-                <!-- Heart fill (appears after stroke draws) -->
-                <path
-                  d="M160,27 C160,18 167.5,14 172,19 C176.5,14 184,18 184,27 L172,39 Z"
-                  fill="url(#heartRedGrad)" opacity="0"
-                  filter="url(#heartGlowF)">
-                  <animate attributeName="opacity"
-                    values="0;0;0;0;0.8;0.8;0.8;0"
-                    keyTimes="0;0.12;0.38;0.56;0.62;0.68;0.84;1"
-                    dur="10s" repeatCount="indefinite"/>
-                  <!-- Double heartbeat pulse -->
-                  <animateTransform attributeName="transform" type="scale"
-                    values="1;1;1;1;1;1.18;1;1.14;1;1;1"
-                    keyTimes="0;0.12;0.38;0.56;0.60;0.65;0.69;0.74;0.78;0.84;1"
-                    additive="sum" dur="10s" repeatCount="indefinite"
-                    transform-origin="172 27"/>
-                </path>
-                <!-- Heart stroke (draws itself via dashoffset) -->
-                <path
-                  d="M160,27 C160,18 167.5,14 172,19 C176.5,14 184,18 184,27 L172,39 Z"
-                  fill="none" stroke="#c0392b" stroke-width="2.2"
-                  stroke-linecap="round" stroke-linejoin="round"
-                  stroke-dasharray="75" stroke-dashoffset="75"
-                  filter="url(#heartGlowF)">
-                  <animate attributeName="stroke-dashoffset"
-                    values="75;75;75;0;0;0;75"
-                    keyTimes="0;0.12;0.44;0.60;0.68;0.84;1"
-                    dur="10s" repeatCount="indefinite"/>
-                </path>
-                <!-- Gold rim shimmer on heart -->
-                <path
-                  d="M160,27 C160,18 167.5,14 172,19 C176.5,14 184,18 184,27 L172,39 Z"
-                  fill="none" stroke="#f5c842" stroke-width="0.8"
-                  stroke-linecap="round" opacity="0">
-                  <animate attributeName="opacity"
-                    values="0;0;0;0;0.55;0.55;0;0"
-                    keyTimes="0;0.12;0.44;0.62;0.68;0.84;0.90;1"
-                    dur="10s" repeatCount="indefinite"/>
-                </path>
-
-                <!-- ══ BRIDE NAME — left side (Arabic RTL, غادة) ══ -->
-                <g clip-path="url(#brideReveal)">
-                  <text x="75" y="46" text-anchor="middle"
-                    font-family="'Amiri','Scheherazade New',serif"
-                    font-size="33" font-weight="700" font-style="italic"
-                    fill="url(#nameGold)"
-                    filter="url(#nameGlowF)"
-                    id="ecgNameBride">
-                    <tspan id="ecgBrideTspan">غادة</tspan>
-                  </text>
-                </g>
-
-                <!-- End-dots (ECG trace tips) -->
-                <circle cx="5" cy="34" r="1.8" fill="#d4a017" opacity="0.5"/>
-                <circle cx="315" cy="34" r="1.8" fill="#d4a017" opacity="0.5"/>
-              </svg>
+              <canvas id="ecgCanvas" width="320" height="70" style="display:block;width:100%;max-width:340px;margin:0 auto;"></canvas>
             </div>
+            <script>
+            (function() {
+              const canvas = document.getElementById('ecgCanvas');
+              if (!canvas) return;
+              const ctx = canvas.getContext('2d');
+              const W = canvas.width, H = canvas.height;
+              const MID = H / 2 + 5;
+
+              // Palette
+              const GOLD = '#f5c842';
+              const GOLD2 = '#c8860a';
+              const RED  = '#c0392b';
+              const RED2  = '#8B0000';
+
+              // ECG pulse shape (normalized 0→1 x, offset y from baseline)
+              // Flat → tiny P → flat → QRS spike → flat → T wave → flat
+              const PULSE_PTS = [
+                [0.00, 0], [0.08, 0], [0.10, -2],[0.12, 0],          // P wave
+                [0.25, 0], [0.28, 2],  [0.30,-18],[0.32, 10],[0.35, 0], // QRS
+                [0.45, 0], [0.50,-5], [0.55, 0],                      // T wave
+                [1.00, 0]
+              ];
+
+              function ecgY(t) {
+                // t in [0,1] → interpolate PULSE_PTS
+                for (let i = 0; i < PULSE_PTS.length - 1; i++) {
+                  const [x0, y0] = PULSE_PTS[i];
+                  const [x1, y1] = PULSE_PTS[i + 1];
+                  if (t >= x0 && t <= x1) {
+                    const f = (t - x0) / (x1 - x0);
+                    return y0 + (y1 - y0) * f;
+                  }
+                }
+                return 0;
+              }
+
+              // Heart path helper (centered at cx, cy, size s)
+              function heartPath(cx, cy, s) {
+                ctx.beginPath();
+                ctx.moveTo(cx, cy + s * 0.3);
+                ctx.bezierCurveTo(cx, cy - s * 0.1, cx - s * 0.8, cy - s * 0.1, cx - s * 0.8, cy - s * 0.4);
+                ctx.bezierCurveTo(cx - s * 0.8, cy - s * 0.9, cx, cy - s * 0.75, cx, cy - s * 0.4);
+                ctx.bezierCurveTo(cx, cy - s * 0.75, cx + s * 0.8, cy - s * 0.9, cx + s * 0.8, cy - s * 0.4);
+                ctx.bezierCurveTo(cx + s * 0.8, cy - s * 0.1, cx, cy - s * 0.1, cx, cy + s * 0.3);
+                ctx.closePath();
+              }
+
+              // Animation state
+              let phase = 0;           // 0..1 position of ECG scan head
+              const SPEED = 0.003;     // speed per frame
+              const TRAIL = 180;       // trail length in px
+              let heartBeat = 0;       // heartbeat scale 0..1
+              let lastQRS = -1;        // last QRS phase
+
+              // Initials (updated from config)
+              let initGroom = 'م';
+              let initBride = 'م';
+
+              function updateInitials() {
+                const gEl = document.getElementById('ecgGroomTspan');
+                const bEl = document.getElementById('ecgBrideTspan');
+                if (gEl && gEl.textContent) initGroom = [...gEl.textContent.trim()][0] || 'م';
+                if (bEl && bEl.textContent) initBride = [...bEl.textContent.trim()][0] || 'م';
+              }
+
+              function draw() {
+                ctx.clearRect(0, 0, W, H);
+
+                // ── Dashed baseline ──
+                ctx.save();
+                ctx.setLineDash([4, 8]);
+                ctx.strokeStyle = 'rgba(212,160,23,0.18)';
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(10, MID);
+                ctx.lineTo(W - 10, MID);
+                ctx.stroke();
+                ctx.restore();
+
+                // ── Scan head X position ──
+                const headX = 10 + (W - 20) * phase;
+
+                // ── Draw trail ECG line (fade from 0→headX) ──
+                const trailStart = Math.max(10, headX - TRAIL);
+                for (let x = trailStart; x < headX; x += 1.5) {
+                  const p = (x - 10) / (W - 20);           // global phase [0,1]
+                  const cycleP = ((p * 4) % 1);             // fast cycle
+                  const yOff = ecgY(cycleP) * 1.0;
+                  const alpha = (x - trailStart) / TRAIL;   // fade in
+                  const grd = ctx.createLinearGradient(0,0,W,0);
+                  grd.addColorStop(0, GOLD2);
+                  grd.addColorStop(1, GOLD);
+                  ctx.fillStyle = `rgba(245,200,66,${alpha * 0.85})`;
+                  ctx.fillRect(x, MID + yOff - 0.8, 1.5, 1.5);
+                }
+
+                // Detect QRS peak (cycleP ≈ 0.30) → trigger heartbeat
+                const curCycle = ((phase * 4) % 1);
+                if (curCycle < 0.33 && lastQRS > 0.5) {
+                  heartBeat = 1;
+                }
+                lastQRS = curCycle;
+                heartBeat = Math.max(0, heartBeat - 0.04);
+
+                // ── Glow dot at head ──
+                const headY = MID + ecgY(curCycle);
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(headX, headY, 3 + heartBeat * 2, 0, Math.PI * 2);
+                const gGlow = ctx.createRadialGradient(headX, headY, 0, headX, headY, 5 + heartBeat * 3);
+                gGlow.addColorStop(0, GOLD);
+                gGlow.addColorStop(1, 'rgba(245,200,66,0)');
+                ctx.fillStyle = gGlow;
+                ctx.fill();
+                ctx.restore();
+
+                // ── HEART at center ──
+                const CX = W / 2, CY = MID - 6;
+                const pulse = 10 + heartBeat * 5;
+                // Shadow / glow
+                ctx.save();
+                ctx.globalAlpha = 0.4 + heartBeat * 0.3;
+                heartPath(CX, CY, pulse + 4);
+                ctx.fillStyle = RED2;
+                ctx.shadowColor = RED;
+                ctx.shadowBlur = 10 + heartBeat * 8;
+                ctx.fill();
+                ctx.restore();
+                // Fill
+                ctx.save();
+                ctx.globalAlpha = 0.85 + heartBeat * 0.15;
+                heartPath(CX, CY, pulse);
+                const hGrd = ctx.createRadialGradient(CX, CY - 3, 0, CX, CY, pulse * 1.2);
+                hGrd.addColorStop(0, '#e74c3c');
+                hGrd.addColorStop(1, RED2);
+                ctx.fillStyle = hGrd;
+                ctx.fill();
+                // Gold rim
+                ctx.strokeStyle = `rgba(245,200,66,${0.5 + heartBeat * 0.5})`;
+                ctx.lineWidth = 1.0;
+                ctx.stroke();
+                ctx.restore();
+
+                // ── Initials ──
+                // Groom initial — right of heart
+                ctx.save();
+                ctx.font = 'bold 18px "Amiri", "Scheherazade New", serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = GOLD;
+                ctx.shadowColor = GOLD2;
+                ctx.shadowBlur = 8;
+                ctx.globalAlpha = 0.92;
+                ctx.fillText(initGroom, CX + 48, MID - 2);
+                ctx.restore();
+
+                // Bride initial — left of heart
+                ctx.save();
+                ctx.font = 'bold 18px "Amiri", "Scheherazade New", serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = GOLD;
+                ctx.shadowColor = GOLD2;
+                ctx.shadowBlur = 8;
+                ctx.globalAlpha = 0.92;
+                ctx.fillText(initBride, CX - 48, MID - 2);
+                ctx.restore();
+
+                // Small "♡" separator between initials and heart
+                ctx.save();
+                ctx.font = '9px serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = `rgba(245,200,66,${0.5 + heartBeat * 0.4})`;
+                ctx.fillText('·', CX + 28, MID - 2);
+                ctx.fillText('·', CX - 28, MID - 2);
+                ctx.restore();
+
+                // ── End dots ──
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(10, MID, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(212,160,23,0.45)';
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(W - 10, MID, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // Advance phase
+                phase = (phase + SPEED) % 1;
+                requestAnimationFrame(draw);
+              }
+
+              // Wait for names to be populated then start
+              setTimeout(function() {
+                updateInitials();
+                draw();
+              }, 600);
+            })();
+            </script>
           </div>
           <div class="scroll-hint">
             <span data-tr="scroll_hint">اسحب للأسفل</span>
