@@ -71,9 +71,154 @@
             <!-- ── Elegant Calligraphic Monogram & Basmala ── -->
             <div class="arch-top-crest">
 
-              <!-- ∞ Animated Infinity Knot of Eternal Love -->
+              <!-- ∞ Corrected Slim Infinity Symbol -->
               <div class="arch-infinity-wrap" id="archInfinityWrap">
-                <svg class="infinity-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                <svg class="infinity-svg" viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                  <defs>
+                    <linearGradient id="infGold1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%"   stop-color="#fffbe0"/>
+                      <stop offset="25%"  stop-color="#f5c842"/>
+                      <stop offset="50%"  stop-color="#b8860b"/>
+                      <stop offset="75%"  stop-color="#fcd34d"/>
+                      <stop offset="100%" stop-color="#92400e"/>
+                    </linearGradient>
+                    <linearGradient id="infGold2" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%"   stop-color="#fef3c7"/>
+                      <stop offset="50%"  stop-color="#b8860b"/>
+                      <stop offset="100%" stop-color="#fde68a"/>
+                    </linearGradient>
+                    <filter id="infGlow" x="-40%" y="-60%" width="180%" height="220%">
+                      <feGaussianBlur stdDeviation="3" result="b"/>
+                      <feFlood flood-color="#fbbf24" flood-opacity="0.65" result="col"/>
+                      <feComposite in="col" in2="b" operator="in" result="glow"/>
+                      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                    <filter id="cometF" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur stdDeviation="2" result="b"/>
+                      <feFlood flood-color="#fff8c0" flood-opacity="1" result="c"/>
+                      <feComposite in="c" in2="b" operator="in" result="g"/>
+                      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                  </defs>
+
+                  <!--
+                    Proper lemniscate: starts at centre (100,35), traces right loop
+                    then left loop, creating true figure-8 crossing at centre.
+                    Control points tuned so the loops are slim ovals.
+                  -->
+                  <!-- Hidden motion path (same shape, used by animateMotion) -->
+                  <path id="infPath"
+                    d="M 100,35
+                       C 115,14 158,14 162,35
+                       C 166,56 125,56 100,35
+                       C 75,14  34,14  38,35
+                       C 42,56  85,56 100,35 Z"
+                    fill="none" stroke="none"/>
+
+                  <!-- Shadow layer -->
+                  <path
+                    d="M 100,35
+                       C 115,14 158,14 162,35
+                       C 166,56 125,56 100,35
+                       C 75,14  34,14  38,35
+                       C 42,56  85,56 100,35 Z"
+                    fill="none"
+                    stroke="rgba(0,0,0,0.4)"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                    transform="translate(0,2)"/>
+
+                  <!-- Back glow -->
+                  <path
+                    d="M 100,35
+                       C 115,14 158,14 162,35
+                       C 166,56 125,56 100,35
+                       C 75,14  34,14  38,35
+                       C 42,56  85,56 100,35 Z"
+                    fill="none"
+                    stroke="url(#infGold2)"
+                    stroke-width="6"
+                    stroke-linecap="round"
+                    opacity="0.45"/>
+
+                  <!-- Front gold ribbon -->
+                  <path
+                    d="M 100,35
+                       C 115,14 158,14 162,35
+                       C 166,56 125,56 100,35
+                       C 75,14  34,14  38,35
+                       C 42,56  85,56 100,35 Z"
+                    fill="none"
+                    stroke="url(#infGold1)"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    filter="url(#infGlow)"/>
+
+                  <!-- Inner highlight shimmer -->
+                  <path
+                    d="M 100,35
+                       C 115,20 152,20 158,35
+                       C 152,50 115,50 100,35
+                       C 85,20 48,20 42,35
+                       C 48,50 85,50 100,35"
+                    fill="none"
+                    stroke="rgba(255,252,220,0.35)"
+                    stroke-width="1"
+                    stroke-linecap="round"/>
+
+                  <!-- Center crossover dot -->
+                  <circle cx="100" cy="35" r="2.8" fill="#fde68a" filter="url(#infGlow)">
+                    <animate attributeName="r" values="2.8;4;2.8" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.85;1;0.85" dur="2s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="100" cy="35" r="1.2" fill="white" opacity="0.95"/>
+
+                  <!-- Traveling comet 1 -->
+                  <circle r="3.5" fill="white" filter="url(#cometF)" opacity="0.95">
+                    <animateMotion dur="2.8s" repeatCount="indefinite" rotate="auto">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                    <animate attributeName="r" values="3.5;5;3.5" dur="2.8s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle r="6" fill="rgba(255,230,100,0.28)" filter="url(#infGlow)">
+                    <animateMotion dur="2.8s" repeatCount="indefinite">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                  </circle>
+
+                  <!-- Traveling comet 2 (offset) -->
+                  <circle r="2.8" fill="#fff5a0" filter="url(#cometF)" opacity="0.8">
+                    <animateMotion dur="2.8s" begin="-1.4s" repeatCount="indefinite" rotate="auto">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                    <animate attributeName="r" values="2.8;4.2;2.8" dur="2.8s" begin="-1.4s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle r="5" fill="rgba(255,200,60,0.22)" filter="url(#infGlow)">
+                    <animateMotion dur="2.8s" begin="-1.4s" repeatCount="indefinite">
+                      <mpath href="#infPath"/>
+                    </animateMotion>
+                  </circle>
+
+                  <!-- Sparkle tips -->
+                  <g opacity="0.8">
+                    <line x1="162" y1="28" x2="162" y2="42" stroke="white" stroke-width="0.7">
+                      <animate attributeName="opacity" values="0.3;1;0.3" dur="2.2s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="155" y1="35" x2="169" y2="35" stroke="white" stroke-width="0.7">
+                      <animate attributeName="opacity" values="0.3;1;0.3" dur="2.2s" repeatCount="indefinite"/>
+                    </line>
+                  </g>
+                  <g opacity="0.8">
+                    <line x1="38" y1="28" x2="38" y2="42" stroke="white" stroke-width="0.7">
+                      <animate attributeName="opacity" values="1;0.3;1" dur="2.2s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="31" y1="35" x2="45" y2="35" stroke="white" stroke-width="0.7">
+                      <animate attributeName="opacity" values="1;0.3;1" dur="2.2s" repeatCount="indefinite"/>
+                    </line>
+                  </g>
+                </svg>
+              </div>
+
                   <defs>
                     <!-- Base gold gradient for the ribbon -->
                     <linearGradient id="infGold1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -270,6 +415,128 @@
               <span class="bride-name animated-bride" data-cfg="brideNameDisplay" onclick="handleCoupleNamesClick(event)">مريم</span>
             </div>
             <div class="shimmer-line"></div>
+
+            <!-- ❤️ ECG Heart — Séquence: pouls ECG → cœur se forme → prénoms apparaissent → boucle -->
+            <div class="ecg-heart-container" id="ecgHeartContainer">
+              <svg class="ecg-heart-svg" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                <defs>
+                  <linearGradient id="ecgLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stop-color="#8B1a0a"/>
+                    <stop offset="40%"  stop-color="#d4820a"/>
+                    <stop offset="70%"  stop-color="#c93020"/>
+                    <stop offset="100%" stop-color="#f5c842"/>
+                  </linearGradient>
+                  <linearGradient id="heartFill" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%"  stop-color="#6B0000"/>
+                    <stop offset="45%" stop-color="#c0380a"/>
+                    <stop offset="100%" stop-color="#d4820a"/>
+                  </linearGradient>
+                  <filter id="ecgGlowF" x="-20%" y="-60%" width="140%" height="220%">
+                    <feGaussianBlur stdDeviation="3" result="b"/>
+                    <feFlood flood-color="#c04010" flood-opacity="0.7" result="c"/>
+                    <feComposite in="c" in2="b" operator="in" result="g"/>
+                    <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <clipPath id="heartClip">
+                    <path d="M140,55 C140,38 155,28 168,36 C181,44 181,58 168,70 L140,90 L112,70 C99,58 99,44 112,36 C125,28 140,38 140,55 Z"/>
+                  </clipPath>
+                </defs>
+
+                <!-- ══ PHASE 1: ECG Line drawing (0–3s) ══ -->
+                <!-- Flat line left -->
+                <line x1="10" y1="45" x2="75" y2="45"
+                  stroke="url(#ecgLineGrad)" stroke-width="2" stroke-linecap="round"
+                  filter="url(#ecgGlowF)">
+                  <animate attributeName="stroke-dasharray" values="0,100;65,100" dur="1s" fill="freeze" begin="0s"/>
+                  <animate attributeName="opacity" values="1;1;0" dur="6s" repeatCount="indefinite"/>
+                  <animate attributeName="stroke-dasharray" values="0,100;65,100;65,100;0,100;0,100" dur="6s" repeatCount="indefinite"/>
+                </line>
+                <!-- ECG spike (sharp peak) -->
+                <polyline points="75,45 85,45 95,10 105,75 115,45 130,45"
+                  fill="none" stroke="url(#ecgLineGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                  filter="url(#ecgGlowF)">
+                  <animate attributeName="stroke-dasharray"
+                    values="0,150;0,150;150,150;150,150;0,150;0,150"
+                    dur="6s" repeatCount="indefinite"/>
+                  <animate attributeName="stroke-dashoffset"
+                    values="150;150;0;0;150;150"
+                    dur="6s" repeatCount="indefinite"/>
+                </polyline>
+                <!-- Flat line right -->
+                <line x1="130" y1="45" x2="200" y2="45"
+                  stroke="url(#ecgLineGrad)" stroke-width="2" stroke-linecap="round"
+                  filter="url(#ecgGlowF)">
+                  <animate attributeName="stroke-dasharray"
+                    values="0,80;0,80;0,80;70,80;70,80;0,80"
+                    dur="6s" repeatCount="indefinite"/>
+                  <animate attributeName="opacity" values="1;1;1;1;0;0" dur="6s" repeatCount="indefinite"/>
+                </line>
+
+                <!-- ══ PHASE 2: Heart shape (appears at ~2.5s) ══ -->
+                <path id="heartOutline"
+                  d="M140,55 C140,38 155,28 168,36 C181,44 181,58 168,70 L140,90 L112,70 C99,58 99,44 112,36 C125,28 140,38 140,55 Z"
+                  fill="url(#heartFill)" opacity="0"
+                  filter="url(#ecgGlowF)">
+                  <animate attributeName="opacity"
+                    values="0;0;0;0.9;1;0.9;1;0.9;0.2;0"
+                    keyTimes="0;0.33;0.42;0.5;0.58;0.67;0.75;0.83;0.92;1"
+                    dur="6s" repeatCount="indefinite"/>
+                  <!-- Heart beat pulse -->
+                  <animateTransform attributeName="transform" type="scale"
+                    values="1;1;1;1;1.12;1;1.08;1;1;1"
+                    additive="sum" keyTimes="0;0.33;0.42;0.5;0.58;0.67;0.75;0.83;0.92;1"
+                    dur="6s" repeatCount="indefinite"
+                    transform-origin="140 62"/>
+                </path>
+
+                <!-- Heart outline stroke -->  
+                <path
+                  d="M140,55 C140,38 155,28 168,36 C181,44 181,58 168,70 L140,90 L112,70 C99,58 99,44 112,36 C125,28 140,38 140,55 Z"
+                  fill="none" stroke="#f5c842" stroke-width="1.5" opacity="0"
+                  filter="url(#ecgGlowF)">
+                  <animate attributeName="opacity"
+                    values="0;0;0;0.8;1;0.8;1;0.8;0.2;0"
+                    keyTimes="0;0.33;0.42;0.5;0.58;0.67;0.75;0.83;0.92;1"
+                    dur="6s" repeatCount="indefinite"/>
+                </path>
+
+                <!-- ══ PHASE 3: Names inside heart ══ -->
+                <!-- Groom name -->
+                <text id="ecgNameGroom" x="140" y="62" text-anchor="middle"
+                  font-family="'Amiri','Scheherazade New',serif"
+                  font-size="12" font-weight="700" fill="#fff8d0"
+                  data-cfg="groomAr" opacity="0"
+                  clip-path="url(#heartClip)">
+                  طارق
+                  <animate attributeName="opacity"
+                    values="0;0;0;0;1;1;1;1;0;0"
+                    keyTimes="0;0.33;0.42;0.5;0.55;0.62;0.67;0.80;0.90;1"
+                    dur="6s" repeatCount="indefinite"/>
+                </text>
+                <!-- Divider heart symbol -->
+                <text x="140" y="72" text-anchor="middle"
+                  font-size="8" fill="#fcd34d" opacity="0"
+                  clip-path="url(#heartClip)">
+                  ♡
+                  <animate attributeName="opacity"
+                    values="0;0;0;0;1;1;1;1;0;0"
+                    keyTimes="0;0.33;0.42;0.5;0.55;0.62;0.67;0.80;0.90;1"
+                    dur="6s" repeatCount="indefinite"/>
+                </text>
+                <!-- Bride name -->
+                <text id="ecgNameBride" x="140" y="82" text-anchor="middle"
+                  font-family="'Amiri','Scheherazade New',serif"
+                  font-size="12" font-weight="700" fill="#fff8d0"
+                  data-cfg="brideAr" opacity="0"
+                  clip-path="url(#heartClip)">
+                  غادة
+                  <animate attributeName="opacity"
+                    values="0;0;0;0;1;1;1;1;0;0"
+                    keyTimes="0;0.33;0.42;0.5;0.55;0.62;0.67;0.80;0.90;1"
+                    dur="6s" repeatCount="indefinite"/>
+                </text>
+              </svg>
+            </div>
           </div>
           <div class="scroll-hint">
             <span data-tr="scroll_hint">اسحب للأسفل</span>

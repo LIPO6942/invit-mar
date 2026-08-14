@@ -2193,6 +2193,23 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   margin-top: 2px;
 }
 
+/* ── ECG Heart Animation Container ── */
+.ecg-heart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 10px auto 2px;
+  padding: 4px 0 0;
+}
+
+.ecg-heart-svg {
+  width: 240px;
+  height: 78px;
+  overflow: visible;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+
 /* ════════════════════════════════════════════════════
    5 AUTHENTIC ARCHITECTURAL & ARTISTIC ARCH DESIGNS
    ════════════════════════════════════════════════════ */
