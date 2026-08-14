@@ -278,226 +278,322 @@
               var cv = document.getElementById('ecgCanvas');
               if (!cv) return;
               var ctx = cv.getContext('2d');
-              var W = cv.width, H = cv.height;
-              var CX = W >> 1;
-              var MID = (H * 0.52) | 0;
+              var W = cv.width, H = cv.height;   /* 320 x 90 */
+              var CX = W >> 1;                    /* 160      */
+              var MID = (H * 0.52) | 0;          /* 46       */
 
-              var GOLD='#f5c842', GLD2='#fffde0', GLD3='#ffe082', AMB='#c8860a';
+              /* Pure gold palette — NO dark browns that can look red */
+              var GOLD  = '#f5c842';   /* settled gold         */
+              var WARM  = '#ffe082';   /* warm/fresh gold      */
+              var HOT   = '#fffde0';   /* hot near nib         */
+              var SPARK = '#ffffff';   /* nib spark            */
 
-              /* Letter zones — LW=42 so PEN+WARM fit inside */
-              var BX=66, LW=42;    /* bride  zone=[24,108]  */
-              var GX=254;          /* groom  zone=[212,296] */
+              /* Letter zones — LW=42 gives 84px each side */
+              var BX = 66,  LW = 42;   /* bride  م  zone=[24,108]  */
+              var GX = 254;             /* groom  ح  zone=[212,296] */
 
-              var PTS=[[0,.0],[.09,.0],[.12,-2.5],[.15,.0],[.26,.0],[.29,3],[.31,-22],[.33,12],[.36,.0],[.46,.0],[.52,-5.5],[.58,.0],[1,.0]];
-              function ey(p){for(var i=0;i<PTS.length-1;i++){var x0=PTS[i][0],y0=PTS[i][1],x1=PTS[i+1][0],y1=PTS[i+1][1];if(p>=x0&&p<=x1)return y0+(y1-y0)*(p-x0)/(x1-x0);}return 0;}
+              /* ECG pulse shape */
+              var PTS=[[0,.0],[.09,.0],[.12,-2.5],[.15,.0],[.26,.0],[.29,3],
+                        [.31,-22],[.33,12],[.36,.0],[.46,.0],[.52,-5.5],[.58,.0],[1,.0]];
+              function ey(p){
+                for(var i=0;i<PTS.length-1;i++){
+                  var x0=PTS[i][0],y0=PTS[i][1],x1=PTS[i+1][0],y1=PTS[i+1][1];
+                  if(p>=x0&&p<=x1) return y0+(y1-y0)*(p-x0)/(x1-x0);
+                }
+                return 0;
+              }
 
               function eio(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
               function eo3(t){return 1-Math.pow(1-t,3);}
 
-              /* Timing — slow through letter zone */
+              /* Timing — slow through letter zone for writing impression */
               var TOTAL=500, DELAY=45;
-              var LA1=DELAY+18,  LA2=LA1+130;   /* bride  write phase */
-              var RA1=DELAY+18,  RA2=RA1+130;   /* groom  write phase */
-              var REACH=LA2+70, HOLD=REACH+100;
+              var LA1=DELAY+18,  LA2=LA1+140;   /* write phase ~2.3s  */
+              var REACH=LA2+65;                  /* heads meet at heart */
+              var HOLD=REACH+100;
 
               var frame=0, beatTrig=-999;
               var ig='ح', ib='م';
 
               function readInit(){
-                var g=document.querySelector('[data-cfg="groomNameDisplay"]')||document.getElementById('ecgGroomTspan');
-                var b=document.querySelector('[data-cfg="brideNameDisplay"]')||document.getElementById('ecgBrideTspan');
+                var g=document.querySelector('[data-cfg="groomNameDisplay"]')
+                   ||document.getElementById('ecgGroomTspan');
+                var b=document.querySelector('[data-cfg="brideNameDisplay"]')
+                   ||document.getElementById('ecgBrideTspan');
                 if(g&&g.textContent.trim()) ig=Array.from(g.textContent.trim())[0];
                 if(b&&b.textContent.trim()) ib=Array.from(b.textContent.trim())[0];
               }
 
-              /* Piecewise left head: edge→LL, slow LL→LR, LR→CX */
+              /* Piecewise head (slow in letter zone) */
               function lHead(f){
                 if(f<=DELAY) return 12;
                 var fA=f-DELAY;
                 var d1=LA1-DELAY; if(fA<=d1) return 12+(BX-LW-12)*eio(fA/d1);
                 var d2=LA2-LA1;   if(f<=LA2) return (BX-LW)+(2*LW)*((f-LA1)/d2);
-                var d3=REACH-LA2; return (BX+LW)+(CX-(BX+LW))*eio((f-LA2)/d3);
+                var d3=REACH-LA2; return (BX+LW)+(CX-BX-LW)*eio((f-LA2)/d3);
               }
               function rHead(f){
                 if(f<=DELAY) return W-12;
                 var fA=f-DELAY;
-                var d1=RA1-DELAY; if(fA<=d1) return (W-12)-(W-12-(GX+LW))*eio(fA/d1);
-                var d2=RA2-RA1;   if(f<=RA2) return (GX+LW)-(2*LW)*((f-RA1)/d2);
-                var d3=REACH-RA2; return (GX-LW)-(GX-LW-CX)*eio((f-RA2)/d3);
+                var d1=LA1-DELAY; if(fA<=d1) return (W-12)-((W-12)-(GX+LW))*eio(fA/d1);
+                var d2=LA2-LA1;   if(f<=LA2) return (GX+LW)-(2*LW)*((f-LA1)/d2);
+                var d3=REACH-LA2; return (GX-LW)-(GX-LW-CX)*eio((f-LA2)/d3);
               }
 
               /* Heart path */
-              function hp(cx,cy,r){ctx.beginPath();ctx.moveTo(cx,cy+r);ctx.bezierCurveTo(cx-r*.13,cy+r*.68,cx-r,cy+r*.22,cx-r,cy-r*.2);ctx.bezierCurveTo(cx-r,cy-r*.78,cx-r*.4,cy-r,cx,cy-r*.52);ctx.bezierCurveTo(cx+r*.4,cy-r,cx+r,cy-r*.78,cx+r,cy-r*.2);ctx.bezierCurveTo(cx+r,cy+r*.22,cx+r*.13,cy+r*.68,cx,cy+r);ctx.closePath();}
+              function hp(cx,cy,r){
+                ctx.beginPath();
+                ctx.moveTo(cx,cy+r);
+                ctx.bezierCurveTo(cx-r*.13,cy+r*.68,cx-r,cy+r*.22,cx-r,cy-r*.2);
+                ctx.bezierCurveTo(cx-r,cy-r*.78,cx-r*.4,cy-r,cx,cy-r*.52);
+                ctx.bezierCurveTo(cx+r*.4,cy-r,cx+r,cy-r*.78,cx+r,cy-r*.2);
+                ctx.bezierCurveTo(cx+r,cy+r*.22,cx+r*.13,cy+r*.68,cx,cy+r);
+                ctx.closePath();
+              }
 
-              function beatStr(age){if(age<0||age>62)return 0;if(age<7)return eo3(age/7);if(age<16)return 1-.65*(age-7)/9;if(age<24)return .35+.65*eo3((age-16)/8);if(age<44)return 1-(age-24)/20;return 0;}
+              function beatStr(age){
+                if(age<0||age>62) return 0;
+                if(age<7)  return eo3(age/7);
+                if(age<16) return 1-.65*(age-7)/9;
+                if(age<24) return .35+.65*eo3((age-16)/8);
+                if(age<44) return 1-(age-24)/20;
+                return 0;
+              }
 
               /* Golden heart */
               function drawHeart(beat,alpha){
                 if(alpha<.02) return;
                 var cx=CX,cy=MID-2,r=12+beat*5.5;
-                ctx.save();var atm=ctx.createRadialGradient(cx,cy,0,cx,cy,r*4);atm.addColorStop(0,'rgba(220,160,0,'+(alpha*(.22+beat*.52))+')');atm.addColorStop(.5,'rgba(180,100,0,'+(alpha*(.05+beat*.12))+')');atm.addColorStop(1,'rgba(140,70,0,0)');ctx.fillStyle=atm;ctx.beginPath();ctx.arc(cx,cy,r*4,0,Math.PI*2);ctx.fill();ctx.restore();
-                ctx.save();ctx.globalAlpha=alpha*.65;hp(cx,cy,r+3);ctx.fillStyle='#2a1000';ctx.shadowColor=GOLD;ctx.shadowBlur=6+beat*35;ctx.fill();ctx.restore();
-                ctx.save();ctx.globalAlpha=alpha;hp(cx,cy,r);var bg=ctx.createLinearGradient(cx-r,cy-r*.9,cx+r,cy+r);bg.addColorStop(0,'#fffde0');bg.addColorStop(.18,GOLD);bg.addColorStop(.5,AMB);bg.addColorStop(.82,'#8a5200');bg.addColorStop(1,'#3a1800');ctx.fillStyle=bg;ctx.shadowColor=GOLD;ctx.shadowBlur=4+beat*22;ctx.fill();ctx.restore();
-                ctx.save();ctx.globalAlpha=alpha*.78;hp(cx,cy,r);ctx.clip();var hl=ctx.createRadialGradient(cx-r*.3,cy-r*.44,0,cx-r*.3,cy-r*.44,r*.7);hl.addColorStop(0,'rgba(255,254,242,.90)');hl.addColorStop(.4,'rgba(245,210,90,.22)');hl.addColorStop(1,'rgba(200,140,0,0)');ctx.fillStyle=hl;ctx.beginPath();ctx.arc(cx,cy,r*2,0,Math.PI*2);ctx.fill();ctx.restore();
-                if(beat>.08){ctx.save();ctx.globalAlpha=alpha*beat*.55;hp(cx,cy,r*.52);ctx.fillStyle='rgba(255,245,170,.45)';ctx.shadowColor='#fff5a0';ctx.shadowBlur=8+beat*12;ctx.fill();ctx.restore();}
-                ctx.save();ctx.globalAlpha=alpha*(.55+beat*.45);hp(cx,cy,r);ctx.strokeStyle=beat>.15?('rgba(255,252,210,'+(0.93+beat*.07)+')'):'rgba(245,200,66,.52)';ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
+                ctx.save();
+                var atm=ctx.createRadialGradient(cx,cy,0,cx,cy,r*4);
+                atm.addColorStop(0,'rgba(220,160,0,'+(alpha*(.22+beat*.52))+')');
+                atm.addColorStop(.5,'rgba(180,100,0,'+(alpha*(.05+beat*.12))+')');
+                atm.addColorStop(1,'rgba(140,70,0,0)');
+                ctx.fillStyle=atm;ctx.beginPath();ctx.arc(cx,cy,r*4,0,Math.PI*2);ctx.fill();
+                ctx.restore();
+
+                ctx.save();ctx.globalAlpha=alpha*.65;hp(cx,cy,r+3);
+                ctx.fillStyle='#2a1000';ctx.shadowColor=GOLD;ctx.shadowBlur=6+beat*35;
+                ctx.fill();ctx.restore();
+
+                ctx.save();ctx.globalAlpha=alpha;hp(cx,cy,r);
+                var bg=ctx.createLinearGradient(cx-r,cy-r*.9,cx+r,cy+r);
+                bg.addColorStop(0,HOT);bg.addColorStop(.18,GOLD);
+                bg.addColorStop(.5,'#d4900a');bg.addColorStop(.82,'#8a5200');
+                bg.addColorStop(1,'#3a1800');
+                ctx.fillStyle=bg;ctx.shadowColor=GOLD;ctx.shadowBlur=4+beat*22;
+                ctx.fill();ctx.restore();
+
+                ctx.save();ctx.globalAlpha=alpha*.78;hp(cx,cy,r);ctx.clip();
+                var hl=ctx.createRadialGradient(cx-r*.3,cy-r*.44,0,cx-r*.3,cy-r*.44,r*.7);
+                hl.addColorStop(0,'rgba(255,254,242,.90)');
+                hl.addColorStop(.4,'rgba(245,210,90,.22)');
+                hl.addColorStop(1,'rgba(200,140,0,0)');
+                ctx.fillStyle=hl;ctx.beginPath();ctx.arc(cx,cy,r*2,0,Math.PI*2);ctx.fill();
+                ctx.restore();
+
+                if(beat>.08){
+                  ctx.save();ctx.globalAlpha=alpha*beat*.55;hp(cx,cy,r*.52);
+                  ctx.fillStyle='rgba(255,245,170,.45)';ctx.shadowColor='#fff5a0';
+                  ctx.shadowBlur=8+beat*12;ctx.fill();ctx.restore();
+                }
+                ctx.save();ctx.globalAlpha=alpha*(.55+beat*.45);hp(cx,cy,r);
+                ctx.strokeStyle=beat>.15?('rgba(255,252,210,'+(0.93+beat*.07)+')')
+                                        :'rgba(245,200,66,.52)';
+                ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
               }
 
-              /* ══════════════════════════════════════════════════════════
-                 ENGRAVED GOLD — 3 thermal zones
-                 nibX moves from LR→LL (Arabic RTL writing direction)
+              /* ════════════════════════════════════════════════════════════
+                 WRITE LETTER — calligraphic pen with thermal gradient
 
-                 Zone A [nibX+PEN+WARM, LR]  → settled gold (3-layer engraved)
-                 Zone B [nibX+PEN, nibX+PEN+WARM] → hot fresh ink (bright gold)
-                 Zone C [nibX-4, nibX+PEN]   → WHITE-HOT nib (laser point)
+                 nibX moves RTL: from LR → LL as animation progresses.
+                 Visible region: [nibX, LR] — what the pen has already traced.
 
-                 Sizes: LW=42 → zone=84px ; PEN=16, WARM=40 → PEN+WARM=56 < 84 ✓
-                 Zone A appears after 28px of travel (1/3 through)
-                 ══════════════════════════════════════════════════════════ */
-              var PEN_W=16, WARM_W=40;
-              var FONT='700 50px "Aref Ruqaa Ink","Aref Ruqaa","Scheherazade New","Amiri",serif';
+                 Thermal gradient (horizontal, left=hot/fresh, right=settled):
+                   nibX end → bright warm gold HOT '#fffde0'
+                   middle   → warm gold       WARM '#ffe082'
+                   LR end   → settled gold    GOLD '#f5c842'
 
-              function drawLetterEngraved(ch, lx, nibX, fade){
+                 Engraving: dark offset shadow below + bright bevel above.
+                 Nib glow: separate radial gradient at nibX, MID.
+                 ════════════════════════════════════════════════════════════ */
+              var FONT = '700 52px "Aref Ruqaa Ink","Aref Ruqaa","Scheherazade New","Amiri",serif';
+
+              function writeLetter(ch, lx, nibX, fade){
                 if(fade<.02) return;
                 var LL=lx-LW, LR=lx+LW;
-                if(nibX > LR+PEN_W) return;
-                var nib=Math.max(LL-PEN_W, Math.min(LR, nibX));
 
-                /* ── A: ENGRAVED GOLD (cooled ink) ── */
-                var aS=Math.min(LR, nib+PEN_W+WARM_W), aE=LR;
-                if(aE > aS+0.5){
+                /* nibX = where pen is now (moves LR→LL) */
+                var clipL = Math.max(LL, nibX);
+                var clipR = LR;
+                if(clipR <= clipL + 0.5) return;
+
+                /* ── Thermal horizontal gradient
+                   x=nibX (LEFT of visible) = freshest → bright
+                   x=LR   (RIGHT of visible) = oldest  → settled gold   */
+                var span = clipR - clipL;
+                var tg = ctx.createLinearGradient(clipL, 0, clipR, 0);
+                tg.addColorStop(0,   HOT);    /* fresh at nib side */
+                tg.addColorStop(0.25, WARM);  /* warm */
+                tg.addColorStop(0.65, GOLD);  /* settled gold */
+                tg.addColorStop(1,   GOLD);   /* full settled gold */
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(clipL, 0, span, H);
+                ctx.clip();
+                ctx.font = FONT;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                /* PASS 1 — engraved shadow (3D depth) */
+                ctx.globalAlpha = fade * 0.30;
+                ctx.fillStyle   = 'rgba(10,4,0,0.9)';  /* very dark, but low alpha */
+                ctx.shadowColor = 'rgba(0,0,0,0)';
+                ctx.shadowBlur  = 0;
+                ctx.shadowOffsetX = 1.2; ctx.shadowOffsetY = 2;
+                ctx.fillText(ch, lx, MID);
+                ctx.shadowOffsetX = 0;   ctx.shadowOffsetY = 0;
+
+                /* PASS 2 — main gold body (thermal gradient) */
+                ctx.globalAlpha = fade * 0.95;
+                ctx.fillStyle   = tg;
+                ctx.fillText(ch, lx, MID);
+
+                /* PASS 3 — top-left bevel highlight */
+                ctx.globalAlpha = fade * 0.20;
+                ctx.fillStyle   = HOT;
+                ctx.shadowColor = 'rgba(255,253,230,0.5)';
+                ctx.shadowBlur  = 3;
+                ctx.shadowOffsetX = -0.5; ctx.shadowOffsetY = -1;
+                ctx.fillText(ch, lx, MID);
+                ctx.shadowOffsetX = 0;    ctx.shadowOffsetY = 0;
+                ctx.shadowBlur = 0;
+
+                ctx.restore();
+
+                /* ── NIB GLOW — separate, no clip interference ── */
+                if(nibX >= LL - 6 && nibX <= LR + 2){
                   ctx.save();
-                  ctx.beginPath();ctx.rect(aS,0,aE-aS,H);ctx.clip();
-                  ctx.font=FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+                  /* Outer corona */
+                  var corona = ctx.createRadialGradient(nibX, MID, 0, nibX, MID, 26);
+                  corona.addColorStop(0,   'rgba(255,253,210,0.95)');
+                  corona.addColorStop(0.22, 'rgba(255,230,80,0.85)');
+                  corona.addColorStop(0.5,  'rgba(245,200,50,0.50)');
+                  corona.addColorStop(0.78, 'rgba(245,190,30,0.20)');
+                  corona.addColorStop(1,    'rgba(245,190,30,0)');
+                  ctx.fillStyle   = corona;
+                  ctx.globalAlpha = fade;
+                  ctx.beginPath();ctx.arc(nibX, MID, 26, 0, Math.PI*2);ctx.fill();
 
-                  /* Shadow — gives 3D depth to engraving */
-                  ctx.globalAlpha=fade*0.5;
-                  ctx.fillStyle='#1a0800';
-                  ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=0;
-                  ctx.shadowOffsetX=2;ctx.shadowOffsetY=2.5;
-                  ctx.fillText(ch,lx,MID);
-                  ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
+                  /* White spark at center */
+                  ctx.globalAlpha = fade * 0.9;
+                  ctx.fillStyle   = SPARK;
+                  ctx.shadowColor = WARM;
+                  ctx.shadowBlur  = 10;
+                  ctx.beginPath();ctx.arc(nibX, MID, 3.5, 0, Math.PI*2);ctx.fill();
+                  ctx.shadowBlur  = 0;
 
-                  /* Gold gradient body */
-                  var g=ctx.createLinearGradient(lx,MID-25,lx,MID+20);
-                  g.addColorStop(0,GLD3);g.addColorStop(0.22,GOLD);
-                  g.addColorStop(0.6,AMB);g.addColorStop(1,'#6b3a00');
-                  ctx.globalAlpha=fade*0.94;ctx.fillStyle=g;
-                  ctx.shadowColor='transparent';ctx.shadowBlur=0;
-                  ctx.fillText(ch,lx,MID);
-
-                  /* Bevel highlight */
-                  ctx.globalAlpha=fade*0.28;ctx.fillStyle=GLD2;
-                  ctx.shadowColor=GLD2;ctx.shadowBlur=4;
-                  ctx.shadowOffsetX=-0.8;ctx.shadowOffsetY=-1;
-                  ctx.fillText(ch,lx,MID);
-                  ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
-
-                  ctx.restore();
-                }
-
-                /* ── B: HOT FRESH INK (just engraved) ── */
-                var bS=Math.max(LL, nib+PEN_W), bE=Math.min(LR, nib+PEN_W+WARM_W);
-                if(bE > bS+0.5){
-                  ctx.save();
-                  ctx.beginPath();ctx.rect(bS,0,bE-bS,H);ctx.clip();
-                  ctx.font=FONT;ctx.textAlign='center';ctx.textBaseline='middle';
-                  ctx.globalAlpha=fade*0.55;
-                  ctx.fillStyle=GLD2;ctx.shadowColor=GLD3;ctx.shadowBlur=26;
-                  ctx.fillText(ch,lx,MID);
-                  ctx.globalAlpha=fade*0.97;
-                  ctx.fillStyle=GLD3;ctx.shadowColor=GOLD;ctx.shadowBlur=10;
-                  ctx.fillText(ch,lx,MID);
-                  ctx.restore();
-                }
-
-                /* ── C: WHITE-HOT NIB (laser/chisel tip) ── */
-                var cS=Math.max(LL, nib-4), cE=Math.min(LR, nib+PEN_W);
-                if(cE > cS+0.5){
-                  ctx.save();
-                  ctx.beginPath();ctx.rect(cS,0,cE-cS,H);ctx.clip();
-                  ctx.font=FONT;ctx.textAlign='center';ctx.textBaseline='middle';
-                  ctx.globalAlpha=fade*0.7;
-                  ctx.fillStyle=GLD2;ctx.shadowColor='#fffde0';ctx.shadowBlur=55;
-                  ctx.fillText(ch,lx,MID);
-                  ctx.globalAlpha=fade*1.0;
-                  ctx.fillStyle='#ffffff';ctx.shadowColor=GLD3;ctx.shadowBlur=28;
-                  ctx.fillText(ch,lx,MID);
+                  /* Vertical beam: links ECG line to letter zone */
+                  var ecgY = MID + ey(0.3); /* approximate ECG y at current position */
+                  if(Math.abs(ecgY - MID) > 4){
+                    var beam = ctx.createLinearGradient(nibX, Math.min(ecgY,MID), nibX, Math.max(ecgY,MID));
+                    beam.addColorStop(0, 'rgba(255,253,210,0.55)');
+                    beam.addColorStop(1, 'rgba(255,253,210,0)');
+                    ctx.globalAlpha = fade * 0.5;
+                    ctx.fillStyle   = beam;
+                    ctx.fillRect(nibX-1.5, Math.min(ecgY,MID), 3, Math.abs(ecgY-MID));
+                  }
                   ctx.restore();
                 }
               }
 
+              /* ECG line */
               function drawLine(x0,x1,cycles,fade){
                 if(x1<=x0+.5||fade<.02) return;
                 var span=x1-x0;ctx.save();ctx.beginPath();var fst=true;
-                for(var x=x0;x<=x1;x+=1.1){var p=((x-x0)/span*cycles)%1,y=MID+ey(p);if(fst){ctx.moveTo(x,y);fst=false;}else ctx.lineTo(x,y);}
-                ctx.strokeStyle=GOLD;ctx.lineWidth=1.8;ctx.lineCap=ctx.lineJoin='round';ctx.shadowColor=GOLD;ctx.shadowBlur=8;ctx.globalAlpha=fade*.88;ctx.stroke();ctx.restore();
+                for(var x=x0;x<=x1;x+=1.1){
+                  var p=((x-x0)/span*cycles)%1,y=MID+ey(p);
+                  if(fst){ctx.moveTo(x,y);fst=false;}else ctx.lineTo(x,y);
+                }
+                ctx.strokeStyle=GOLD;ctx.lineWidth=1.8;
+                ctx.lineCap=ctx.lineJoin='round';
+                ctx.shadowColor=GOLD;ctx.shadowBlur=8;
+                ctx.globalAlpha=fade*.88;ctx.stroke();ctx.restore();
               }
 
-              function drawDot(x,y,fade,beat,inZone){
-                if(fade<.02) return;
-                var r=inZone?8+beat*3.5:5+beat*3;
+              /* Scan dot */
+              function drawDot(x,y,fade,beat){
+                var r=5.5+beat*3.5;
                 ctx.save();
-                var g=ctx.createRadialGradient(x,y,0,x,y,r+6);
-                g.addColorStop(0,'#fffef8');g.addColorStop(.22,GLD2);g.addColorStop(.55,GOLD);g.addColorStop(1,'rgba(245,200,66,0)');
+                var g=ctx.createRadialGradient(x,y,0,x,y,r+5);
+                g.addColorStop(0,SPARK);g.addColorStop(.22,HOT);
+                g.addColorStop(.55,GOLD);g.addColorStop(1,'rgba(245,200,66,0)');
                 ctx.fillStyle=g;ctx.globalAlpha=fade;
-                ctx.shadowColor=GLD2;ctx.shadowBlur=inZone?16:8;
                 ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
-                if(inZone){
-                  var bm=ctx.createLinearGradient(x,y,x,MID);
-                  bm.addColorStop(0,'rgba(255,253,240,.5)');bm.addColorStop(1,'rgba(255,253,240,0)');
-                  ctx.fillStyle=bm;ctx.fillRect(x-2,Math.min(y,MID),4,Math.abs(MID-y));
-                }
                 ctx.restore();
               }
 
+              /* ── MAIN DRAW LOOP ── */
               function draw(){
                 ctx.clearRect(0,0,W,H);
                 var f=frame%TOTAL;
                 if(f<DELAY){frame++;requestAnimationFrame(draw);return;}
 
-                var lx=Math.min(CX,lHead(f));
-                var rx=Math.max(CX,rHead(f));
-                var fa=f<=HOLD?1.0:1-eio((f-HOLD)/(TOTAL-HOLD));
+                var lx = Math.min(CX, lHead(f));
+                var rx = Math.max(CX, rHead(f));
+                var fa = f<=HOLD ? 1.0 : 1-eio((f-HOLD)/(TOTAL-HOLD));
 
                 if(f===REACH) beatTrig=frame;
                 var beat=beatStr(frame-beatTrig);
                 var pct=Math.min(1,(f-DELAY)/(REACH-DELAY));
-                var ha=f<REACH?Math.pow(pct,2.8)*.25:fa;
+                var ha=f<REACH ? Math.pow(pct,2.8)*.28 : fa;
 
-                ctx.save();ctx.setLineDash([3,10]);ctx.strokeStyle='rgba(212,160,23,.08)';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(12,MID);ctx.lineTo(W-12,MID);ctx.stroke();ctx.restore();
+                /* Baseline */
+                ctx.save();ctx.setLineDash([3,10]);
+                ctx.strokeStyle='rgba(212,160,23,.07)';ctx.lineWidth=.5;
+                ctx.beginPath();ctx.moveTo(12,MID);ctx.lineTo(W-12,MID);ctx.stroke();
+                ctx.restore();
 
-                drawLine(12,lx,3.8,fa);
-                drawLine(rx,W-12,3.8,fa);
+                /* ECG lines */
+                drawLine(12, lx, 3.8, fa);
+                drawLine(rx, W-12, 3.8, fa);
 
-                /* nibX for bride: mirror (RTL) = 2*BX - lx */
-                var bNib=2*BX-lx;
-                var gNib=rx;
+                /* ── Letter nib positions ──
+                   Bride  م (left head): nibX = 2*BX - lx  (mirror → RTL)
+                   Groom  ح (right head): nibX = rx        (naturally RTL)   */
+                var bNib = 2*BX - lx;   /* moves from LR→LL as lx goes LL→LR */
+                var gNib = rx;           /* moves from LR→LL naturally         */
 
-                drawLetterEngraved(ib,BX,bNib,fa);
-                drawLetterEngraved(ig,GX,gNib,fa);
+                writeLetter(ib, BX, bNib, fa);
+                writeLetter(ig, GX, gNib, fa);
 
-                drawHeart(beat,ha);
+                /* Golden heart */
+                drawHeart(beat, ha);
 
-                if(f<REACH+10){
+                /* Scan dots (above letters, on ECG wave) */
+                if(f < REACH+12){
                   var lp=((lx-12)/(CX-12)*3.8)%1;
-                  drawDot(lx,MID+ey(lp),fa,beat,(lx>=BX-LW&&lx<=BX+LW));
+                  drawDot(lx, MID+ey(lp), fa, beat);
                   var rp=((W-12-rx)/(W-12-CX)*3.8)%1;
-                  drawDot(rx,MID+ey(rp),fa,beat,(rx>=GX-LW&&rx<=GX+LW));
+                  drawDot(rx, MID+ey(rp), fa, beat);
                 }
 
-                ctx.save();[12,W-12].forEach(function(x){ctx.beginPath();ctx.arc(x,MID,1.8,0,Math.PI*2);ctx.fillStyle='rgba(212,160,23,.22)';ctx.fill();});ctx.restore();
+                /* Edge anchors */
+                ctx.save();
+                [12,W-12].forEach(function(x){
+                  ctx.beginPath();ctx.arc(x,MID,1.6,0,Math.PI*2);
+                  ctx.fillStyle='rgba(212,160,23,.20)';ctx.fill();
+                });
+                ctx.restore();
 
                 frame++;requestAnimationFrame(draw);
               }
 
-              document.fonts.load('700 50px "Aref Ruqaa Ink"').then(function(){
-                setTimeout(function(){readInit();draw();},600);
-                setTimeout(readInit,2200);
-              }).catch(function(){
-                setTimeout(function(){readInit();draw();},800);
-                setTimeout(readInit,2500);
-              });
+              /* Wait for Aref Ruqaa Ink, then start */
+              document.fonts.load('700 52px "Aref Ruqaa Ink"')
+                .then(function(){ setTimeout(function(){readInit();draw();},500); setTimeout(readInit,2000); })
+                .catch(function(){ setTimeout(function(){readInit();draw();},700); setTimeout(readInit,2400); });
             })();
             </script>
           </div>
