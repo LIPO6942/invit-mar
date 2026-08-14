@@ -563,6 +563,37 @@
         </div>
       </div>
 
+      <!-- Demo Mode Card -->
+      <div class="card" style="border:1.5px dashed rgba(243,156,18,0.6); background:rgba(243,156,18,0.05); margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.3rem;">⚡</span>
+            <div>
+              <div style="font-weight:700; color:#f39c12; font-size:0.95rem;">رابط تجريبي مؤقت للعميل (Démo 24h)</div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">إغلاق الرابط تلقائياً بعد مهلة محددة لحماية عملك</div>
+            </div>
+          </div>
+          <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer; background:rgba(243,156,18,0.15); border:1px solid rgba(243,156,18,0.4); padding:6px 14px; border-radius:20px; font-size:0.85rem; color:#fff;">
+            <input type="checkbox" id="isDemoCheckbox" onchange="toggleDemoOptions(this.checked)" style="width:16px; height:16px; accent-color:#f39c12; cursor:pointer;">
+            <span>تفعيل كمعاينة تجريبية</span>
+          </label>
+        </div>
+        <div id="demoOptionsContainer" style="display:none; margin-top:12px; padding-top:10px; border-top:1px solid rgba(243,156,18,0.2);">
+          <div class="field">
+            <label style="font-size:0.8rem; color:#f39c12;">مدة صلاحية رابط التجربة قبل الإغلاق التلقائي:</label>
+            <select id="demoDuration" style="background:#140c04; border:1px solid rgba(243,156,18,0.4); color:#f5e6c0; padding:8px 12px; border-radius:6px; font-size:0.85rem;">
+              <option value="24" selected>⏳ 24 ساعة (1 يوم كامل - الأكثر استخداماً)</option>
+              <option value="48">⏳ 48 ساعة (يومان)</option>
+              <option value="12">⏳ 12 ساعة (نصف يوم)</option>
+              <option value="168">⏳ 7 أيام (أسبوع)</option>
+            </select>
+          </div>
+          <small style="color:var(--text-muted); display:block; margin-top:6px; font-size:0.75rem;">
+            ⓘ بعد انتهاء هذه المهلة، سيتم قفل الرابط تلقائياً وظهور شاشة تطلب من العميل التواصل معكم لتأكيد الباقة الرسمية.
+          </small>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-title">📦 اختر الباقة</div>
         <div class="pack-selector">
@@ -936,11 +967,13 @@ function buildInvSlug(groomFr, brideFr) {
 function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── Firebase Firestore operations ──
-async function saveInvitationToFirebase(slug, cfg, pack, guestName, couplePwd, isUpdate = false) {
+async function saveInvitationToFirebase(slug, cfg, pack, guestName, couplePwd, isUpdate = false, isDemo = false, demoHours = 24) {
   initFirebase();
   const docRef = _db.collection('invitations').doc(slug);
   const doc = await docRef.get();
   
+  const demoExpiresAt = isDemo ? new Date(Date.now() + (Number(demoHours) || 24) * 3600 * 1000).toISOString() : null;
+
   if (isUpdate && doc.exists) {
     // Update existing invitation - preserve count, guests, and created timestamp
     const existingData = doc.data() || {};
@@ -948,13 +981,20 @@ async function saveInvitationToFirebase(slug, cfg, pack, guestName, couplePwd, i
     if (cfg && cfg.features) {
       cfg.features.guestPhotos = { ...existingGuestPhotos, ...(cfg.features.guestPhotos || {}) };
     }
-    await docRef.update({
+    const updateObj = {
       config: cfg,
       pack: pack,
       guestName: guestName || existingData.guestName || 'عام',
       couplePassword: couplePwd || existingData.couplePassword || '',
+      isDemo: isDemo,
+      demoExpiresAt: demoExpiresAt,
       updated: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    };
+    if (!isDemo && existingData.isDemo) {
+      updateObj.isDemo = false;
+      updateObj.demoExpiresAt = null;
+    }
+    await docRef.update(updateObj);
   } else {
     // Create new invitation
     await docRef.set({
@@ -964,6 +1004,8 @@ async function saveInvitationToFirebase(slug, cfg, pack, guestName, couplePwd, i
       guestName:     guestName || 'عام',
       couplePassword: couplePwd || '',
       guests:        [],
+      isDemo:        isDemo,
+      demoExpiresAt: demoExpiresAt,
       created:       firebase.firestore.FieldValue.serverTimestamp()
     });
   }
@@ -2167,8 +2209,11 @@ async function generateLink() {
 
   shortUrlEl.textContent = '⏳ جاري الحفظ على Firebase...';
 
+  const isDemo = document.getElementById('isDemoCheckbox')?.checked || false;
+  const demoHours = parseInt(document.getElementById('demoDuration')?.value || '24', 10);
+
   try {
-    await saveInvitationToFirebase(invSlug, cfg, selectedPack, guestName, finalPwd, !!existingSlug);
+    await saveInvitationToFirebase(invSlug, cfg, selectedPack, guestName, finalPwd, !!existingSlug, isDemo, demoHours);
 
     const inviteUrl  = `${base}?inv=${invSlug}`;
     const guestsBase = base.replace('index.html', 'submit-guests.html').replace(INVITATION_FILE, 'submit-guests.html');
@@ -2199,12 +2244,35 @@ async function generateLink() {
     if (typeof loadGuestDropdown === 'function') {
       await loadGuestDropdown();
     }
-    showToast(existingSlug ? '✅ تم تحديث الدعوة!' : '🎉 تم إنشاء الرابط!');
+    showToast(existingSlug ? '✅ تم تحديث الدعوة!' : (isDemo ? `🎉 تم إنشاء رابط التجربة (صالح لمدة ${demoHours} ساعة)!` : '🎉 تم إنشاء الرابط!'));
 
   } catch(e) {
     console.error('Firebase save failed:', e);
     shortUrlEl.textContent = '❌ فشل الحفظ — ' + e.message;
     showToast('❌ خطأ في Firebase: ' + e.message);
+  }
+}
+
+// ── Demo Mode UI helper ──
+function toggleDemoOptions(checked) {
+  const container = document.getElementById('demoOptionsContainer');
+  if (container) container.style.display = checked ? 'block' : 'none';
+}
+
+async function prolongDemo(slug, hours = 24) {
+  try {
+    initFirebase();
+    const newExp = new Date(Date.now() + hours * 3600 * 1000).toISOString();
+    await _db.collection('invitations').doc(slug).update({
+      isDemo: true,
+      demoExpiresAt: newExp,
+      updated: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast(`✅ تم تمديد صلاحية الرابط التجريبي لمدة ${hours} ساعة بنجاح!`);
+    await renderLinksHistory();
+  } catch (err) {
+    console.error('Failed to prolong demo:', err);
+    showToast('❌ فشل تمديد الصلاحية: ' + err.message);
   }
 }
 
@@ -2238,7 +2306,9 @@ async function renderLinksHistory() {
         created:        data.created ? (data.created.toDate ? data.created.toDate().toISOString() : new Date(data.created).toISOString()) : new Date().toISOString(),
         wishes:         data.wishes || [],
         rsvpConfirmed:  data.rsvpConfirmed || false,
-        rsvpCount:      data.rsvpCount || 0
+        rsvpCount:      data.rsvpCount || 0,
+        isDemo:         data.isDemo || false,
+        demoExpiresAt:  data.demoExpiresAt || null
       });
     });
     hist.sort((a, b) => new Date(b.created) - new Date(a.created));
@@ -2300,12 +2370,23 @@ async function renderLinksHistory() {
           ? ' <span style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.35);color:#e74c3c;border-radius:4px;padding:2px 6px;font-size:0.68rem;font-weight:700;margin-right:6px;display:inline-block;">✗ معتذر</span>'
           : '';
 
+      let demoBadge = '';
+      if (h.isDemo && h.demoExpiresAt) {
+        const remainingMs = new Date(h.demoExpiresAt) - Date.now();
+        if (remainingMs > 0) {
+          const remHours = Math.ceil(remainingMs / (3600 * 1000));
+          demoBadge = ' <span style="background:rgba(243,156,18,0.15);border:1px solid rgba(243,156,18,0.4);color:#f39c12;border-radius:20px;padding:2px 8px;font-size:0.68rem;font-weight:700;margin-right:6px;display:inline-flex;align-items:center;gap:3px;">⚡ تجريبي (' + remHours + 'س متبقية)</span>';
+        } else {
+          demoBadge = ' <span style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.4);color:#e74c3c;border-radius:20px;padding:2px 8px;font-size:0.68rem;font-weight:700;margin-right:6px;display:inline-flex;align-items:center;gap:3px;">🔒 تجريبي منتهي</span> <button onclick="prolongDemo(\'' + h.id + '\', 24)" style="background:rgba(243,156,18,0.15);border:1px solid rgba(243,156,18,0.4);color:#f39c12;border-radius:15px;padding:2px 7px;font-size:0.65rem;cursor:pointer;">🔄 تمديد 24س</button>';
+        }
+      }
+
       return '<div class="link-history-item" id="lhi-' + h.id + '" style="padding:0;overflow:hidden">'
         // Header
         + '<div style="background:rgba(201,168,76,0.07);border-bottom:1px solid rgba(201,168,76,0.14);padding:11px 14px;display:flex;align-items:center;gap:10px">'
           + '<span style="font-size:1.2rem">👤</span>'
           + '<div style="flex:1;min-width:0">'
-            + '<div style="font-weight:700;color:var(--gold-light);font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;">' + h.guestName + rsvpBadge + '</div>'
+            + '<div style="font-weight:700;color:var(--gold-light);font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;flex-wrap:wrap;">' + h.guestName + demoBadge + rsvpBadge + '</div>'
             + '<div style="font-size:0.67rem;color:var(--text-muted);font-family:monospace;margin-top:1px">' + h.id + '</div>'
           + '</div>'
           + '<div style="font-size:0.67rem;color:rgba(255,255,255,0.3);flex-shrink:0">' + new Date(h.created).toLocaleDateString('ar-TN') + '</div>'

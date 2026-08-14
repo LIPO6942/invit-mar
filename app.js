@@ -193,6 +193,50 @@ function loadConfigFromURL() {
         const count    = data.count || 0;
         const pack     = data.pack  || 9999;
 
+        /* Demo Expiration Check */
+        if (data.isDemo === true && data.demoExpiresAt) {
+          const expTime = new Date(data.demoExpiresAt).getTime();
+          if (!isNaN(expTime) && Date.now() > expTime) {
+            const isFr = (cfg && cfg.la === 'fr');
+            const groomName = isFr ? (cfg.gf2 || cfg.ga) : (cfg.ga || 'العريس');
+            const brideName = isFr ? (cfg.bf2 || cfg.ba) : (cfg.ba || 'العروسة');
+            const overlay = document.getElementById('pack-expired-overlay');
+            if (overlay) {
+              overlay.style.display = 'flex';
+              if (isFr) {
+                overlay.innerHTML = `
+                  <div style="font-size:3.2rem; filter:drop-shadow(0 2px 10px rgba(243,156,18,0.5));">⏳</div>
+                  <div style="font-size:1.45rem;font-weight:700;color:#c9a84c;font-family:'Amiri',serif">Période d'aperçu d'essai terminée</div>
+                  <div style="color:#f5e6c0;font-size:0.98rem;max-width:320px;line-height:1.7;margin-top:4px;">
+                    Le lien d'aperçu démo pour le mariage de <strong>${groomName} & ${brideName}</strong> est arrivé à expiration (24h).
+                  </div>
+                  <div style="color:#a08868;font-size:0.85rem;max-width:300px;line-height:1.6;margin-top:6px;">
+                    Pour commander et débloquer votre pack complet avec vos liens personnalisés pour tous vos convives, veuillez contacter l'administrateur 🌸
+                  </div>
+                  <a href="https://wa.me/?text=${encodeURIComponent('Bonjour, je souhaite commander et activer mon pack de mariage pour ' + groomName + ' & ' + brideName)}" target="_blank" style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;text-decoration:none;padding:11px 24px;border-radius:25px;font-weight:bold;font-size:0.92rem;box-shadow:0 4px 15px rgba(37,211,102,0.35);">
+                    <span>💬 Contacter sur WhatsApp pour Activer</span>
+                  </a>
+                `;
+              } else {
+                overlay.innerHTML = `
+                  <div style="font-size:3.2rem; filter:drop-shadow(0 2px 10px rgba(243,156,18,0.5));">⏳</div>
+                  <div style="font-size:1.55rem;font-weight:700;color:#c9a84c;font-family:'Amiri',serif">انتهت فترة المعاينة التجريبية</div>
+                  <div style="color:#f5e6c0;font-size:1.05rem;font-family:'Amiri',serif;max-width:320px;line-height:1.7;margin-top:4px;">
+                    لقد انتهت مهلة المعاينة التجريبية لهذا الرابط الخاص بحفل زفاف <strong>${groomName} & ${brideName}</strong>.
+                  </div>
+                  <div style="color:#a08868;font-size:0.88rem;font-family:'Amiri',serif;max-width:300px;line-height:1.6;margin-top:6px;">
+                    يرجى التواصل مع إدارة الموقع لتأكيد وتفعيل باقة الزفاف الرسمية الخاصة بكم وتوليد روابط المدعوين 🌸
+                  </div>
+                  <a href="https://wa.me/?text=${encodeURIComponent('مرحباً، أود تأكيد وتفعيل باقة الزفاف الرسمية الخاصة بنا: ' + groomName + ' و ' + brideName)}" target="_blank" style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;text-decoration:none;padding:11px 24px;border-radius:25px;font-weight:bold;font-family:'Amiri',serif;font-size:0.95rem;box-shadow:0 4px 15px rgba(37,211,102,0.35);">
+                    <span>💬 تواصل عبر واتساب للتفعيل</span>
+                  </a>
+                `;
+              }
+            }
+            return;
+          }
+        }
+
         /* Guest links (with ?guest= or ?gid=) get unlimited views — no pack check, no count increment */
         const hasGuestLink = !!(params.get('guest') || params.get('gid'));
         // Removed: pack limits the number of added guests, not public view clicks
