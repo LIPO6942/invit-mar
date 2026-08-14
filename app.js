@@ -2312,6 +2312,7 @@ function applyMusicFromConfig(cfg) {
     'wedding_march':      'assets/wedding_march.mp3',
     'ziad_gharsa':        'assets/ziad_gharsa.mp3',
     'mabrouk_ramy_ayach': 'assets/mabrouk_ramy_ayach.mp3',
+    'mramma_hamza':       'assets/mramma_hamza_bouchnak.mp3',
   };
   const src = MUSIC_MAP[cfg.mu];
   if (!src) return;

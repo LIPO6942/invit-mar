@@ -197,7 +197,7 @@
 
           <!-- Option 3: Mabrouk - Ramy Ayach -->
           <div id="mo-mabrouk_ramy_ayach" onclick="selectMusic('mabrouk_ramy_ayach')"
-               style="flex:1;padding:14px 10px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:rgba(0,0,0,0.3);text-align:center;transition:all 0.2s">
+               style="flex:1;min-width:120px;padding:14px 10px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:rgba(0,0,0,0.3);text-align:center;transition:all 0.2s">
             <div style="font-size:1.6rem">🎊</div>
             <div style="font-size:0.8rem;margin-top:6px;color:white;font-weight:700">مبروك</div>
             <div style="font-size:0.66rem;color:var(--text-muted);margin-top:2px">رامي عياش</div>
@@ -206,6 +206,19 @@
               ▶ استماع
             </button>
             <audio id="preview-mabrouk_ramy_ayach" src="assets/mabrouk_ramy_ayach.mp3" preload="none"></audio>
+          </div>
+
+          <!-- Option 4: Mramma - Hamza Bouchnak -->
+          <div id="mo-mramma_hamza" onclick="selectMusic('mramma_hamza')"
+               style="flex:1;min-width:120px;padding:14px 10px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:rgba(0,0,0,0.3);text-align:center;transition:all 0.2s">
+            <div style="font-size:1.6rem">🥁</div>
+            <div style="font-size:0.8rem;margin-top:6px;color:white;font-weight:700">مرمة</div>
+            <div style="font-size:0.66rem;color:var(--text-muted);margin-top:2px">حمزة بوشناق</div>
+            <button onclick="event.stopPropagation();previewMusic('mramma_hamza')"
+              style="margin-top:8px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer;font-family:'Amiri',serif">
+              ▶ استماع
+            </button>
+            <audio id="preview-mramma_hamza" src="assets/mramma_hamza_bouchnak.mp3" preload="none"></audio>
           </div>
 
         </div>
@@ -899,7 +912,7 @@ let _previewAudio = null;
 
 function selectMusic(name, doSave = true) {
   window._selectedMusic = name;
-  ['wedding_march', 'ziad_gharsa', 'mabrouk_ramy_ayach'].forEach(m => {
+  ['wedding_march', 'ziad_gharsa', 'mabrouk_ramy_ayach', 'mramma_hamza'].forEach(m => {
     const el = document.getElementById('mo-' + m);
     if (!el) return;
     if (m === name) {
