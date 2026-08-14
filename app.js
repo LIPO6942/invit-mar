@@ -96,16 +96,11 @@ function applyConfigToDOM(cfg) {
     overlay.classList.add(`arch-style-${styleKey}`);
   }
 
-  // Update calligraphic monogram initials from couple's names
-  const monoGroom = document.getElementById('monoInitialGroom');
-  const monoBride = document.getElementById('monoInitialBride');
-  if (monoGroom && groomDisplay) {
-    // Use first character of the name (French or Arabic)
-    monoGroom.textContent = groomDisplay.charAt(0).toUpperCase();
-  }
-  if (monoBride && brideDisplay) {
-    monoBride.textContent = brideDisplay.charAt(0).toUpperCase();
-  }
+  // Update ECG Tattoo-style name elements (tspan inside SVG text)
+  const ecgGroomTspan = document.getElementById('ecgGroomTspan');
+  const ecgBrideTspan  = document.getElementById('ecgBrideTspan');
+  if (ecgGroomTspan && groomDisplay) ecgGroomTspan.textContent = groomDisplay;
+  if (ecgBrideTspan  && brideDisplay) ecgBrideTspan.textContent  = brideDisplay;
 
   // Initialize Photo Stack Widget
   if (typeof initPhotoStack === 'function') {

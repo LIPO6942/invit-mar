@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -264,125 +264,130 @@
             </div>
             <div class="shimmer-line"></div>
 
-            <!-- ❤️ ECG Heart — Séquence: pouls ECG → cœur se forme → prénoms apparaissent → boucle -->
+            <!-- 💛❤️ Tattoo Style: Groom ♡ Bride — animated calligraphy + self-drawing heart -->
             <div class="ecg-heart-container" id="ecgHeartContainer">
-              <svg class="ecg-heart-svg" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+              <svg class="ecg-heart-svg" viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg" overflow="visible">
                 <defs>
-                  <linearGradient id="ecgLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stop-color="#8B1a0a"/>
-                    <stop offset="40%"  stop-color="#d4820a"/>
-                    <stop offset="70%"  stop-color="#c93020"/>
-                    <stop offset="100%" stop-color="#f5c842"/>
+                  <!-- Gold gradient for names -->
+                  <linearGradient id="nameGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%"   stop-color="#fffbe0"/>
+                    <stop offset="28%"  stop-color="#f5c842"/>
+                    <stop offset="60%"  stop-color="#c8860a"/>
+                    <stop offset="100%" stop-color="#fde68a"/>
                   </linearGradient>
-                  <linearGradient id="heartFill" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <!-- Blood red gradient for heart -->
+                  <linearGradient id="heartRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%"  stop-color="#6B0000"/>
-                    <stop offset="45%" stop-color="#c0380a"/>
-                    <stop offset="100%" stop-color="#d4820a"/>
+                    <stop offset="100%" stop-color="#c0392b"/>
                   </linearGradient>
-                  <filter id="ecgGlowF" x="-20%" y="-60%" width="140%" height="220%">
-                    <feGaussianBlur stdDeviation="3" result="b"/>
-                    <feFlood flood-color="#c04010" flood-opacity="0.7" result="c"/>
+                  <!-- Gold glow for names -->
+                  <filter id="nameGlowF" x="-25%" y="-60%" width="150%" height="220%">
+                    <feGaussianBlur stdDeviation="3.5" result="b"/>
+                    <feFlood flood-color="#d4a017" flood-opacity="0.6" result="c"/>
                     <feComposite in="c" in2="b" operator="in" result="g"/>
                     <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
-                  <clipPath id="heartClip">
-                    <path d="M140,55 C140,38 155,28 168,36 C181,44 181,58 168,70 L140,90 L112,70 C99,58 99,44 112,36 C125,28 140,38 140,55 Z"/>
+                  <!-- Red glow for heart -->
+                  <filter id="heartGlowF" x="-60%" y="-80%" width="220%" height="260%">
+                    <feGaussianBlur stdDeviation="3" result="b"/>
+                    <feFlood flood-color="#8B0000" flood-opacity="0.65" result="c"/>
+                    <feComposite in="c" in2="b" operator="in" result="g"/>
+                    <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+
+                  <!-- ClipPath: groom name reveal (positioned x:185→305) -->
+                  <clipPath id="groomReveal" clipPathUnits="userSpaceOnUse">
+                    <rect x="185" y="-8" height="76" width="0">
+                      <animate attributeName="width"
+                        values="0;0;120;120;120;0"
+                        keyTimes="0;0.12;0.38;0.78;0.88;1"
+                        dur="10s" repeatCount="indefinite"/>
+                    </rect>
+                  </clipPath>
+
+                  <!-- ClipPath: bride name reveal (positioned x:15→135) -->
+                  <clipPath id="brideReveal" clipPathUnits="userSpaceOnUse">
+                    <rect x="15" y="-8" height="76" width="0">
+                      <animate attributeName="width"
+                        values="0;0;0;120;120;0"
+                        keyTimes="0;0.12;0.50;0.68;0.88;1"
+                        dur="10s" repeatCount="indefinite"/>
+                    </rect>
                   </clipPath>
                 </defs>
 
-                <!-- ══ PHASE 1: ECG Line drawing (0–3s) ══ -->
-                <!-- Flat line left -->
-                <line x1="10" y1="45" x2="75" y2="45"
-                  stroke="url(#ecgLineGrad)" stroke-width="2" stroke-linecap="round"
-                  filter="url(#ecgGlowF)">
-                  <animate attributeName="stroke-dasharray" values="0,100;65,100" dur="1s" fill="freeze" begin="0s"/>
-                  <animate attributeName="opacity" values="1;1;0" dur="6s" repeatCount="indefinite"/>
-                  <animate attributeName="stroke-dasharray" values="0,100;65,100;65,100;0,100;0,100" dur="6s" repeatCount="indefinite"/>
-                </line>
-                <!-- ECG spike (sharp peak) -->
-                <polyline points="75,45 85,45 95,10 105,75 115,45 130,45"
-                  fill="none" stroke="url(#ecgLineGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
-                  filter="url(#ecgGlowF)">
-                  <animate attributeName="stroke-dasharray"
-                    values="0,150;0,150;150,150;150,150;0,150;0,150"
-                    dur="6s" repeatCount="indefinite"/>
-                  <animate attributeName="stroke-dashoffset"
-                    values="150;150;0;0;150;150"
-                    dur="6s" repeatCount="indefinite"/>
-                </polyline>
-                <!-- Flat line right -->
-                <line x1="130" y1="45" x2="200" y2="45"
-                  stroke="url(#ecgLineGrad)" stroke-width="2" stroke-linecap="round"
-                  filter="url(#ecgGlowF)">
-                  <animate attributeName="stroke-dasharray"
-                    values="0,80;0,80;0,80;70,80;70,80;0,80"
-                    dur="6s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="1;1;1;1;0;0" dur="6s" repeatCount="indefinite"/>
-                </line>
+                <!-- Fine dashed baseline (ECG flat line) -->
+                <line x1="5" y1="34" x2="315" y2="34"
+                  stroke="rgba(212,160,23,0.2)" stroke-width="0.8"
+                  stroke-dasharray="4 7" stroke-linecap="round"/>
 
-                <!-- ══ PHASE 2: Heart shape (appears at ~2.5s) ══ -->
-                <path id="heartOutline"
-                  d="M140,55 C140,38 155,28 168,36 C181,44 181,58 168,70 L140,90 L112,70 C99,58 99,44 112,36 C125,28 140,38 140,55 Z"
-                  fill="url(#heartFill)" opacity="0"
-                  filter="url(#ecgGlowF)">
-                  <animate attributeName="opacity"
-                    values="0;0;0;0.9;1;0.9;1;0.9;0.2;0"
-                    keyTimes="0;0.33;0.42;0.5;0.58;0.67;0.75;0.83;0.92;1"
-                    dur="6s" repeatCount="indefinite"/>
-                  <!-- Heart beat pulse -->
-                  <animateTransform attributeName="transform" type="scale"
-                    values="1;1;1;1;1.12;1;1.08;1;1;1"
-                    additive="sum" keyTimes="0;0.33;0.42;0.5;0.58;0.67;0.75;0.83;0.92;1"
-                    dur="6s" repeatCount="indefinite"
-                    transform-origin="140 62"/>
-                </path>
+                <!-- ══ GROOM NAME — right side (Arabic RTL, طارق) ══ -->
+                <g clip-path="url(#groomReveal)">
+                  <text x="245" y="46" text-anchor="middle"
+                    font-family="'Amiri','Scheherazade New',serif"
+                    font-size="33" font-weight="700" font-style="italic"
+                    fill="url(#nameGold)"
+                    filter="url(#nameGlowF)"
+                    id="ecgNameGroom">
+                    <tspan id="ecgGroomTspan">طارق</tspan>
+                  </text>
+                </g>
 
-                <!-- Heart outline stroke -->  
+                <!-- ══ HEART — center, blood red self-drawing ══ -->
+                <!-- Heart fill (appears after stroke draws) -->
                 <path
-                  d="M140,55 C140,38 155,28 168,36 C181,44 181,58 168,70 L140,90 L112,70 C99,58 99,44 112,36 C125,28 140,38 140,55 Z"
-                  fill="none" stroke="#f5c842" stroke-width="1.5" opacity="0"
-                  filter="url(#ecgGlowF)">
+                  d="M160,27 C160,18 167.5,14 172,19 C176.5,14 184,18 184,27 L172,39 Z"
+                  fill="url(#heartRedGrad)" opacity="0"
+                  filter="url(#heartGlowF)">
                   <animate attributeName="opacity"
-                    values="0;0;0;0.8;1;0.8;1;0.8;0.2;0"
-                    keyTimes="0;0.33;0.42;0.5;0.58;0.67;0.75;0.83;0.92;1"
-                    dur="6s" repeatCount="indefinite"/>
+                    values="0;0;0;0;0.8;0.8;0.8;0"
+                    keyTimes="0;0.12;0.38;0.56;0.62;0.68;0.84;1"
+                    dur="10s" repeatCount="indefinite"/>
+                  <!-- Double heartbeat pulse -->
+                  <animateTransform attributeName="transform" type="scale"
+                    values="1;1;1;1;1;1.18;1;1.14;1;1;1"
+                    keyTimes="0;0.12;0.38;0.56;0.60;0.65;0.69;0.74;0.78;0.84;1"
+                    additive="sum" dur="10s" repeatCount="indefinite"
+                    transform-origin="172 27"/>
+                </path>
+                <!-- Heart stroke (draws itself via dashoffset) -->
+                <path
+                  d="M160,27 C160,18 167.5,14 172,19 C176.5,14 184,18 184,27 L172,39 Z"
+                  fill="none" stroke="#c0392b" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  stroke-dasharray="75" stroke-dashoffset="75"
+                  filter="url(#heartGlowF)">
+                  <animate attributeName="stroke-dashoffset"
+                    values="75;75;75;0;0;0;75"
+                    keyTimes="0;0.12;0.44;0.60;0.68;0.84;1"
+                    dur="10s" repeatCount="indefinite"/>
+                </path>
+                <!-- Gold rim shimmer on heart -->
+                <path
+                  d="M160,27 C160,18 167.5,14 172,19 C176.5,14 184,18 184,27 L172,39 Z"
+                  fill="none" stroke="#f5c842" stroke-width="0.8"
+                  stroke-linecap="round" opacity="0">
+                  <animate attributeName="opacity"
+                    values="0;0;0;0;0.55;0.55;0;0"
+                    keyTimes="0;0.12;0.44;0.62;0.68;0.84;0.90;1"
+                    dur="10s" repeatCount="indefinite"/>
                 </path>
 
-                <!-- ══ PHASE 3: Names inside heart ══ -->
-                <!-- Groom name -->
-                <text id="ecgNameGroom" x="140" y="62" text-anchor="middle"
-                  font-family="'Amiri','Scheherazade New',serif"
-                  font-size="12" font-weight="700" fill="#fff8d0"
-                  data-cfg="groomAr" opacity="0"
-                  clip-path="url(#heartClip)">
-                  طارق
-                  <animate attributeName="opacity"
-                    values="0;0;0;0;1;1;1;1;0;0"
-                    keyTimes="0;0.33;0.42;0.5;0.55;0.62;0.67;0.80;0.90;1"
-                    dur="6s" repeatCount="indefinite"/>
-                </text>
-                <!-- Divider heart symbol -->
-                <text x="140" y="72" text-anchor="middle"
-                  font-size="8" fill="#fcd34d" opacity="0"
-                  clip-path="url(#heartClip)">
-                  ♡
-                  <animate attributeName="opacity"
-                    values="0;0;0;0;1;1;1;1;0;0"
-                    keyTimes="0;0.33;0.42;0.5;0.55;0.62;0.67;0.80;0.90;1"
-                    dur="6s" repeatCount="indefinite"/>
-                </text>
-                <!-- Bride name -->
-                <text id="ecgNameBride" x="140" y="82" text-anchor="middle"
-                  font-family="'Amiri','Scheherazade New',serif"
-                  font-size="12" font-weight="700" fill="#fff8d0"
-                  data-cfg="brideAr" opacity="0"
-                  clip-path="url(#heartClip)">
-                  غادة
-                  <animate attributeName="opacity"
-                    values="0;0;0;0;1;1;1;1;0;0"
-                    keyTimes="0;0.33;0.42;0.5;0.55;0.62;0.67;0.80;0.90;1"
-                    dur="6s" repeatCount="indefinite"/>
-                </text>
+                <!-- ══ BRIDE NAME — left side (Arabic RTL, غادة) ══ -->
+                <g clip-path="url(#brideReveal)">
+                  <text x="75" y="46" text-anchor="middle"
+                    font-family="'Amiri','Scheherazade New',serif"
+                    font-size="33" font-weight="700" font-style="italic"
+                    fill="url(#nameGold)"
+                    filter="url(#nameGlowF)"
+                    id="ecgNameBride">
+                    <tspan id="ecgBrideTspan">غادة</tspan>
+                  </text>
+                </g>
+
+                <!-- End-dots (ECG trace tips) -->
+                <circle cx="5" cy="34" r="1.8" fill="#d4a017" opacity="0.5"/>
+                <circle cx="315" cy="34" r="1.8" fill="#d4a017" opacity="0.5"/>
               </svg>
             </div>
           </div>
@@ -1306,9 +1311,12 @@
       <p style="font-size: 0.85rem; color: #d4b260;">اختر مشروع زفاف للفتح والمشاهدة المباشرة</p>
     </div>
 
-    <div id="weddingProjectsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-      <div style="text-align:center;padding:18px;color:#fff3ad;font-family:Amiri,serif;">&#x23F3; جاري تحميل مشاريع الزفاف...</div>
-    </div>
+    <div id="weddingProjectsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+
+      <div style="text-align:center;padding:18px;color:#fff3ad;font-family:Amiri,serif;">&#x23F3; جاري تحميل مشاريع الزفاف...</div>
+
+    </div>
+
 
     <div style="margin-top: 10px; border-top: 1px solid rgba(201,168,76,0.3); padding-top: 12px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
       <label style="display: block; font-size: 0.85rem; font-weight: bold; color: #fff3ad; margin-bottom: 6px;">🔗 أو إدخال مسار/رابط مشروع زفاف آخر :</label>
