@@ -2126,9 +2126,23 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin: 0 auto 4px;
+  margin: 0 auto 3px;
   width: 100%;
   max-width: 280px;
+}
+
+.arch-apex-crown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+  animation: crownGlowPulse 4s ease-in-out infinite;
+}
+
+@keyframes crownGlowPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)); }
+  50% { transform: scale(1.06); filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(255, 230, 120, 0.95)); }
 }
 
 .arch-bismillah-emblem {
@@ -2165,59 +2179,99 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   margin-top: 1px;
 }
 
-/* ── 5 Custom Arch Styles ── */
-/* Style 1: Royal Dome (Default) */
+/* ── 5 Artistically Distinct Arch & Card Styles ── */
+/* Style 1: Royal Baroque Dome with Imperial Gold */
 .intro-overlay.arch-style-royal_dome {
   border-radius: 170px 170px 24px 24px;
-  border: 1.5px solid rgba(255, 235, 170, 0.65);
-}
-
-/* Style 2: Andalusian Horseshoe Arch */
-.intro-overlay.arch-style-andalusian_arch {
-  border-radius: 190px 190px 24px 24px;
-  border: 1.8px solid rgba(255, 225, 140, 0.8);
+  border: 1.8px solid rgba(255, 235, 170, 0.75);
   background: linear-gradient(
     165deg,
     rgba(255, 255, 255, 0.18) 0%,
-    rgba(218, 165, 32, 0.12) 30%,
-    rgba(30, 15, 5, 0.28) 75%,
+    rgba(218, 165, 32, 0.10) 35%,
+    rgba(25, 12, 4, 0.28) 75%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.42),
+    inset 0 1px 3px rgba(255, 255, 255, 0.75),
+    inset 0 0 30px rgba(201, 168, 76, 0.15),
+    0 0 28px rgba(201, 168, 76, 0.32);
+}
+
+/* Style 2: Andalusian Mauresque Mihrab & Zellige Accents */
+.intro-overlay.arch-style-andalusian_arch {
+  border-radius: 190px 190px 26px 26px;
+  border: 2px solid rgba(255, 220, 120, 0.85);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(20, 50, 70, 0.18) 35%,
+    rgba(20, 10, 5, 0.32) 75%,
+    rgba(218, 165, 32, 0.12) 100%
+  );
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.35),
+    inset 0 0 0 6px rgba(30, 80, 110, 0.2),
+    0 0 35px rgba(218, 165, 32, 0.4);
+}
+
+/* Style 3: Romantic Boho Floral & Rose Gold Sheen */
+.intro-overlay.arch-style-floral_boho {
+  border-radius: 160px 160px 28px 28px;
+  border: 1.8px solid rgba(255, 215, 225, 0.85);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 245, 248, 0.22) 0%,
+    rgba(235, 175, 195, 0.14) 35%,
+    rgba(28, 10, 18, 0.28) 75%,
+    rgba(255, 235, 240, 0.12) 100%
+  );
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.4),
+    inset 0 1px 4px rgba(255, 255, 255, 0.85),
+    inset 0 0 30px rgba(240, 160, 180, 0.2),
+    0 0 30px rgba(240, 170, 190, 0.35);
+}
+
+/* Style 4: Art Deco Geometric Beveled Crystal Card */
+.intro-overlay.arch-style-geometric_hex {
+  border-radius: 42px;
+  border: 2px solid rgba(255, 235, 170, 0.8);
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(201, 168, 76, 0.10) 30%,
+    rgba(15, 8, 2, 0.28) 70%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.3),
+    inset 0 0 0 6px rgba(255, 255, 255, 0.12),
+    0 0 30px rgba(201, 168, 76, 0.35);
+}
+
+/* Style 5: Ottoman Imperial Palace Ogival Arch & Gold Lace */
+.intro-overlay.arch-style-palace_ottoman,
+.intro-overlay.arch-style-ogive_palace {
+  border-top-left-radius: 220px 340px;
+  border-top-right-radius: 220px 340px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  border: 2px solid rgba(255, 220, 130, 0.85);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(180, 120, 30, 0.12) 35%,
+    rgba(25, 10, 2, 0.32) 75%,
     rgba(255, 255, 255, 0.10) 100%
   );
   box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 2px rgba(201, 168, 76, 0.25),
-    inset 0 1px 3px rgba(255, 255, 255, 0.7),
-    0 0 30px rgba(218, 165, 32, 0.35);
-}
-
-/* Style 3: Pointed Ottoman Palace Ogive */
-.intro-overlay.arch-style-ogive_palace {
-  border-top-left-radius: 210px 330px;
-  border-top-right-radius: 210px 330px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  border: 1.5px solid rgba(255, 235, 170, 0.7);
-}
-
-/* Style 4: Beveled Geometric Diamond Card */
-.intro-overlay.arch-style-geometric_hex {
-  border-radius: 38px;
-  border: 1.5px solid rgba(255, 235, 170, 0.7);
-  box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 3px rgba(201, 168, 76, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.75),
-    0 0 28px rgba(201, 168, 76, 0.3);
-}
-
-/* Style 5: Minimal Chic Crystal Card */
-.intro-overlay.arch-style-minimal_chic {
-  border-radius: 24px;
-  border: 1px solid rgba(255, 235, 170, 0.55);
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.38),
-    inset 0 1px 2px rgba(255, 255, 255, 0.6),
-    0 0 20px rgba(201, 168, 76, 0.2);
+    0 22px 55px rgba(0, 0, 0, 0.52),
+    inset 0 1px 3px rgba(255, 255, 255, 0.8),
+    inset 0 0 0 2px rgba(201, 168, 76, 0.3),
+    0 0 35px rgba(201, 168, 76, 0.4);
 }
 
 @keyframes archBorderGlow {

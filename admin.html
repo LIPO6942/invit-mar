@@ -267,11 +267,11 @@
           <div class="field">
             <label>طراز القوس</label>
             <select id="archStyle">
-              <option value="royal_dome">👑 القوس الملكي الدائري (Arche Royale Dôme - كلاسيكي عريق)</option>
-              <option value="andalusian_arch">🕌 القوس الأندلسي المغاربي (Arche Andalouse Fer à cheval)</option>
-              <option value="ogive_palace">🏛️ القوس العثماني الروماني (Arche Ogivale Palace - مدبب فاخر)</option>
-              <option value="geometric_hex">💎 الإطار الهندسي الماسي (Cadre Géométrique Biseauté)</option>
-              <option value="minimal_chic">✨ الإطار الكريستالي الناعم (Cadre Minimaliste Chic)</option>
+              <option value="royal_dome">👑 التاج الملكي الباروكي (Arche Baroque & Couronne Royale)</option>
+              <option value="andalusian_arch">🕌 المحراب الأندلسي المغاربي (Mihrab Mauresque & Zellige)</option>
+              <option value="floral_boho">🌸 القوس الزهري الرومانسي (Arche Florale & Roses d'Or)</option>
+              <option value="geometric_hex">💎 الكريستال الماسي الآرت ديكو (Cadre Art Déco & Cristaux)</option>
+              <option value="palace_ottoman">🏛️ قصر السلاطين العثماني (Arche Palais Impérial & Dentelle)</option>
             </select>
           </div>
         </div>
@@ -2480,7 +2480,77 @@ function cancelEditingSlug() {
   const banner = document.getElementById('editingBanner');
   if (banner) banner.style.display = 'none';
   document.getElementById('generateBtn').textContent = '✨ إنشاء الرابط';
-  showToast('ℹ️ تم إلغاء نمط التعديل');
+  // Reset demo checkbox to false by default for new creations
+  const isDemoEl = document.getElementById('isDemoCheckbox');
+  if (isDemoEl) {
+    isDemoEl.checked = false;
+    toggleDemoOptions(false);
+  }
+  showToast('ℹ️ تم إلغاء نمط التعديل والعودة للوضع الافتراضي');
+}
+
+async function loadInvitationConfig(slug) {
+  try {
+    initFirebase();
+    const docRef = _db.collection('invitations').doc(slug);
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      showToast('❌ الدعوة غير موجودة على السيرفر');
+      return;
+    }
+    const data = doc.data() || {};
+    const cfg = data.config || {};
+    
+    // Apply configuration to fields
+    applyConfigToFields(cfg);
+    
+    // Set editing state
+    window._currentEditingSlug = slug;
+    const banner = document.getElementById('editingBanner');
+    const slugDisp = document.getElementById('editingSlugDisplay');
+    if (banner && slugDisp) {
+      slugDisp.textContent = slug;
+      banner.style.display = 'flex';
+    }
+    document.getElementById('generateBtn').textContent = `💾 تحديث وحفظ الدعوة (${slug})`;
+    
+    // Sync Demo mode checkbox specifically for this wedding!
+    const isDemoEl = document.getElementById('isDemoCheckbox');
+    if (isDemoEl) {
+      isDemoEl.checked = !!data.isDemo;
+      toggleDemoOptions(!!data.isDemo);
+      if (data.isDemo && data.demoExpiresAt) {
+        const remHours = Math.round((new Date(data.demoExpiresAt) - Date.now()) / (3600 * 1000));
+        const durEl = document.getElementById('demoDuration');
+        if (durEl) {
+          if (remHours <= 12) durEl.value = '12';
+          else if (remHours <= 24) durEl.value = '24';
+          else if (remHours <= 48) durEl.value = '48';
+          else durEl.value = '168';
+        }
+      }
+    }
+    
+    // Select pack
+    if (data.pack) {
+      selectedPack = data.pack;
+      document.querySelectorAll('.pack-card').forEach(c => {
+        if (parseInt(c.dataset.pack) === data.pack) c.classList.add('selected');
+        else c.classList.remove('selected');
+      });
+    }
+    
+    // Set couple password
+    if (data.couplePassword) {
+      document.getElementById('couplePwdInput').value = data.couplePassword;
+    }
+    
+    showToast(`📥 تم تحميل بيانات الدعوة (${slug}) بنجاح في اللوحة`);
+    goToPage(1);
+  } catch (err) {
+    console.error('Error loading invitation config:', err);
+    showToast('❌ خطأ في تحميل الدعوة: ' + err.message);
+  }
 }
 
 async function applyCurrentConfigToInvitation(slug) {
