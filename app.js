@@ -793,26 +793,174 @@ window.toggleMusic = function() {
   }
 };
 
+/* ────────────────────────────────────────────────
+   REALISTIC WAX CRACK & PAPER RUSTLE AUDIO SYNTHESIZER
+   Uses Web Audio API (Zero external MP3 dependency)
+   ──────────────────────────────────────────────── */
+function playRealisticWaxAndPaperSound() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!window._envelopeAudioCtx) {
+      window._envelopeAudioCtx = new AudioCtx();
+    }
+    const ctx = window._envelopeAudioCtx;
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+
+    // ── 1. WAX FRACTURE (Crisp mechanical snap & brittle crack) ──
+    const osc = ctx.createOscillator();
+    const oscGain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(850, now);
+    osc.frequency.exponentialRampToValueAtTime(85, now + 0.045);
+    oscGain.gain.setValueAtTime(0.75, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.05);
+
+    // High frequency wax texture crunch
+    const crackBufferLen = Math.floor(ctx.sampleRate * 0.12);
+    const crackBuffer = ctx.createBuffer(1, crackBufferLen, ctx.sampleRate);
+    const crackData = crackBuffer.getChannelData(0);
+    for (let i = 0; i < crackBufferLen; i++) {
+      const decay = Math.exp(-i / (ctx.sampleRate * 0.018));
+      const micro = (Math.random() > 0.82 ? 1.6 : 0.5);
+      crackData[i] = (Math.random() * 2 - 1) * decay * micro;
+    }
+    const crackSource = ctx.createBufferSource();
+    crackSource.buffer = crackBuffer;
+
+    const crackFilter = ctx.createBiquadFilter();
+    crackFilter.type = 'bandpass';
+    crackFilter.frequency.setValueAtTime(3400, now);
+    crackFilter.Q.setValueAtTime(3.2, now);
+
+    const crackGain = ctx.createGain();
+    crackGain.gain.setValueAtTime(0.9, now);
+    crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+    crackSource.connect(crackFilter);
+    crackFilter.connect(crackGain);
+    crackGain.connect(ctx.destination);
+    crackSource.start(now);
+    crackSource.stop(now + 0.12);
+
+    // ── 2. PAPER UNFOLD & SLIDE FRICTION (t = 0.06s to 1.1s) ──
+    const paperDuration = 0.95;
+    const paperBufferLen = Math.floor(ctx.sampleRate * paperDuration);
+    const paperBuffer = ctx.createBuffer(1, paperBufferLen, ctx.sampleRate);
+    const paperData = paperBuffer.getChannelData(0);
+    let lastOut = 0;
+    for (let i = 0; i < paperBufferLen; i++) {
+      const white = Math.random() * 2 - 1;
+      paperData[i] = (lastOut + 0.035 * white) / 1.035;
+      lastOut = paperData[i];
+      paperData[i] *= 3.8;
+    }
+
+    const paperSource = ctx.createBufferSource();
+    paperSource.buffer = paperBuffer;
+
+    const paperFilter = ctx.createBiquadFilter();
+    paperFilter.type = 'bandpass';
+    paperFilter.frequency.setValueAtTime(650, now + 0.06);
+    paperFilter.frequency.exponentialRampToValueAtTime(2200, now + 0.4);
+    paperFilter.frequency.exponentialRampToValueAtTime(550, now + paperDuration);
+    paperFilter.Q.setValueAtTime(1.6, now + 0.06);
+
+    const paperGain = ctx.createGain();
+    paperGain.gain.setValueAtTime(0.001, now);
+    paperGain.gain.linearRampToValueAtTime(0.35, now + 0.15);
+    paperGain.gain.linearRampToValueAtTime(0.22, now + 0.55);
+    paperGain.gain.exponentialRampToValueAtTime(0.001, now + paperDuration);
+
+    paperSource.connect(paperFilter);
+    paperFilter.connect(paperGain);
+    paperGain.connect(ctx.destination);
+    paperSource.start(now + 0.06);
+    paperSource.stop(now + paperDuration + 0.1);
+
+  } catch (err) {
+    console.warn('[Audio] Wax/Paper sound playback error:', err);
+  }
+
+  // ── Haptic Vibration ──
+  if (navigator.vibrate) {
+    try {
+      navigator.vibrate([35, 30, 75, 40, 20]);
+    } catch(e) {}
+  }
+}
+
+function spawnWaxSparks(cx, cy) {
+  const sparkColors = ['#fdf0b0', '#f0c84a', '#c9930c', '#fffdf5', '#e8cc7a'];
+  const count = 16;
+  for (let i = 0; i < count; i++) {
+    const spark = document.createElement('div');
+    spark.className = 'wax-shard-spark';
+    const angle = (i / count) * 2 * Math.PI + (Math.random() * 0.4 - 0.2);
+    const dist = Math.random() * 95 + 45;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist;
+    const rot = (Math.random() * 360 - 180) + 'deg';
+    const size = Math.random() * 6 + 3;
+    const color = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+
+    spark.style.width = size + 'px';
+    spark.style.height = size + 'px';
+    spark.style.left = cx + 'px';
+    spark.style.top = cy + 'px';
+    spark.style.background = color;
+    spark.style.boxShadow = `0 0 8px ${color}`;
+    spark.style.setProperty('--tx', `${tx}px`);
+    spark.style.setProperty('--ty', `${ty}px`);
+    spark.style.setProperty('--rot', rot);
+
+    document.body.appendChild(spark);
+    setTimeout(() => { spark.remove(); }, 900);
+  }
+}
+
 window.openEnvelopeNow = function() {
   const inv = document.getElementById('invitation');
-  if (!inv || inv.classList.contains('open')) return;
+  if (!inv || inv.classList.contains('open') || inv.classList.contains('opening')) return;
 
-  // 1. Start the panel slide immediately (2.4s theatrical animation)
+  // 1. Play realistic wax crack & paper rustle sound immediately + haptic
+  playRealisticWaxAndPaperSound();
+
+  // 2. Spawn golden wax fracture sparks from the seal
+  const seal = document.getElementById('seal');
+  if (seal) {
+    seal.classList.add('seal-breaking');
+    const rect = seal.getBoundingClientRect();
+    spawnWaxSparks(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  // 3. Mark body and invitation as opening immediately (3D flaps start swinging at t=0)
   document.body.classList.add('env-open');
+  inv.classList.add('opening');
 
-  // 2. Delay revealing the content until panels are well into opening
-  //    (~1.3s in: panels are ~54% open, no blank white space visible)
-  setTimeout(() => {
-    inv.classList.add('open');
-  }, 1300);
-
-  // Play the actual wedding march MP3 song
-  startWeddingMusic();
-
+  // 4. Release rose petals & golden particles
   setTimeout(() => {
     spawnPetals();
     startHeartClock();
-  }, 900);
+  }, 400);
+
+  // 5. Start wedding music
+  setTimeout(() => {
+    startWeddingMusic();
+  }, 600);
+
+  // 6. Complete transition
+  setTimeout(() => {
+    inv.classList.add('open');
+  }, 1200);
 };
 
 // Secret admin shortcut: triple-tap the closing section to go to admin
