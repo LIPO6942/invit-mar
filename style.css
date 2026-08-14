@@ -2119,18 +2119,6 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   animation: archBorderGlow 4s ease-in-out infinite;
 }
 
-/* ── Apex Twin Golden Doves of Love ── */
-.arch-top-crest {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin: 0 auto 3px;
-  width: 100%;
-  max-width: 280px;
-}
-
 /* ── Apex Interlocked Gold Wedding Rings ── */
 .arch-top-crest {
   display: flex;
@@ -2138,16 +2126,16 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin: 0 auto 3px;
+  margin: 0 auto 6px;
   width: 100%;
-  max-width: 280px;
+  max-width: 260px;
 }
 
 .arch-apex-rings {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 2px;
+  margin: 0 auto 4px;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.65));
 }
 
@@ -2158,7 +2146,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 
 .ring-diamond-sparkle {
   animation: diamondStarGlint 2.2s ease-in-out infinite;
-  transform-origin: 60px 10px;
+  transform-origin: 65px 11px;
 }
 
 @keyframes ringsFloatingGlow {
@@ -2177,14 +2165,14 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   justify-content: center;
   align-items: center;
   text-align: center;
-  margin: 0 auto;
+  margin: 2px auto 0;
 }
 
 .bismillah-svg {
   display: block;
   margin: 0 auto;
-  max-width: 250px;
-  width: 85%;
+  max-width: 230px;
+  width: 80%;
   height: auto;
   overflow: visible;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(230, 190, 88, 0.65));
@@ -2202,7 +2190,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   color: #f7d67d;
   opacity: 0.85;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 /* ════════════════════════════════════════════════════
@@ -2211,7 +2199,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 
 /* 👑 THEME 1: Classic Roman Arch Dome (القوس الكلاسيكي الملكي الدائري) */
 .intro-overlay.arch-style-royal_dome {
-  border-radius: 180px 180px 24px 24px;
+  border-radius: 175px 175px 24px 24px;
   border: 2px solid rgba(255, 235, 170, 0.85);
   background: linear-gradient(
     165deg,
@@ -2227,31 +2215,26 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
     0 0 30px rgba(201, 168, 76, 0.35);
 }
 
-/* 🕌 THEME 2: Authentic Moorish Mihrab Ogee Arch (المحراب الأندلسي المغاربي الأصيل) */
+/* 🕌 THEME 2: Authentic Moorish Mihrab Arch (المحراب الأندلسي المغاربي) */
 .intro-overlay.arch-style-andalusian_mihrab,
 .intro-overlay.arch-style-andalusian_arch {
-  /* Exact Pointed Ogee Mihrab Silhouette from Islamic/Moorish Architecture */
-  clip-path: polygon(
-    50% 0%,
-    53% 2%, 57% 5%, 62% 8.5%, 68% 12.5%, 75% 17%, 83% 22%, 91% 27.5%, 97% 33.5%, 100% 40%, 
-    100% 97%, 96% 100%, 4% 100%, 0% 97%, 
-    0% 40%, 3% 33.5%, 9% 27.5%, 17% 22%, 25% 17%, 32% 12.5%, 38% 8.5%, 43% 5%, 47% 2%
-  );
-  border-radius: 0 !important;
-  border: none !important;
+  border-top-left-radius: 185px 230px;
+  border-top-right-radius: 185px 230px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  border: 2px solid rgba(255, 220, 120, 0.95);
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(20, 60, 95, 0.28) 32%,
-    rgba(24, 12, 5, 0.36) 75%,
-    rgba(225, 175, 45, 0.18) 100%
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(18, 55, 80, 0.26) 35%,
+    rgba(22, 12, 6, 0.35) 75%,
+    rgba(220, 170, 40, 0.16) 100%
   );
   box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.6),
-    inset 0 0 0 3px rgba(255, 220, 120, 0.85),
-    inset 0 0 0 7px rgba(20, 65, 100, 0.35),
-    0 0 45px rgba(218, 165, 32, 0.5);
-  filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.5)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
+    0 25px 60px rgba(0, 0, 0, 0.58),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.55),
+    inset 0 0 0 7px rgba(24, 75, 110, 0.3),
+    0 0 42px rgba(218, 165, 32, 0.5);
 }
 
 /* 🌸 THEME 3: Floral Wonderland (القوس الزهري الرومانسي) */
