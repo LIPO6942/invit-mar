@@ -819,6 +819,11 @@ function startWeddingMusic() {
   const btn = document.getElementById('music-toggle');
   if (!audio) return;
   
+  const startSec = parseFloat(audio.dataset.startTime || '0');
+  if (startSec > 0 && audio.currentTime < 1) {
+    try { audio.currentTime = startSec; } catch (e) {}
+  }
+  
   audio.volume = 0.4;
   audio.play().then(() => {
     if (btn) btn.classList.remove('paused');
@@ -834,6 +839,10 @@ window.toggleMusic = function() {
   if (!audio || !btn) return;
   
   if (audio.paused) {
+    const startSec = parseFloat(audio.dataset.startTime || '0');
+    if (startSec > 0 && audio.currentTime < 1) {
+      try { audio.currentTime = startSec; } catch (e) {}
+    }
     audio.play().then(() => {
       btn.classList.remove('paused');
     }).catch(e => {
@@ -2307,22 +2316,29 @@ function readAndApplyGuestParam() {
    Supported keys: 'wedding_march' | 'ziad_gharsa' | 'mabrouk_ramy_ayach'
 ──────────────────────────────────────────────── */
 function applyMusicFromConfig(cfg) {
-  if (!cfg || !cfg.mu) return;
+  if (!cfg) return;
   const MUSIC_MAP = {
     'wedding_march':      'assets/wedding_march.mp3',
     'ziad_gharsa':        'assets/ziad_gharsa.mp3',
     'mabrouk_ramy_ayach': 'assets/mabrouk_ramy_ayach.mp3',
     'mramma_hamza':       'assets/mramma_hamza_bouchnak.mp3',
   };
-  const src = MUSIC_MAP[cfg.mu];
-  if (!src) return;
   const audio = document.getElementById('wedding-audio');
   if (!audio) return;
-  if (audio.getAttribute('src') === src) return; // already correct, nothing to do
-  const wasPlaying = !audio.paused;
-  audio.src = src;
-  audio.load();
-  if (wasPlaying) audio.play().catch(() => {});
+  
+  if (cfg.mst != null) {
+    audio.dataset.startTime = cfg.mst;
+  }
+  
+  if (cfg.mu && MUSIC_MAP[cfg.mu]) {
+    const src = MUSIC_MAP[cfg.mu];
+    if (audio.getAttribute('src') !== src) {
+      const wasPlaying = !audio.paused;
+      audio.src = src;
+      audio.load();
+      if (wasPlaying) audio.play().catch(() => {});
+    }
+  }
 }
 
 const SUGGESTIONS = {

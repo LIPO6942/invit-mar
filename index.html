@@ -68,60 +68,46 @@
           <div class="hero-bg-parallax"></div>
           <div class="petals-layer" id="petals"></div>
           <div class="intro-overlay" id="introOverlay">
-            <!-- ── Apex Twin Golden Doves of Love & Basmala ── -->
+            <!-- ── Apex Interlocked Gold Wedding Rings & Basmala ── -->
             <div class="arch-top-crest">
-              <div class="arch-apex-doves">
-                <svg viewBox="0 0 160 52" class="doves-svg" width="130" height="42" xmlns="http://www.w3.org/2000/svg">
+              <div class="arch-apex-rings">
+                <svg viewBox="0 0 100 46" class="wedding-rings-svg" width="78" height="36" xmlns="http://www.w3.org/2000/svg">
                   <defs>
-                    <linearGradient id="doveGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="goldRingGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#ffffff"/>
-                      <stop offset="30%" stop-color="#fff6c4"/>
-                      <stop offset="65%" stop-color="#e2b747"/>
-                      <stop offset="100%" stop-color="#caa134"/>
+                      <stop offset="25%" stop-color="#fff6c4"/>
+                      <stop offset="50%" stop-color="#e5b84c"/>
+                      <stop offset="75%" stop-color="#fff8d0"/>
+                      <stop offset="100%" stop-color="#b8860b"/>
                     </linearGradient>
-                    <filter id="doveGlow">
-                      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.85)"/>
-                      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="rgba(242,201,76,0.6)"/>
+                    <linearGradient id="goldRingGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff"/>
+                      <stop offset="30%" stop-color="#fceda4"/>
+                      <stop offset="60%" stop-color="#d4af37"/>
+                      <stop offset="100%" stop-color="#996515"/>
+                    </linearGradient>
+                    <filter id="ringGlow">
+                      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.9)"/>
+                      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="rgba(242,201,76,0.65)"/>
                     </filter>
                   </defs>
+                  <!-- Left Ring (Groom band) -->
+                  <ellipse cx="40" cy="24" rx="14" ry="14" fill="none" stroke="url(#goldRingGrad1)" stroke-width="3.2" filter="url(#ringGlow)"/>
+                  <ellipse cx="40" cy="24" rx="11.5" ry="11.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
                   
-                  <!-- Left Dove (Realistic Anatomy & Feathered Wings) -->
-                  <g class="dove-wing-anim-l" filter="url(#doveGlow)">
-                    <!-- Main Wing Feathers -->
-                    <path d="M 38 22 C 34 10, 22 2, 8 0 C 14 6, 18 14, 20 20 C 14 14, 8 10, 2 8 C 8 16, 14 24, 18 28 C 12 24, 6 22, 0 22 C 6 28, 14 34, 22 36 Z" fill="url(#doveGoldGrad)" opacity="0.95"/>
-                    <!-- Body, Head & Tail -->
-                    <path d="M 22 36 C 26 38, 32 38, 38 34 C 42 30, 48 28, 54 26 C 58 24, 62 20, 64 16 C 62 16, 58 17, 56 16 C 54 12, 50 14, 46 16 C 40 20, 32 24, 24 28 C 18 32, 12 36, 6 42 C 10 40, 16 38, 22 36 Z" fill="url(#doveGoldGrad)"/>
-                    <!-- Head & Beak -->
-                    <path d="M 54 20 C 56 18, 60 18, 64 19 C 68 20, 72 19, 75 18 C 71 21, 67 23, 63 24 C 59 25, 56 23, 54 20 Z" fill="url(#doveGoldGrad)"/>
-                    <circle cx="58" cy="19" r="1.2" fill="#1a1005"/>
-                    <circle cx="58.3" cy="18.8" r="0.5" fill="#ffffff"/>
-                    <!-- Olive Branch in Beak -->
-                    <path d="M 72 19 Q 78 22 80 28" fill="none" stroke="url(#doveGoldGrad)" stroke-width="1.2"/>
-                    <path d="M 75 20 Q 78 18 80 20 Q 77 22 75 20 Z" fill="url(#doveGoldGrad)"/>
-                    <path d="M 78 24 Q 82 23 83 26 Q 80 27 78 24 Z" fill="url(#doveGoldGrad)"/>
-                  </g>
-
-                  <!-- Central Linked Wedding Rings -->
-                  <g class="dove-rings" transform="translate(80, 26)" filter="url(#doveGlow)">
-                    <circle cx="-5" cy="0" r="5.5" fill="none" stroke="url(#doveGoldGrad)" stroke-width="1.8"/>
-                    <circle cx="5" cy="0" r="5.5" fill="none" stroke="url(#doveGoldGrad)" stroke-width="1.8"/>
-                    <polygon points="0,-6 -2,-3 0,-1 2,-3" fill="#ffffff" filter="drop-shadow(0 0 4px #fff)"/>
-                  </g>
-
-                  <!-- Right Dove (Mirrored) -->
-                  <g class="dove-wing-anim-r" transform="translate(160, 0) scale(-1, 1)" filter="url(#doveGlow)">
-                    <!-- Main Wing Feathers -->
-                    <path d="M 38 22 C 34 10, 22 2, 8 0 C 14 6, 18 14, 20 20 C 14 14, 8 10, 2 8 C 8 16, 14 24, 18 28 C 12 24, 6 22, 0 22 C 6 28, 14 34, 22 36 Z" fill="url(#doveGoldGrad)" opacity="0.95"/>
-                    <!-- Body, Head & Tail -->
-                    <path d="M 22 36 C 26 38, 32 38, 38 34 C 42 30, 48 28, 54 26 C 58 24, 62 20, 64 16 C 62 16, 58 17, 56 16 C 54 12, 50 14, 46 16 C 40 20, 32 24, 24 28 C 18 32, 12 36, 6 42 C 10 40, 16 38, 22 36 Z" fill="url(#doveGoldGrad)"/>
-                    <!-- Head & Beak -->
-                    <path d="M 54 20 C 56 18, 60 18, 64 19 C 68 20, 72 19, 75 18 C 71 21, 67 23, 63 24 C 59 25, 56 23, 54 20 Z" fill="url(#doveGoldGrad)"/>
-                    <circle cx="58" cy="19" r="1.2" fill="#1a1005"/>
-                    <circle cx="58.3" cy="18.8" r="0.5" fill="#ffffff"/>
-                    <!-- Olive Branch in Beak -->
-                    <path d="M 72 19 Q 78 22 80 28" fill="none" stroke="url(#doveGoldGrad)" stroke-width="1.2"/>
-                    <path d="M 75 20 Q 78 18 80 20 Q 77 22 75 20 Z" fill="url(#doveGoldGrad)"/>
-                    <path d="M 78 24 Q 82 23 83 26 Q 80 27 78 24 Z" fill="url(#doveGoldGrad)"/>
+                  <!-- Right Ring (Bride Solitaire with Diamond) -->
+                  <ellipse cx="60" cy="24" rx="14" ry="14" fill="none" stroke="url(#goldRingGrad2)" stroke-width="3.2" filter="url(#ringGlow)"/>
+                  <ellipse cx="60" cy="24" rx="11.5" ry="11.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                  
+                  <!-- Diamond Setting on Bride Ring -->
+                  <g transform="translate(60, 10)" class="ring-diamond-sparkle">
+                    <!-- Diamond base prong -->
+                    <path d="M -2.5 0 L 2.5 0 L 1.5 2 L -1.5 2 Z" fill="url(#goldRingGrad1)"/>
+                    <!-- Brilliant cut gem -->
+                    <polygon points="0,-6 -4.5,-2.5 -2.5,0 2.5,0 4.5,-2.5" fill="#ffffff" stroke="#fff8d0" stroke-width="0.5"/>
+                    <polygon points="0,-6 -1.8,-2.5 0,0 1.8,-2.5" fill="#e8f4fd" opacity="0.85"/>
+                    <!-- Star glint -->
+                    <circle cx="0" cy="-3.5" r="1.5" fill="#ffffff" filter="drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #ffd700)"/>
                   </g>
                 </svg>
               </div>

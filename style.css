@@ -2131,7 +2131,19 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   max-width: 280px;
 }
 
-.arch-apex-doves {
+/* ── Apex Interlocked Gold Wedding Rings ── */
+.arch-top-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 auto 3px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.arch-apex-rings {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2139,34 +2151,24 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.65));
 }
 
-.dove-wing-anim-l {
-  animation: realisticDoveFlutterL 4s ease-in-out infinite;
-  transform-origin: 40px 24px;
+.wedding-rings-svg {
+  animation: ringsFloatingGlow 3.5s ease-in-out infinite;
+  transform-origin: center center;
 }
 
-.dove-wing-anim-r {
-  animation: realisticDoveFlutterR 4s ease-in-out infinite;
-  transform-origin: 120px 24px;
+.ring-diamond-sparkle {
+  animation: diamondStarGlint 2.2s ease-in-out infinite;
+  transform-origin: 60px 10px;
 }
 
-.dove-rings {
-  animation: doveRingsSparkle 2.5s ease-in-out infinite;
-  transform-origin: 80px 26px;
+@keyframes ringsFloatingGlow {
+  0%, 100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+  50% { transform: translateY(-2px) scale(1.04); filter: drop-shadow(0 2px 8px rgba(242,201,76,0.85)) drop-shadow(0 0 12px rgba(255,230,120,0.9)); }
 }
 
-@keyframes realisticDoveFlutterL {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-3px) rotate(-3.5deg); }
-}
-
-@keyframes realisticDoveFlutterR {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-3px) rotate(3.5deg); }
-}
-
-@keyframes doveRingsSparkle {
-  0%, 100% { transform: translate(80px, 26px) scale(1); filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8)); }
-  50% { transform: translate(80px, 26px) scale(1.15); filter: drop-shadow(0 0 12px rgba(255, 240, 150, 1)); }
+@keyframes diamondStarGlint {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.35); opacity: 1; }
 }
 
 .arch-bismillah-emblem {
@@ -2207,10 +2209,50 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
    5 AUTHENTIC ARCHITECTURAL & ARTISTIC ARCH DESIGNS
    ════════════════════════════════════════════════════ */
 
-/* 🌸 THEME 1: Floral Wonderland (القوس الزهري الملكي) */
+/* 👑 THEME 1: Classic Roman Arch Dome (القوس الكلاسيكي الملكي الدائري) */
+.intro-overlay.arch-style-royal_dome {
+  border-radius: 180px 180px 24px 24px;
+  border: 2px solid rgba(255, 235, 170, 0.85);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.20) 0%,
+    rgba(225, 175, 45, 0.10) 35%,
+    rgba(28, 14, 5, 0.28) 75%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.48),
+    inset 0 1px 4px rgba(255, 255, 255, 0.85),
+    inset 0 0 35px rgba(201, 168, 76, 0.16),
+    0 0 30px rgba(201, 168, 76, 0.35);
+}
+
+/* 🕌 THEME 2: Authentic Moorish Mihrab Ogee Arch (المحراب الأندلسي المغاربي الأصيل) */
+.intro-overlay.arch-style-andalusian_mihrab,
+.intro-overlay.arch-style-andalusian_arch {
+  border-top-left-radius: 210px 320px;
+  border-top-right-radius: 210px 320px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  border: 2.5px solid rgba(255, 220, 120, 0.95);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(18, 55, 80, 0.26) 35%,
+    rgba(22, 12, 6, 0.35) 75%,
+    rgba(220, 170, 40, 0.16) 100%
+  );
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.58),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.55),
+    inset 0 0 0 7px rgba(24, 75, 110, 0.3),
+    0 0 42px rgba(218, 165, 32, 0.5);
+}
+
+/* 🌸 THEME 3: Floral Wonderland (القوس الزهري الرومانسي) */
 .intro-overlay.arch-style-floral_wonderland,
 .intro-overlay.arch-style-floral_boho {
-  border-radius: 180px 180px 32px 32px;
+  border-radius: 175px 175px 32px 32px;
   border: 2px solid rgba(255, 215, 225, 0.85);
   background: linear-gradient(
     165deg,
@@ -2226,29 +2268,9 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
     0 0 35px rgba(240, 170, 195, 0.4);
 }
 
-/* 🕌 THEME 2: Andalusian Mauresque Mihrab (المحراب الأندلسي الملكي) */
-.intro-overlay.arch-style-andalusian_mihrab,
-.intro-overlay.arch-style-andalusian_arch {
-  border-radius: 200px 200px 24px 24px;
-  border: 2.5px solid rgba(255, 220, 120, 0.95);
-  background: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(18, 55, 80, 0.25) 35%,
-    rgba(22, 12, 6, 0.35) 75%,
-    rgba(220, 170, 40, 0.16) 100%
-  );
-  box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.58),
-    inset 0 0 0 3px rgba(201, 168, 76, 0.5),
-    inset 0 0 0 7px rgba(24, 75, 110, 0.3),
-    0 0 42px rgba(218, 165, 32, 0.48);
-}
-
-/* ⚜️ THEME 3: Baroque Versailles Mirror (قصر فرساي الباروكي) */
-.intro-overlay.arch-style-baroque_versailles,
-.intro-overlay.arch-style-royal_dome {
-  border-radius: 170px 170px 26px 26px;
+/* ⚜️ THEME 4: Baroque Versailles Mirror (قصر فرساي الباروكي) */
+.intro-overlay.arch-style-baroque_versailles {
+  border-radius: 160px 160px 26px 26px;
   border: 2.2px solid rgba(255, 235, 170, 0.9);
   background: linear-gradient(
     165deg,
@@ -2262,24 +2284,6 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
     inset 0 1px 4px rgba(255, 255, 255, 0.9),
     inset 0 0 38px rgba(201, 168, 76, 0.2),
     0 0 35px rgba(201, 168, 76, 0.4);
-}
-
-/* ✨ THEME 4: Boho Draped Canopy (خيمة الفرح البوهيمية) */
-.intro-overlay.arch-style-boho_drapes {
-  border-radius: 195px 145px 36px 24px;
-  border: 1.8px solid rgba(255, 250, 240, 0.75);
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 240, 220, 0.14) 40%,
-    rgba(20, 15, 8, 0.25) 80%,
-    rgba(255, 255, 255, 0.16) 100%
-  );
-  box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.4),
-    inset 0 1px 3px rgba(255, 255, 255, 0.85),
-    inset 0 0 28px rgba(255, 230, 180, 0.22),
-    0 0 28px rgba(255, 220, 160, 0.32);
 }
 
 /* 💎 THEME 5: Art Deco Dubai Palace (قصر دبي آرت ديكو) */
