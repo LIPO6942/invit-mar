@@ -2146,7 +2146,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 
 .ring-diamond-sparkle {
   animation: diamondStarGlint 2.2s ease-in-out infinite;
-  transform-origin: 65px 11px;
+  transform-origin: 84px 14px;
 }
 
 @keyframes ringsFloatingGlow {
@@ -2215,26 +2215,26 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
     0 0 30px rgba(201, 168, 76, 0.35);
 }
 
-/* 🕌 THEME 2: Authentic Moorish Mihrab Arch (المحراب الأندلسي المغاربي) */
+/* 🕌 THEME 2: Authentic Moorish Mihrab Arch - frame drawn by SVG overlay (المحراب الأندلسي المغاربي) */
 .intro-overlay.arch-style-andalusian_mihrab,
 .intro-overlay.arch-style-andalusian_arch {
-  border-top-left-radius: 185px 230px;
-  border-top-right-radius: 185px 230px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  border: 2px solid rgba(255, 220, 120, 0.95);
+  /* Border/shape drawn by the SVG Mihrab frame overlay - keep card rect transparent */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: none;
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(18, 55, 80, 0.26) 35%,
-    rgba(22, 12, 6, 0.35) 75%,
-    rgba(220, 170, 40, 0.16) 100%
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(18, 55, 80, 0.22) 35%,
+    rgba(22, 12, 6, 0.32) 75%,
+    rgba(220, 170, 40, 0.12) 100%
   );
   box-shadow:
     0 25px 60px rgba(0, 0, 0, 0.58),
-    inset 0 0 0 3px rgba(201, 168, 76, 0.55),
-    inset 0 0 0 7px rgba(24, 75, 110, 0.3),
-    0 0 42px rgba(218, 165, 32, 0.5);
+    0 0 42px rgba(218, 165, 32, 0.4);
+  overflow: visible;
 }
 
 /* 🌸 THEME 3: Floral Wonderland (القوس الزهري الرومانسي) */

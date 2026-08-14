@@ -94,6 +94,13 @@ function applyConfigToDOM(cfg) {
     overlay.className = overlay.className.replace(/\barch-style-\S+/g, '').trim();
     const styleKey = cfg.archStyle || 'royal_dome';
     overlay.classList.add(`arch-style-${styleKey}`);
+
+    // Show SVG Mihrab frame overlay only for andalusian_mihrab / andalusian_arch styles
+    const mihrabhSvg = document.getElementById('mihrabhFrameSvg');
+    if (mihrabhSvg) {
+      const isMihrab = styleKey === 'andalusian_mihrab' || styleKey === 'andalusian_arch';
+      mihrabhSvg.style.display = isMihrab ? 'block' : 'none';
+    }
   }
 
   // Initialize Photo Stack Widget
