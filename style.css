@@ -2096,7 +2096,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   align-items: center;
   text-align: center;
   gap: 7px;
-  padding: 30px 16px 22px;
+  padding: 26px 16px 20px;
   /* Ultra-luminous Crystal Royal Glass Arch */
   background: linear-gradient(
     165deg,
@@ -2114,9 +2114,102 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
     inset 0 1px 3px rgba(255, 255, 255, 0.7),
     inset 0 0 25px rgba(201, 168, 76, 0.12),
     0 0 25px rgba(201, 168, 76, 0.28);
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease, opacity 0.8s ease;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease, opacity 0.8s ease, border-radius 0.4s ease;
   will-change: transform, opacity;
   animation: archBorderGlow 4s ease-in-out infinite;
+}
+
+/* ── Apex Basmala Crest at Head of Arch ── */
+.arch-top-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.arch-bismillah-emblem {
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-family: 'Amiri', serif;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #ffffff 0%, #fff2b2 25%, #e6be58 50%, #fffde8 75%, #caa134 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 14px rgba(230, 190, 88, 0.7));
+  animation: bismillahGoldShine 4.5s ease-in-out infinite;
+}
+
+@keyframes bismillahGoldShine {
+  0%, 100% { background-position: 0% center; transform: scale(1); }
+  50% { background-position: 100% center; transform: scale(1.04); }
+}
+
+.arch-crown-stars {
+  font-size: 0.72rem;
+  letter-spacing: 5px;
+  color: #f7d67d;
+  opacity: 0.85;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+}
+
+/* ── 5 Custom Arch Styles ── */
+/* Style 1: Royal Dome (Default) */
+.intro-overlay.arch-style-royal_dome {
+  border-radius: 170px 170px 24px 24px;
+  border: 1.5px solid rgba(255, 235, 170, 0.65);
+}
+
+/* Style 2: Andalusian Horseshoe Arch */
+.intro-overlay.arch-style-andalusian_arch {
+  border-radius: 190px 190px 24px 24px;
+  border: 1.8px solid rgba(255, 225, 140, 0.8);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(218, 165, 32, 0.12) 30%,
+    rgba(30, 15, 5, 0.28) 75%,
+    rgba(255, 255, 255, 0.10) 100%
+  );
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 2px rgba(201, 168, 76, 0.25),
+    inset 0 1px 3px rgba(255, 255, 255, 0.7),
+    0 0 30px rgba(218, 165, 32, 0.35);
+}
+
+/* Style 3: Pointed Ottoman Palace Ogive */
+.intro-overlay.arch-style-ogive_palace {
+  border-top-left-radius: 210px 330px;
+  border-top-right-radius: 210px 330px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  border: 1.5px solid rgba(255, 235, 170, 0.7);
+}
+
+/* Style 4: Beveled Geometric Diamond Card */
+.intro-overlay.arch-style-geometric_hex {
+  border-radius: 38px;
+  border: 1.5px solid rgba(255, 235, 170, 0.7);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.75),
+    0 0 28px rgba(201, 168, 76, 0.3);
+}
+
+/* Style 5: Minimal Chic Crystal Card */
+.intro-overlay.arch-style-minimal_chic {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 235, 170, 0.55);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.38),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    0 0 20px rgba(201, 168, 76, 0.2);
 }
 
 @keyframes archBorderGlow {

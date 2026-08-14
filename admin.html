@@ -261,6 +261,23 @@
       </div>
 
       <div class="card">
+        <div class="card-title">🏛️ طراز وشكل القوس الزجاجي (Style de l'Arche & Cadre)</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:10px">اختر شكل القوس الزجاجي الكريستالي الذي يحتضن أسماء العائلات والعروسين عند فتح الدعوة</div>
+        <div class="form-row" style="grid-template-columns: 1fr;">
+          <div class="field">
+            <label>طراز القوس</label>
+            <select id="archStyle">
+              <option value="royal_dome">👑 القوس الملكي الدائري (Arche Royale Dôme - كلاسيكي عريق)</option>
+              <option value="andalusian_arch">🕌 القوس الأندلسي المغاربي (Arche Andalouse Fer à cheval)</option>
+              <option value="ogive_palace">🏛️ القوس العثماني الروماني (Arche Ogivale Palace - مدبب فاخر)</option>
+              <option value="geometric_hex">💎 الإطار الهندسي الماسي (Cadre Géométrique Biseauté)</option>
+              <option value="minimal_chic">✨ الإطار الكريستالي الناعم (Cadre Minimaliste Chic)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-title">📸 خلفية قاعة الأفراح (Image de la salle de fête)</div>
         <div class="photo-selector" style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
           <div class="photo-card selected" data-photo="luxury_wedding_hall" onclick="selectHallPhoto('luxury_wedding_hall')">
@@ -1141,6 +1158,7 @@ function buildConfig() {
     ep: val('envPattern'),   // envelope pattern
     es: val('envSeal'),      // envelope seal
     si: val('envSealInitials'), // seal initials
+    archStyle: val('archStyle') || 'royal_dome', // arch glass style
     hp: window._selectedHallPhoto   || 'luxury_wedding_hall', // hall photo background
     cp: window._selectedClosingPhoto || 'wedding_hall_board',  // closing section photo
     la: val('invLanguage'),  // invitation language
@@ -1241,6 +1259,7 @@ function applyConfigToFields(c) {
   set('envPattern',        c.ep  || 'floral');
   set('envSeal',           c.es  || 'heart');
   set('envSealInitials',   c.si  || '');
+  set('archStyle',         c.archStyle || 'royal_dome');
   
   // Toggle initials field visibility dynamically
   const initialsField = document.getElementById('sealInitialsField');

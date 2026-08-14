@@ -88,6 +88,14 @@ function applyConfigToDOM(cfg) {
     document.title = isFr ? `Mariage de ${groomDisplay} & ${brideDisplay}` : `حفل زفاف ${groomDisplay} و ${brideDisplay}`;
   }
 
+  // Apply Arch Glass Style
+  const overlay = document.getElementById('introOverlay');
+  if (overlay) {
+    overlay.className = overlay.className.replace(/\barch-style-\S+/g, '').trim();
+    const styleKey = cfg.archStyle || 'royal_dome';
+    overlay.classList.add(`arch-style-${styleKey}`);
+  }
+
   // Initialize Photo Stack Widget
   if (typeof initPhotoStack === 'function') {
     initPhotoStack(cfg);
@@ -1926,6 +1934,7 @@ function applyEnvelopeDesign(cfg) {
    ──────────────────────────────────────────────── */
 const TRANSLATIONS = {
   ar: {
+    bismillah_apex: '﷽',
     basmala: 'بارك الله لهما وبارك عليهما وجمع بينهما في خير',
     invite_title: 'تتشرف عائلتا',
     mr: 'السيد',
@@ -1974,6 +1983,7 @@ const TRANSLATIONS = {
     souvenir_opt_html_desc: 'ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.',
   },
   fr: {
+    bismillah_apex: '✨',
     basmala: 'Que Dieu les bénisse, les comble de bonheur et les réunisse.',
     invite_title: 'Les familles',
     mr: 'M.',
