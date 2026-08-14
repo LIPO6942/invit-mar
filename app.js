@@ -4182,8 +4182,10 @@ function openPwaGuestSwitcher() {
   _db.collection('invitations').doc(invSlug).get()
     .then(doc => {
       let realGuests = [];
+      let guestPhotosMap = {};
       if (doc.exists) {
-        const data = doc.data();
+        const data = doc.data() || {};
+        guestPhotosMap = data.config?.features?.guestPhotos || {};
         // 1. Read guests array from Firebase Firestore (created in admin/guests.html)
         if (Array.isArray(data.guests) && data.guests.length > 0) {
           data.guests.forEach(g => {
@@ -4216,10 +4218,18 @@ function openPwaGuestSwitcher() {
         const safeName = (g.name || '').replace(/'/g, "\\'");
         const safeType = (g.type || 'ar_couple').replace(/'/g, "\\'");
         const safeId   = (g.id || '').replace(/'/g, "\\'");
+        const pList    = (g.id && Array.isArray(guestPhotosMap[g.id])) ? guestPhotosMap[g.id] : [];
+        const photoBadge = pList.length > 0
+          ? `<span style="display:inline-flex; align-items:center; gap:3px; font-size:0.75rem; background:rgba(39,174,96,0.15); color:#27ae60; border:1px solid rgba(39,174,96,0.4); padding:2px 8px; border-radius:10px; margin-right:6px; font-weight:normal;" title="يحتوي على ${pList.length} صور خاصة">📸 <b style="font-size:0.7rem">${pList.length}</b></span>`
+          : '';
+
         return `
         <button onclick="applyPwaGuest('${safeName}', '${safeType}', '${safeId}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1px solid rgba(201,168,76,0.4); border-radius:10px; font-family:'Amiri',serif; font-size:0.98rem; color:#2b1800; font-weight:bold; cursor:pointer; text-align:right;">
-          <span>👤 ${g.name}</span>
-          <span style="font-size:0.8rem; color:#8a6010; background:rgba(201,168,76,0.2); padding:3px 8px; border-radius:6px;">عرض الدعوة ➜</span>
+          <span style="display:flex; align-items:center; gap:6px;">
+            <span>👤 ${g.name}</span>
+            ${photoBadge}
+          </span>
+          <span style="font-size:0.8rem; color:#8a6010; background:rgba(201,168,76,0.2); padding:3px 8px; border-radius:6px; flex-shrink:0;">عرض الدعوة ➜</span>
         </button>
       `;}).join('');
     })

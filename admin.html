@@ -2814,6 +2814,12 @@ async function onAdminGuestWeddingChange(slug) {
       const matchedType = FORMULAS_MAP.some(f => f.value === guestType) ? guestType : defaultType;
       const optionsHtml = FORMULAS_MAP.map(f => `<option value="${f.value}" ${f.value === matchedType ? 'selected' : ''}>${f.label}</option>`).join('');
 
+      const guestPhotosMap = (cfg.features && cfg.features.guestPhotos) ? cfg.features.guestPhotos : {};
+      const pList = (guestId && Array.isArray(guestPhotosMap[guestId])) ? guestPhotosMap[guestId] : [];
+      const photoBadge = pList.length > 0
+        ? `<span style="display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;color:#27ae60;background:rgba(39,174,96,0.12);border:1px solid rgba(39,174,96,0.35);border-radius:20px;padding:2px 8px;white-space:nowrap;" title="يحتوي على ${pList.length} صور خاصة">📸 ${pList.length} صور</span>`
+        : '';
+
       // Status badge + approve button
       const statusBadge = hasName ? (isApproved
         ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.72rem;color:#82e0aa;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.35);border-radius:20px;padding:2px 10px;white-space:nowrap;">✅ ${weddingLang==='fr'?'Approuvé':'موافق عليه'}</span>`
@@ -2823,6 +2829,7 @@ async function onAdminGuestWeddingChange(slug) {
       const linkBadge = hasName ? `
         <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap; margin-top:4px; width:100%;">
           ${statusBadge}
+          ${photoBadge}
           <button
             onclick="(function(){
               var inp=document.getElementById('ag-name-${i}');
