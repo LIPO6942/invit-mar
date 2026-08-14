@@ -68,168 +68,71 @@
           <div class="hero-bg-parallax"></div>
           <div class="petals-layer" id="petals"></div>
           <div class="intro-overlay" id="introOverlay">
-            <!-- ── SVG Mihrab Arch Frame Overlay (decorative border, no clipping) ── -->
-            <svg class="mihrab-frame-svg" id="mihrabhFrameSvg" viewBox="0 0 100 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10;">
-              <defs>
-                <linearGradient id="mihrabhBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#fff5c0"/>
-                  <stop offset="30%" stop-color="#f0c040"/>
-                  <stop offset="60%" stop-color="#ffeea0"/>
-                  <stop offset="100%" stop-color="#b8860b"/>
-                </linearGradient>
-                <filter id="mihrabhGlow">
-                  <feGaussianBlur stdDeviation="1.2" result="blur"/>
-                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                </filter>
-              </defs>
-              <!-- True Mihrab pointed ogee arch path - stroke only (no fill) -->
-              <path class="mihrab-arch-path"
-                d="M 4,159 L 4,62 
-                   C 4,62 4,52 10,44
-                   C 16,36 20,32 25,26
-                   C 30,20 34,14 36,9
-                   C 38,5 39,2 50,0
-                   C 61,2 62,5 64,9
-                   C 66,14 70,20 75,26
-                   C 80,32 84,36 90,44
-                   C 96,52 96,62 96,62
-                   L 96,159 Z"
-                fill="none"
-                stroke="url(#mihrabhBorderGrad)"
-                stroke-width="2.2"
-                filter="url(#mihrabhGlow)"
-              />
-              <!-- Inner decorative line -->
-              <path class="mihrab-arch-inner"
-                d="M 8,158 L 8,63
-                   C 8,63 8,54 14,47
-                   C 19,40 23,36 28,30
-                   C 33,24 37,17 39,12
-                   C 41,7 42,4 50,2
-                   C 58,4 59,7 61,12
-                   C 63,17 67,24 72,30
-                   C 77,36 81,40 86,47
-                   C 92,54 92,63 92,63
-                   L 92,158"
-                fill="none"
-                stroke="rgba(255,240,160,0.35)"
-                stroke-width="1"
-              />
-            </svg>
-            <!-- ── Apex Interlocked Gold Wedding Rings & Basmala ── -->
+            <!-- ── Elegant Calligraphic Monogram & Basmala ── -->
             <div class="arch-top-crest">
-              <div class="arch-apex-rings">
-                <!-- Redesigned premium 3D wedding rings -->
-                <svg viewBox="0 0 130 72" class="wedding-rings-svg" width="108" height="60" xmlns="http://www.w3.org/2000/svg">
+
+              <!-- Monogram: Couple's initials in gold calligraphy -->
+              <div class="arch-monogram-wrap" id="archMonogramWrap">
+                <svg class="monogram-svg" id="monogramSvg" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
                   <defs>
-                    <!-- Groom Ring Gold gradient (left ring) -->
-                    <linearGradient id="groomRingTop" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#fffbe0"/>
-                      <stop offset="18%" stop-color="#ffd966"/>
-                      <stop offset="40%" stop-color="#c8860a"/>
-                      <stop offset="62%" stop-color="#f5c842"/>
-                      <stop offset="80%" stop-color="#fffbe0"/>
-                      <stop offset="100%" stop-color="#8a5a08"/>
+                    <linearGradient id="monoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%"  stop-color="#fffbe0"/>
+                      <stop offset="22%" stop-color="#fde68a"/>
+                      <stop offset="45%" stop-color="#d4a017"/>
+                      <stop offset="68%" stop-color="#fcd34d"/>
+                      <stop offset="85%" stop-color="#fef3c7"/>
+                      <stop offset="100%" stop-color="#92400e"/>
                     </linearGradient>
-                    <linearGradient id="groomRingBot" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#7a4f08"/>
-                      <stop offset="50%" stop-color="#d4a017"/>
-                      <stop offset="100%" stop-color="#fceea0"/>
+                    <linearGradient id="monoGoldDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%"  stop-color="#92400e"/>
+                      <stop offset="50%" stop-color="#d97706"/>
+                      <stop offset="100%" stop-color="#fbbf24"/>
                     </linearGradient>
-                    <!-- Bride Ring Gold gradient (right ring) -->
-                    <linearGradient id="brideRingTop" x1="100%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#fffbe0"/>
-                      <stop offset="18%" stop-color="#ffd966"/>
-                      <stop offset="40%" stop-color="#c8860a"/>
-                      <stop offset="62%" stop-color="#f5c842"/>
-                      <stop offset="80%" stop-color="#fffbe0"/>
-                      <stop offset="100%" stop-color="#8a5a08"/>
-                    </linearGradient>
-                    <!-- Diamond gradient -->
-                    <linearGradient id="diamondGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff"/>
-                      <stop offset="30%" stop-color="#ddf4ff"/>
-                      <stop offset="60%" stop-color="#a8d8f0"/>
-                      <stop offset="100%" stop-color="#6ab8e8"/>
-                    </linearGradient>
-                    <!-- Gold setting for diamond -->
-                    <linearGradient id="settingGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#fff4b0"/>
-                      <stop offset="50%" stop-color="#e0a820"/>
-                      <stop offset="100%" stop-color="#9a6a00"/>
-                    </linearGradient>
-                    <!-- Glow filter -->
-                    <filter id="ringsGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="3" result="blur"/>
-                      <feFlood flood-color="rgba(255,210,0,0.5)" result="color"/>
-                      <feComposite in="color" in2="blur" operator="in" result="glow"/>
-                      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
-                    </filter>
-                    <filter id="diamondGlow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="2.5" result="blur"/>
-                      <feFlood flood-color="rgba(255,255,255,0.9)" result="white"/>
-                      <feComposite in="white" in2="blur" operator="in" result="glow"/>
+                    <filter id="monoGlow" x="-30%" y="-30%" width="160%" height="160%">
+                      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+                      <feFlood flood-color="rgba(251,191,36,0.55)" result="col"/>
+                      <feComposite in="col" in2="blur" operator="in" result="glow"/>
                       <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
                     </filter>
                   </defs>
 
-                  <g filter="url(#ringsGlow)">
-                    <!-- ═══ GROOM RING (left, slightly behind) ═══ -->
-                    <!-- Ring body top (front half top curve) -->
-                    <path d="M 22,44 C 22,26 30,18 46,18 C 62,18 70,26 70,44" fill="none" stroke="url(#groomRingTop)" stroke-width="7" stroke-linecap="butt"/>
-                    <!-- Inner highlight top -->
-                    <path d="M 27,44 C 27,29 34,22 46,22 C 58,22 65,29 65,44" fill="none" stroke="rgba(255,252,220,0.55)" stroke-width="2.5" stroke-linecap="butt"/>
-                    <!-- Ring body bottom (front, in front) -->
-                    <path d="M 22,44 C 22,62 30,70 46,70 C 62,70 70,62 70,44" fill="none" stroke="url(#groomRingBot)" stroke-width="7" stroke-linecap="butt"/>
-                    <!-- Outer edge shimmer -->
-                    <path d="M 19,44 C 19,24 28,15 46,15 C 64,15 73,24 73,44 C 73,64 64,73 46,73 C 28,73 19,64 19,44 Z" fill="none" stroke="rgba(255,240,160,0.28)" stroke-width="1"/>
+                  <!-- Ornamental flourish left -->
+                  <path d="M 10,45 C 18,30 28,28 34,38 C 38,44 36,50 30,50 C 26,50 24,46 28,44" fill="none" stroke="url(#monoGold)" stroke-width="1.2" opacity="0.7"/>
+                  <path d="M 10,45 C 15,55 22,58 28,54" fill="none" stroke="url(#monoGold)" stroke-width="1" opacity="0.5"/>
 
-                    <!-- ═══ BRIDE RING (right, in front, slightly overlapping) ═══ -->
-                    <!-- Back half of bride ring (hidden behind groom ring) - only bottom back -->
-                    <path d="M 60,44 C 60,62 68,70 84,70 C 100,70 108,62 108,44" fill="none" stroke="url(#groomRingBot)" stroke-width="6" stroke-linecap="butt"/>
-                    <!-- Top of bride ring (in front of groom ring at overlap) -->
-                    <path d="M 60,44 C 60,26 68,18 84,18 C 100,18 108,26 108,44" fill="none" stroke="url(#brideRingTop)" stroke-width="6" stroke-linecap="butt"/>
-                    <!-- Inner top highlight bride -->
-                    <path d="M 64,44 C 64,29 71,23 84,23 C 97,23 104,29 104,44" fill="none" stroke="rgba(255,252,220,0.5)" stroke-width="2" stroke-linecap="butt"/>
-                    <!-- Outer edge shimmer bride -->
-                    <path d="M 57,44 C 57,24 66,15 84,15 C 102,15 111,24 111,44 C 111,64 102,73 84,73 C 66,73 57,64 57,44 Z" fill="none" stroke="rgba(255,240,160,0.25)" stroke-width="1"/>
+                  <!-- Ornamental flourish right -->
+                  <path d="M 170,45 C 162,30 152,28 146,38 C 142,44 144,50 150,50 C 154,50 156,46 152,44" fill="none" stroke="url(#monoGold)" stroke-width="1.2" opacity="0.7"/>
+                  <path d="M 170,45 C 165,55 158,58 152,54" fill="none" stroke="url(#monoGold)" stroke-width="1" opacity="0.5"/>
 
-                    <!-- ═══ OVERLAP INTERLOCKING MASK (bride ring in front at left side) ═══ -->
-                    <!-- Cover groom ring where bride ring passes in front -->
-                    <path d="M 60,28 C 60,24 62,20 66,18" fill="none" stroke="url(#brideRingTop)" stroke-width="6.5" stroke-linecap="round"/>
+                  <!-- Divider ampersand center -->
+                  <text x="90" y="58" text-anchor="middle" font-family="'Playfair Display', 'Georgia', serif" font-size="22" font-style="italic" fill="url(#monoGold)" filter="url(#monoGlow)" opacity="0.9">&amp;</text>
 
-                    <!-- ═══ DIAMOND SOLITAIRE on Bride's Ring ═══ -->
-                    <g transform="translate(84, 14)" class="ring-diamond-sparkle" filter="url(#diamondGlow)">
-                      <!-- Setting prongs -->
-                      <line x1="-4" y1="4" x2="-5" y2="0" stroke="url(#settingGold)" stroke-width="1.5" stroke-linecap="round"/>
-                      <line x1="4" y1="4" x2="5" y2="0" stroke="url(#settingGold)" stroke-width="1.5" stroke-linecap="round"/>
-                      <line x1="-2" y1="5" x2="-2" y2="8" stroke="url(#settingGold)" stroke-width="1.5" stroke-linecap="round"/>
-                      <line x1="2" y1="5" x2="2" y2="8" stroke="url(#settingGold)" stroke-width="1.5" stroke-linecap="round"/>
-                      <!-- Diamond shape (round brilliant) -->
-                      <polygon points="0,-12 -7,-4 -5,2 5,2 7,-4" fill="url(#diamondGrad)" stroke="rgba(255,255,255,0.8)" stroke-width="0.5"/>
-                      <!-- Facets -->
-                      <polygon points="0,-12 -3,-4 3,-4" fill="#eaf8ff" opacity="0.9"/>
-                      <polygon points="-3,-4 0,-12 -7,-4" fill="#b8e4f9" opacity="0.85"/>
-                      <polygon points="3,-4 0,-12 7,-4" fill="#7ec8f0" opacity="0.85"/>
-                      <polygon points="-7,-4 -5,2 -1,0" fill="#54a8d4" opacity="0.75"/>
-                      <polygon points="7,-4 5,2 1,0" fill="#4090c0" opacity="0.75"/>
-                      <polygon points="-5,2 5,2 0,0" fill="#d0eeff"/>
-                      <!-- Brilliant center sparkle -->
-                      <circle cx="0" cy="-5" r="2.4" fill="white" opacity="0.95"/>
-                      <!-- Star cross sparkle -->
-                      <line x1="0" y1="-11" x2="0" y2="1" stroke="white" stroke-width="0.7" opacity="0.7"/>
-                      <line x1="-8" y1="-5" x2="8" y2="-5" stroke="white" stroke-width="0.7" opacity="0.7"/>
-                      <line x1="-5" y1="-10" x2="5" y2="0" stroke="white" stroke-width="0.4" opacity="0.5"/>
-                      <line x1="5" y1="-10" x2="-5" y2="0" stroke="white" stroke-width="0.4" opacity="0.5"/>
-                    </g>
-                  </g>
+                  <!-- Groom initial - LEFT (large calligraphic) -->
+                  <text id="monoInitialGroom" x="52" y="65" text-anchor="middle"
+                    font-family="'Playfair Display', 'IM Fell English', 'Georgia', serif"
+                    font-size="58" font-weight="700" font-style="italic"
+                    fill="url(#monoGold)" filter="url(#monoGlow)"
+                    letter-spacing="-2">T</text>
+
+                  <!-- Bride initial - RIGHT (large calligraphic) -->
+                  <text id="monoInitialBride" x="128" y="65" text-anchor="middle"
+                    font-family="'Playfair Display', 'IM Fell English', 'Georgia', serif"
+                    font-size="58" font-weight="700" font-style="italic"
+                    fill="url(#monoGold)" filter="url(#monoGlow)"
+                    letter-spacing="-2">G</text>
+
+                  <!-- Fine horizontal rule under initials -->
+                  <line x1="38" y1="72" x2="142" y2="72" stroke="url(#monoGold)" stroke-width="0.7" opacity="0.55"/>
+                  <!-- Decorative diamond dots -->
+                  <polygon points="88,69 90,71 92,69 90,67" fill="url(#monoGold)" opacity="0.9"/>
                 </svg>
               </div>
+
               <div class="arch-bismillah-emblem">
                 <svg class="bismillah-svg" viewBox="0 0 280 50" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="goldBismillahGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff"/>
+                      <stop offset="0%"  stop-color="#ffffff"/>
                       <stop offset="25%" stop-color="#fff0a8"/>
                       <stop offset="50%" stop-color="#e2b747"/>
                       <stop offset="75%" stop-color="#fff8d0"/>
