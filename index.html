@@ -275,324 +275,277 @@
             </div>
             <script>
             (function() {
-              const canvas = document.getElementById('ecgCanvas');
-              if (!canvas) return;
-              const ctx = canvas.getContext('2d');
-              const W = canvas.width, H = canvas.height;
-              const MID = H / 2 + 4;
+              var cv = document.getElementById('ecgCanvas');
+              if (!cv) return;
+              var ctx = cv.getContext('2d');
+              var W = cv.width, H = cv.height;   // 320 × 70
+              var CX = W >> 1;                    // 160
+              var MID = (H * 0.54) | 0;          // 37
 
-              // ── Palette ──
-              const GOLD      = '#f5c842';
-              const GOLD_LT   = '#fffbe0';
-              const GOLD2     = '#c8860a';
-              const RED_DEEP  = '#7B0000';
-              const RED_MID   = '#c0392b';
-              const RED_LT    = '#e74c3c';
+              /* ── palette ── */
+              var GOLD = '#f5c842', GLD2 = '#fffbe0';
+              var RD0 = '#1a0008', RD1 = '#7b0028', RD2 = '#c9184a', RD3 = '#ff6b6b';
 
-              // ── ECG pulse shape: P-QRS-T ──
-              const PULSE_PTS = [
-                [0.00,  0], [0.07,  0],
-                [0.10, -2.5],[0.12,  0],              // P wave
-                [0.24,  0], [0.27,  3],
-                [0.30,-22], [0.32, 12],[0.34,  0],   // QRS spike
-                [0.44,  0], [0.50, -6],[0.56,  0],   // T wave
-                [1.00,  0]
+              /* ── letter zones ──
+                 In Arabic display: groom حلبى is RIGHT, bride مريم is LEFT
+                 BX = bride position (left), GX = groom position (right)         */
+              var BX = 72,  LW = 26;  /* bride left  */
+              var GX = 248;            /* groom right */
+
+              /* ── ECG pulse shape (P-QRS-T) ── */
+              var PTS = [
+                [0,.0],[.09,.0],[.12,-2.5],[.15,.0],
+                [.26,.0],[.29,3],[.31,-22],[.33,12],[.36,.0],
+                [.46,.0],[.52,-5.5],[.58,.0],[1,.0]
               ];
-              function ecgY(t) {
-                for (let i = 0; i < PULSE_PTS.length - 1; i++) {
-                  const [x0,y0] = PULSE_PTS[i], [x1,y1] = PULSE_PTS[i+1];
-                  if (t >= x0 && t <= x1) {
-                    return y0 + (y1 - y0) * (t - x0) / (x1 - x0);
-                  }
+              function ey(p) {
+                for (var i=0;i<PTS.length-1;i++) {
+                  var x0=PTS[i][0],y0=PTS[i][1],x1=PTS[i+1][0],y1=PTS[i+1][1];
+                  if (p>=x0&&p<=x1) return y0+(y1-y0)*(p-x0)/(x1-x0);
                 }
                 return 0;
               }
 
-              // ── Premium heart path ──
-              // Uses 4 cubic bezier curves for a smooth, classic heart silhouette
-              function heartPath(cx, cy, r) {
-                const k = r * 0.5523; // cubic approximation factor
+              /* ── easing ── */
+              function eio(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+              function eo3(t){return 1-Math.pow(1-t,3);}
+
+              /* ── cycle config ── */
+              var TOTAL  = 400;  /* frames/cycle  (~6.7 s @ 60fps) */
+              var TRAVEL = 205;  /* frame heads reach centre        */
+              var HOLD   = 300;  /* hold phase ends, fade begins    */
+
+              /* ── state ── */
+              var frame = 0, beatTrig = -999;
+              var ig = 'ح', ib = 'م';   /* groom / bride initials */
+
+              function readInit() {
+                var g = document.querySelector('[data-cfg="groomNameDisplay"]')
+                     || document.getElementById('ecgGroomTspan');
+                var b = document.querySelector('[data-cfg="brideNameDisplay"]')
+                     || document.getElementById('ecgBrideTspan');
+                if (g && g.textContent.trim()) ig = Array.from(g.textContent.trim())[0];
+                if (b && b.textContent.trim()) ib = Array.from(b.textContent.trim())[0];
+              }
+
+              /* ── classic heart path (smooth bezier) ── */
+              function hp(cx, cy, r) {
                 ctx.beginPath();
-                // Top-left lobe
-                ctx.moveTo(cx, cy - r * 0.35);
-                ctx.bezierCurveTo(cx,           cy - r * 0.35 - k,
-                                   cx - r * 0.6, cy - r,
-                                   cx - r,       cy - r * 0.5);
-                // Bottom-left
-                ctx.bezierCurveTo(cx - r * 1.0, cy + r * 0.05,
-                                   cx - r * 0.5, cy + r * 0.6,
-                                   cx,           cy + r);
-                // Bottom-right
-                ctx.bezierCurveTo(cx + r * 0.5, cy + r * 0.6,
-                                   cx + r * 1.0, cy + r * 0.05,
-                                   cx + r,       cy - r * 0.5);
-                // Top-right lobe
-                ctx.bezierCurveTo(cx + r * 0.6, cy - r,
-                                   cx,           cy - r * 0.35 - k,
-                                   cx,           cy - r * 0.35);
+                ctx.moveTo(cx, cy + r);
+                ctx.bezierCurveTo(cx-r*.13, cy+r*.68, cx-r,    cy+r*.22, cx-r,    cy-r*.2);
+                ctx.bezierCurveTo(cx-r,    cy-r*.78,  cx-r*.4, cy-r,     cx,      cy-r*.52);
+                ctx.bezierCurveTo(cx+r*.4, cy-r,      cx+r,    cy-r*.78, cx+r,    cy-r*.2);
+                ctx.bezierCurveTo(cx+r,    cy+r*.22,  cx+r*.13,cy+r*.68, cx,      cy+r);
                 ctx.closePath();
               }
 
-              // ── Animation state ──
-              let phase    = 0;
-              const SPEED  = 0.0028;
-              const TRAIL  = 200;
-              let heartBeat  = 0;
-              let lastCycle  = 0;
-              // Sparkle particles for initials
-              let sparks = [];
-
-              // ── Read real initials from visible name spans ──
-              let initGroom = 'ح';
-              let initBride  = 'م';
-              function updateInitials() {
-                // Primary: visible name display spans
-                const gEl = document.querySelector('[data-cfg="groomNameDisplay"]');
-                const bEl = document.querySelector('[data-cfg="brideNameDisplay"]');
-                // Fallback: hidden tspans set by app.js
-                const gElFb = document.getElementById('ecgGroomTspan');
-                const bElFb = document.getElementById('ecgBrideTspan');
-                const gName = (gEl && gEl.textContent.trim()) || (gElFb && gElFb.textContent.trim()) || '';
-                const bName = (bEl && bEl.textContent.trim()) || (bElFb && bElFb.textContent.trim()) || '';
-                if (gName) initGroom = [...gName][0];
-                if (bName) initBride  = [...bName][0];
+              /* ── lub-dub beat envelope ── */
+              function beatStr(age) {
+                if (age < 0 || age > 58) return 0;
+                if (age < 7)  return eo3(age / 7);          /* lub up   */
+                if (age < 16) return 1 - .65*(age-7)/9;     /* lub down */
+                if (age < 24) return .35 + .65*eo3((age-16)/8); /* dub up */
+                if (age < 42) return 1 - (age-24)/18;       /* dub down */
+                return 0;
               }
 
-              // Positions of initials (relative to canvas centre)
-              const CX = W / 2;
-              const GROOM_X = CX + 55;   // right side
-              const BRIDE_X = CX - 55;   // left side
-              const INIT_Y  = MID - 1;
+              /* ── premium heart draw ── */
+              function drawHeart(beat, alpha) {
+                if (alpha < .02) return;
+                var cx=CX, cy=MID-3, r=11+beat*5;
 
-              // ── Sparkle on initials when scan head passes ──
-              function spawnSparks(x, count) {
-                for (let i = 0; i < count; i++) {
-                  sparks.push({
-                    x: x + (Math.random() - 0.5) * 16,
-                    y: INIT_Y + (Math.random() - 0.5) * 18,
-                    vx: (Math.random() - 0.5) * 1.5,
-                    vy: -Math.random() * 1.8 - 0.3,
-                    life: 1.0,
-                    r: Math.random() * 2.2 + 0.6,
-                  });
-                }
-              }
+                /* 1. atmospheric halo */
+                ctx.save();
+                var atm=ctx.createRadialGradient(cx,cy,0,cx,cy,r*3.5);
+                atm.addColorStop(0,'rgba(200,0,40,'+(alpha*(.15+beat*.4))+')');
+                atm.addColorStop(1,'rgba(200,0,40,0)');
+                ctx.fillStyle=atm;
+                ctx.beginPath();ctx.arc(cx,cy,r*3.5,0,Math.PI*2);ctx.fill();
+                ctx.restore();
 
-              function drawSparks() {
-                sparks = sparks.filter(s => s.life > 0);
-                sparks.forEach(s => {
+                /* 2. deep shadow */
+                ctx.save();
+                ctx.globalAlpha=alpha*.6;
+                hp(cx,cy,r+2.5);
+                ctx.fillStyle=RD0;
+                ctx.shadowColor='#ff0050';ctx.shadowBlur=4+beat*28;
+                ctx.fill();ctx.restore();
+
+                /* 3. body gradient */
+                ctx.save();
+                ctx.globalAlpha=alpha;
+                hp(cx,cy,r);
+                var bg=ctx.createLinearGradient(cx-r,cy-r*.8,cx+r,cy+r);
+                bg.addColorStop(0,RD3);bg.addColorStop(.28,RD2);
+                bg.addColorStop(.72,RD1);bg.addColorStop(1,RD0);
+                ctx.fillStyle=bg;
+                ctx.shadowColor='#ff0050';ctx.shadowBlur=2+beat*16;
+                ctx.fill();ctx.restore();
+
+                /* 4. specular highlight (glassy) */
+                ctx.save();
+                ctx.globalAlpha=alpha*.72;
+                hp(cx,cy,r);ctx.clip();
+                var hl=ctx.createRadialGradient(cx-r*.32,cy-r*.42,0,cx-r*.32,cy-r*.42,r*.64);
+                hl.addColorStop(0,'rgba(255,220,220,.75)');
+                hl.addColorStop(.45,'rgba(255,110,110,.18)');
+                hl.addColorStop(1,'rgba(255,0,0,0)');
+                ctx.fillStyle=hl;
+                ctx.beginPath();ctx.arc(cx,cy,r*2,0,Math.PI*2);ctx.fill();
+                ctx.restore();
+
+                /* 5. inner shimmer ring when beating */
+                if (beat > .1) {
                   ctx.save();
-                  ctx.globalAlpha = s.life * 0.9;
-                  ctx.beginPath();
-                  ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                  ctx.fillStyle = Math.random() > 0.5 ? GOLD_LT : GOLD;
-                  ctx.shadowColor = GOLD;
-                  ctx.shadowBlur = 6;
-                  ctx.fill();
-                  ctx.restore();
-                  s.x  += s.vx;
-                  s.y  += s.vy;
-                  s.vy += 0.06;
-                  s.life -= 0.055;
-                });
+                  ctx.globalAlpha=alpha*beat*.45;
+                  hp(cx,cy,r*.6);
+                  ctx.fillStyle='rgba(255,180,180,.3)';
+                  ctx.fill();ctx.restore();
+                }
+
+                /* 6. gold rim */
+                ctx.save();
+                ctx.globalAlpha=alpha*(.42+beat*.58);
+                hp(cx,cy,r);
+                ctx.strokeStyle=beat>.2?('rgba(255,228,76,'+(0.82+beat*.18)+')')
+                                        :'rgba(245,200,66,.38)';
+                ctx.lineWidth=1.4;ctx.stroke();ctx.restore();
               }
 
-              // ── Main draw loop ──
+              /* ── letter reveal via progressive clip ──
+                 fromLeft=true  → left head reveals letter from LEFT to RIGHT
+                 fromLeft=false → right head reveals letter from RIGHT to LEFT */
+              function drawLetter(ch, lx, reveal, fromLeft, prox, fade) {
+                if (fade < .02) return;
+                var cl = fromLeft ? lx-LW : reveal;
+                var cr = fromLeft ? reveal : lx+LW;
+                if (cr <= cl + .8) return;
+
+                ctx.save();
+                ctx.beginPath();ctx.rect(cl, 0, cr-cl, H);ctx.clip();
+
+                var sh = Math.min(prox*1.8, 1);
+                var sz = 26 + sh*5;
+                ctx.font = 'italic 700 '+sz+'px "Amiri","Scheherazade New",serif';
+                ctx.textAlign='center';ctx.textBaseline='middle';
+
+                /* outer glow — gives the "electric writing" look */
+                ctx.globalAlpha = fade*(.35+sh*.5);
+                ctx.fillStyle   = GLD2;
+                ctx.shadowColor = GOLD; ctx.shadowBlur = 16+sh*26;
+                ctx.fillText(ch, lx, MID);
+
+                /* solid letter */
+                ctx.globalAlpha = fade*(.85+sh*.15);
+                ctx.shadowBlur  = 4+sh*12;
+                ctx.fillStyle   = sh>.35 ? 'rgba(255,251,224,.96)' : GOLD;
+                ctx.fillText(ch, lx, MID);
+
+                ctx.restore();
+              }
+
+              /* ── ECG line segment ── */
+              function drawLine(x0, x1, cycles, fade) {
+                if (x1 <= x0+.5 || fade<.02) return;
+                var span=x1-x0;
+                ctx.save();ctx.beginPath();
+                var fst=true;
+                for (var x=x0;x<=x1;x+=1.1) {
+                  var p=((x-x0)/span*cycles)%1;
+                  var y=MID+ey(p);
+                  if(fst){ctx.moveTo(x,y);fst=false;}else ctx.lineTo(x,y);
+                }
+                ctx.strokeStyle=GOLD;ctx.lineWidth=1.8;
+                ctx.lineCap=ctx.lineJoin='round';
+                ctx.shadowColor=GOLD;ctx.shadowBlur=8;
+                ctx.globalAlpha=fade*.88;ctx.stroke();ctx.restore();
+              }
+
+              /* ── glowing scan dot ── */
+              function drawDot(x, y, fade, extra) {
+                if (fade<.02) return;
+                var r=5+extra*3;
+                ctx.save();
+                var g=ctx.createRadialGradient(x,y,0,x,y,r+4);
+                g.addColorStop(0,GLD2);g.addColorStop(.38,GOLD);
+                g.addColorStop(1,'rgba(245,200,66,0)');
+                ctx.fillStyle=g;ctx.globalAlpha=fade;
+                ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+                ctx.restore();
+              }
+
+              /* ── MAIN LOOP ── */
               function draw() {
-                ctx.clearRect(0, 0, W, H);
+                ctx.clearRect(0,0,W,H);
+                var f = frame % TOTAL;
 
-                // Dashed baseline
-                ctx.save();
-                ctx.setLineDash([4, 9]);
-                ctx.strokeStyle = 'rgba(212,160,23,0.15)';
-                ctx.lineWidth = 0.7;
-                ctx.beginPath();
-                ctx.moveTo(12, MID);
-                ctx.lineTo(W - 12, MID);
-                ctx.stroke();
+                /* travel: heads converge from edges to center */
+                var tp = eio(Math.min(1, f/TRAVEL));
+                var lx = 12+(CX-12)*tp;         /* left  head x */
+                var rx = W-12-(W-12-CX)*tp;      /* right head x */
+
+                /* fade factor (full during hold, fades at end) */
+                var fa = f<=HOLD ? 1.0
+                       : 1-eio((f-HOLD)/(TOTAL-HOLD));
+
+                /* trigger lub-dub when heads converge */
+                if (f === TRAVEL) beatTrig = frame;
+                var beat = beatStr(frame - beatTrig);
+
+                /* heart dims while travelling, illuminates at beat */
+                var ha = f < TRAVEL ? Math.pow(tp,2.5)*.28 : fa;
+
+                /* ─ baseline ─ */
+                ctx.save();ctx.setLineDash([3,9]);
+                ctx.strokeStyle='rgba(212,160,23,.1)';ctx.lineWidth=.6;
+                ctx.beginPath();ctx.moveTo(12,MID);ctx.lineTo(W-12,MID);ctx.stroke();
                 ctx.restore();
 
-                // Scan head position
-                const headX   = 12 + (W - 24) * phase;
-                const curCycle = (phase * 4.5) % 1;
+                /* ─ left ECG line (12 → lx) ─ */
+                drawLine(12, lx, 3.8, fa);
 
-                // ECG trail — rendered as a continuous path for smoothness
-                ctx.save();
-                ctx.beginPath();
-                const trailStart = Math.max(12, headX - TRAIL);
-                let first = true;
-                for (let x = trailStart; x <= headX; x += 1.2) {
-                  const p      = (x - 12) / (W - 24);
-                  const cP     = (p * 4.5) % 1;
-                  const yOff   = ecgY(cP);
-                  const alpha  = Math.pow((x - trailStart) / TRAIL, 0.6);
-                  if (first) { ctx.moveTo(x, MID + yOff); first = false; }
-                  else        { ctx.lineTo(x, MID + yOff); }
-                }
-                ctx.strokeStyle = GOLD;
-                ctx.lineWidth   = 1.8;
-                ctx.lineCap     = 'round';
-                ctx.lineJoin    = 'round';
-                ctx.shadowColor = GOLD;
-                ctx.shadowBlur  = 7;
-                ctx.globalAlpha = 0.88;
-                ctx.stroke();
-                ctx.restore();
+                /* ─ right ECG line (rx → W-12) ─ */
+                drawLine(rx, W-12, 3.8, fa);
 
-                // QRS detection → heartbeat
-                if (curCycle < 0.33 && lastCycle > 0.68) {
-                  heartBeat = 1.0;
-                }
-                lastCycle = curCycle;
-                heartBeat = Math.max(0, heartBeat - 0.038);
-
-                // Glowing scan head dot
-                const headY = MID + ecgY(curCycle);
-                ctx.save();
-                const gGlow = ctx.createRadialGradient(headX, headY, 0, headX, headY, 7 + heartBeat * 4);
-                gGlow.addColorStop(0,   GOLD_LT);
-                gGlow.addColorStop(0.3, GOLD);
-                gGlow.addColorStop(1,   'rgba(245,200,66,0)');
-                ctx.fillStyle   = gGlow;
-                ctx.globalAlpha = 0.95;
-                ctx.beginPath();
-                ctx.arc(headX, headY, 4 + heartBeat * 2.5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-
-                // ── Sparkle trigger when head near initials ──
-                const SPARK_ZONE = 18;
-                if (Math.abs(headX - GROOM_X) < SPARK_ZONE && Math.random() < 0.55) {
-                  spawnSparks(GROOM_X, 3);
-                }
-                if (Math.abs(headX - BRIDE_X) < SPARK_ZONE && Math.random() < 0.55) {
-                  spawnSparks(BRIDE_X, 3);
-                }
-                drawSparks();
-
-                // ── Premium Heart at centre ──
-                const HCX = CX, HCY = MID - 4;
-                const HR  = 10 + heartBeat * 4.5;   // base radius
-
-                // Outer halo ring (gold, fades on idle)
-                ctx.save();
-                ctx.globalAlpha = 0.18 + heartBeat * 0.28;
-                heartPath(HCX, HCY, HR + 7);
-                ctx.fillStyle = RED_DEEP;
-                ctx.shadowColor = RED_MID;
-                ctx.shadowBlur  = 22 + heartBeat * 14;
-                ctx.fill();
-                ctx.restore();
-
-                // Gold halo border
-                ctx.save();
-                heartPath(HCX, HCY, HR + 4);
-                const haloGrd = ctx.createRadialGradient(HCX, HCY, HR * 0.5, HCX, HCY, HR + 6);
-                haloGrd.addColorStop(0,   'rgba(255,220,80,0)');
-                haloGrd.addColorStop(0.7, 'rgba(245,200,66,0.12)');
-                haloGrd.addColorStop(1,   'rgba(245,200,66,0)');
-                ctx.fillStyle = haloGrd;
-                ctx.globalAlpha = 0.7 + heartBeat * 0.3;
-                ctx.fill();
-                ctx.restore();
-
-                // Heart body fill
-                ctx.save();
-                heartPath(HCX, HCY, HR);
-                const hBodyGrd = ctx.createRadialGradient(HCX - HR * 0.25, HCY - HR * 0.3, 0,
-                                                           HCX,             HCY,             HR * 1.6);
-                hBodyGrd.addColorStop(0,   '#ff6b6b');
-                hBodyGrd.addColorStop(0.35, RED_LT);
-                hBodyGrd.addColorStop(0.75, RED_MID);
-                hBodyGrd.addColorStop(1,    RED_DEEP);
-                ctx.fillStyle = hBodyGrd;
-                ctx.globalAlpha = 0.92 + heartBeat * 0.08;
-                ctx.shadowColor = RED_MID;
-                ctx.shadowBlur  = 8 + heartBeat * 10;
-                ctx.fill();
-                ctx.restore();
-
-                // Specular highlight (tiny white oval on upper-left)
-                ctx.save();
-                heartPath(HCX, HCY, HR);
-                ctx.clip();
-                const hlGrd = ctx.createRadialGradient(HCX - HR * 0.35, HCY - HR * 0.5, 0,
-                                                        HCX - HR * 0.35, HCY - HR * 0.5, HR * 0.55);
-                hlGrd.addColorStop(0,   'rgba(255,255,255,0.55)');
-                hlGrd.addColorStop(0.5, 'rgba(255,255,255,0.12)');
-                hlGrd.addColorStop(1,   'rgba(255,255,255,0)');
-                ctx.fillStyle = hlGrd;
-                ctx.fill();
-                ctx.restore();
-
-                // Gold stroke rim
-                ctx.save();
-                heartPath(HCX, HCY, HR);
-                ctx.strokeStyle = `rgba(245,200,66,${0.55 + heartBeat * 0.45})`;
-                ctx.lineWidth   = 1.2;
-                ctx.globalAlpha = 0.9;
-                ctx.stroke();
-                ctx.restore();
-
-                // ── Initials with shimmer ──
-                const scanProxGroom = Math.max(0, 1 - Math.abs(headX - GROOM_X) / 60);
-                const scanProxBride = Math.max(0, 1 - Math.abs(headX - BRIDE_X) / 60);
-
-                function drawInitial(letter, x, scanProx) {
-                  const shimmer = scanProx * 0.6;
-                  const sz = 20 + scanProx * 3;
-                  ctx.save();
-                  ctx.font = `700 ${sz}px "Amiri","Scheherazade New",serif`;
-                  ctx.textAlign    = 'center';
-                  ctx.textBaseline = 'middle';
-                  // Outer glow layer
-                  ctx.globalAlpha = 0.35 + shimmer * 0.5;
-                  ctx.fillStyle   = GOLD_LT;
-                  ctx.shadowColor = GOLD;
-                  ctx.shadowBlur  = 12 + shimmer * 20;
-                  ctx.fillText(letter, x, INIT_Y);
-                  // Solid layer
-                  ctx.globalAlpha = 0.88 + shimmer * 0.12;
-                  ctx.shadowBlur  = 4 + shimmer * 10;
-                  ctx.fillStyle   = shimmer > 0.3
-                    ? `rgba(255,251,224,${0.9 + shimmer * 0.1})`
-                    : GOLD;
-                  ctx.fillText(letter, x, INIT_Y);
-                  ctx.restore();
+                /* ─ bride initial (left, revealed by left head) ─ */
+                if (lx >= BX-LW) {
+                  var bRev = Math.min(lx, BX+LW);
+                  var bPrx = Math.max(0, 1-Math.abs(lx-BX)/55);
+                  drawLetter(ib, BX, bRev, true, bPrx, fa);
                 }
 
-                drawInitial(initGroom, GROOM_X, scanProxGroom);
-                drawInitial(initBride,  BRIDE_X, scanProxBride);
+                /* ─ groom initial (right, revealed by right head) ─ */
+                if (rx <= GX+LW) {
+                  var gRev = Math.max(rx, GX-LW);
+                  var gPrx = Math.max(0, 1-Math.abs(rx-GX)/55);
+                  drawLetter(ig, GX, gRev, false, gPrx, fa);
+                }
 
-                // Dot separators
-                [HCX + 32, HCX - 32].forEach(dx => {
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.arc(dx, INIT_Y, 1.5, 0, Math.PI * 2);
-                  ctx.fillStyle   = `rgba(245,200,66,0.45)`;
-                  ctx.globalAlpha = 0.55 + heartBeat * 0.35;
-                  ctx.fill();
-                  ctx.restore();
+                /* ─ heart (center) ─ */
+                drawHeart(beat, ha);
+
+                /* ─ scan head dots ─ */
+                if (f < TRAVEL+10) {
+                  var lp=((lx-12)/(CX-12)*3.8)%1;
+                  drawDot(lx, MID+ey(lp), fa, beat);
+                  var rp=((W-12-rx)/(W-12-CX)*3.8)%1;
+                  drawDot(rx, MID+ey(rp), fa, beat);
+                }
+
+                /* ─ edge dots ─ */
+                ctx.save();
+                [12,W-12].forEach(function(x){
+                  ctx.beginPath();ctx.arc(x,MID,1.8,0,Math.PI*2);
+                  ctx.fillStyle='rgba(212,160,23,.28)';ctx.fill();
                 });
+                ctx.restore();
 
-                // End dots
-                [12, W - 12].forEach(x => {
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.arc(x, MID, 2, 0, Math.PI * 2);
-                  ctx.fillStyle = 'rgba(212,160,23,0.4)';
-                  ctx.fill();
-                  ctx.restore();
-                });
-
-                phase = (phase + SPEED) % 1;
+                frame++;
                 requestAnimationFrame(draw);
               }
 
-              // Let app.js populate names first, then read initials
-              setTimeout(function() { updateInitials(); draw(); }, 800);
-              // Re-read after a longer delay in case config loads late
-              setTimeout(function() { updateInitials(); }, 2500);
+              setTimeout(function(){ readInit(); draw(); }, 800);
+              setTimeout(readInit, 2500);
             })();
             </script>
           </div>
