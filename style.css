@@ -5028,3 +5028,49 @@ body.lang-ar .animated-bride {
     hallArchReveal  0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both,
     archBorderGlow  4s  ease-in-out infinite 1.4s;
 }
+
+/* ── ECG Calligraphic Initials (HTML elements, CSS gold, clip-path writing) ── */
+.ecg-heart-container {
+  position: relative !important;
+}
+
+.ecg-initial {
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-52%);
+  font: 700 52px/1 "Aref Ruqaa Ink","Aref Ruqaa","Scheherazade New","Amiri",serif;
+  /* CSS gold gradient — always renders correctly */
+  background: linear-gradient(
+    180deg,
+    #fffde0 0%,
+    #ffe082 22%,
+    #f5c842 50%,
+    #d4960c 78%,
+    #b87a08 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter:
+    drop-shadow(1.5px 2.5px 0px rgba(0,0,0,0.45))
+    drop-shadow(-0.5px -1px 0px rgba(255,253,200,0.30));
+  /* Initial state: fully hidden (pen hasn't written yet) */
+  clip-path: inset(0 0 0 100%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  white-space: nowrap;
+  line-height: 1;
+  will-change: clip-path, opacity;
+}
+
+/* Bride: centered at 20.625% (BX=66, W=320) */
+#ecgBrideInitial {
+  left: 20.625%;
+}
+
+/* Groom: centered at 79.375% (GX=254, W=320) */
+#ecgGroomInitial {
+  left: 79.375%;
+}
