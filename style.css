@@ -5029,33 +5029,37 @@ body.lang-ar .animated-bride {
     archBorderGlow  4s  ease-in-out infinite 1.4s;
 }
 
-/* ── ECG Calligraphic Initials (HTML elements, CSS gold, clip-path writing) ── */
-.ecg-heart-container {
-  position: relative !important;
+/* ══ ECG canvas wrapper & calligraphic initials ══ */
+.ecg-canvas-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+.ecg-canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
+/* Gold calligraphic initial — positioned over canvas */
 .ecg-initial {
   position: absolute;
-  top: 50%;
-  transform: translateX(-50%) translateY(-52%);
-  font: 700 52px/1 "Aref Ruqaa Ink","Aref Ruqaa","Scheherazade New","Amiri",serif;
-  /* CSS gold gradient — always renders correctly */
-  background: linear-gradient(
-    180deg,
-    #fffde0 0%,
-    #ffe082 22%,
-    #f5c842 50%,
-    #d4960c 78%,
-    #b87a08 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  filter:
-    drop-shadow(1.5px 2.5px 0px rgba(0,0,0,0.45))
-    drop-shadow(-0.5px -1px 0px rgba(255,253,200,0.30));
-  /* Initial state: fully hidden (pen hasn't written yet) */
+  /* vertical center = MID = 46px / 90px ≈ 51% */
+  top: 51%;
+  transform: translateX(-50%) translateY(-50%);
+  /* Font */
+  font: 700 58px/1 "Aref Ruqaa Ink","Aref Ruqaa","Scheherazade New","Amiri",serif;
+  /* Gold color — simple, always works */
+  color: #f5c842;
+  /* Engraved 3D look via text-shadow */
+  text-shadow:
+    0px  2px  0px rgba(0,0,0,0.55),
+    1px  2.5px 0px rgba(0,0,0,0.40),
+    -0.5px -1px 0px rgba(255,253,200,0.35),
+    0px  0px 14px rgba(245,200,66,0.50);
+  /* Initially fully hidden — JS updates clip-path */
   clip-path: inset(0 0 0 100%);
   opacity: 0;
   pointer-events: none;
@@ -5065,12 +5069,18 @@ body.lang-ar .animated-bride {
   will-change: clip-path, opacity;
 }
 
-/* Bride: centered at 20.625% (BX=66, W=320) */
-#ecgBrideInitial {
-  left: 20.625%;
-}
+/* Bride م — 20.625% = 66/320 of canvas width */
+#ecgBrideInitial { left: 20.625%; }
+/* Groom ح — 79.375% = 254/320 of canvas width */
+#ecgGroomInitial { left: 79.375%; }
 
-/* Groom: centered at 79.375% (GX=254, W=320) */
-#ecgGroomInitial {
-  left: 79.375%;
+/* Warm glow overlay on settled (fully-written) letters */
+#ecgBrideInitial.letter-settled,
+#ecgGroomInitial.letter-settled {
+  text-shadow:
+    0px  2px  0px rgba(0,0,0,0.55),
+    1px  2.5px 0px rgba(0,0,0,0.40),
+    -0.5px -1px 0px rgba(255,253,200,0.35),
+    0px  0px 22px rgba(245,200,66,0.80),
+    0px  0px 40px rgba(245,200,66,0.35);
 }
