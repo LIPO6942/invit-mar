@@ -192,6 +192,10 @@ function loadConfigFromURL() {
         /* Process wishes for Groom/Bride private inbox */
         processWishesForRole(data.wishes);
 
+        /* Save config and wedding guests globally for dynamic lookups */
+        window._lastLoadedConfig = cfg;
+        window._currentWeddingGuests = Array.isArray(data.guests) ? data.guests : [];
+
         /* Apply config */
         if (cfg.wd) _weddingDateTime = cfg.wd;
         applyConfigToDOM(cfg);
@@ -2620,6 +2624,9 @@ function loadWeatherForecast() {
    PHOTO STACK WIDGET LOGIC
    ──────────────────────────────────────────────── */
 function initPhotoStack(cfg) {
+  if (!cfg) return;
+  window._lastLoadedConfig = cfg;
+
   const section = document.getElementById('photo-stack-section');
   const wrapper = document.getElementById('photo-stack-cards-wrapper');
   const widget  = document.getElementById('photo-stack-widget');
@@ -2634,22 +2641,32 @@ function initPhotoStack(cfg) {
     return;
   }
 
-  // 2. Determine which photos to show based on ?gid= or ?view= in URL
-  const params   = new URLSearchParams(window.location.search);
-  const gid      = params.get('gid') || params.get('guest') || null;
-  const view     = params.get('view') || null;
+  // 2. Determine which photos to show based on ?gid= or ?view= or ?guest= in URL or session
+  const params         = new URLSearchParams(window.location.search);
+  let   gid            = params.get('gid') || sessionStorage.getItem('pwa_override_gid') || null;
+  const view           = params.get('view') || null;
+  const guestNameParam = params.get('guest') || sessionStorage.getItem('pwa_override_guest') || null;
+
+  const perGuest = (cfg.features && cfg.features.guestPhotos) ? cfg.features.guestPhotos : {};
+
+  // If gid is not matching, try to match by guest name from wedding guests list
+  if ((!gid || !perGuest[gid] || perGuest[gid].length === 0) && Array.isArray(window._currentWeddingGuests)) {
+    const targetName = (guestNameParam || params.get('guest') || gid || '').trim();
+    if (targetName) {
+      const match = window._currentWeddingGuests.find(g => g && (g.id === gid || g.name === targetName || (g.name && targetName.includes(g.name))));
+      if (match && match.id && perGuest[match.id] && perGuest[match.id].length > 0) {
+        gid = match.id;
+      }
+    }
+  }
 
   let rawPhotos = null;
 
-  if (gid) {
-    // Sub-guest link: ONLY show photos specifically assigned to this guest
-    const perGuest = cfg.features.guestPhotos;
-    if (perGuest && Array.isArray(perGuest[gid]) && perGuest[gid].length > 0) {
-      rawPhotos = perGuest[gid];
-    }
+  if (gid && perGuest[gid] && Array.isArray(perGuest[gid]) && perGuest[gid].length > 0) {
+    // Sub-guest link: show photos specifically assigned to this guest
+    rawPhotos = perGuest[gid];
   } else if (view === 'groom' || view === 'bride') {
     // Groom/Bride view: look up guestPhotos['groom'] or guestPhotos['bride']
-    const perGuest = cfg.features.guestPhotos;
     if (perGuest && Array.isArray(perGuest[view]) && perGuest[view].length > 0) {
       rawPhotos = perGuest[view];
     } else {
@@ -2662,7 +2679,7 @@ function initPhotoStack(cfg) {
       ];
     }
   } else {
-    // General link (no gid, no view): use global photoStackPhotos
+    // General link (or guest without custom photos): use global photoStackPhotos or default general photos
     if (Array.isArray(cfg.features.photoStackPhotos) && cfg.features.photoStackPhotos.length > 0) {
       rawPhotos = cfg.features.photoStackPhotos;
     } else {
@@ -4047,12 +4064,16 @@ function openPwaGuestSwitcher() {
         return;
       }
 
-      container.innerHTML = realGuests.map(g => `
-        <button onclick="applyPwaGuest('${g.name.replace(/'/g, "\\'")}', '${g.type || 'ar_couple'}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1px solid rgba(201,168,76,0.4); border-radius:10px; font-family:'Amiri',serif; font-size:0.98rem; color:#2b1800; font-weight:bold; cursor:pointer; text-align:right;">
+      container.innerHTML = realGuests.map(g => {
+        const safeName = (g.name || '').replace(/'/g, "\\'");
+        const safeType = (g.type || 'ar_couple').replace(/'/g, "\\'");
+        const safeId   = (g.id || '').replace(/'/g, "\\'");
+        return `
+        <button onclick="applyPwaGuest('${safeName}', '${safeType}', '${safeId}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1px solid rgba(201,168,76,0.4); border-radius:10px; font-family:'Amiri',serif; font-size:0.98rem; color:#2b1800; font-weight:bold; cursor:pointer; text-align:right;">
           <span>👤 ${g.name}</span>
           <span style="font-size:0.8rem; color:#8a6010; background:rgba(201,168,76,0.2); padding:3px 8px; border-radius:6px;">عرض الدعوة ➜</span>
         </button>
-      `).join('');
+      `;}).join('');
     })
     .catch(err => {
       console.error('[PWA Switcher] Failed to load real guests:', err);
@@ -4071,17 +4092,22 @@ function handleEnvelopeNamesDblClick(e) {
 function applyPwaGuestFromInput() {
   const input = document.getElementById('pwaCustomGuestInput');
   if (!input || !input.value.trim()) return;
-  applyPwaGuest(input.value.trim(), 'ar_couple');
+  applyPwaGuest(input.value.trim(), 'ar_couple', '');
 }
 
-function applyPwaGuest(guestName, guestType = 'ar_couple') {
+function applyPwaGuest(guestName, guestType = 'ar_couple', guestId = '') {
   if (!guestName) return;
   
   // Persist override in storage
   sessionStorage.setItem('pwa_override_guest', guestName);
   sessionStorage.setItem('pwa_override_type', guestType);
+  if (guestId) sessionStorage.setItem('pwa_override_gid', guestId);
+  else sessionStorage.removeItem('pwa_override_gid');
+
   localStorage.setItem('pwa_override_guest', guestName);
   localStorage.setItem('pwa_override_type', guestType);
+  if (guestId) localStorage.setItem('pwa_override_gid', guestId);
+  else localStorage.removeItem('pwa_override_gid');
 
   // Close modal first
   const modal = document.getElementById('pwaGuestSwitcherModal');
@@ -4092,6 +4118,8 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('guest', guestName);
     if (guestType) newUrl.searchParams.set('type', guestType);
+    if (guestId) newUrl.searchParams.set('gid', guestId);
+    else newUrl.searchParams.delete('gid');
     window.history.pushState({}, '', newUrl.toString());
   } catch(e) {}
 
@@ -4100,6 +4128,11 @@ function applyPwaGuest(guestName, guestType = 'ar_couple') {
   _resolvedGuestType = guestType;
   _applyGuestBanner(guestName, guestType);
   _updatePersonalizedInviteDesc();
+
+  // Re-initialize photo stack for this guest immediately
+  if (typeof initPhotoStack === 'function' && window._lastLoadedConfig) {
+    initPhotoStack(window._lastLoadedConfig);
+  }
 
   // Show banner
   const banner = document.getElementById('guestNameBanner');
