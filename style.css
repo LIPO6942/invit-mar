@@ -2119,7 +2119,7 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   animation: archBorderGlow 4s ease-in-out infinite;
 }
 
-/* ── Apex Basmala Crest at Head of Arch ── */
+/* ── Apex Twin Golden Doves of Love ── */
 .arch-top-crest {
   display: flex;
   flex-direction: column;
@@ -2131,18 +2131,39 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   max-width: 280px;
 }
 
-.arch-apex-crown {
+.arch-apex-doves {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1px;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
-  animation: crownGlowPulse 4s ease-in-out infinite;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.65));
 }
 
-@keyframes crownGlowPulse {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)); }
-  50% { transform: scale(1.06); filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(255, 230, 120, 0.95)); }
+.dove-wing-anim-l {
+  animation: doveFlutterL 3.5s ease-in-out infinite;
+}
+
+.dove-wing-anim-r {
+  animation: doveFlutterR 3.5s ease-in-out infinite;
+}
+
+.dove-heart {
+  animation: heartGlowBeat 2s ease-in-out infinite;
+}
+
+@keyframes doveFlutterL {
+  0%, 100% { transform: translate(14px, 0) rotate(0deg); }
+  50% { transform: translate(14px, -2px) rotate(-3deg); }
+}
+
+@keyframes doveFlutterR {
+  0%, 100% { transform: translate(76px, 0) rotate(0deg); }
+  50% { transform: translate(76px, -2px) rotate(3deg); }
+}
+
+@keyframes heartGlowBeat {
+  0%, 100% { transform: translate(62px, 10px) scale(1); filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8)); }
+  50% { transform: translate(62px, 10px) scale(1.18); filter: drop-shadow(0 0 12px rgba(255, 230, 120, 1)); }
 }
 
 .arch-bismillah-emblem {
@@ -2179,99 +2200,154 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   margin-top: 1px;
 }
 
-/* ── 5 Artistically Distinct Arch & Card Styles ── */
-/* Style 1: Royal Baroque Dome with Imperial Gold */
-.intro-overlay.arch-style-royal_dome {
-  border-radius: 170px 170px 24px 24px;
-  border: 1.8px solid rgba(255, 235, 170, 0.75);
+/* ════════════════════════════════════════════════════
+   5 DISTINCT & IMMERSIVE ARCH UNIVERSES
+   ════════════════════════════════════════════════════ */
+
+/* 🌸 THEME 1: Floral Wonderland (Jardin Féerique de Roses d'Or & Pivoines) */
+.intro-overlay.arch-style-floral_wonderland,
+.intro-overlay.arch-style-floral_boho {
+  border-radius: 165px 165px 28px 28px;
+  border: 2px solid rgba(255, 215, 225, 0.85);
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(218, 165, 32, 0.10) 35%,
-    rgba(25, 12, 4, 0.28) 75%,
-    rgba(255, 255, 255, 0.12) 100%
+    rgba(255, 245, 248, 0.24) 0%,
+    rgba(240, 180, 200, 0.14) 35%,
+    rgba(32, 12, 22, 0.30) 75%,
+    rgba(255, 235, 242, 0.14) 100%
   );
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.42),
-    inset 0 1px 3px rgba(255, 255, 255, 0.75),
-    inset 0 0 30px rgba(201, 168, 76, 0.15),
-    0 0 28px rgba(201, 168, 76, 0.32);
+    inset 0 1px 4px rgba(255, 255, 255, 0.9),
+    inset 0 0 35px rgba(240, 160, 185, 0.25),
+    0 0 35px rgba(240, 170, 195, 0.4);
+}
+.intro-overlay.arch-style-floral_wonderland::before,
+.intro-overlay.arch-style-floral_boho::before {
+  content: '🌸 🌿 🌸 🌿 🌸';
+  position: absolute;
+  top: -14px;
+  font-size: 0.85rem;
+  letter-spacing: 8px;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(255,192,203,0.8));
+  z-index: 4;
 }
 
-/* Style 2: Andalusian Mauresque Mihrab & Zellige Accents */
+/* 🕌 THEME 2: Andalusian Mauresque Mihrab (Palais de l'Alhambra & Zellige) */
+.intro-overlay.arch-style-andalusian_mihrab,
 .intro-overlay.arch-style-andalusian_arch {
-  border-radius: 190px 190px 26px 26px;
-  border: 2px solid rgba(255, 220, 120, 0.85);
+  border-radius: 195px 195px 24px 24px;
+  border: 2.2px solid rgba(255, 225, 130, 0.9);
   background: linear-gradient(
     165deg,
     rgba(255, 255, 255, 0.18) 0%,
-    rgba(20, 50, 70, 0.18) 35%,
-    rgba(20, 10, 5, 0.32) 75%,
-    rgba(218, 165, 32, 0.12) 100%
+    rgba(18, 55, 80, 0.22) 35%,
+    rgba(22, 12, 6, 0.34) 75%,
+    rgba(220, 170, 40, 0.15) 100%
   );
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.5),
-    inset 0 0 0 3px rgba(201, 168, 76, 0.35),
-    inset 0 0 0 6px rgba(30, 80, 110, 0.2),
-    0 0 35px rgba(218, 165, 32, 0.4);
+    0 22px 55px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.4),
+    inset 0 0 0 7px rgba(24, 75, 110, 0.25),
+    0 0 40px rgba(218, 165, 32, 0.45);
+}
+.intro-overlay.arch-style-andalusian_mihrab::before,
+.intro-overlay.arch-style-andalusian_arch::before {
+  content: '🏛️ ✦ 🕌 ✦ 🏛️';
+  position: absolute;
+  top: -13px;
+  font-size: 0.78rem;
+  letter-spacing: 6px;
+  color: #ffdf7a;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
+  z-index: 4;
 }
 
-/* Style 3: Romantic Boho Floral & Rose Gold Sheen */
-.intro-overlay.arch-style-floral_boho {
-  border-radius: 160px 160px 28px 28px;
-  border: 1.8px solid rgba(255, 215, 225, 0.85);
+/* ⚜️ THEME 3: Baroque Versailles Mirror (Miroir Sculpté Or Massif & Moulures) */
+.intro-overlay.arch-style-baroque_versailles,
+.intro-overlay.arch-style-royal_dome {
+  border-radius: 170px 170px 24px 24px;
+  border: 2px solid rgba(255, 235, 170, 0.85);
   background: linear-gradient(
     165deg,
-    rgba(255, 245, 248, 0.22) 0%,
-    rgba(235, 175, 195, 0.14) 35%,
-    rgba(28, 10, 18, 0.28) 75%,
-    rgba(255, 235, 240, 0.12) 100%
+    rgba(255, 255, 255, 0.20) 0%,
+    rgba(225, 175, 45, 0.12) 35%,
+    rgba(28, 14, 5, 0.30) 75%,
+    rgba(255, 255, 255, 0.14) 100%
   );
   box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.4),
+    0 20px 50px rgba(0, 0, 0, 0.48),
     inset 0 1px 4px rgba(255, 255, 255, 0.85),
-    inset 0 0 30px rgba(240, 160, 180, 0.2),
-    0 0 30px rgba(240, 170, 190, 0.35);
+    inset 0 0 35px rgba(201, 168, 76, 0.18),
+    0 0 32px rgba(201, 168, 76, 0.38);
+}
+.intro-overlay.arch-style-baroque_versailles::before,
+.intro-overlay.arch-style-royal_dome::before {
+  content: '⚜️ · ✦ · ⚜️';
+  position: absolute;
+  top: -12px;
+  font-size: 0.8rem;
+  letter-spacing: 6px;
+  color: #ffe694;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
+  z-index: 4;
 }
 
-/* Style 4: Art Deco Geometric Beveled Crystal Card */
+/* ✨ THEME 4: Boho Draped Canopy (Voilage Bohème Fluide & Lucioles Dorées) */
+.intro-overlay.arch-style-boho_drapes {
+  border-radius: 155px 155px 30px 30px;
+  border: 1.5px solid rgba(255, 250, 240, 0.7);
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 240, 220, 0.12) 40%,
+    rgba(20, 15, 8, 0.24) 80%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.38),
+    inset 0 1px 3px rgba(255, 255, 255, 0.8),
+    inset 0 0 25px rgba(255, 230, 180, 0.2),
+    0 0 25px rgba(255, 220, 160, 0.3);
+}
+.intro-overlay.arch-style-boho_drapes::before {
+  content: '✨ 🕊️ ✨ 🕊️ ✨';
+  position: absolute;
+  top: -13px;
+  font-size: 0.78rem;
+  letter-spacing: 7px;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.85)) drop-shadow(0 0 8px rgba(255,235,170,0.9));
+  z-index: 4;
+}
+
+/* 💎 THEME 5: Art Deco Dubai Palace (Rayons Solaires & Biseaux Métalliques Or) */
+.intro-overlay.arch-style-art_deco_palace,
 .intro-overlay.arch-style-geometric_hex {
-  border-radius: 42px;
-  border: 2px solid rgba(255, 235, 170, 0.8);
+  border-radius: 44px;
+  border: 2px solid rgba(255, 235, 170, 0.85);
   background: linear-gradient(
     140deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(201, 168, 76, 0.10) 30%,
-    rgba(15, 8, 2, 0.28) 70%,
-    rgba(255, 255, 255, 0.12) 100%
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(210, 175, 60, 0.12) 30%,
+    rgba(16, 8, 2, 0.30) 70%,
+    rgba(255, 255, 255, 0.14) 100%
   );
   box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.48),
-    inset 0 0 0 3px rgba(201, 168, 76, 0.3),
-    inset 0 0 0 6px rgba(255, 255, 255, 0.12),
-    0 0 30px rgba(201, 168, 76, 0.35);
-}
-
-/* Style 5: Ottoman Imperial Palace Ogival Arch & Gold Lace */
-.intro-overlay.arch-style-palace_ottoman,
-.intro-overlay.arch-style-ogive_palace {
-  border-top-left-radius: 220px 340px;
-  border-top-right-radius: 220px 340px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  border: 2px solid rgba(255, 220, 130, 0.85);
-  background: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(180, 120, 30, 0.12) 35%,
-    rgba(25, 10, 2, 0.32) 75%,
-    rgba(255, 255, 255, 0.10) 100%
-  );
-  box-shadow:
-    0 22px 55px rgba(0, 0, 0, 0.52),
-    inset 0 1px 3px rgba(255, 255, 255, 0.8),
-    inset 0 0 0 2px rgba(201, 168, 76, 0.3),
+    0 22px 52px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 3px rgba(201, 168, 76, 0.35),
+    inset 0 0 0 7px rgba(255, 255, 255, 0.14),
     0 0 35px rgba(201, 168, 76, 0.4);
+}
+.intro-overlay.arch-style-art_deco_palace::before,
+.intro-overlay.arch-style-geometric_hex::before {
+  content: '💎 · ✦ · 💎';
+  position: absolute;
+  top: -12px;
+  font-size: 0.8rem;
+  letter-spacing: 6px;
+  color: #fff0a8;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
+  z-index: 4;
 }
 
 @keyframes archBorderGlow {
