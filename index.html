@@ -278,21 +278,18 @@
               var cv = document.getElementById('ecgCanvas');
               if (!cv) return;
               var ctx = cv.getContext('2d');
-              var W = cv.width, H = cv.height;   // 320 × 70
-              var CX = W >> 1;                    // 160
-              var MID = (H * 0.54) | 0;          // 37
+              var W = cv.width, H = cv.height;
+              var CX = W >> 1;
+              var MID = (H * 0.54) | 0;
 
-              /* ── palette ── */
+              /* palette */
               var GOLD = '#f5c842', GLD2 = '#fffbe0';
-              var RD0 = '#1a0008', RD1 = '#7b0028', RD2 = '#c9184a', RD3 = '#ff6b6b';
 
-              /* ── letter zones ──
-                 In Arabic display: groom حلبى is RIGHT, bride مريم is LEFT
-                 BX = bride position (left), GX = groom position (right)         */
-              var BX = 72,  LW = 26;  /* bride left  */
-              var GX = 248;            /* groom right */
+              /* letter zones: bride LEFT, groom RIGHT */
+              var BX = 72, LW = 26;
+              var GX = 248;
 
-              /* ── ECG pulse shape (P-QRS-T) ── */
+              /* ECG pulse shape */
               var PTS = [
                 [0,.0],[.09,.0],[.12,-2.5],[.15,.0],
                 [.26,.0],[.29,3],[.31,-22],[.33,12],[.36,.0],
@@ -306,153 +303,165 @@
                 return 0;
               }
 
-              /* ── easing ── */
               function eio(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
               function eo3(t){return 1-Math.pow(1-t,3);}
 
-              /* ── cycle config ── */
-              var TOTAL  = 400;  /* frames/cycle  (~6.7 s @ 60fps) */
-              var TRAVEL = 205;  /* frame heads reach centre        */
-              var HOLD   = 300;  /* hold phase ends, fade begins    */
-
-              /* ── state ── */
-              var frame = 0, beatTrig = -999;
-              var ig = 'ح', ib = 'م';   /* groom / bride initials */
+              var TOTAL=400, TRAVEL=205, HOLD=300;
+              var frame=0, beatTrig=-999;
+              var ig='\u062d', ib='\u0645';
 
               function readInit() {
-                var g = document.querySelector('[data-cfg="groomNameDisplay"]')
-                     || document.getElementById('ecgGroomTspan');
-                var b = document.querySelector('[data-cfg="brideNameDisplay"]')
-                     || document.getElementById('ecgBrideTspan');
-                if (g && g.textContent.trim()) ig = Array.from(g.textContent.trim())[0];
-                if (b && b.textContent.trim()) ib = Array.from(b.textContent.trim())[0];
+                var g=document.querySelector('[data-cfg="groomNameDisplay"]')
+                   ||document.getElementById('ecgGroomTspan');
+                var b=document.querySelector('[data-cfg="brideNameDisplay"]')
+                   ||document.getElementById('ecgBrideTspan');
+                if(g&&g.textContent.trim()) ig=Array.from(g.textContent.trim())[0];
+                if(b&&b.textContent.trim()) ib=Array.from(b.textContent.trim())[0];
               }
 
-              /* ── classic heart path (smooth bezier) ── */
-              function hp(cx, cy, r) {
+              /* heart bezier path */
+              function hp(cx,cy,r) {
                 ctx.beginPath();
-                ctx.moveTo(cx, cy + r);
-                ctx.bezierCurveTo(cx-r*.13, cy+r*.68, cx-r,    cy+r*.22, cx-r,    cy-r*.2);
-                ctx.bezierCurveTo(cx-r,    cy-r*.78,  cx-r*.4, cy-r,     cx,      cy-r*.52);
-                ctx.bezierCurveTo(cx+r*.4, cy-r,      cx+r,    cy-r*.78, cx+r,    cy-r*.2);
-                ctx.bezierCurveTo(cx+r,    cy+r*.22,  cx+r*.13,cy+r*.68, cx,      cy+r);
+                ctx.moveTo(cx,cy+r);
+                ctx.bezierCurveTo(cx-r*.13,cy+r*.68,cx-r,cy+r*.22,cx-r,cy-r*.2);
+                ctx.bezierCurveTo(cx-r,cy-r*.78,cx-r*.4,cy-r,cx,cy-r*.52);
+                ctx.bezierCurveTo(cx+r*.4,cy-r,cx+r,cy-r*.78,cx+r,cy-r*.2);
+                ctx.bezierCurveTo(cx+r,cy+r*.22,cx+r*.13,cy+r*.68,cx,cy+r);
                 ctx.closePath();
               }
 
-              /* ── lub-dub beat envelope ── */
+              /* lub-dub envelope */
               function beatStr(age) {
-                if (age < 0 || age > 58) return 0;
-                if (age < 7)  return eo3(age / 7);          /* lub up   */
-                if (age < 16) return 1 - .65*(age-7)/9;     /* lub down */
-                if (age < 24) return .35 + .65*eo3((age-16)/8); /* dub up */
-                if (age < 42) return 1 - (age-24)/18;       /* dub down */
+                if (age<0||age>58) return 0;
+                if (age<7)  return eo3(age/7);
+                if (age<16) return 1-.65*(age-7)/9;
+                if (age<24) return .35+.65*eo3((age-16)/8);
+                if (age<42) return 1-(age-24)/18;
                 return 0;
               }
 
-              /* ── premium heart draw ── */
+              /* GOLDEN heart */
               function drawHeart(beat, alpha) {
-                if (alpha < .02) return;
+                if (alpha<.02) return;
                 var cx=CX, cy=MID-3, r=11+beat*5;
 
-                /* 1. atmospheric halo */
+                /* 1. gold atmospheric halo */
                 ctx.save();
-                var atm=ctx.createRadialGradient(cx,cy,0,cx,cy,r*3.5);
-                atm.addColorStop(0,'rgba(200,0,40,'+(alpha*(.15+beat*.4))+')');
-                atm.addColorStop(1,'rgba(200,0,40,0)');
+                var atm=ctx.createRadialGradient(cx,cy,0,cx,cy,r*3.8);
+                atm.addColorStop(0,'rgba(220,160,0,'+(alpha*(.2+beat*.5))+')');
+                atm.addColorStop(.5,'rgba(180,110,0,'+(alpha*(.05+beat*.14))+')');
+                atm.addColorStop(1,'rgba(150,80,0,0)');
                 ctx.fillStyle=atm;
-                ctx.beginPath();ctx.arc(cx,cy,r*3.5,0,Math.PI*2);ctx.fill();
+                ctx.beginPath();ctx.arc(cx,cy,r*3.8,0,Math.PI*2);ctx.fill();
                 ctx.restore();
 
-                /* 2. deep shadow */
+                /* 2. dark amber shadow */
                 ctx.save();
-                ctx.globalAlpha=alpha*.6;
-                hp(cx,cy,r+2.5);
-                ctx.fillStyle=RD0;
-                ctx.shadowColor='#ff0050';ctx.shadowBlur=4+beat*28;
+                ctx.globalAlpha=alpha*.65;
+                hp(cx,cy,r+3);
+                ctx.fillStyle='#2a1000';
+                ctx.shadowColor='#f5c842';ctx.shadowBlur=5+beat*32;
                 ctx.fill();ctx.restore();
 
-                /* 3. body gradient */
+                /* 3. gold body gradient */
                 ctx.save();
                 ctx.globalAlpha=alpha;
                 hp(cx,cy,r);
-                var bg=ctx.createLinearGradient(cx-r,cy-r*.8,cx+r,cy+r);
-                bg.addColorStop(0,RD3);bg.addColorStop(.28,RD2);
-                bg.addColorStop(.72,RD1);bg.addColorStop(1,RD0);
+                var bg=ctx.createLinearGradient(cx-r,cy-r*.9,cx+r,cy+r);
+                bg.addColorStop(0,  '#fffbe0');
+                bg.addColorStop(.18,'#f5c842');
+                bg.addColorStop(.5, '#d4900a');
+                bg.addColorStop(.82,'#8a5200');
+                bg.addColorStop(1,  '#3a1800');
                 ctx.fillStyle=bg;
-                ctx.shadowColor='#ff0050';ctx.shadowBlur=2+beat*16;
+                ctx.shadowColor='#f5c842';ctx.shadowBlur=3+beat*20;
                 ctx.fill();ctx.restore();
 
-                /* 4. specular highlight (glassy) */
+                /* 4. warm specular */
                 ctx.save();
-                ctx.globalAlpha=alpha*.72;
+                ctx.globalAlpha=alpha*.78;
                 hp(cx,cy,r);ctx.clip();
-                var hl=ctx.createRadialGradient(cx-r*.32,cy-r*.42,0,cx-r*.32,cy-r*.42,r*.64);
-                hl.addColorStop(0,'rgba(255,220,220,.75)');
-                hl.addColorStop(.45,'rgba(255,110,110,.18)');
-                hl.addColorStop(1,'rgba(255,0,0,0)');
+                var hl=ctx.createRadialGradient(cx-r*.3,cy-r*.44,0,cx-r*.3,cy-r*.44,r*.7);
+                hl.addColorStop(0,'rgba(255,253,240,.88)');
+                hl.addColorStop(.4,'rgba(245,210,90,.2)');
+                hl.addColorStop(1,'rgba(200,140,0,0)');
                 ctx.fillStyle=hl;
                 ctx.beginPath();ctx.arc(cx,cy,r*2,0,Math.PI*2);ctx.fill();
                 ctx.restore();
 
-                /* 5. inner shimmer ring when beating */
-                if (beat > .1) {
+                /* 5. inner shimmer when beating */
+                if (beat>.08) {
                   ctx.save();
-                  ctx.globalAlpha=alpha*beat*.45;
-                  hp(cx,cy,r*.6);
-                  ctx.fillStyle='rgba(255,180,180,.3)';
+                  ctx.globalAlpha=alpha*beat*.55;
+                  hp(cx,cy,r*.55);
+                  ctx.fillStyle='rgba(255,245,180,.45)';
+                  ctx.shadowColor='#fff0a0';ctx.shadowBlur=6+beat*10;
                   ctx.fill();ctx.restore();
                 }
 
                 /* 6. gold rim */
                 ctx.save();
-                ctx.globalAlpha=alpha*(.42+beat*.58);
+                ctx.globalAlpha=alpha*(.55+beat*.45);
                 hp(cx,cy,r);
-                ctx.strokeStyle=beat>.2?('rgba(255,228,76,'+(0.82+beat*.18)+')')
-                                        :'rgba(245,200,66,.38)';
-                ctx.lineWidth=1.4;ctx.stroke();ctx.restore();
+                ctx.strokeStyle=beat>.15
+                  ?('rgba(255,252,220,'+(0.92+beat*.08)+')')
+                  :'rgba(245,200,66,.5)';
+                ctx.lineWidth=1.6;ctx.stroke();ctx.restore();
               }
 
-              /* ── letter reveal via progressive clip ──
-                 fromLeft=true  → left head reveals letter from LEFT to RIGHT
-                 fromLeft=false → right head reveals letter from RIGHT to LEFT */
-              function drawLetter(ch, lx, reveal, fromLeft, prox, fade) {
-                if (fade < .02) return;
-                var cl = fromLeft ? lx-LW : reveal;
-                var cr = fromLeft ? reveal : lx+LW;
-                if (cr <= cl + .8) return;
+              /* PEN-WRITING letter effect:
+                 Only visible where scan head has already passed;
+                 bright white-gold nib glow at the current head position. */
+              function drawLetter(ch, lx, headX, fromLeft, fade) {
+                if (fade<.02) return;
+                var LL=lx-LW, LR=lx+LW;
+                var FONT='italic 700 30px "Amiri","Scheherazade New",serif';
+                var PEN=14;
 
-                ctx.save();
-                ctx.beginPath();ctx.rect(cl, 0, cr-cl, H);ctx.clip();
+                var written=fromLeft?(headX-LL)/(2*LW):(LR-headX)/(2*LW);
+                if (written<=0) return;
 
-                var sh = Math.min(prox*1.8, 1);
-                var sz = 26 + sh*5;
-                ctx.font = 'italic 700 '+sz+'px "Amiri","Scheherazade New",serif';
-                ctx.textAlign='center';ctx.textBaseline='middle';
+                /* already-written — stable gold */
+                var wStart=fromLeft?LL:Math.max(headX+PEN,LL);
+                var wEnd  =fromLeft?Math.min(headX-PEN,LR):LR;
+                if (wEnd>wStart+0.5) {
+                  ctx.save();
+                  ctx.beginPath();ctx.rect(wStart,0,wEnd-wStart,H);ctx.clip();
+                  ctx.font=FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+                  ctx.globalAlpha=fade*0.48;
+                  ctx.fillStyle=GLD2;ctx.shadowColor=GOLD;ctx.shadowBlur=10;
+                  ctx.fillText(ch,lx,MID);
+                  ctx.globalAlpha=fade*0.9;
+                  ctx.fillStyle=GOLD;ctx.shadowBlur=4;
+                  ctx.fillText(ch,lx,MID);
+                  ctx.restore();
+                }
 
-                /* outer glow — gives the "electric writing" look */
-                ctx.globalAlpha = fade*(.35+sh*.5);
-                ctx.fillStyle   = GLD2;
-                ctx.shadowColor = GOLD; ctx.shadowBlur = 16+sh*26;
-                ctx.fillText(ch, lx, MID);
-
-                /* solid letter */
-                ctx.globalAlpha = fade*(.85+sh*.15);
-                ctx.shadowBlur  = 4+sh*12;
-                ctx.fillStyle   = sh>.35 ? 'rgba(255,251,224,.96)' : GOLD;
-                ctx.fillText(ch, lx, MID);
-
-                ctx.restore();
+                /* pen-tip — bright white-gold nib */
+                var tStart=fromLeft?Math.max(LL,headX-PEN):Math.max(LL,headX-4);
+                var tEnd  =fromLeft?Math.min(LR,headX+4)  :Math.min(LR,headX+PEN);
+                if (tEnd>tStart+0.5) {
+                  ctx.save();
+                  ctx.beginPath();ctx.rect(tStart,0,tEnd-tStart,H);ctx.clip();
+                  ctx.font=FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+                  ctx.globalAlpha=fade*0.65;
+                  ctx.fillStyle=GLD2;ctx.shadowColor='#fffbe0';ctx.shadowBlur=28;
+                  ctx.fillText(ch,lx,MID);
+                  ctx.globalAlpha=fade*0.98;
+                  ctx.fillStyle='#ffffff';ctx.shadowColor=GOLD;ctx.shadowBlur=14;
+                  ctx.fillText(ch,lx,MID);
+                  ctx.restore();
+                }
               }
 
-              /* ── ECG line segment ── */
-              function drawLine(x0, x1, cycles, fade) {
-                if (x1 <= x0+.5 || fade<.02) return;
+              /* ECG line */
+              function drawLine(x0,x1,cycles,fade) {
+                if (x1<=x0+.5||fade<.02) return;
                 var span=x1-x0;
                 ctx.save();ctx.beginPath();
                 var fst=true;
                 for (var x=x0;x<=x1;x+=1.1) {
-                  var p=((x-x0)/span*cycles)%1;
-                  var y=MID+ey(p);
+                  var p=((x-x0)/span*cycles)%1, y=MID+ey(p);
                   if(fst){ctx.moveTo(x,y);fst=false;}else ctx.lineTo(x,y);
                 }
                 ctx.strokeStyle=GOLD;ctx.lineWidth=1.8;
@@ -461,8 +470,8 @@
                 ctx.globalAlpha=fade*.88;ctx.stroke();ctx.restore();
               }
 
-              /* ── glowing scan dot ── */
-              function drawDot(x, y, fade, extra) {
+              /* scan dot */
+              function drawDot(x,y,fade,extra) {
                 if (fade<.02) return;
                 var r=5+extra*3;
                 ctx.save();
@@ -474,65 +483,42 @@
                 ctx.restore();
               }
 
-              /* ── MAIN LOOP ── */
+              /* MAIN LOOP */
               function draw() {
                 ctx.clearRect(0,0,W,H);
-                var f = frame % TOTAL;
+                var f=frame%TOTAL;
+                var tp=eio(Math.min(1,f/TRAVEL));
+                var lx=12+(CX-12)*tp;
+                var rx=W-12-(W-12-CX)*tp;
+                var fa=f<=HOLD?1.0:1-eio((f-HOLD)/(TOTAL-HOLD));
 
-                /* travel: heads converge from edges to center */
-                var tp = eio(Math.min(1, f/TRAVEL));
-                var lx = 12+(CX-12)*tp;         /* left  head x */
-                var rx = W-12-(W-12-CX)*tp;      /* right head x */
+                if (f===TRAVEL) beatTrig=frame;
+                var beat=beatStr(frame-beatTrig);
+                var ha=f<TRAVEL?Math.pow(tp,2.5)*.28:fa;
 
-                /* fade factor (full during hold, fades at end) */
-                var fa = f<=HOLD ? 1.0
-                       : 1-eio((f-HOLD)/(TOTAL-HOLD));
-
-                /* trigger lub-dub when heads converge */
-                if (f === TRAVEL) beatTrig = frame;
-                var beat = beatStr(frame - beatTrig);
-
-                /* heart dims while travelling, illuminates at beat */
-                var ha = f < TRAVEL ? Math.pow(tp,2.5)*.28 : fa;
-
-                /* ─ baseline ─ */
+                /* baseline */
                 ctx.save();ctx.setLineDash([3,9]);
                 ctx.strokeStyle='rgba(212,160,23,.1)';ctx.lineWidth=.6;
                 ctx.beginPath();ctx.moveTo(12,MID);ctx.lineTo(W-12,MID);ctx.stroke();
                 ctx.restore();
 
-                /* ─ left ECG line (12 → lx) ─ */
-                drawLine(12, lx, 3.8, fa);
+                drawLine(12,lx,3.8,fa);
+                drawLine(rx,W-12,3.8,fa);
 
-                /* ─ right ECG line (rx → W-12) ─ */
-                drawLine(rx, W-12, 3.8, fa);
+                /* bride initial — pen-written left→right */
+                if (lx>=BX-LW) drawLetter(ib,BX,lx,true,fa);
+                /* groom initial — pen-written right→left */
+                if (rx<=GX+LW) drawLetter(ig,GX,rx,false,fa);
 
-                /* ─ bride initial (left, revealed by left head) ─ */
-                if (lx >= BX-LW) {
-                  var bRev = Math.min(lx, BX+LW);
-                  var bPrx = Math.max(0, 1-Math.abs(lx-BX)/55);
-                  drawLetter(ib, BX, bRev, true, bPrx, fa);
-                }
+                drawHeart(beat,ha);
 
-                /* ─ groom initial (right, revealed by right head) ─ */
-                if (rx <= GX+LW) {
-                  var gRev = Math.max(rx, GX-LW);
-                  var gPrx = Math.max(0, 1-Math.abs(rx-GX)/55);
-                  drawLetter(ig, GX, gRev, false, gPrx, fa);
-                }
-
-                /* ─ heart (center) ─ */
-                drawHeart(beat, ha);
-
-                /* ─ scan head dots ─ */
-                if (f < TRAVEL+10) {
+                if (f<TRAVEL+10) {
                   var lp=((lx-12)/(CX-12)*3.8)%1;
-                  drawDot(lx, MID+ey(lp), fa, beat);
+                  drawDot(lx,MID+ey(lp),fa,beat);
                   var rp=((W-12-rx)/(W-12-CX)*3.8)%1;
-                  drawDot(rx, MID+ey(rp), fa, beat);
+                  drawDot(rx,MID+ey(rp),fa,beat);
                 }
 
-                /* ─ edge dots ─ */
                 ctx.save();
                 [12,W-12].forEach(function(x){
                   ctx.beginPath();ctx.arc(x,MID,1.8,0,Math.PI*2);
