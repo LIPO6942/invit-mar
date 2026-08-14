@@ -2100,13 +2100,13 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   /* Ultra-luminous Crystal Royal Glass Arch */
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(201, 168, 76, 0.08) 35%,
-    rgba(25, 12, 4, 0.26) 75%,
-    rgba(255, 255, 255, 0.10) 100%
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(201, 168, 76, 0.03) 35%,
+    rgba(25, 12, 4, 0.10) 75%,
+    rgba(255, 255, 255, 0.05) 100%
   );
-  backdrop-filter: blur(8px) saturate(135%);
-  -webkit-backdrop-filter: blur(8px) saturate(135%);
+  backdrop-filter: blur(3px) saturate(110%);
+  -webkit-backdrop-filter: blur(3px) saturate(110%);
   border-radius: 170px 170px 24px 24px;
   border: 1.5px solid rgba(255, 235, 170, 0.65);
   box-shadow:
@@ -4981,3 +4981,50 @@ body.lang-ar .animated-bride {
 }
 
 
+
+
+/* ═══════════════════════════════════════════════════════════
+   HALL-FIRST OPENING SEQUENCE
+   Background (hall) shows instantly; arch + components appear
+   one by one automatically, no user tap required.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Arch frame: auto-reveal 0.5s after load ── */
+#introOverlay {
+  opacity: 0;
+  animation:
+    hallArchReveal  0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both,
+    archBorderGlow  4s  ease-in-out infinite 1.4s;
+}
+
+@keyframes hallArchReveal {
+  0%   { opacity: 0; transform: scale(0.95) translateY(18px); }
+  100% { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ── Component stagger (quickly, one by one) ── */
+.arch-infinity-wrap    { animation: archItemIn 0.4s 1.10s ease both; }
+.arch-bismillah-emblem { animation: archItemIn 0.4s 1.28s ease both; }
+.arch-crown-stars      { animation: archItemIn 0.35s 1.42s ease both; }
+.p1-blessing-text,
+.arch-blessing-text    { animation: archItemIn 0.4s 1.54s ease both; }
+.families-section      { animation: archItemIn 0.4s 1.68s ease both; }
+.p1-invite-text        { animation: archItemIn 0.35s 1.80s ease both; }
+.names-main            { animation: archItemIn 0.45s 1.92s ease both; }
+.shimmer-line          { animation: archItemIn 0.3s  2.06s ease both; }
+.ecg-heart-container   { animation: archItemIn 0.4s  2.18s ease both; }
+.scroll-hint           { animation: archItemIn 0.35s 2.32s ease both; }
+
+@keyframes archItemIn {
+  0%   { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0);     }
+}
+
+/* Override staggered entrance from old .invitation.opening selector
+   so it doesn't conflict */
+.invitation.opening .intro-overlay,
+.invitation.open    .intro-overlay {
+  animation:
+    hallArchReveal  0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both,
+    archBorderGlow  4s  ease-in-out infinite 1.4s;
+}
