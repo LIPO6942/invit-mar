@@ -4177,7 +4177,7 @@ function openPwaGuestSwitcher() {
 
   initFirebase();
   const params = new URLSearchParams(window.location.search);
-  const invSlug = params.get('inv') || 'default';
+  const invSlug = params.get('inv') || localStorage.getItem('invitLastSlug') || (window._lastLoadedConfig && window._lastLoadedConfig.id) || 'default';
 
   _db.collection('invitations').doc(invSlug).get()
     .then(doc => {
@@ -4214,13 +4214,29 @@ function openPwaGuestSwitcher() {
         return;
       }
 
+      function _getPhotosCount(g) {
+        if (!guestPhotosMap || typeof guestPhotosMap !== 'object') return 0;
+        if (g.id && Array.isArray(guestPhotosMap[g.id]) && guestPhotosMap[g.id].length > 0) return guestPhotosMap[g.id].length;
+        if (g.name && Array.isArray(guestPhotosMap[g.name]) && guestPhotosMap[g.name].length > 0) return guestPhotosMap[g.name].length;
+        const cName = (g.name || '').trim().toLowerCase();
+        for (const [k, v] of Object.entries(guestPhotosMap)) {
+          if (Array.isArray(v) && v.length > 0) {
+            const cK = k.trim().toLowerCase();
+            if (cK === cName || (cName && cName.includes(cK)) || (cK && cK.includes(cName))) {
+              return v.length;
+            }
+          }
+        }
+        return 0;
+      }
+
       container.innerHTML = realGuests.map(g => {
         const safeName = (g.name || '').replace(/'/g, "\\'");
         const safeType = (g.type || 'ar_couple').replace(/'/g, "\\'");
         const safeId   = (g.id || '').replace(/'/g, "\\'");
-        const pList    = (g.id && Array.isArray(guestPhotosMap[g.id])) ? guestPhotosMap[g.id] : [];
-        const photoBadge = pList.length > 0
-          ? `<span style="display:inline-flex; align-items:center; gap:3px; font-size:0.75rem; background:rgba(39,174,96,0.15); color:#27ae60; border:1px solid rgba(39,174,96,0.4); padding:2px 8px; border-radius:10px; margin-right:6px; font-weight:normal;" title="يحتوي على ${pList.length} صور خاصة">📸 <b style="font-size:0.7rem">${pList.length}</b></span>`
+        const pCount   = _getPhotosCount(g);
+        const photoBadge = pCount > 0
+          ? `<span style="display:inline-flex; align-items:center; gap:3px; font-size:0.75rem; background:rgba(39,174,96,0.15); color:#27ae60; border:1px solid rgba(39,174,96,0.4); padding:2px 8px; border-radius:10px; margin-right:6px; font-weight:normal;" title="يحتوي على ${pCount} صور خاصة">📸 <b style="font-size:0.7rem">${pCount} صور</b></span>`
           : '';
 
         return `
