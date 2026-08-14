@@ -2230,23 +2230,28 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 /* 🕌 THEME 2: Authentic Moorish Mihrab Ogee Arch (المحراب الأندلسي المغاربي الأصيل) */
 .intro-overlay.arch-style-andalusian_mihrab,
 .intro-overlay.arch-style-andalusian_arch {
-  border-top-left-radius: 210px 320px;
-  border-top-right-radius: 210px 320px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  border: 2.5px solid rgba(255, 220, 120, 0.95);
+  /* Exact Pointed Ogee Mihrab Silhouette from Islamic/Moorish Architecture */
+  clip-path: polygon(
+    50% 0%,
+    53% 2%, 57% 5%, 62% 8.5%, 68% 12.5%, 75% 17%, 83% 22%, 91% 27.5%, 97% 33.5%, 100% 40%, 
+    100% 97%, 96% 100%, 4% 100%, 0% 97%, 
+    0% 40%, 3% 33.5%, 9% 27.5%, 17% 22%, 25% 17%, 32% 12.5%, 38% 8.5%, 43% 5%, 47% 2%
+  );
+  border-radius: 0 !important;
+  border: none !important;
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(18, 55, 80, 0.26) 35%,
-    rgba(22, 12, 6, 0.35) 75%,
-    rgba(220, 170, 40, 0.16) 100%
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(20, 60, 95, 0.28) 32%,
+    rgba(24, 12, 5, 0.36) 75%,
+    rgba(225, 175, 45, 0.18) 100%
   );
   box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.58),
-    inset 0 0 0 3px rgba(201, 168, 76, 0.55),
-    inset 0 0 0 7px rgba(24, 75, 110, 0.3),
-    0 0 42px rgba(218, 165, 32, 0.5);
+    0 25px 60px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 3px rgba(255, 220, 120, 0.85),
+    inset 0 0 0 7px rgba(20, 65, 100, 0.35),
+    0 0 45px rgba(218, 165, 32, 0.5);
+  filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.5)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.7));
 }
 
 /* 🌸 THEME 3: Floral Wonderland (القوس الزهري الرومانسي) */

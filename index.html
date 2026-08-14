@@ -71,43 +71,61 @@
             <!-- ── Apex Interlocked Gold Wedding Rings & Basmala ── -->
             <div class="arch-top-crest">
               <div class="arch-apex-rings">
-                <svg viewBox="0 0 100 46" class="wedding-rings-svg" width="78" height="36" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 110 50" class="wedding-rings-svg" width="88" height="40" xmlns="http://www.w3.org/2000/svg">
                   <defs>
-                    <linearGradient id="goldRingGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="ringGoldShine" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#ffffff"/>
-                      <stop offset="25%" stop-color="#fff6c4"/>
+                      <stop offset="20%" stop-color="#fff4b8"/>
+                      <stop offset="45%" stop-color="#e6b438"/>
+                      <stop offset="70%" stop-color="#fced9d"/>
+                      <stop offset="90%" stop-color="#c48a1c"/>
+                      <stop offset="100%" stop-color="#7a4f08"/>
+                    </linearGradient>
+                    <linearGradient id="ringInnerShade" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#8a5a08"/>
                       <stop offset="50%" stop-color="#e5b84c"/>
-                      <stop offset="75%" stop-color="#fff8d0"/>
-                      <stop offset="100%" stop-color="#b8860b"/>
+                      <stop offset="100%" stop-color="#543603"/>
                     </linearGradient>
-                    <linearGradient id="goldRingGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff"/>
-                      <stop offset="30%" stop-color="#fceda4"/>
-                      <stop offset="60%" stop-color="#d4af37"/>
-                      <stop offset="100%" stop-color="#996515"/>
-                    </linearGradient>
-                    <filter id="ringGlow">
-                      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.9)"/>
-                      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="rgba(242,201,76,0.65)"/>
+                    <filter id="ringDropGlow">
+                      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.85)"/>
+                      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="rgba(255,215,0,0.65)"/>
                     </filter>
                   </defs>
-                  <!-- Left Ring (Groom band) -->
-                  <ellipse cx="40" cy="24" rx="14" ry="14" fill="none" stroke="url(#goldRingGrad1)" stroke-width="3.2" filter="url(#ringGlow)"/>
-                  <ellipse cx="40" cy="24" rx="11.5" ry="11.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-                  
-                  <!-- Right Ring (Bride Solitaire with Diamond) -->
-                  <ellipse cx="60" cy="24" rx="14" ry="14" fill="none" stroke="url(#goldRingGrad2)" stroke-width="3.2" filter="url(#ringGlow)"/>
-                  <ellipse cx="60" cy="24" rx="11.5" ry="11.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
-                  
-                  <!-- Diamond Setting on Bride Ring -->
-                  <g transform="translate(60, 10)" class="ring-diamond-sparkle">
-                    <!-- Diamond base prong -->
-                    <path d="M -2.5 0 L 2.5 0 L 1.5 2 L -1.5 2 Z" fill="url(#goldRingGrad1)"/>
-                    <!-- Brilliant cut gem -->
-                    <polygon points="0,-6 -4.5,-2.5 -2.5,0 2.5,0 4.5,-2.5" fill="#ffffff" stroke="#fff8d0" stroke-width="0.5"/>
-                    <polygon points="0,-6 -1.8,-2.5 0,0 1.8,-2.5" fill="#e8f4fd" opacity="0.85"/>
-                    <!-- Star glint -->
-                    <circle cx="0" cy="-3.5" r="1.5" fill="#ffffff" filter="drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #ffd700)"/>
+
+                  <g filter="url(#ringDropGlow)">
+                    <!-- Back arc of Groom ring -->
+                    <path d="M 28 26 C 28 17, 36 12, 46 12 C 56 12, 64 17, 64 26" fill="none" stroke="url(#ringInnerShade)" stroke-width="4.2" stroke-linecap="round"/>
+                    
+                    <!-- Back arc of Bride ring -->
+                    <path d="M 46 26 C 46 16, 55 11, 65 11 C 75 11, 84 16, 84 26" fill="none" stroke="url(#ringInnerShade)" stroke-width="3.8" stroke-linecap="round"/>
+                    
+                    <!-- Front arc of Groom ring (Loops through Bride ring) -->
+                    <path d="M 64 26 C 64 35, 56 40, 46 40 C 36 40, 28 35, 28 26" fill="none" stroke="url(#ringGoldShine)" stroke-width="4.2" stroke-linecap="round"/>
+                    <path d="M 30 26 C 30 33, 37 38, 46 38 C 55 38, 62 33, 62 26" fill="none" stroke="#fff8d0" stroke-width="0.8" opacity="0.8"/>
+                    
+                    <!-- Front arc of Bride ring (Rests in front on the right) -->
+                    <path d="M 84 26 C 84 35, 75 40, 65 40 C 55 40, 46 35, 46 26" fill="none" stroke="url(#ringGoldShine)" stroke-width="3.8" stroke-linecap="round"/>
+                    <path d="M 48 26 C 48 33, 56 38, 65 38 C 74 38, 82 33, 82 26" fill="none" stroke="#fff8d0" stroke-width="0.7" opacity="0.8"/>
+                    
+                    <!-- Solitaire Diamond Crown on Bride's Ring -->
+                    <g transform="translate(65, 11)" class="ring-diamond-sparkle">
+                      <!-- Prongs -->
+                      <path d="M -3 1 L -4 -2 L -2 -1 Z" fill="url(#ringGoldShine)"/>
+                      <path d="M 3 1 L 4 -2 L 2 -1 Z" fill="url(#ringGoldShine)"/>
+                      <path d="M -1 2 L 0 0 L 1 2 Z" fill="url(#ringGoldShine)"/>
+                      
+                      <!-- Brilliant Cut Gem -->
+                      <polygon points="0,-8 -5,-4 -3,0 3,0 5,-4" fill="#ffffff" stroke="#e0f2fe" stroke-width="0.4"/>
+                      <polygon points="0,-8 -2,-4 2,-4" fill="#f0f9ff"/>
+                      <polygon points="-2,-4 0,-8 -5,-4" fill="#dbeafe"/>
+                      <polygon points="2,-4 0,-8 5,-4" fill="#bae6fd"/>
+                      <polygon points="-5,-4 -3,0 0,-1" fill="#93c5fd" opacity="0.7"/>
+                      <polygon points="5,-4 3,0 0,-1" fill="#7dd3fc" opacity="0.7"/>
+                      <polygon points="-3,0 0,-1 3,0 0,1" fill="#e0f2fe"/>
+                      
+                      <!-- Star Glint -->
+                      <circle cx="0" cy="-4.5" r="1.6" fill="#ffffff" filter="drop-shadow(0 0 4px #ffffff) drop-shadow(0 0 8px #ffd700)"/>
+                    </g>
                   </g>
                 </svg>
               </div>
