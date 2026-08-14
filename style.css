@@ -2141,8 +2141,8 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 }
 
 .infinity-svg {
-  width: 180px;
-  height: 90px;
+  width: 110px;
+  height: 55px;
   overflow: visible;
   animation: infinityBreath 4s ease-in-out infinite;
 }
