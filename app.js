@@ -352,10 +352,28 @@ function zdGetMembers(name, type, isFr) {
   return members;
 }
 
-// ── LocalStorage key for a specific member's fortune ──
+// ── LocalStorage key for a specific member's fortune (Strictly Guest-Isolated) ──
 function zdStorageKey(guestId, memberKey) {
-  return `zd_fortune_v2_${guestId || 'guest'}_${memberKey}`;
+  const params = new URLSearchParams(window.location.search);
+  const invSlug = params.get('inv') || localStorage.getItem('invitLastSlug') || (window._lastLoadedConfig && window._lastLoadedConfig.id) || 'default';
+  const rawGuest = guestId || _resolvedGuestId || _resolvedGuestName || 'guest';
+  const cleanGuest = encodeURIComponent(String(rawGuest).trim().toLowerCase());
+  return `zd_fortune_v5_${invSlug}_${cleanGuest}_${memberKey || 'primary'}`;
 }
+
+// ── Admin Reset Helper for testing ──
+window.zdAdminResetGuestFortune = function(guestId) {
+  const gid = guestId || _resolvedGuestId || _resolvedGuestName || 'guest';
+  if (_zdMembers && Array.isArray(_zdMembers)) {
+    _zdMembers.forEach(m => {
+      localStorage.removeItem(zdStorageKey(gid, m.key));
+    });
+  }
+  localStorage.removeItem(zdStorageKey(gid, 'primary'));
+  localStorage.removeItem(zdStorageKey(gid, 'spouse'));
+  localStorage.removeItem(zdStorageKey(gid, 'children'));
+  zdRefreshGuestFortune();
+};
 
 // ── Fortune messages per sign (wedding-linked, bilingual) ──
 function zdGetFortunes(gName, bName, gNameFr, bNameFr) {
@@ -412,11 +430,24 @@ function buildGuestFortune(cfg, ZODIAC) {
   const grid = document.getElementById('zdSignGrid');
   if (!grid) return;
   grid.innerHTML = '';
-  grid.dataset.init = '1';
+  grid.style.display = 'grid';
+
+  // Wipe previously appended parchments from any other guest
+  const parchmentsContainer = document.getElementById('zdParchments');
+  if (parchmentsContainer) parchmentsContainer.innerHTML = '';
+
+  const lockedNotice = document.getElementById('zdLockedNotice');
+  if (lockedNotice) lockedNotice.style.display = 'none';
+
+  const revealWrap = document.getElementById('zdRevealWrap');
+  if (revealWrap) revealWrap.style.display = 'none';
 
   _zdIsFr   = cfg.la === 'fr';
   _zdCfg    = cfg;
   _zdZodiac = ZODIAC;
+  _zdActiveMember = 0;
+  _zdSelectedKey = null;
+  _zdSelectedZd  = null;
 
   const guestName = _resolvedGuestName || '';
   const guestType = (typeof _resolvedGuestType !== 'undefined' && _resolvedGuestType) ? _resolvedGuestType : 'ar_couple';
@@ -431,7 +462,7 @@ function buildGuestFortune(cfg, ZODIAC) {
   // Build member list
   _zdMembers = zdGetMembers(guestName, guestType, _zdIsFr);
 
-  // Check if ALL members already have saved fortunes
+  // Check if ALL members already have saved fortunes for THIS specific guest
   const allSaved = _zdMembers.every(m => !!localStorage.getItem(zdStorageKey(guestId, m.key)));
   _zdIsLocked = allSaved;
 
@@ -462,7 +493,10 @@ function buildGuestFortune(cfg, ZODIAC) {
           _zdActiveMember = idx;
           zdUpdateActivePickerBadge(m);
           _zdSelectedKey = null;
-          document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
+          document.querySelectorAll('.zd-sign-btn').forEach(b => {
+            b.classList.remove('zd-active');
+            b.disabled = false;
+          });
           document.getElementById('zdRevealWrap').style.display = 'none';
           const savedFortune = localStorage.getItem(zdStorageKey(guestId, m.key));
           if (savedFortune) {
@@ -504,11 +538,10 @@ function buildGuestFortune(cfg, ZODIAC) {
 // ── Refresh Fortune when guest is resolved ──
 function zdRefreshGuestFortune() {
   if (typeof _zdCfg !== 'undefined' && typeof _zdZodiac !== 'undefined' && _zdCfg && _zdZodiac) {
-    const grid = document.getElementById('zdSignGrid');
-    if (grid) delete grid.dataset.init;
     buildGuestFortune(_zdCfg, _zdZodiac);
   }
 }
+
 
 function zdSelectSign(key, zd, guestId) {
   // Check if current member already revealed
