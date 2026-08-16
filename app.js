@@ -112,150 +112,190 @@ function applyConfigToDOM(cfg) {
 }
 
 /* ─────────────────────────────────────────────────────────
-   ZODIAC SECTION — Arc Céleste Art Déco
+   ZODIAC SECTION — Premium Dark Design
    Called from applyConfigToDOM when cfg.gs / cfg.bs are set
 ───────────────────────────────────────────────────────── */
 function applyZodiacSection(cfg) {
-  const gs = cfg.gs || '';  // groom sign key
-  const bs = cfg.bs || '';  // bride sign key
+  const gs = cfg.gs || '';
+  const bs = cfg.bs || '';
 
   const section = document.getElementById('zodiac-section');
   if (!section) return;
 
-  // Only show if at least one sign is configured
-  if (!gs && !bs) {
-    section.style.display = 'none';
-    return;
+  if (!gs && !bs) { section.style.display = 'none'; return; }
+  section.style.display = '';
+
+  // ─── Zodiac data ───
+  const ZODIAC = {
+    aries:       { sym:'♈', fr:'BÉLIER',     ar:'الحمل',      el:'🔥 Feu',     dates:'21 Mars – 19 Avr',  poem_ar:'بشجاعة الحمل وقوة عزمه' },
+    taurus:      { sym:'♉', fr:'TAUREAU',    ar:'الثور',      el:'🌍 Terre',   dates:'20 Avr – 20 Mai',   poem_ar:'بوفاء الثور ورسوخه' },
+    gemini:      { sym:'♊', fr:'GÉMEAUX',    ar:'الجوزاء',    el:'💨 Air',     dates:'21 Mai – 20 Juin',  poem_ar:'بروح الجوزاء المرحة' },
+    cancer:      { sym:'♋', fr:'CANCER',     ar:'السرطان',    el:'💧 Eau',     dates:'21 Juin – 22 Juil', poem_ar:'بحنان السرطان الدافئ' },
+    leo:         { sym:'♌', fr:'LION',       ar:'الأسد',      el:'🔥 Feu',     dates:'23 Juil – 22 Août', poem_ar:'بكرم الأسد الملكي' },
+    virgo:       { sym:'♍', fr:'VIERGE',     ar:'العذراء',    el:'🌍 Terre',   dates:'23 Août – 22 Sep',  poem_ar:'بلطف العذراء النقي' },
+    libra:       { sym:'♎', fr:'BALANCE',    ar:'الميزان',    el:'💨 Air',     dates:'23 Sep – 22 Oct',   poem_ar:'بتوازن الميزان الجميل' },
+    scorpio:     { sym:'♏', fr:'SCORPION',   ar:'العقرب',     el:'💧 Eau',     dates:'23 Oct – 21 Nov',   poem_ar:'بعمق العقرب وإخلاصه' },
+    sagittarius: { sym:'♐', fr:'SAGITTAIRE', ar:'القوس',      el:'🔥 Feu',     dates:'22 Nov – 21 Déc',   poem_ar:'بحرية القوس ومغامراته' },
+    capricorn:   { sym:'♑', fr:'CAPRICORNE', ar:'الجدي',      el:'🌍 Terre',   dates:'22 Déc – 19 Jan',   poem_ar:'بصبر الجدي وثباته' },
+    aquarius:    { sym:'♒', fr:'VERSEAU',    ar:'الدلو',      el:'💨 Air',     dates:'20 Jan – 18 Fév',   poem_ar:'بإبداع الدلو ورؤيته' },
+    pisces:      { sym:'♓', fr:'POISSONS',   ar:'الحوت',      el:'💧 Eau',     dates:'19 Fév – 20 Mars',  poem_ar:'بحساسية الحوت ورومانسيته' },
+  };
+
+  // ─── Constellation star positions (viewBox 0 0 120 120) ───
+  const CONST_STARS = {
+    aries:       [[60,22],[50,44],[70,44],[38,68],[56,60],[76,68]],
+    taurus:      [[35,30],[60,18],[85,30],[76,56],[44,56],[60,50]],
+    gemini:      [[30,20],[70,20],[38,45],[62,45],[28,70],[72,70]],
+    cancer:      [[50,18],[28,48],[72,48],[36,73],[64,73]],
+    leo:         [[40,28],[58,16],[76,30],[68,52],[52,63],[36,54],[28,38],[52,82]],
+    virgo:       [[50,14],[33,33],[67,33],[27,58],[73,58],[50,74],[50,44]],
+    libra:       [[50,18],[22,52],[78,52],[30,76],[70,76],[50,42]],
+    scorpio:     [[28,20],[44,30],[62,24],[74,42],[68,58],[55,68],[50,84],[60,92],[72,86]],
+    sagittarius: [[50,18],[32,44],[68,44],[20,66],[78,35],[50,70],[38,84]],
+    capricorn:   [[28,24],[55,18],[74,36],[62,58],[40,68],[22,50]],
+    aquarius:    [[18,38],[40,28],[62,40],[84,28],[18,62],[40,72],[62,62],[84,72]],
+    pisces:      [[28,24],[52,14],[76,24],[52,50],[28,78],[52,88],[76,78]],
+  };
+  const CONST_LINES = {
+    aries:       [[0,1],[0,2],[1,3],[2,4],[3,5]],
+    taurus:      [[0,1],[1,2],[2,4],[0,3],[3,5],[5,4]],
+    gemini:      [[0,1],[0,2],[1,3],[2,4],[3,5]],
+    cancer:      [[0,1],[0,2],[1,3],[2,4]],
+    leo:         [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0],[4,7]],
+    virgo:       [[0,1],[0,2],[1,3],[2,4],[3,6],[4,6],[6,5]],
+    libra:       [[0,5],[5,1],[5,2],[1,3],[2,4]],
+    scorpio:     [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8]],
+    sagittarius: [[0,1],[0,2],[1,3],[2,4],[0,5],[5,6]],
+    capricorn:   [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]],
+    aquarius:    [[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[1,5],[2,6]],
+    pisces:      [[0,1],[1,2],[0,3],[2,3],[3,4],[3,5],[3,6]],
+  };
+
+  function renderConst(svgEl, key) {
+    if (!svgEl || !key || !CONST_STARS[key]) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    svgEl.innerHTML = '';
+    const stars = CONST_STARS[key];
+    const lines  = CONST_LINES[key] || [];
+    lines.forEach(([a, b]) => {
+      const el = document.createElementNS(NS, 'line');
+      el.setAttribute('x1', stars[a][0]); el.setAttribute('y1', stars[a][1]);
+      el.setAttribute('x2', stars[b][0]); el.setAttribute('y2', stars[b][1]);
+      el.setAttribute('stroke', '#c9a84c'); el.setAttribute('stroke-width', '0.8');
+      el.setAttribute('stroke-linecap', 'round');
+      svgEl.appendChild(el);
+    });
+    stars.forEach(([x, y], i) => {
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', x); c.setAttribute('cy', y);
+      c.setAttribute('r', i === 0 ? '2.8' : '1.9');
+      c.setAttribute('fill', '#c9a84c');
+      svgEl.appendChild(c);
+    });
   }
 
-  section.style.display = '';  // show section (uses w-section flex layout)
-
-  const ZODIAC = {
-    aries:       { symbol: '♈', fr: 'BÉLIER',     ar: 'الحمل',      el: 'Feu 🔥',     poem_ar: 'بشجاعة الحمل وقوة عزمه' },
-    taurus:      { symbol: '♉', fr: 'TAUREAU',    ar: 'الثور',      el: 'Terre 🌍',   poem_ar: 'بوفاء الثور ورسوخه' },
-    gemini:      { symbol: '♊', fr: 'GÉMEAUX',    ar: 'الجوزاء',    el: 'Air 💨',     poem_ar: 'بروح الجوزاء المرحة' },
-    cancer:      { symbol: '♋', fr: 'CANCER',     ar: 'السرطان',    el: 'Eau 💧',     poem_ar: 'بحنان السرطان الدافئ' },
-    leo:         { symbol: '♌', fr: 'LION',       ar: 'الأسد',      el: 'Feu 🔥',     poem_ar: 'بكرم الأسد الملكي' },
-    virgo:       { symbol: '♍', fr: 'VIERGE',     ar: 'العذراء',    el: 'Terre 🌍',   poem_ar: 'بلطف العذراء النقي' },
-    libra:       { symbol: '♎', fr: 'BALANCE',    ar: 'الميزان',    el: 'Air 💨',     poem_ar: 'بتوازن الميزان الجميل' },
-    scorpio:     { symbol: '♏', fr: 'SCORPION',   ar: 'العقرب',     el: 'Eau 💧',     poem_ar: 'بعمق العقرب وإخلاصه' },
-    sagittarius: { symbol: '♐', fr: 'SAGITTAIRE', ar: 'القوس',      el: 'Feu 🔥',     poem_ar: 'بحرية القوس ومغامراته' },
-    capricorn:   { symbol: '♑', fr: 'CAPRICORNE', ar: 'الجدي',      el: 'Terre 🌍',   poem_ar: 'بصبر الجدي وثباته' },
-    aquarius:    { symbol: '♒', fr: 'VERSEAU',    ar: 'الدلو',      el: 'Air 💨',     poem_ar: 'بإبداع الدلو ورؤيته' },
-    pisces:      { symbol: '♓', fr: 'POISSONS',   ar: 'الحوت',      el: 'Eau 💧',     poem_ar: 'بحساسية الحوت ورومانسيته' },
-  };
+  function setEl(id, text)  { const e = document.getElementById(id); if (e) e.textContent = text; }
+  function setElHTML(id, h) { const e = document.getElementById(id); if (e) e.innerHTML = h; }
 
   const gd = ZODIAC[gs];
   const bd = ZODIAC[bs];
 
-  // ── Update groom medallion ──
+  // ─── Groom card ───
   if (gd) {
-    const sym  = document.getElementById('zdGroomSymbol');
-    const name = document.getElementById('zdGroomName');
-    const lbl  = document.getElementById('zdGroomLabel');
-    if (sym)  sym.textContent  = gd.symbol;
-    if (name) name.textContent = gd.fr;
-    if (lbl)  lbl.textContent  = cfg.ga ? cfg.ga : 'العريس';
+    setEl('zdGroomSymbol', gd.sym + '\uFE0E'); // U+FE0E = text presentation (no emoji color)
+    setEl('zdGroomName',   gd.fr);
+    setEl('zdGroomAr',     gd.ar);
+    setEl('zdGroomEl',     gd.el);
+    setEl('zdGroomDates',  gd.dates);
+    setEl('zdGroomLabel',  cfg.ga || 'العريس');
+    renderConst(document.getElementById('zdGroomConst'), gs);
+    const groomCard = document.getElementById('zdGroomCard');
+    if (groomCard) groomCard.style.display = '';
   } else {
-    // Hide groom medallion if no sign set
-    const med = document.getElementById('zdGroomMedallion');
-    if (med) med.style.display = 'none';
+    const c = document.getElementById('zdGroomCard');
+    if (c) c.style.display = 'none';
+    // Shift bridge if no groom sign
+    const bridge = document.querySelector('.zd-bridge');
+    if (bridge) bridge.style.display = 'none';
   }
 
-  // ── Update bride medallion ──
+  // ─── Bride card ───
   if (bd) {
-    const sym  = document.getElementById('zdBrideSymbol');
-    const name = document.getElementById('zdBrideName');
-    const lbl  = document.getElementById('zdBrideLabel');
-    if (sym)  sym.textContent  = bd.symbol;
-    if (name) name.textContent = bd.fr;
-    if (lbl)  lbl.textContent  = cfg.ba ? cfg.ba : 'العروسة';
+    setEl('zdBrideSymbol', bd.sym + '\uFE0E');
+    setEl('zdBrideName',   bd.fr);
+    setEl('zdBrideAr',     bd.ar);
+    setEl('zdBrideEl',     bd.el);
+    setEl('zdBrideDates',  bd.dates);
+    setEl('zdBrideLabel',  cfg.ba || 'العروسة');
+    renderConst(document.getElementById('zdBrideConst'), bs);
+    const brideCard = document.getElementById('zdBrideCard');
+    if (brideCard) brideCard.style.display = '';
   } else {
-    const med = document.getElementById('zdBrideMedallion');
-    if (med) med.style.display = 'none';
-    // Shift groom medallion to center if only one sign
-    const gMed = document.getElementById('zdGroomMedallion');
-    if (gMed) gMed.setAttribute('transform', 'translate(110,0)');
+    const c = document.getElementById('zdBrideCard');
+    if (c) c.style.display = 'none';
   }
 
-  // ── Compat label at bottom of SVG ──
+  // ─── Compat label ───
   const compatEl = document.getElementById('zdCompatText');
   if (compatEl) {
     if (gd && bd) {
-      // Check element compatibility (same element = harmony)
-      const gEl = gd.el.split(' ')[0];
-      const bEl = bd.el.split(' ')[0];
-      const compatLabel = (gEl === bEl)
-        ? `✦ HARMONIE ${gEl.toUpperCase()} ✦`
-        : `✦ ${gEl.toUpperCase()} & ${bEl.toUpperCase()} ✦`;
-      compatEl.textContent = compatLabel;
+      const gEl = gd.el.split(' ')[1] || gd.el;
+      const bEl = bd.el.split(' ')[1] || bd.el;
+      compatEl.textContent = (gEl === bEl) ? `HARMONIE ${gEl.toUpperCase()}` : `${gEl.toUpperCase()} & ${bEl.toUpperCase()}`;
     } else if (gd) {
-      compatEl.textContent = `✦ ${gd.el.toUpperCase()} ✦`;
+      compatEl.textContent = (gd.el.split(' ')[1] || gd.el).toUpperCase();
     } else if (bd) {
-      compatEl.textContent = `✦ ${bd.el.toUpperCase()} ✦`;
+      compatEl.textContent = (bd.el.split(' ')[1] || bd.el).toUpperCase();
     }
   }
 
-  // ── Poetic text (Arabic) ──
+  // ─── Poetic text ───
   const poemEl = document.getElementById('zodiacPoemText');
   if (poemEl) {
     const isFr = cfg.la === 'fr';
+    const frName = (d) => d.fr.charAt(0) + d.fr.slice(1).toLowerCase();
     if (gd && bd) {
-      if (isFr) {
-        poemEl.textContent = `Sous les étoiles, ${gd.fr.charAt(0) + gd.fr.slice(1).toLowerCase()} et ${bd.fr.charAt(0) + bd.fr.slice(1).toLowerCase()} ont uni leurs destins pour l'éternité.`;
-      } else {
-        poemEl.textContent = `${gd.poem_ar}، و${bd.poem_ar}، جمعتهما النجوم في حبٍّ أبديّ ✨`;
-      }
+      poemEl.textContent = isFr
+        ? `Sous les étoiles, ${frName(gd)} et ${frName(bd)} ont uni leurs destins pour l'éternité.`
+        : `${gd.poem_ar}، و${bd.poem_ar}، جمعتهما النجوم في حبٍّ أبديّ ✨`;
     } else if (gd) {
       poemEl.textContent = isFr
-        ? `Né·e sous le signe du ${gd.fr.charAt(0) + gd.fr.slice(1).toLowerCase()}, les étoiles ont guidé ce chemin.`
+        ? `Né·e sous le signe du ${frName(gd)}, les étoiles ont guidé ce chemin.`
         : `${gd.poem_ar}، نقشت النجوم لهما قدرًا جميلًا ✨`;
     } else if (bd) {
       poemEl.textContent = isFr
-        ? `Né·e sous le signe du ${bd.fr.charAt(0) + bd.fr.slice(1).toLowerCase()}, les étoiles ont guidé ce chemin.`
+        ? `Né·e sous le signe du ${frName(bd)}, les étoiles ont guidé ce chemin.`
         : `${bd.poem_ar}، نقشت النجوم لهما قدرًا جميلًا ✨`;
     }
   }
 
-  // ── Generate star particles background ──
+  // ─── Generate star particles background ───
   const starsContainer = document.getElementById('zodiacStarsBg');
   if (starsContainer && !starsContainer.dataset.init) {
     starsContainer.dataset.init = '1';
-    starsContainer.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1';
-    const count = 30;
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < 45; i++) {
       const star = document.createElement('div');
-      const size = (Math.random() * 2.5 + 0.8).toFixed(1);
-      const x    = (Math.random() * 100).toFixed(1);
-      const y    = (Math.random() * 100).toFixed(1);
-      const dur  = (Math.random() * 3 + 2).toFixed(1);
-      const del  = (Math.random() * 4).toFixed(1);
-      star.style.cssText = `
-        position:absolute;
-        left:${x}%;top:${y}%;
-        width:${size}px;height:${size}px;
-        border-radius:50%;
-        background:rgba(201,168,76,0.55);
-        animation:zdStarTwinkle ${dur}s ${del}s ease-in-out infinite;
-        box-shadow:0 0 ${size * 2}px rgba(201,168,76,0.3);
-      `;
+      const size = (Math.random() * 2.2 + 0.6).toFixed(1);
+      star.style.cssText = [
+        'position:absolute',
+        `left:${(Math.random()*100).toFixed(1)}%`,
+        `top:${(Math.random()*100).toFixed(1)}%`,
+        `width:${size}px`, `height:${size}px`,
+        'border-radius:50%',
+        `background:rgba(${Math.random()>0.7?'200,160,255':'201,168,76'},${(Math.random()*0.5+0.2).toFixed(2)})`,
+        `animation:zdStarTwinkle ${(Math.random()*3+2).toFixed(1)}s ${(Math.random()*5).toFixed(1)}s ease-in-out infinite`,
+        `box-shadow:0 0 ${(size*2.5).toFixed(0)}px rgba(201,168,76,0.25)`,
+      ].join(';');
       starsContainer.appendChild(star);
     }
-    // Inject keyframes if not already present
-    if (!document.getElementById('zdStarKf')) {
-      const style = document.createElement('style');
-      style.id = 'zdStarKf';
-      style.textContent = `
-        @keyframes zdStarTwinkle {
-          0%,100% { opacity:0.15; transform:scale(1); }
-          50%      { opacity:0.75; transform:scale(1.4); }
-        }
-      `;
-      document.head.appendChild(style);
+    if (!document.getElementById('zdKf')) {
+      const s = document.createElement('style');
+      s.id = 'zdKf';
+      s.textContent = '@keyframes zdStarTwinkle{0%,100%{opacity:0.1;transform:scale(1)}50%{opacity:0.8;transform:scale(1.5)}}';
+      document.head.appendChild(s);
     }
   }
 }
-
 
 
 function checkRoleView() {

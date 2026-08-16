@@ -5028,3 +5028,349 @@ body.lang-ar .animated-bride {
     hallArchReveal  0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both,
     archBorderGlow  4s  ease-in-out infinite 1.4s;
 }
+
+/* ═══════════════════════════════════════════════════════
+   ZODIAC SECTION — Premium Dark "Canva-Style" Design
+═══════════════════════════════════════════════════════ */
+
+/* Section container */
+.zd-section {
+  background: linear-gradient(170deg, #090718 0%, #0f0c26 45%, #080615 100%) !important;
+  min-height: auto !important;
+  padding: 56px 16px 60px !important;
+  position: relative;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Background nebula ── */
+.zd-bg-nebula {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.zd-stars-field { position: absolute; inset: 0; }
+.zd-nebula-orb  { position: absolute; border-radius: 50%; pointer-events: none; }
+.zd-orb-1 {
+  width: 240px; height: 240px;
+  top: -70px; left: -70px;
+  background: radial-gradient(circle, rgba(201,168,76,0.22), transparent 70%);
+  filter: blur(55px);
+}
+.zd-orb-2 {
+  width: 280px; height: 280px;
+  bottom: -90px; right: -90px;
+  background: radial-gradient(circle, rgba(72,35,130,0.25), transparent 70%);
+  filter: blur(75px);
+}
+.zd-orb-3 {
+  width: 200px; height: 200px;
+  top: 35%; left: 50%; transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(201,168,76,0.07), transparent 70%);
+  filter: blur(50px);
+}
+
+/* ── Main content wrapper ── */
+.zd-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.zd-header { text-align: center; margin-bottom: 34px; }
+.zd-hdr-ornament {
+  font-size: 0.62rem;
+  letter-spacing: 10px;
+  color: rgba(201,168,76,0.4);
+  margin-bottom: 14px;
+}
+.zd-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fffbe0 0%, #f5c842 40%, #c9a84c 70%, #fde68a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.zd-subtitle {
+  font-family: 'Amiri', serif;
+  font-size: 0.86rem;
+  color: rgba(200,175,120,0.5);
+  letter-spacing: 0.5px;
+}
+
+/* ── Cards row ── */
+.zd-cards-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 30px;
+}
+
+/* ── Individual card ── */
+.zd-card {
+  flex: 1;
+  max-width: 158px;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(155deg, rgba(30,22,60,0.96) 0%, rgba(12,9,30,0.98) 100%);
+  border: 1px solid rgba(201,168,76,0.28);
+  box-shadow:
+    0 14px 45px rgba(0,0,0,0.72),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  animation: zdCardFadeIn 0.85s cubic-bezier(0.22,0.9,0.32,1) both;
+}
+#zdGroomCard { animation-delay: 0.12s; }
+#zdBrideCard { animation-delay: 0.42s; }
+
+@keyframes zdCardFadeIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* Diagonal shine sweep */
+.zd-card-shine {
+  position: absolute;
+  top: 0; left: -65%;
+  width: 38%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.038), transparent);
+  transform: skewX(-12deg);
+  animation: zdShineSweep 5.5s ease-in-out infinite;
+  z-index: 3;
+  pointer-events: none;
+}
+#zdGroomCard .zd-card-shine { animation-delay: 0s; }
+#zdBrideCard .zd-card-shine { animation-delay: 2.75s; }
+
+@keyframes zdShineSweep {
+  0%, 100% { left: -65%; }
+  50%       { left: 165%; }
+}
+
+/* Constellation SVG background */
+.zd-const-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.14;
+  z-index: 0;
+}
+
+/* Card body */
+.zd-card-body {
+  position: relative;
+  z-index: 2;
+  padding: 20px 10px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Role badge */
+.zd-role {
+  font-family: 'Amiri', serif;
+  font-size: 0.6rem;
+  color: rgba(201,168,76,0.6);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ── Sigil (zodiac symbol circle) ── */
+.zd-sigil-circle {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin: 4px 0 10px;
+}
+
+.zd-sigil-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%,
+    rgba(201,168,76,0.14),
+    rgba(201,168,76,0.04) 70%);
+  border: 1px solid rgba(201,168,76,0.4);
+  box-shadow:
+    0 0 24px rgba(201,168,76,0.14),
+    inset 0 0 20px rgba(201,168,76,0.06);
+  animation: zdRingBreath 4s ease-in-out infinite;
+}
+
+.zd-sigil-ring::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(201,168,76,0.2);
+  animation: zdRingBreath 4s 1s ease-in-out infinite;
+}
+
+.zd-sigil-ring::after {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  border: 0.5px dashed rgba(201,168,76,0.12);
+  animation: zdRingRotate 20s linear infinite;
+}
+
+@keyframes zdRingBreath {
+  0%,100% {
+    box-shadow: 0 0 24px rgba(201,168,76,0.14), inset 0 0 20px rgba(201,168,76,0.06);
+  }
+  50% {
+    box-shadow: 0 0 38px rgba(201,168,76,0.3), inset 0 0 26px rgba(201,168,76,0.13);
+  }
+}
+@keyframes zdRingRotate {
+  to { transform: rotate(360deg); }
+}
+
+.zd-sigil-char {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  line-height: 1;
+  /* Force text (non-emoji) rendering */
+  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', 'Apple Symbols', 'Symbola', serif;
+  -webkit-text-fill-color: #c9a84c;
+  color: #c9a84c;
+  filter: drop-shadow(0 0 14px rgba(201,168,76,0.85));
+  animation: zdSymGlow 3.5s ease-in-out infinite;
+}
+
+@keyframes zdSymGlow {
+  0%,100% { filter: drop-shadow(0 0 14px rgba(201,168,76,0.85)); }
+  50%     { filter: drop-shadow(0 0 28px rgba(201,168,76,1)) drop-shadow(0 0 45px rgba(255,220,100,0.45)); }
+}
+
+/* Sign names */
+.zd-sign-fr {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #dfc870;
+  text-shadow: 0 0 28px rgba(201,168,76,0.38);
+}
+.zd-sign-ar {
+  font-family: 'Amiri', serif;
+  font-size: 0.85rem;
+  color: rgba(200,175,120,0.52);
+  margin-top: -2px;
+}
+
+/* Meta (element + dates) */
+.zd-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+.zd-element-pill {
+  font-size: 0.62rem;
+  color: rgba(201,168,76,0.88);
+  background: rgba(201,168,76,0.09);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 20px;
+  padding: 3px 12px;
+  letter-spacing: 1px;
+}
+.zd-dates {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.55rem;
+  color: rgba(180,155,90,0.42);
+  letter-spacing: 0.5px;
+}
+
+/* ── Bridge between cards ── */
+.zd-bridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  gap: 9px;
+  min-height: 240px;
+}
+
+.zd-bridge-gem {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(circle, rgba(201,168,76,0.2), rgba(201,168,76,0.04));
+  border: 1px solid rgba(201,168,76,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: zdGemPing 2.6s ease-in-out infinite;
+}
+
+@keyframes zdGemPing {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.38); }
+  50%      { box-shadow: 0 0 0 9px rgba(201,168,76,0); }
+}
+
+.zd-bridge-inner {
+  font-size: 1.1rem;
+  color: #c9a84c;
+  animation: zdGemGlow2 2.6s ease-in-out infinite;
+}
+@keyframes zdGemGlow2 {
+  0%,100% { opacity: 0.72; transform: scale(1);    text-shadow: 0 0 10px rgba(201,168,76,0.5); }
+  50%     { opacity: 1;    transform: scale(1.28); text-shadow: 0 0 22px rgba(201,168,76,1); }
+}
+
+.zd-bridge-compat {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.46rem;
+  color: rgba(201,168,76,0.42);
+  letter-spacing: 2.5px;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
+/* ── Poem footer ── */
+.zd-poem-wrap {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.zd-poem-line {
+  width: 72px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.38), transparent);
+}
+.zd-poem {
+  font-family: 'Amiri', serif;
+  font-size: 1rem;
+  color: rgba(200,175,120,0.68);
+  line-height: 1.95;
+  font-style: italic;
+  max-width: 300px;
+}
