@@ -5592,44 +5592,60 @@ body.lang-ar .animated-bride {
   margin-top: 10px;
 }
 
-/* ── Parchment scroll ── */
+/* ── Photo Stack Section Envelope Pattern Theming ── */
+.photo-section-pattern-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0.13;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.5s ease;
+}
+
+.photo-section-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.2) 20%, rgba(245, 237, 224, 0.75) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Parchment scroll (No truncation, full message display) ── */
 .zd-parchment-wrap {
-  max-width: 340px;
+  width: 100%;
+  max-width: 360px;
   margin: 0 auto;
-  overflow: hidden;
+  overflow: visible;
   max-height: 0;
-  transition: max-height 0.7s cubic-bezier(0.22, 0.9, 0.32, 1),
-              opacity 0.4s ease;
+  transition: max-height 0.85s cubic-bezier(0.22, 0.9, 0.32, 1),
+              opacity 0.45s ease;
   opacity: 0;
 }
 .zd-parchment-wrap.zd-open {
-  max-height: 440px;
+  max-height: 2500px;
   opacity: 1;
+  overflow: visible;
 }
 
 .zd-parchment {
   position: relative;
-  background: linear-gradient(160deg, #fffef5 0%, #fdf6e3 50%, #faf0d2 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(201, 168, 76, 0.45);
+  background: linear-gradient(160deg, #fffef7 0%, #fdf6e4 45%, #f7ebd0 100%);
+  border-radius: 16px;
+  border: 1.5px solid rgba(201, 168, 76, 0.55);
   box-shadow:
-    0 8px 32px rgba(74, 44, 10, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 0 30px rgba(201, 168, 76, 0.04);
-  padding: 28px 24px 24px;
+    0 10px 36px rgba(74, 44, 10, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 35px rgba(201, 168, 76, 0.05);
+  padding: 28px 22px 30px;
   text-align: center;
-  margin-bottom: 8px;
-  /* Ragged top/bottom edges like parchment scroll */
-  clip-path: polygon(
-    0% 3%, 2% 0%, 4% 2%, 6% 0%, 8% 2%, 10% 0%, 12% 2%,
-    14% 0%, 16% 1%, 18% 0%, 20% 2%, 25% 0%, 30% 2%, 35% 0%,
-    40% 1%, 45% 0%, 50% 2%, 55% 0%, 60% 1%, 65% 0%, 70% 2%,
-    75% 0%, 80% 1%, 85% 0%, 90% 2%, 95% 0%, 98% 1%, 100% 0%,
-    100% 97%, 98% 100%, 96% 98%, 94% 100%, 92% 98%, 90% 100%,
-    85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%,
-    55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%,
-    25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 2% 100%, 0% 97%
-  );
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: visible;
 }
 
 /* Wax seal */
@@ -5642,7 +5658,7 @@ body.lang-ar .animated-bride {
   border-radius: 50%;
   background: radial-gradient(circle at 38% 32%, #f5c842, #c9a84c 50%, #8a6010);
   box-shadow: 0 3px 12px rgba(201, 168, 76, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   animation: zdSealAppear 0.5s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   font-size: 22px;
 }
@@ -5690,16 +5706,18 @@ body.lang-ar .animated-bride {
   margin: 0 auto 14px;
 }
 
-/* The fortune message text */
+/* The fortune message text (Full length display) */
 .zd-fortune-msg {
   font-family: 'Scheherazade New', 'Amiri', serif;
   font-size: 1.25rem;
   color: var(--brown);
   line-height: 2.1;
   font-weight: 500;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   text-shadow: 0 0 1px rgba(74, 44, 10, 0.15);
   animation: zdMsgReveal 0.6s 0.3s ease both;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 @keyframes zdMsgReveal {
   from { opacity: 0; transform: translateY(8px); }
@@ -5709,15 +5727,17 @@ body.lang-ar .animated-bride {
 /* French sub-message */
 .zd-fortune-msg-fr {
   font-family: 'Playfair Display', serif;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   color: var(--brown-mid);
-  opacity: 0.78;
+  opacity: 0.85;
   font-style: italic;
   letter-spacing: 0.6px;
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
   animation: zdMsgReveal 0.6s 0.5s ease both;
+  word-wrap: break-word;
 }
+
 
 
 

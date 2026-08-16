@@ -2385,6 +2385,48 @@ function applyEnvelopeDesign(cfg) {
     }
   });
 
+  // ── Photo Stack Background Theme (Inherits Envelope Theme in translucent style) ──
+  const photoPatternEl = document.getElementById('photoSectionPatternBg');
+  if (photoPatternEl) {
+    let patternImg = '';
+    let patternOpacity = '0.12';
+    if (showNature) {
+      patternImg = "url('assets/nature_summer_pattern.png')";
+      patternOpacity = '0.14';
+    } else if (showVintage) {
+      patternImg = "url('assets/vintage_pattern_new.png')";
+      patternOpacity = '0.12';
+    } else if (showArabesque) {
+      patternImg = "url('assets/arabesque_pattern.png')";
+      patternOpacity = '0.12';
+    } else if (showCalligraphy) {
+      patternImg = "url('assets/arabic_calligraphy_pattern.png')";
+      patternOpacity = '0.13';
+    } else if (showZellige) {
+      patternImg = "url('assets/zellige_pattern.png')";
+      patternOpacity = '0.13';
+    } else if (showDoor) {
+      patternImg = "url('assets/tunisian_door_pattern.png')";
+      patternOpacity = '0.14';
+    } else if (showAmazigh) {
+      patternImg = "url('assets/amazigh_pattern.png')";
+      patternOpacity = '0.14';
+    } else if (showEmbossed) {
+      patternImg = "url('assets/embossed_botanical_pattern.png')";
+      patternOpacity = '0.14';
+    } else if (showSageEmbossed) {
+      patternImg = "url('assets/embossed_sage_green_pattern.png')";
+      patternOpacity = '0.14';
+    } else {
+      // Default floral / damask
+      patternImg = "radial-gradient(circle at 50% 50%, rgba(201, 168, 76, 0.12) 0%, rgba(201, 168, 76, 0.04) 50%, transparent 80%)";
+      patternOpacity = '0.9';
+    }
+    photoPatternEl.style.backgroundImage = patternImg;
+    photoPatternEl.style.opacity = patternOpacity;
+  }
+
+
   // ── Hall Photo Background (hp) ──
   const hallPhoto = cfg.hp || 'luxury_wedding_hall';
   const heroBg = document.querySelector('.hero-bg-parallax');
