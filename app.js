@@ -321,24 +321,26 @@ let _zdIsLocked    = false;  // true once all revealed
 // ── Determine members from guest type ──
 function zdGetMembers(name, type, isFr) {
   const members = [];
-  const n = name || '';
-  if (!n) return members;
+  const fallbackGuest = isFr ? 'Cher(e) Invité(e)' : 'ضيفنا العزيز';
+  const n = name || fallbackGuest;
 
   // Primary guest always present
   const primaryLabel = isFr
-    ? (type.includes('fr_woman') ? 'Vous' : type.includes('fr_friend_f') ? 'Vous' : 'Vous')
-    : 'أنتَ / أنتِ';
+    ? (type.includes('fr_woman') ? 'Madame' : type.includes('fr_friend_f') ? 'Mon amie' : 'Vous')
+    : (type.includes('ar_woman') ? 'السيدة' : type.includes('ar_friend_f') ? 'عشيرتي' : type.includes('ar_friend_m') ? 'عشيري' : 'أنتَ');
   members.push({ name: n, role: primaryLabel, key: 'primary' });
 
   // Spouse?
   if (type === 'ar_couple' || type === 'ar_couple_children' || type === 'fr_couple') {
-    const spouseLabel = isFr ? 'Votre conjoint·e' : 'قرينتك / قرينك';
-    members.push({ name: isFr ? `${n} — conjoint·e` : `${n} — القرين`, role: spouseLabel, key: 'spouse' });
+    const spouseRole = isFr ? 'Conjoint·e' : 'القرين / القرينة';
+    const spouseName = isFr ? `Conjoint(e) de ${n}` : (n.includes('حرم') ? n : `حرم ${n}`);
+    members.push({ name: spouseName, role: spouseRole, key: 'spouse' });
   }
   // Children?
   if (type === 'ar_couple_children') {
-    const kidLabel = 'الأبناء';
-    members.push({ name: isFr ? `Famille ${n}` : `أبناء ${n}`, role: kidLabel, key: 'children' });
+    const kidRole = 'الأبناء';
+    const kidName = isFr ? `Enfants de ${n}` : `أبناء ${n}`;
+    members.push({ name: kidName, role: kidRole, key: 'children' });
   }
   return members;
 }
@@ -366,7 +368,6 @@ function zdGetFortunes(gName, bName, gNameFr, bNameFr) {
   };
 }
 
-// ── Build the entire fortune section ──
 // ── Update Active Member Picker Badge ──
 function zdUpdateActivePickerBadge(m) {
   const badge = document.getElementById('zdActivePickerBadge');
@@ -382,13 +383,13 @@ function zdUpdateActivePickerBadge(m) {
   badge.style.display = 'inline-flex';
   if (isDone) {
     badge.innerHTML = isFr
-      ? `<span class="zd-picker-icon">✓</span> Étoile de <span class="zd-picker-name">${m.name || m.role}</span> déjà illuminée`
-      : `<span class="zd-picker-icon">✓</span> نَجْمُ <span class="zd-picker-name">${m.name || m.role}</span> أُضِيءَ بالفعل`;
+      ? `<span class="zd-picker-icon">✓</span> Étoile de <span class="zd-picker-name">${m.name}</span> déjà illuminée`
+      : `<span class="zd-picker-icon">✓</span> نَجْمُ <span class="zd-picker-name">${m.name}</span> أُضِيءَ بالفعل`;
     return;
   }
 
-  const nameLabel = m.name ? m.name : '';
-  const roleLabel = m.role ? m.role : '';
+  const nameLabel = m.name || '';
+  const roleLabel = m.role || '';
   
   if (isFr) {
     const who = nameLabel ? `${nameLabel} (${roleLabel})` : (roleLabel || 'Invité');
@@ -402,7 +403,8 @@ function zdUpdateActivePickerBadge(m) {
 // ── Build the entire fortune section ──
 function buildGuestFortune(cfg, ZODIAC) {
   const grid = document.getElementById('zdSignGrid');
-  if (!grid || grid.dataset.init) return;
+  if (!grid) return;
+  grid.innerHTML = '';
   grid.dataset.init = '1';
 
   _zdIsFr   = cfg.la === 'fr';
@@ -411,20 +413,16 @@ function buildGuestFortune(cfg, ZODIAC) {
 
   const guestName = _resolvedGuestName || '';
   const guestType = (typeof _resolvedGuestType !== 'undefined' && _resolvedGuestType) ? _resolvedGuestType : 'ar_couple';
-  const guestId   = (typeof _resolvedGuestId !== 'undefined' && _resolvedGuestId) ? _resolvedGuestId : guestName;
+  const guestId   = (typeof _resolvedGuestId !== 'undefined' && _resolvedGuestId) ? _resolvedGuestId : (guestName || 'guest');
 
   // Update section title with guest name
   const greeting = document.getElementById('zdFortuneGreeting');
   if (greeting && guestName) {
-    greeting.textContent = _zdIsFr ? `مِرآةُ النُّجوم — ${guestName}` : `مِرآةُ النُّجوم — ${guestName}`;
+    greeting.textContent = `مِرآةُ النُّجوم — ${guestName}`;
   }
 
   // Build member list
   _zdMembers = zdGetMembers(guestName, guestType, _zdIsFr);
-  if (_zdMembers.length === 0) {
-    // No guest known — show single generic slot
-    _zdMembers = [{ name: guestName, role: _zdIsFr ? 'Vous' : 'أنتَ', key: 'primary' }];
-  }
 
   // Check if ALL members already have saved fortunes
   const allSaved = _zdMembers.every(m => !!localStorage.getItem(zdStorageKey(guestId, m.key)));
@@ -441,33 +439,35 @@ function buildGuestFortune(cfg, ZODIAC) {
 
   // Build member tabs (only if > 1 member)
   const tabsEl = document.getElementById('zdMemberTabs');
-  if (_zdMembers.length > 1 && tabsEl) {
-    tabsEl.style.display = 'flex';
-    _zdMembers.forEach((m, idx) => {
-      // Skip already-saved members in tab
-      const saved = localStorage.getItem(zdStorageKey(guestId, m.key));
-      const btn = document.createElement('button');
-      btn.className = 'zd-member-tab' + (idx === 0 ? ' zd-tab-active' : '') + (saved ? ' zd-tab-done' : '');
-      btn.textContent = (m.name ? `${m.name} (${m.role})` : m.role) + (saved ? ' ✦' : '');
-      btn.dataset.idx = idx;
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.zd-member-tab').forEach(b => b.classList.remove('zd-tab-active'));
-        btn.classList.add('zd-tab-active');
-        _zdActiveMember = idx;
-        zdUpdateActivePickerBadge(m);
-        // Reset sign selection
-        _zdSelectedKey = null;
-        document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
-        document.getElementById('zdRevealWrap').style.display = 'none';
-        // If this member already has a fortune, show it
-        const savedFortune = localStorage.getItem(zdStorageKey(guestId, m.key));
-        if (savedFortune) {
-          const data = JSON.parse(savedFortune);
-          zdShowSavedParchment(m, data, ZODIAC);
-        }
+  if (tabsEl) {
+    tabsEl.innerHTML = '';
+    if (_zdMembers.length > 1) {
+      tabsEl.style.display = 'flex';
+      _zdMembers.forEach((m, idx) => {
+        const saved = localStorage.getItem(zdStorageKey(guestId, m.key));
+        const btn = document.createElement('button');
+        btn.className = 'zd-member-tab' + (idx === 0 ? ' zd-tab-active' : '') + (saved ? ' zd-tab-done' : '');
+        btn.textContent = (m.name ? `${m.name}` : m.role) + (saved ? ' ✦' : '');
+        btn.dataset.idx = idx;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.zd-member-tab').forEach(b => b.classList.remove('zd-tab-active'));
+          btn.classList.add('zd-tab-active');
+          _zdActiveMember = idx;
+          zdUpdateActivePickerBadge(m);
+          _zdSelectedKey = null;
+          document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
+          document.getElementById('zdRevealWrap').style.display = 'none';
+          const savedFortune = localStorage.getItem(zdStorageKey(guestId, m.key));
+          if (savedFortune) {
+            const data = JSON.parse(savedFortune);
+            zdShowSavedParchment(m, data, ZODIAC);
+          }
+        });
+        tabsEl.appendChild(btn);
       });
-      tabsEl.appendChild(btn);
-    });
+    } else {
+      tabsEl.style.display = 'none';
+    }
   }
 
   // Check if the active member already has a fortune
@@ -478,7 +478,7 @@ function buildGuestFortune(cfg, ZODIAC) {
     zdShowSavedParchment(activeM, data, ZODIAC);
   }
 
-  // Build sign grid
+  // Build sign grid (Full Arabic/French names, no awkward truncation)
   const ALL_SIGNS = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
   ALL_SIGNS.forEach(key => {
     const zd = ZODIAC[key];
@@ -487,10 +487,20 @@ function buildGuestFortune(cfg, ZODIAC) {
     btn.className = 'zd-sign-btn';
     btn.dataset.sign = key;
     btn.setAttribute('aria-label', `${zd.fr} – ${zd.ar}`);
-    btn.innerHTML = `<span class="zd-btn-sym">${zd.sym}\uFE0E</span><span class="zd-btn-name">${zd.fr.slice(0,5)}</span>`;
+    const signLabel = _zdIsFr ? zd.fr : zd.ar;
+    btn.innerHTML = `<span class="zd-btn-sym">${zd.sym}\uFE0E</span><span class="zd-btn-name">${signLabel}</span>`;
     btn.addEventListener('click', () => zdSelectSign(key, zd, guestId));
     grid.appendChild(btn);
   });
+}
+
+// ── Refresh Fortune when guest is resolved ──
+function zdRefreshGuestFortune() {
+  if (typeof _zdCfg !== 'undefined' && typeof _zdZodiac !== 'undefined' && _zdCfg && _zdZodiac) {
+    const grid = document.getElementById('zdSignGrid');
+    if (grid) delete grid.dataset.init;
+    buildGuestFortune(_zdCfg, _zdZodiac);
+  }
 }
 
 function zdSelectSign(key, zd, guestId) {
@@ -514,6 +524,7 @@ function zdSelectSign(key, zd, guestId) {
       : `أضيء نجم ${who} (${zd.ar})`;
   }
 }
+
 
 
 /* Called from HTML onclick */
@@ -2842,7 +2853,11 @@ function _applyGuestBanner(guestName, guestType) {
 
   // Update personalized invitation description text
   _updatePersonalizedInviteDesc();
+
+  // Refresh Zodiac Miroir du Ciel for this specific guest
+  zdRefreshGuestFortune();
 }
+
 
 /** Extracts creative calligraphic initials for Arabic and Latin guest names */
 function _extractGuestInitials(guestName) {

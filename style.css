@@ -5410,39 +5410,41 @@ body.lang-ar .animated-bride {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 7px 4px;
+  gap: 3px;
+  padding: 8px 3px 7px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(201, 168, 76, 0.4);
   cursor: pointer;
   transition: all 0.25s ease;
   backdrop-filter: blur(4px);
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 8px rgba(74, 44, 10, 0.04);
 }
 .zd-sign-btn:hover, .zd-sign-btn.zd-active {
-  background: rgba(201, 168, 76, 0.18);
-  border-color: rgba(201, 168, 76, 0.75);
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.22) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border-color: rgba(201, 168, 76, 0.85);
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(201, 168, 76, 0.25);
+  box-shadow: 0 4px 14px rgba(201, 168, 76, 0.3);
 }
-.zd-sign-btn.zd-active { border-width: 1.5px; }
+.zd-sign-btn.zd-active { border-width: 1.5px; border-color: var(--gold); }
 
 .zd-btn-sym {
-  font-size: 20px;
+  font-size: 22px;
   font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
-  -webkit-text-fill-color: var(--gold);
   color: var(--gold);
   line-height: 1;
+  filter: drop-shadow(0 1px 4px rgba(201, 168, 76, 0.4));
 }
 .zd-btn-name {
-  font-size: 0.45rem;
-  color: var(--brown-mid);
-  letter-spacing: 0.5px;
-  font-family: 'Playfair Display', serif;
-  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--brown);
+  font-family: 'Scheherazade New', 'Amiri', 'Playfair Display', serif;
+  font-weight: 600;
+  letter-spacing: 0.2px;
   white-space: nowrap;
 }
+
 
 /* ── Member Selector Tabs ── */
 .zd-member-tabs {
