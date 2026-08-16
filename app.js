@@ -367,6 +367,39 @@ function zdGetFortunes(gName, bName, gNameFr, bNameFr) {
 }
 
 // ── Build the entire fortune section ──
+// ── Update Active Member Picker Badge ──
+function zdUpdateActivePickerBadge(m) {
+  const badge = document.getElementById('zdActivePickerBadge');
+  if (!badge) return;
+  if (!m) {
+    badge.style.display = 'none';
+    return;
+  }
+  const isFr = _zdIsFr;
+  const guestId = (typeof _resolvedGuestId !== 'undefined' && _resolvedGuestId) ? _resolvedGuestId : (_resolvedGuestName || '');
+  const isDone = !!localStorage.getItem(zdStorageKey(guestId, m.key));
+  
+  badge.style.display = 'inline-flex';
+  if (isDone) {
+    badge.innerHTML = isFr
+      ? `<span class="zd-picker-icon">✓</span> Étoile de <span class="zd-picker-name">${m.name || m.role}</span> déjà illuminée`
+      : `<span class="zd-picker-icon">✓</span> نَجْمُ <span class="zd-picker-name">${m.name || m.role}</span> أُضِيءَ بالفعل`;
+    return;
+  }
+
+  const nameLabel = m.name ? m.name : '';
+  const roleLabel = m.role ? m.role : '';
+  
+  if (isFr) {
+    const who = nameLabel ? `${nameLabel} (${roleLabel})` : (roleLabel || 'Invité');
+    badge.innerHTML = `<span class="zd-picker-icon">✨</span> Au tour de : <span class="zd-picker-name">${who}</span> — Choisissez votre signe`;
+  } else {
+    const who = nameLabel ? `${nameLabel} (${roleLabel})` : (roleLabel || 'الضيف');
+    badge.innerHTML = `<span class="zd-picker-icon">✨</span> دَوْرُ : <span class="zd-picker-name">${who}</span> — اختَر برجك الفلكي`;
+  }
+}
+
+// ── Build the entire fortune section ──
 function buildGuestFortune(cfg, ZODIAC) {
   const grid = document.getElementById('zdSignGrid');
   if (!grid || grid.dataset.init) return;
@@ -390,7 +423,7 @@ function buildGuestFortune(cfg, ZODIAC) {
   _zdMembers = zdGetMembers(guestName, guestType, _zdIsFr);
   if (_zdMembers.length === 0) {
     // No guest known — show single generic slot
-    _zdMembers = [{ name: '', role: _zdIsFr ? 'Vous' : 'أنتَ', key: 'primary' }];
+    _zdMembers = [{ name: guestName, role: _zdIsFr ? 'Vous' : 'أنتَ', key: 'primary' }];
   }
 
   // Check if ALL members already have saved fortunes
@@ -403,6 +436,9 @@ function buildGuestFortune(cfg, ZODIAC) {
     return;
   }
 
+  // Show active member badge
+  zdUpdateActivePickerBadge(_zdMembers[0]);
+
   // Build member tabs (only if > 1 member)
   const tabsEl = document.getElementById('zdMemberTabs');
   if (_zdMembers.length > 1 && tabsEl) {
@@ -412,12 +448,13 @@ function buildGuestFortune(cfg, ZODIAC) {
       const saved = localStorage.getItem(zdStorageKey(guestId, m.key));
       const btn = document.createElement('button');
       btn.className = 'zd-member-tab' + (idx === 0 ? ' zd-tab-active' : '') + (saved ? ' zd-tab-done' : '');
-      btn.textContent = m.role + (saved ? ' ✦' : '');
+      btn.textContent = (m.name ? `${m.name} (${m.role})` : m.role) + (saved ? ' ✦' : '');
       btn.dataset.idx = idx;
       btn.addEventListener('click', () => {
         document.querySelectorAll('.zd-member-tab').forEach(b => b.classList.remove('zd-tab-active'));
         btn.classList.add('zd-tab-active');
         _zdActiveMember = idx;
+        zdUpdateActivePickerBadge(m);
         // Reset sign selection
         _zdSelectedKey = null;
         document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
@@ -471,11 +508,13 @@ function zdSelectSign(key, zd, guestId) {
   if (revealWrap) revealWrap.style.display = '';
   const revealText = document.querySelector('#zdRevealBtn .zd-reveal-text');
   if (revealText) {
+    const who = m ? (m.name || m.role) : '';
     revealText.textContent = _zdIsFr
-      ? `Allumer mon ${zd.fr.charAt(0) + zd.fr.slice(1).toLowerCase()}`
-      : `أضيء نجم ${zd.ar}`;
+      ? `Allumer l'étoile de ${who} (${zd.fr})`
+      : `أضيء نجم ${who} (${zd.ar})`;
   }
 }
+
 
 /* Called from HTML onclick */
 function zdRevealMiroir() {
@@ -541,12 +580,15 @@ function zdShowLockedState(guestId, ZODIAC) {
   const notice  = document.getElementById('zdLockedNotice');
   const tabs    = document.getElementById('zdMemberTabs');
   const revWrap = document.getElementById('zdRevealWrap');
+  const badge   = document.getElementById('zdActivePickerBadge');
   if (grid)    grid.style.display    = 'none';
   if (revWrap) revWrap.style.display = 'none';
   if (notice)  notice.style.display  = 'flex';
   if (tabs)    tabs.style.display    = 'none';
+  if (badge)   badge.style.display   = 'none';
 
   _zdMembers.forEach(m => {
+
     const raw = localStorage.getItem(zdStorageKey(guestId, m.key));
     if (!raw) return;
     try { zdAppendParchment(m, JSON.parse(raw), ZODIAC); } catch(e) {}
@@ -2117,13 +2159,10 @@ window.submitWish = function() {
 
   if (!invSlug) {
     // Local preview fallback
-    const localWish = { name, message: msg, target: recipient, timestamp: new Date().toISOString() };
-    allWishes.unshift(localWish);
-    renderWishesScroller();
     nameInput.value = '';
     messageInput.value = '';
     if (rsvpSelect) rsvpSelect.value = '';
-    alert(_currentLang === 'fr' ? 'Votre réponse a été envoyée (Aperçu local) ✨' : 'تم إرسال ردك بنجاح (معاينة محلية) ✨');
+    alert(_currentLang === 'fr' ? 'Votre réponse a été enregistrée ✨' : 'تم إرسال ردك بنجاح ✨');
     return;
   }
 
@@ -2168,9 +2207,8 @@ window.submitWish = function() {
     }
     const badge = document.getElementById('mailbox-badge');
     if (badge) badge.textContent = _roleWishes.length;
-
-    loadAllWishes();
   })
+
   .catch(err => {
     console.error('Failed to submit wish:', err);
     alert('عذراً، حدث خطأ أثناء إرسال التهنئة. الرجاء المحاولة مرة أخرى.');

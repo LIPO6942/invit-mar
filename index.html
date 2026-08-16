@@ -786,13 +786,6 @@
               <textarea id="gb-message" class="guestbook-textarea" placeholder="أكتب تهنئتك هنا..." data-tr-placeholder="gb_msg_placeholder" rows="3" required></textarea>
               <button class="guestbook-submit-btn" onclick="submitWish()" data-tr="gb_submit">إرسال التهنئة ✨</button>
             </div>
-
-            <!-- List of Wishes -->
-            <div id="wishes-carousel-container" style="margin-top: 30px; max-width: 360px; margin-left: auto; margin-right: auto; position: relative; overflow: hidden; height: 130px;">
-              <div id="wishes-scroller" style="position: absolute; width: 100%; top: 0; left: 0; transition: top 0.5s ease-in-out;">
-                <!-- Wishes items will slide here -->
-              </div>
-            </div>
           </div>
         </section>
 
@@ -907,7 +900,10 @@
               <div class="zd-hdr-ornament" style="margin-bottom:10px">✦ · · · ✦</div>
               <div class="zd-guest-intro-title" id="zdFortuneGreeting">مِرآةُ النُّجوم</div>
               <div class="zd-guest-intro-sub" data-tr="zd_fortune_sub">اختر برجك ليُضيء اسمك في سماء هذه الليلة المباركة</div>
+              <!-- Active guest selecting sign badge -->
+              <div class="zd-active-picker-badge" id="zdActivePickerBadge" style="display:none"></div>
             </div>
+
 
             <!-- Member selector tabs (filled by JS) -->
             <div class="zd-member-tabs" id="zdMemberTabs" style="display:none"></div>

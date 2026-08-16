@@ -5481,7 +5481,39 @@ body.lang-ar .animated-bride {
   border-color: rgba(201, 168, 76, 0.7);
 }
 
+/* ── Active Guest Picker Badge ── */
+.zd-active-picker-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px auto 6px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(253, 248, 236, 0.95) 100%);
+  border: 1.5px solid rgba(201, 168, 76, 0.6);
+  border-radius: 25px;
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 1.15rem;
+  color: var(--brown);
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: zdBadgePop 0.4s cubic-bezier(0.22, 0.9, 0.32, 1) both;
+}
+@keyframes zdBadgePop {
+  from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.zd-picker-icon {
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+.zd-picker-name {
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(201, 168, 76, 0.3);
+}
+
 /* ── Locked State Notice ── */
+
 .zd-locked-notice {
   display: flex;
   align-items: center;
