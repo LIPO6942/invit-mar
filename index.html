@@ -936,25 +936,22 @@
 
         </section>
 
-        <!-- ── COUPLE FLOATING STAR BEACON VOYANT ── -->
-        <div class="couple-star-voyant" id="coupleStarVoyant" style="display:none" onclick="openCoupleZodiacStarsModal()" title="نجوم الضيوف المضاءة">
-          <div class="voyant-pulse-ring"></div>
-          <div class="voyant-star-icon">✨</div>
-          <span class="voyant-star-count" id="voyantStarCount">0</span>
-        </div>
+        <!-- ── TRAVELING STARS UNIVERSE (Etoiles Voyageuses) ── -->
+        <div id="traveling-stars-universe" style="position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden;"></div>
 
         <!-- ── COUPLE ZODIAC STARS POPUP MODAL ── -->
-        <div id="couple-stars-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:10000; justify-content:center; align-items:center; backdrop-filter:blur(5px); padding:20px;">
-          <div class="couple-stars-modal-card font-amiri" style="max-width:380px; width:100%; background:linear-gradient(160deg, #fffef9 0%, #fcf7ed 100%); border-radius:18px; border:1.5px solid rgba(201,168,76,0.6); box-shadow:0 12px 40px rgba(0,0,0,0.25); padding:24px 20px; position:relative; text-align:center;">
-            <button onclick="closeCoupleZodiacStarsModal()" style="position:absolute; top:12px; left:12px; border:none; background:rgba(201,168,76,0.15); width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; color:#5c3d10;">✕</button>
-            <div style="font-size:2rem; margin-bottom:4px;">🌌</div>
-            <div style="font-size:1.35rem; font-weight:bold; color:var(--brown); margin-bottom:4px;">سماءُ النُّجوم المضاءة</div>
-            <div style="font-size:0.9rem; color:var(--brown-mid); margin-bottom:16px;">الضيوف الذين أضاؤوا نجومهم وبركاتهم في فرحكم</div>
-            <div id="couple-stars-modal-list" style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; text-align:right; padding:4px;">
+        <div id="couple-stars-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:10001; justify-content:center; align-items:center; backdrop-filter:blur(6px); padding:20px;">
+          <div class="couple-stars-modal-card font-amiri" style="max-width:390px; width:100%; background:linear-gradient(160deg, #fffef9 0%, #fcf7ed 100%); border-radius:20px; border:1.5px solid rgba(201,168,76,0.6); box-shadow:0 16px 50px rgba(0,0,0,0.3); padding:26px 20px; position:relative; text-align:center; animation: modalZoomPop 0.35s cubic-bezier(0.22, 0.9, 0.32, 1) both;">
+            <button onclick="closeCoupleZodiacStarsModal()" style="position:absolute; top:14px; left:14px; border:none; background:rgba(201,168,76,0.15); width:34px; height:34px; border-radius:50%; font-size:1.15rem; cursor:pointer; color:#5c3d10; transition:all 0.2s;">✕</button>
+            <div style="font-size:2.2rem; margin-bottom:6px; animation:starCoreTwinkle 2s ease-in-out infinite alternate;">🌌</div>
+            <div id="couple-stars-modal-title" style="font-size:1.4rem; font-weight:bold; color:var(--brown); margin-bottom:4px;">سماءُ النُّجوم المضاءة</div>
+            <div id="couple-stars-modal-sub" style="font-size:0.92rem; color:var(--brown-mid); margin-bottom:16px;">الضيوف الذين أضاؤوا نجومهم وبركاتهم في فرحكم</div>
+            <div id="couple-stars-modal-list" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; text-align:right; padding:4px;">
               <!-- Stars listed dynamically -->
             </div>
           </div>
         </div>
+
 
 
 

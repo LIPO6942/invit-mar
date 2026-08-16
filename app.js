@@ -569,44 +569,100 @@ function zdSelectSign(key, zd, guestId) {
 
 let _cachedCoupleStars = [];
 
-// ── Render Couple's Sky Star Beacon Voyant ──
+// ── Render Dynamic Traveling Stars for the Couple (Multi-Star Voyageurs) ──
 function zdRenderCoupleSky(stars) {
   _cachedCoupleStars = Array.isArray(stars) ? stars : [];
-  const voyant = document.getElementById('coupleStarVoyant');
-  const countEl = document.getElementById('voyantStarCount');
-  if (!voyant) return;
+  const universe = document.getElementById('traveling-stars-universe');
+  if (!universe) return;
 
   const isCouple = _currentRole === 'groom' || _currentRole === 'bride';
 
-  if (isCouple && _cachedCoupleStars.length > 0) {
-    voyant.style.display = 'flex';
-    if (countEl) countEl.textContent = _cachedCoupleStars.length;
-  } else {
-    voyant.style.display = 'none';
+  if (!isCouple || _cachedCoupleStars.length === 0) {
+    universe.innerHTML = '';
+    return;
   }
+
+  // Generate a traveling interactive star for each guest fortune
+  universe.innerHTML = _cachedCoupleStars.map((s, idx) => {
+    const sym = s.sym || '✦';
+    const guest = s.guestName || 'ضيف';
+    const flightNum = (idx % 6) + 1; // flights 1 to 6
+    const duration = 24 + (idx % 5) * 5; // 24s to 44s smooth flight
+    const delay = -(idx * 5.8) % duration; // staggered initial position
+    
+    return `
+      <div class="traveling-star-orb" 
+           style="animation: starFlight${flightNum} ${duration}s ease-in-out infinite ${delay}s;" 
+           onclick="openCoupleSingleStarModal(${idx})" 
+           title="نجمة أضاءها ${guest}">
+        <div class="traveling-star-tail"></div>
+        <div class="traveling-star-body">
+          <span class="star-sparkle-top">✦</span>
+          <span class="star-sym-badge">${sym}</span>
+        </div>
+        <div class="traveling-star-label">✨ ${guest}</div>
+      </div>
+    `;
+  }).join('');
 }
 
-window.openCoupleZodiacStarsModal = function() {
+window.openCoupleSingleStarModal = function(idx) {
+  const s = _cachedCoupleStars[idx];
+  if (!s) {
+    openCoupleZodiacStarsModal();
+    return;
+  }
   const overlay = document.getElementById('couple-stars-modal-overlay');
+  const titleEl = document.getElementById('couple-stars-modal-title');
+  const subEl = document.getElementById('couple-stars-modal-sub');
   const listEl = document.getElementById('couple-stars-modal-list');
   if (!overlay || !listEl) return;
 
   overlay.style.display = 'flex';
+  if (titleEl) titleEl.textContent = `نجمة ${s.guestName || 'الضيف'} المضيئة ✨`;
+  if (subEl) subEl.textContent = `أضاء نجمة في سمائكم لتبارك زفافكم المبارك`;
+
+  const sym = s.sym || '✦';
+  const guest = s.guestName || 'ضيف';
+  const signName = s.ar || s.fr || '';
+  const timeStr = s.ts ? new Date(s.ts).toLocaleString('ar-TN', { dateStyle:'medium', timeStyle:'short' }) : '';
+
+  listEl.innerHTML = `
+    <div style="background:linear-gradient(135deg, #ffffff 0%, #fcf7ed 100%); padding:20px; border-radius:16px; border:1.5px solid rgba(201,168,76,0.4); text-align:center; box-shadow:0 4px 18px rgba(201,168,76,0.18);">
+      <div style="font-size:2.8rem; color:#b8860b; filter:drop-shadow(0 2px 10px rgba(201,168,76,0.5)); margin-bottom:8px; animation:starCoreTwinkle 2s ease-in-out infinite alternate;">${sym}</div>
+      <div style="font-size:1.4rem; font-weight:bold; color:var(--brown); margin-bottom:4px;">${guest}</div>
+      <div style="font-size:1.05rem; color:var(--gold); font-weight:bold; margin-bottom:12px;">برج ${signName}</div>
+      ${timeStr ? `<div style="font-size:0.82rem; color:var(--brown-mid); margin-bottom:16px;">توقيت الإضاءة: ${timeStr}</div>` : ''}
+      <button onclick="openCoupleZodiacStarsModal()" style="display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, #f7ebd0 0%, #e2c88e 100%); border:1px solid rgba(201,168,76,0.6); border-radius:22px; padding:7px 18px; font-family:'Amiri',serif; font-size:0.95rem; font-weight:bold; color:#3b2200; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1);">عرض جميع النجوم المضاءة (${_cachedCoupleStars.length}) ➜</button>
+    </div>
+  `;
+};
+
+window.openCoupleZodiacStarsModal = function() {
+  const overlay = document.getElementById('couple-stars-modal-overlay');
+  const titleEl = document.getElementById('couple-stars-modal-title');
+  const subEl = document.getElementById('couple-stars-modal-sub');
+  const listEl = document.getElementById('couple-stars-modal-list');
+  if (!overlay || !listEl) return;
+
+  overlay.style.display = 'flex';
+  if (titleEl) titleEl.textContent = 'سماءُ النُّجوم المضاءة 🌌';
+  if (subEl) subEl.textContent = 'الضيوف الذين أضاؤوا نجومهم وبركاتهم في فرحكم';
 
   if (!_cachedCoupleStars || _cachedCoupleStars.length === 0) {
     listEl.innerHTML = `<div style="text-align:center; padding:20px; color:var(--brown-mid); font-style:italic;">لا توجد نجوم مضاءة من الضيوف بعد 🌟</div>`;
     return;
   }
 
-  listEl.innerHTML = _cachedCoupleStars.slice().reverse().map(s => {
+  listEl.innerHTML = _cachedCoupleStars.slice().reverse().map((s, idx) => {
     const sym = s.sym || '✦';
     const guest = s.guestName || 'ضيف';
     const signName = s.ar || s.fr || '';
     const timeStr = s.ts ? new Date(s.ts).toLocaleTimeString('ar-TN', { hour: '2-digit', minute: '2-digit' }) : '';
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.92); padding:10px 14px; border-radius:12px; border:1px solid rgba(201,168,76,0.3); box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.92); padding:10px 14px; border-radius:12px; border:1px solid rgba(201,168,76,0.3); box-shadow:0 2px 8px rgba(0,0,0,0.04); cursor:pointer;" onclick="openCoupleSingleStarModal(${_cachedCoupleStars.length - 1 - idx})">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:1.3rem; line-height:1; filter:drop-shadow(0 1px 3px rgba(160,185,210,0.6)); color:#799bbb;">${sym}</span>
+          <span style="font-size:1.4rem; line-height:1; filter:drop-shadow(0 1px 3px rgba(201,168,76,0.6)); color:#b8860b;">${sym}</span>
           <div>
             <div style="font-weight:bold; color:var(--brown); font-size:1.05rem;">${guest}</div>
             <div style="font-size:0.8rem; color:var(--brown-mid);">أضاء نجمة برج ${signName} ✨</div>
@@ -622,6 +678,7 @@ window.closeCoupleZodiacStarsModal = function() {
   const overlay = document.getElementById('couple-stars-modal-overlay');
   if (overlay) overlay.style.display = 'none';
 };
+
 
 
 /* Called from HTML onclick */
