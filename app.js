@@ -301,9 +301,16 @@ function applyZodiacSection(cfg) {
 
 
 
-  // ─── Guest Fortune Parchment ───
-  buildGuestFortune(cfg, ZODIAC);
+  // ─── Guest Fortune Parchment (Hidden for Groom/Bride view) ───
+  const guestFortuneSec = document.getElementById('zdGuestFortuneSection');
+  if (_currentRole === 'groom' || _currentRole === 'bride') {
+    if (guestFortuneSec) guestFortuneSec.style.display = 'none';
+  } else {
+    if (guestFortuneSec) guestFortuneSec.style.display = '';
+    buildGuestFortune(cfg, ZODIAC);
+  }
 }
+
 
 /* ═══════════════════════════════════════════════════════════
    MIROIR DU CIEL v2 — Multi-member, locked, RTL-correct
@@ -527,44 +534,62 @@ function zdSelectSign(key, zd, guestId) {
 
 
 
-// ── Render Couple's Sky of Illuminated Guest Stars ──
-function zdRenderCoupleSky(stars) {
-  const container = document.getElementById('zdCoupleSkyContainer');
-  const countEl = document.getElementById('zdCoupleSkyCount');
-  const starsBox = document.getElementById('zdCoupleSkyStars');
-  if (!container || !starsBox) return;
+let _cachedCoupleStars = [];
 
-  const validStars = Array.isArray(stars) ? stars : [];
+// ── Render Couple's Sky Star Beacon Voyant ──
+function zdRenderCoupleSky(stars) {
+  _cachedCoupleStars = Array.isArray(stars) ? stars : [];
+  const voyant = document.getElementById('coupleStarVoyant');
+  const countEl = document.getElementById('voyantStarCount');
+  if (!voyant) return;
+
   const isCouple = _currentRole === 'groom' || _currentRole === 'bride';
 
-  if (validStars.length === 0) {
-    if (isCouple) {
-      container.style.display = 'block';
-      if (countEl) countEl.textContent = '0 نجوم';
-      starsBox.innerHTML = `<div style="font-size:0.9rem; color:#7899b8; font-style:italic; padding:10px;">في انتظار أول نجمة يضيئها ضيوفكم الليلة 🌟</div>`;
-    } else {
-      container.style.display = 'none';
-    }
+  if (isCouple && _cachedCoupleStars.length > 0) {
+    voyant.style.display = 'flex';
+    if (countEl) countEl.textContent = _cachedCoupleStars.length;
+  } else {
+    voyant.style.display = 'none';
+  }
+}
+
+window.openCoupleZodiacStarsModal = function() {
+  const overlay = document.getElementById('couple-stars-modal-overlay');
+  const listEl = document.getElementById('couple-stars-modal-list');
+  if (!overlay || !listEl) return;
+
+  overlay.style.display = 'flex';
+
+  if (!_cachedCoupleStars || _cachedCoupleStars.length === 0) {
+    listEl.innerHTML = `<div style="text-align:center; padding:20px; color:var(--brown-mid); font-style:italic;">لا توجد نجوم مضاءة من الضيوف بعد 🌟</div>`;
     return;
   }
 
-  // Show if stars exist or if couple
-  container.style.display = 'block';
-  if (countEl) countEl.textContent = `${validStars.length} نجوم مضاءة ✨`;
-
-  starsBox.innerHTML = validStars.map(s => {
+  listEl.innerHTML = _cachedCoupleStars.slice().reverse().map(s => {
     const sym = s.sym || '✦';
     const guest = s.guestName || 'ضيف';
     const signName = s.ar || s.fr || '';
+    const timeStr = s.ts ? new Date(s.ts).toLocaleTimeString('ar-TN', { hour: '2-digit', minute: '2-digit' }) : '';
     return `
-      <div class="zd-shining-star-card" title="نجمة أضاءها ${guest} (${signName})">
-        <span class="zd-shining-star-sym">${sym}</span>
-        <span class="zd-shining-star-guest">${guest}</span>
-        ${signName ? `<span style="font-size:0.8rem; color:#6a88a4;">(${signName})</span>` : ''}
+      <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.92); padding:10px 14px; border-radius:12px; border:1px solid rgba(201,168,76,0.3); box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.3rem; line-height:1; filter:drop-shadow(0 1px 3px rgba(160,185,210,0.6)); color:#799bbb;">${sym}</span>
+          <div>
+            <div style="font-weight:bold; color:var(--brown); font-size:1.05rem;">${guest}</div>
+            <div style="font-size:0.8rem; color:var(--brown-mid);">أضاء نجمة برج ${signName} ✨</div>
+          </div>
+        </div>
+        ${timeStr ? `<div style="font-size:0.75rem; color:#8a6010; background:rgba(201,168,76,0.15); padding:2px 6px; border-radius:6px;">${timeStr}</div>` : ''}
       </div>
     `;
   }).join('');
-}
+};
+
+window.closeCoupleZodiacStarsModal = function() {
+  const overlay = document.getElementById('couple-stars-modal-overlay');
+  if (overlay) overlay.style.display = 'none';
+};
+
 
 /* Called from HTML onclick */
 function zdRevealMiroir() {
@@ -822,12 +847,17 @@ function checkRoleView() {
     const gbSection = document.getElementById('guestbook-section');
     if (gbSection) gbSection.style.display = 'none';
 
+    // Hide the guest fortune section (Miroir des Étoiles) — the couple only views their own couple zodiac signs
+    const guestFortuneSec = document.getElementById('zdGuestFortuneSection');
+    if (guestFortuneSec) guestFortuneSec.style.display = 'none';
+
     // Show the dedicated bride/groom inscription on the envelope
     const roleLabel = document.getElementById('role-inscription-banner');
     if (roleLabel) roleLabel.style.display = 'flex';
     // Text will be set after language is applied in applyLanguage()
     window._pendingRoleView = view;
   }
+
 }
 
 function processWishesForRole(dataWishes) {
