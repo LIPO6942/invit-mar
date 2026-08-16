@@ -106,7 +106,157 @@ function applyConfigToDOM(cfg) {
   if (typeof initPhotoStack === 'function') {
     initPhotoStack(cfg);
   }
+
+  // ── ZODIAC ARC CÉLESTE Section ──
+  applyZodiacSection(cfg);
 }
+
+/* ─────────────────────────────────────────────────────────
+   ZODIAC SECTION — Arc Céleste Art Déco
+   Called from applyConfigToDOM when cfg.gs / cfg.bs are set
+───────────────────────────────────────────────────────── */
+function applyZodiacSection(cfg) {
+  const gs = cfg.gs || '';  // groom sign key
+  const bs = cfg.bs || '';  // bride sign key
+
+  const section = document.getElementById('zodiac-section');
+  if (!section) return;
+
+  // Only show if at least one sign is configured
+  if (!gs && !bs) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = '';  // show section (uses w-section flex layout)
+
+  const ZODIAC = {
+    aries:       { symbol: '♈', fr: 'BÉLIER',     ar: 'الحمل',      el: 'Feu 🔥',     poem_ar: 'بشجاعة الحمل وقوة عزمه' },
+    taurus:      { symbol: '♉', fr: 'TAUREAU',    ar: 'الثور',      el: 'Terre 🌍',   poem_ar: 'بوفاء الثور ورسوخه' },
+    gemini:      { symbol: '♊', fr: 'GÉMEAUX',    ar: 'الجوزاء',    el: 'Air 💨',     poem_ar: 'بروح الجوزاء المرحة' },
+    cancer:      { symbol: '♋', fr: 'CANCER',     ar: 'السرطان',    el: 'Eau 💧',     poem_ar: 'بحنان السرطان الدافئ' },
+    leo:         { symbol: '♌', fr: 'LION',       ar: 'الأسد',      el: 'Feu 🔥',     poem_ar: 'بكرم الأسد الملكي' },
+    virgo:       { symbol: '♍', fr: 'VIERGE',     ar: 'العذراء',    el: 'Terre 🌍',   poem_ar: 'بلطف العذراء النقي' },
+    libra:       { symbol: '♎', fr: 'BALANCE',    ar: 'الميزان',    el: 'Air 💨',     poem_ar: 'بتوازن الميزان الجميل' },
+    scorpio:     { symbol: '♏', fr: 'SCORPION',   ar: 'العقرب',     el: 'Eau 💧',     poem_ar: 'بعمق العقرب وإخلاصه' },
+    sagittarius: { symbol: '♐', fr: 'SAGITTAIRE', ar: 'القوس',      el: 'Feu 🔥',     poem_ar: 'بحرية القوس ومغامراته' },
+    capricorn:   { symbol: '♑', fr: 'CAPRICORNE', ar: 'الجدي',      el: 'Terre 🌍',   poem_ar: 'بصبر الجدي وثباته' },
+    aquarius:    { symbol: '♒', fr: 'VERSEAU',    ar: 'الدلو',      el: 'Air 💨',     poem_ar: 'بإبداع الدلو ورؤيته' },
+    pisces:      { symbol: '♓', fr: 'POISSONS',   ar: 'الحوت',      el: 'Eau 💧',     poem_ar: 'بحساسية الحوت ورومانسيته' },
+  };
+
+  const gd = ZODIAC[gs];
+  const bd = ZODIAC[bs];
+
+  // ── Update groom medallion ──
+  if (gd) {
+    const sym  = document.getElementById('zdGroomSymbol');
+    const name = document.getElementById('zdGroomName');
+    const lbl  = document.getElementById('zdGroomLabel');
+    if (sym)  sym.textContent  = gd.symbol;
+    if (name) name.textContent = gd.fr;
+    if (lbl)  lbl.textContent  = cfg.ga ? cfg.ga : 'العريس';
+  } else {
+    // Hide groom medallion if no sign set
+    const med = document.getElementById('zdGroomMedallion');
+    if (med) med.style.display = 'none';
+  }
+
+  // ── Update bride medallion ──
+  if (bd) {
+    const sym  = document.getElementById('zdBrideSymbol');
+    const name = document.getElementById('zdBrideName');
+    const lbl  = document.getElementById('zdBrideLabel');
+    if (sym)  sym.textContent  = bd.symbol;
+    if (name) name.textContent = bd.fr;
+    if (lbl)  lbl.textContent  = cfg.ba ? cfg.ba : 'العروسة';
+  } else {
+    const med = document.getElementById('zdBrideMedallion');
+    if (med) med.style.display = 'none';
+    // Shift groom medallion to center if only one sign
+    const gMed = document.getElementById('zdGroomMedallion');
+    if (gMed) gMed.setAttribute('transform', 'translate(110,0)');
+  }
+
+  // ── Compat label at bottom of SVG ──
+  const compatEl = document.getElementById('zdCompatText');
+  if (compatEl) {
+    if (gd && bd) {
+      // Check element compatibility (same element = harmony)
+      const gEl = gd.el.split(' ')[0];
+      const bEl = bd.el.split(' ')[0];
+      const compatLabel = (gEl === bEl)
+        ? `✦ HARMONIE ${gEl.toUpperCase()} ✦`
+        : `✦ ${gEl.toUpperCase()} & ${bEl.toUpperCase()} ✦`;
+      compatEl.textContent = compatLabel;
+    } else if (gd) {
+      compatEl.textContent = `✦ ${gd.el.toUpperCase()} ✦`;
+    } else if (bd) {
+      compatEl.textContent = `✦ ${bd.el.toUpperCase()} ✦`;
+    }
+  }
+
+  // ── Poetic text (Arabic) ──
+  const poemEl = document.getElementById('zodiacPoemText');
+  if (poemEl) {
+    const isFr = cfg.la === 'fr';
+    if (gd && bd) {
+      if (isFr) {
+        poemEl.textContent = `Sous les étoiles, ${gd.fr.charAt(0) + gd.fr.slice(1).toLowerCase()} et ${bd.fr.charAt(0) + bd.fr.slice(1).toLowerCase()} ont uni leurs destins pour l'éternité.`;
+      } else {
+        poemEl.textContent = `${gd.poem_ar}، و${bd.poem_ar}، جمعتهما النجوم في حبٍّ أبديّ ✨`;
+      }
+    } else if (gd) {
+      poemEl.textContent = isFr
+        ? `Né·e sous le signe du ${gd.fr.charAt(0) + gd.fr.slice(1).toLowerCase()}, les étoiles ont guidé ce chemin.`
+        : `${gd.poem_ar}، نقشت النجوم لهما قدرًا جميلًا ✨`;
+    } else if (bd) {
+      poemEl.textContent = isFr
+        ? `Né·e sous le signe du ${bd.fr.charAt(0) + bd.fr.slice(1).toLowerCase()}, les étoiles ont guidé ce chemin.`
+        : `${bd.poem_ar}، نقشت النجوم لهما قدرًا جميلًا ✨`;
+    }
+  }
+
+  // ── Generate star particles background ──
+  const starsContainer = document.getElementById('zodiacStarsBg');
+  if (starsContainer && !starsContainer.dataset.init) {
+    starsContainer.dataset.init = '1';
+    starsContainer.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1';
+    const count = 30;
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement('div');
+      const size = (Math.random() * 2.5 + 0.8).toFixed(1);
+      const x    = (Math.random() * 100).toFixed(1);
+      const y    = (Math.random() * 100).toFixed(1);
+      const dur  = (Math.random() * 3 + 2).toFixed(1);
+      const del  = (Math.random() * 4).toFixed(1);
+      star.style.cssText = `
+        position:absolute;
+        left:${x}%;top:${y}%;
+        width:${size}px;height:${size}px;
+        border-radius:50%;
+        background:rgba(201,168,76,0.55);
+        animation:zdStarTwinkle ${dur}s ${del}s ease-in-out infinite;
+        box-shadow:0 0 ${size * 2}px rgba(201,168,76,0.3);
+      `;
+      starsContainer.appendChild(star);
+    }
+    // Inject keyframes if not already present
+    if (!document.getElementById('zdStarKf')) {
+      const style = document.createElement('style');
+      style.id = 'zdStarKf';
+      style.textContent = `
+        @keyframes zdStarTwinkle {
+          0%,100% { opacity:0.15; transform:scale(1); }
+          50%      { opacity:0.75; transform:scale(1.4); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+}
+
+
 
 function checkRoleView() {
   const params = new URLSearchParams(window.location.search);
@@ -2040,6 +2190,8 @@ const TRANSLATIONS = {
     souvenir_opt_png_desc: 'صورة عالية الجودة تحتوي على المغلف باسمك وكارت الدعوة مناسبة للحفظ في معرض الصور.',
     souvenir_opt_html_title: 'تحميل كصفحة ويب (HTML)',
     souvenir_opt_html_desc: 'ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.',
+    zodiac_title: 'البروج الفلكية للعروسين',
+    zodiac_subtitle: 'كتبت النجوم لقاءهما منذ الأزل',
   },
   fr: {
     bismillah_apex: '✨',
@@ -2089,6 +2241,8 @@ const TRANSLATIONS = {
     souvenir_opt_png_desc: 'Une image haute définition contenant l\'enveloppe avec votre nom et la carte d\'invitation.',
     souvenir_opt_html_title: 'Télécharger en Page Web (HTML)',
     souvenir_opt_html_desc: 'Un fichier HTML autonome complet qui fonctionne hors-ligne.',
+    zodiac_title: 'Signes Astrologiques des Mariés',
+    zodiac_subtitle: 'Les étoiles ont écrit leur rencontre depuis l\'éternité',
   }
 };
 

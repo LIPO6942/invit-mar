@@ -146,6 +146,89 @@
           <div class="field"><label>Prénom en français</label><input id="brideFr" type="text" value="Mariam" dir="ltr"></div>
         </div>
       </div>
+
+      <!-- ▸ Zodiac Signs Card -->
+      <div class="card" id="zodiac-admin-card">
+        <div class="card-title">⭐ البروج الفلكية للعروسين (Signes Astrologiques)</div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:14px">اختر برج كل واحد من العروسين لإضافة لمسة كونية جميلة للدعوة بأسلوب Arc Céleste Art Déco ✨</div>
+        <div class="form-row">
+          <div class="field">
+            <label>🌙 برج العريس (Signe du Marié)</label>
+            <select id="groomSign">
+              <option value="">— بدون —</option>
+              <option value="aries">♈ الحمل — Bélier</option>
+              <option value="taurus">♉ الثور — Taureau</option>
+              <option value="gemini">♊ الجوزاء — Gémeaux</option>
+              <option value="cancer">♋ السرطان — Cancer</option>
+              <option value="leo">♌ الأسد — Lion</option>
+              <option value="virgo">♍ العذراء — Vierge</option>
+              <option value="libra">♎ الميزان — Balance</option>
+              <option value="scorpio">♏ العقرب — Scorpion</option>
+              <option value="sagittarius">♐ القوس — Sagittaire</option>
+              <option value="capricorn">♑ الجدي — Capricorne</option>
+              <option value="aquarius">♒ الدلو — Verseau</option>
+              <option value="pisces">♓ الحوت — Poissons</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>🌸 برج العروسة (Signe de la Mariée)</label>
+            <select id="brideSign">
+              <option value="">— بدون —</option>
+              <option value="aries">♈ الحمل — Bélier</option>
+              <option value="taurus">♉ الثور — Taureau</option>
+              <option value="gemini">♊ الجوزاء — Gémeaux</option>
+              <option value="cancer">♋ السرطان — Cancer</option>
+              <option value="leo">♌ الأسد — Lion</option>
+              <option value="virgo">♍ العذراء — Vierge</option>
+              <option value="libra">♎ الميزان — Balance</option>
+              <option value="scorpio">♏ العقرب — Scorpion</option>
+              <option value="sagittarius">♐ القوس — Sagittaire</option>
+              <option value="capricorn">♑ الجدي — Capricorne</option>
+              <option value="aquarius">♒ الدلو — Verseau</option>
+              <option value="pisces">♓ الحوت — Poissons</option>
+            </select>
+          </div>
+        </div>
+        <!-- Live preview of the zodiac pairing -->
+        <div id="zodiac-admin-preview" style="margin-top:16px;padding:14px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:10px;text-align:center;display:none">
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:6px">معاينة / Aperçu</div>
+          <div id="zodiac-preview-content" style="display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap"></div>
+        </div>
+        <script>
+        (function(){
+          const ZODIAC_DATA = {
+            aries:       { symbol:'♈', ar:'الحمل',      fr:'Bélier',     el:'🔥', dates:'21 Mars – 19 Avr' },
+            taurus:      { symbol:'♉', ar:'الثور',      fr:'Taureau',    el:'🌍', dates:'20 Avr – 20 Mai' },
+            gemini:      { symbol:'♊', ar:'الجوزاء',    fr:'Gémeaux',    el:'💨', dates:'21 Mai – 20 Jun' },
+            cancer:      { symbol:'♋', ar:'السرطان',    fr:'Cancer',     el:'💧', dates:'21 Jun – 22 Juil'},
+            leo:         { symbol:'♌', ar:'الأسد',      fr:'Lion',       el:'🔥', dates:'23 Juil – 22 Août'},
+            virgo:       { symbol:'♍', ar:'العذراء',    fr:'Vierge',     el:'🌍', dates:'23 Août – 22 Sep'},
+            libra:       { symbol:'♎', ar:'الميزان',    fr:'Balance',    el:'💨', dates:'23 Sep – 22 Oct'},
+            scorpio:     { symbol:'♏', ar:'العقرب',     fr:'Scorpion',   el:'💧', dates:'23 Oct – 21 Nov'},
+            sagittarius: { symbol:'♐', ar:'القوس',      fr:'Sagittaire', el:'🔥', dates:'22 Nov – 21 Déc'},
+            capricorn:   { symbol:'♑', ar:'الجدي',      fr:'Capricorne', el:'🌍', dates:'22 Déc – 19 Jan'},
+            aquarius:    { symbol:'♒', ar:'الدلو',      fr:'Verseau',    el:'💨', dates:'20 Jan – 18 Fév'},
+            pisces:      { symbol:'♓', ar:'الحوت',      fr:'Poissons',   el:'💧', dates:'19 Fév – 20 Mar'},
+          };
+          function updateZodiacPreview() {
+            const gs = document.getElementById('groomSign').value;
+            const bs = document.getElementById('brideSign').value;
+            const pv = document.getElementById('zodiac-admin-preview');
+            const pc = document.getElementById('zodiac-preview-content');
+            if (!gs && !bs) { pv.style.display='none'; return; }
+            pv.style.display='block';
+            const gd = ZODIAC_DATA[gs]; const bd = ZODIAC_DATA[bs];
+            pc.innerHTML = [
+              gd ? `<div style="text-align:center"><div style="font-size:2rem;filter:drop-shadow(0 0 6px rgba(201,168,76,0.6))">${gd.symbol}</div><div style="font-size:0.75rem;color:var(--gold);font-weight:700">${gd.fr}</div><div style="font-size:0.65rem;color:var(--text-muted)">${gd.ar}</div></div>` : '',
+              (gd && bd) ? `<div style="color:var(--gold);font-size:1.4rem">✦</div>` : '',
+              bd ? `<div style="text-align:center"><div style="font-size:2rem;filter:drop-shadow(0 0 6px rgba(201,168,76,0.6))">${bd.symbol}</div><div style="font-size:0.75rem;color:var(--gold);font-weight:700">${bd.fr}</div><div style="font-size:0.65rem;color:var(--text-muted)">${bd.ar}</div></div>` : '',
+            ].join('');
+          }
+          document.getElementById('groomSign').addEventListener('change', updateZodiacPreview);
+          document.getElementById('brideSign').addEventListener('change', updateZodiacPreview);
+        })();
+        </script>
+      </div>
       <div class="card">
         <div class="card-title">🎨 ثيم الألوان (Theme)</div>
         <div style="display:flex;gap:12px;margin-top:10px">
@@ -1249,6 +1332,8 @@ function buildConfig() {
     bf2:val('brideFr'),
     bf: val('brideFather'),
     bm: val('brideMother'),
+    gs: val('groomSign') || '',   // groom zodiac sign
+    bs: val('brideSign') || '',   // bride zodiac sign
     wd: val('weddingDate'),
     wdd:val('weddingDateDisplay'),
     ev: collectEvents().filter(e => e.active !== false).map(e => ({
@@ -1332,6 +1417,20 @@ function applyConfigToFields(c) {
   set('groomMother',       c.gm  || '');
   set('brideFather',       c.bf  || '');
   set('brideMother',       c.bm  || '');
+  // Restore zodiac signs
+  const groomSignEl = document.getElementById('groomSign');
+  const brideSignEl = document.getElementById('brideSign');
+  if (groomSignEl) groomSignEl.value = c.gs || '';
+  if (brideSignEl) brideSignEl.value = c.bs || '';
+  // Trigger preview update
+  setTimeout(() => {
+    const previewFn = window._updateZodiacPreview;
+    if (typeof previewFn === 'function') previewFn();
+    else {
+      const gEl = document.getElementById('groomSign');
+      if (gEl) gEl.dispatchEvent(new Event('change'));
+    }
+  }, 100);
   set('weddingDate',       c.wd  || '');
   autoFillDateDisplay(c.wd || ''); // regenerate date display from stored date
   set('weddingDateDisplay',c.wdd || ''); // fallback: also restore legacy saved text
