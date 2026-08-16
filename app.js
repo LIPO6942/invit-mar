@@ -2385,14 +2385,14 @@ function applyEnvelopeDesign(cfg) {
     }
   });
 
-  // ── Photo Stack Background Theme (Inherits Envelope Theme in translucent style) ──
-  const photoPatternEl = document.getElementById('photoSectionPatternBg');
-  if (photoPatternEl) {
+  // ── Synchronize Translucent Envelope Pattern across all invitation sections (Program -> Closing) ──
+  const patternEls = document.querySelectorAll('.section-pattern-bg, .photo-section-pattern-bg');
+  if (patternEls.length) {
     let patternImg = '';
-    let patternOpacity = '0.12';
+    let patternOpacity = '0.11';
     if (showNature) {
       patternImg = "url('assets/nature_summer_pattern.png')";
-      patternOpacity = '0.14';
+      patternOpacity = '0.13';
     } else if (showVintage) {
       patternImg = "url('assets/vintage_pattern_new.png')";
       patternOpacity = '0.12';
@@ -2401,30 +2401,33 @@ function applyEnvelopeDesign(cfg) {
       patternOpacity = '0.12';
     } else if (showCalligraphy) {
       patternImg = "url('assets/arabic_calligraphy_pattern.png')";
-      patternOpacity = '0.13';
+      patternOpacity = '0.12';
     } else if (showZellige) {
       patternImg = "url('assets/zellige_pattern.png')";
-      patternOpacity = '0.13';
+      patternOpacity = '0.12';
     } else if (showDoor) {
       patternImg = "url('assets/tunisian_door_pattern.png')";
-      patternOpacity = '0.14';
+      patternOpacity = '0.13';
     } else if (showAmazigh) {
       patternImg = "url('assets/amazigh_pattern.png')";
-      patternOpacity = '0.14';
+      patternOpacity = '0.13';
     } else if (showEmbossed) {
       patternImg = "url('assets/embossed_botanical_pattern.png')";
-      patternOpacity = '0.14';
+      patternOpacity = '0.13';
     } else if (showSageEmbossed) {
       patternImg = "url('assets/embossed_sage_green_pattern.png')";
-      patternOpacity = '0.14';
+      patternOpacity = '0.13';
     } else {
-      // Default floral / damask
+      // Default floral / branches
       patternImg = "radial-gradient(circle at 50% 50%, rgba(201, 168, 76, 0.12) 0%, rgba(201, 168, 76, 0.04) 50%, transparent 80%)";
-      patternOpacity = '0.9';
+      patternOpacity = '0.85';
     }
-    photoPatternEl.style.backgroundImage = patternImg;
-    photoPatternEl.style.opacity = patternOpacity;
+    patternEls.forEach(el => {
+      el.style.backgroundImage = patternImg;
+      el.style.opacity = patternOpacity;
+    });
   }
+
 
 
   // ── Hall Photo Background (hp) ──

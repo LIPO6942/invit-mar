@@ -5592,27 +5592,47 @@ body.lang-ar .animated-bride {
   margin-top: 10px;
 }
 
-/* ── Photo Stack Section Envelope Pattern Theming ── */
+/* ── Global Section Envelope Pattern Theming (Program to Closing) ── */
+.section-pattern-bg,
 .photo-section-pattern-bg {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  opacity: 0.13;
+  opacity: 0.12;
   mix-blend-mode: multiply;
   pointer-events: none;
   z-index: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, background-image 0.5s ease;
 }
 
+.section-vignette,
 .photo-section-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.2) 20%, rgba(245, 237, 224, 0.75) 100%);
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.25) 20%, rgba(245, 237, 224, 0.65) 100%);
   pointer-events: none;
   z-index: 1;
 }
+
+#program-section,
+#guestbook-section,
+#photo-stack-section,
+.zd-section,
+#closing-section {
+  position: relative;
+  overflow: hidden;
+}
+
+#program-section .program-content,
+#closing-section .closing-split,
+#closing-section .closing-ornament-top,
+#closing-section .closing-ornament-bottom {
+  position: relative;
+  z-index: 2;
+}
+
 
 /* ── Parchment scroll (No truncation, full message display) ── */
 .zd-parchment-wrap {
