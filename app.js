@@ -301,20 +301,67 @@ function applyZodiacSection(cfg) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MIROIR DU CIEL — Gamification fortune de l'invité
-   - Guest name prefilled from _resolvedGuestName / URL
-   - Sign selection reveals "Allume mon étoile" button
-   - Button triggers starfield canvas animation + parchment
+   MIROIR DU CIEL v2 — Multi-member, locked, RTL-correct
 ═══════════════════════════════════════════════════════════ */
 
-// Global state for miroir
-let _zdSelectedKey  = null;
-let _zdSelectedZd   = null;
-let _zdFortune      = null;
-let _zdIsFr         = false;
-let _zdCfg          = null;
-let _zdZodiac       = null;
+let _zdSelectedKey = null;
+let _zdSelectedZd  = null;
+let _zdIsFr        = false;
+let _zdCfg         = null;
+let _zdZodiac      = null;
+let _zdMembers     = [];     // [{name, role, storageKey}]
+let _zdActiveMember = 0;     // which member tab is active
+let _zdIsLocked    = false;  // true once all revealed
 
+// ── Determine members from guest type ──
+function zdGetMembers(name, type, isFr) {
+  const members = [];
+  const n = name || '';
+  if (!n) return members;
+
+  // Primary guest always present
+  const primaryLabel = isFr
+    ? (type.includes('fr_woman') ? 'Vous' : type.includes('fr_friend_f') ? 'Vous' : 'Vous')
+    : 'أنتَ / أنتِ';
+  members.push({ name: n, role: primaryLabel, key: 'primary' });
+
+  // Spouse?
+  if (type === 'ar_couple' || type === 'ar_couple_children' || type === 'fr_couple') {
+    const spouseLabel = isFr ? 'Votre conjoint·e' : 'قرينتك / قرينك';
+    members.push({ name: isFr ? `${n} — conjoint·e` : `${n} — القرين`, role: spouseLabel, key: 'spouse' });
+  }
+  // Children?
+  if (type === 'ar_couple_children') {
+    const kidLabel = 'الأبناء';
+    members.push({ name: isFr ? `Famille ${n}` : `أبناء ${n}`, role: kidLabel, key: 'children' });
+  }
+  return members;
+}
+
+// ── LocalStorage key for a specific member's fortune ──
+function zdStorageKey(guestId, memberKey) {
+  return `zd_fortune_v2_${guestId || 'guest'}_${memberKey}`;
+}
+
+// ── Fortune messages per sign (wedding-linked, bilingual) ──
+function zdGetFortunes(gName, bName, gNameFr, bNameFr) {
+  return {
+    aries:       { ar: `يا صاحب الحمل، روحك من نار وجرأة، وفي هذه الليلة المباركة التي تجمع ${gName} و${bName}، كتبت النجوم أن حضورك يُضيء الحفل كما يُضيء الحمل سماء الربيع. اللهم اجعل فرحتك اليوم بداية نعمة لا تنتهي 🌟`, fr: `Cher Bélier, votre fougue illumine cette nuit où ${gNameFr} et ${bNameFr} unissent leurs destins. Que ce soir vous apporte joie et bénédiction ✨` },
+    taurus:      { ar: `يا من وُلدت تحت نجم الثور، ثباتك وأمانتك منحة من الله. وفي ليلة ميثاق ${gName} و${bName}، كما رسخت جذور الثور في الأرض، فليرسخ الفرح في قلبك وقلوب الأحبة 🌿`, fr: `Noble Taureau, votre loyauté est un trésor en cette nuit d'alliance entre ${gNameFr} et ${bNameFr} 🌿` },
+    gemini:      { ar: `يا صاحب الجوزاء، روحك خفيفة كنسيم الليل الذي يداعب نجوم سماء ${gName} و${bName}. كلماتك ستكون بلسماً وضحكتك ستجعل الفرح مضاعفاً 💫`, fr: `Brillant Gémeaux, votre esprit anime cette nuit où ${gNameFr} et ${bNameFr} se disent oui 💫` },
+    cancer:      { ar: `يا من تحمل قلب السرطان، حنانك هو هدية للجميع في ليلة زفاف ${gName} و${bName}. النجوم ترى فيك روحاً تجمع القلوب، اللهم أدم عليك هذا النور 🤍`, fr: `Doux Cancer, votre sensibilité est un cadeau en cette nuit où ${gNameFr} et ${bNameFr} bâtissent leur nid d'amour 🤍` },
+    leo:         { ar: `يا أسد الليل المبارك، حضورك في حفل ${gName} و${bName} كالشمس في سماء صافية. أنت من يُضفي على هذه الليلة مهابتها وبريقها الملكي 👑`, fr: `Majestueux Lion, votre présence au mariage de ${gNameFr} et ${bNameFr} est comme un soleil royal 👑` },
+    virgo:       { ar: `يا نقية العذراء، في هذه الليلة التي تجمع ${gName} و${bName} في ميثاق مقدس، لطفك وجمال روحك هما زينة هذا الحفل 🌸`, fr: `Gracieuse Vierge, votre délicatesse est l'ornement de cette nuit où ${gNameFr} et ${bNameFr} s'engagent 🌸` },
+    libra:       { ar: `يا صاحب الميزان، في ليلة بنى فيها ${gName} و${bName} توازن حياة مشتركة، أناقتك وتوازنك يجعلان كل من حولك في راحة وبهجة ⚖️`, fr: `Élégante Balance, en cette nuit où ${gNameFr} et ${bNameFr} trouvent leur équilibre à deux ⚖️` },
+    scorpio:     { ar: `يا عميق الروح يا عقرب، في هذه الليلة الخالدة التي توّج فيها ${gName} و${bName} حبهما، حضورك يُضيف إلى هذه الذكرى معنى لا يُنسى 🖤`, fr: `Profond Scorpion, en cette nuit immortelle où ${gNameFr} et ${bNameFr} scellent leur amour 🖤` },
+    sagittarius: { ar: `يا حر القوس، روحك المتفائلة هي النسيم الذي يحمل بخور هذه الليلة. في فرح ${gName} و${bName}، سهامك من المحبة ستصيب القلوب 🏹`, fr: `Libre Sagittaire, en cette fête de ${gNameFr} et ${bNameFr}, vos flèches de joie atteignent tous les cœurs 🏹` },
+    capricorn:   { ar: `يا صبور الجدي، في ليلة ${gName} و${bName}، صبرك وحكمتك هما درعٌ لمن تحبّ، وعزيمتك مثالٌ يحتذى به 🌙`, fr: `Persévérant Capricorne, en cette nuit de ${gNameFr} et ${bNameFr}, votre sagesse brille comme la lune 🌙` },
+    aquarius:    { ar: `يا مبدع الدلو، روحك الحرة هي الفضاء الذي تتألق فيه نجوم ${gName} و${bName}. أفكارك تجعل هذا الاحتفال استثنائياً 🌊`, fr: `Visionnaire Verseau, votre créativité illumine l'espace où brillent les étoiles de ${gNameFr} et ${bNameFr} 🌊` },
+    pisces:      { ar: `يا حساس الحوت، في هذه الليلة الرومانسية التي يتبادل فيها ${gName} و${bName} عهد الحب الأبدي، الحب الحقيقي الذي تراه بعيونك الليلة سيُلهمك طويلاً 🐟`, fr: `Sensible Poissons, en cette nuit où ${gNameFr} et ${bNameFr} échangent leur serment éternel, l'amour vous inspire 🐟` },
+  };
+}
+
+// ── Build the entire fortune section ──
 function buildGuestFortune(cfg, ZODIAC) {
   const grid = document.getElementById('zdSignGrid');
   if (!grid || grid.dataset.init) return;
@@ -324,90 +371,73 @@ function buildGuestFortune(cfg, ZODIAC) {
   _zdCfg    = cfg;
   _zdZodiac = ZODIAC;
 
-  // ─── Prefill guest name ───
-  const nameInput = document.getElementById('zdGuestNameInput');
-  const autoName  = _resolvedGuestName || '';
-  if (nameInput && autoName) {
-    nameInput.value = autoName;
-    nameInput.placeholder = '';
-  }
-  // Update greeting dynamically
-  if (nameInput) {
-    nameInput.addEventListener('input', zdUpdateGreeting);
-    zdUpdateGreeting();
+  const guestName = _resolvedGuestName || '';
+  const guestType = (typeof _resolvedGuestType !== 'undefined' && _resolvedGuestType) ? _resolvedGuestType : 'ar_couple';
+  const guestId   = (typeof _resolvedGuestId !== 'undefined' && _resolvedGuestId) ? _resolvedGuestId : guestName;
+
+  // Update section title with guest name
+  const greeting = document.getElementById('zdFortuneGreeting');
+  if (greeting && guestName) {
+    greeting.textContent = _zdIsFr ? `مِرآةُ النُّجوم — ${guestName}` : `مِرآةُ النُّجوم — ${guestName}`;
   }
 
-  // Update placeholder per language
-  if (nameInput) {
-    nameInput.placeholder = _zdIsFr ? 'Votre prénom…' : 'أدخل اسمك هنا…';
+  // Build member list
+  _zdMembers = zdGetMembers(guestName, guestType, _zdIsFr);
+  if (_zdMembers.length === 0) {
+    // No guest known — show single generic slot
+    _zdMembers = [{ name: '', role: _zdIsFr ? 'Vous' : 'أنتَ', key: 'primary' }];
   }
 
-  // ─── Greeting ───
-  zdUpdateGreeting();
+  // Check if ALL members already have saved fortunes
+  const allSaved = _zdMembers.every(m => !!localStorage.getItem(zdStorageKey(guestId, m.key)));
+  _zdIsLocked = allSaved;
 
-  // ─── Fortune messages per sign — rich, wedding-linked ───
-  const gName = cfg.ga || cfg.gf2 || 'العريس';
-  const bName = cfg.ba || cfg.bf2 || 'العروسة';
-  const gNameFr = cfg.gf2 || cfg.ga || 'le marié';
-  const bNameFr = cfg.bf2 || cfg.ba || 'la mariée';
+  if (allSaved) {
+    // Show locked notice + all saved parchments
+    zdShowLockedState(guestId, ZODIAC);
+    return;
+  }
 
-  window._zdFORTUNES = {
-    aries: {
-      ar: `يا صاحب الحمل، روحك من نار وجرأة، وفي هذه الليلة المباركة التي تجمع ${gName} و${bName}، كتبت النجوم أن حضورك يُضيء الحفل كما يُضيء الحمل سماء الربيع. اللهم اجعل فرحتك اليوم بداية نعمة لا تنتهي 🌟`,
-      fr:  `Cher Bélier, votre fougue illumine cette nuit où ${gNameFr} et ${bNameFr} unissent leurs destins. Les étoiles ont inscrit votre présence comme une flamme qui réchauffe cette céleste union. Que ce soir vous apporte joie et bénédiction ✨`
-    },
-    taurus: {
-      ar: `يا من وُلدت تحت نجم الثور، ثباتك وأمانتك منحة من الله. وفي ليلة ميثاق ${gName} و${bName}، تحمل النجوم لك رسالة: كما رسخت جذور الثور في الأرض، فليرسخ الفرح في قلبك وقلوب الأحبة 🌿`,
-      fr:  `Noble Taureau, votre loyauté est un trésor en cette nuit d'alliance entre ${gNameFr} et ${bNameFr}. Les constellations chuchotent que votre présence apporte équilibre et sérénité à cette fête bénie 🌿`
-    },
-    gemini: {
-      ar: `يا صاحب الجوزاء، روحك خفيفة كنسيم الليل الذي يداعب نجوم سماء ${gName} و${bName}. في هذه الليلة المضيئة، كتبت لك الكواكب أن كلماتك ستكون بلسماً وضحكتك ستجعل الفرح مضاعفاً 💫`,
-      fr:  `Brillant Gémeaux, votre esprit vif est la brise légère qui anime cette nuit où ${gNameFr} et ${bNameFr} se disent oui. Les étoiles vous choisissent pour porter la joie et faire résonner les rires 💫`
-    },
-    cancer: {
-      ar: `يا من تحمل قلب السرطان، حنانك الذي لا يُقاس هو هدية للجميع في ليلة زفاف ${gName} و${bName}. النجوم ترى فيك روحاً تجمع القلوب، اللهم أدم عليك هذا النور وعلى من تحب 🤍`,
-      fr:  `Doux Cancer, votre sensibilité est un cadeau précieux en cette nuit où ${gNameFr} et ${bNameFr} bâtissent leur nid d'amour. Les astres vous voient comme le cœur battant de cette célébration 🤍`
-    },
-    leo: {
-      ar: `يا أسد الليل المبارك، حضورك في حفل ${gName} و${bName} كالشمس في سماء صافية — لا يمكن تجاهله. النجوم تحيّيك: أنت من يُضفي على هذه الليلة مهابتها وبريقها الملكي 👑`,
-      fr:  `Majestueux Lion, votre présence au mariage de ${gNameFr} et ${bNameFr} est comme un soleil dans un ciel d'été — lumineuse et royale. Les étoiles vous couronnent roi de cette nuit de fête 👑`
-    },
-    virgo: {
-      ar: `يا نقية العذراء، في هذه الليلة التي تجمع ${gName} و${bName} في ميثاق مقدس، تحمل النجوم لك رسالة: لطفك وجمال روحك هما زينة هذا الحفل، وحضورك بركة على العروسين 🌸`,
-      fr:  `Gracieuse Vierge, votre délicatesse est l'ornement de cette nuit où ${gNameFr} et ${bNameFr} s'engagent pour la vie. Les astres voient en vous la touche de grâce qui rend cette fête inoubliable 🌸`
-    },
-    libra: {
-      ar: `يا صاحب الميزان، في ليلة بنى فيها ${gName} و${bName} توازن حياة مشتركة، أنت الميزان الذي يُوزن به الحضور. النجوم تُخبرك: أناقتك وتوازنك يجعلان كل من حولك في راحة وبهجة ⚖️`,
-      fr:  `Élégante Balance, en cette nuit où ${gNameFr} et ${bNameFr} trouvent leur équilibre à deux, vous incarnez l'harmonie même. Les étoiles vous confient la mission de répandre sérénité et élégance ⚖️`
-    },
-    scorpio: {
-      ar: `يا عميق الروح يا عقرب، وفاؤك وإخلاصك أمانة نادرة. في هذه الليلة الخالدة التي توّج فيها ${gName} و${bName} حبهما، تُخبرك النجوم أن حضورك يُضيف إلى هذه الذكرى معنى لا يُنسى 🖤`,
-      fr:  `Profond Scorpion, votre loyauté sans faille est un joyau rare en cette nuit immortelle où ${gNameFr} et ${bNameFr} scellent leur amour. Les astres vous confient leurs secrets les plus précieux 🖤`
-    },
-    sagittarius: {
-      ar: `يا حر القوس، روحك المتفائلة هي النسيم الذي يحمل بخور هذه الليلة إلى كل الأصقاع. في فرح ${gName} و${bName}، النجوم تُبشّرك: سهامك من المحبة ستصيب القلوب وتُدخل الفرح لكل من حولك 🏹`,
-      fr:  `Libre Sagittaire, votre optimisme est le vent qui porte le parfum de cette nuit jusqu'aux étoiles. En cette fête de ${gNameFr} et ${bNameFr}, les astres vous confient la mission d'apporter joie et espoir 🏹`
-    },
-    capricorn: {
-      ar: `يا صبور الجدي، في ليلة حصاد المحبة والعمر التي يحتفل بها ${gName} و${bName}، تُرسل إليك النجوم رسالة: صبرك وحكمتك هما درعٌ لمن تحبّ، وعزيمتك مثالٌ يحتذى به هذه الليلة 🌙`,
-      fr:  `Persévérant Capricorne, en cette nuit de récolte d'amour de ${gNameFr} et ${bNameFr}, les étoiles célèbrent votre sagesse et votre ténacité qui font de vous un pilier précieux 🌙`
-    },
-    aquarius: {
-      ar: `يا مبدع الدلو، روحك الحرة والمبدعة هي الفضاء الذي تتألق فيه نجوم ${gName} و${bName}. النجوم تُلهمك الليلة: أنت شمعة تضيء ما لا يراه الآخرون، وأفكارك تجعل هذا الاحتفال استثنائياً 🌊`,
-      fr:  `Visionnaire Verseau, votre créativité est l'espace où brillent les étoiles de ${gNameFr} et ${bNameFr}. Les astres vous inspirent ce soir à illuminer ce qui échappe aux regards ordinaires 🌊`
-    },
-    pisces: {
-      ar: `يا حساس الحوت، في هذه الليلة الرومانسية التي يتبادل فيها ${gName} و${bName} عهد الحب الأبدي، قلبك الرقيق يتردّد صداه في كل كلمة تُقال. النجوم تُهديك هذه الرسالة: الحب الحقيقي الذي تراه بعيونك الليلة سيُلهمك طويلاً 🐟`,
-      fr:  `Sensible Poissons, en cette nuit romantique où ${gNameFr} et ${bNameFr} échangent leur serment d'amour éternel, votre cœur résonne à chaque parole prononcée. Les astres vous offrent l'amour véritable comme source d'inspiration 🐟`
-    },
-  };
+  // Build member tabs (only if > 1 member)
+  const tabsEl = document.getElementById('zdMemberTabs');
+  if (_zdMembers.length > 1 && tabsEl) {
+    tabsEl.style.display = 'flex';
+    _zdMembers.forEach((m, idx) => {
+      // Skip already-saved members in tab
+      const saved = localStorage.getItem(zdStorageKey(guestId, m.key));
+      const btn = document.createElement('button');
+      btn.className = 'zd-member-tab' + (idx === 0 ? ' zd-tab-active' : '') + (saved ? ' zd-tab-done' : '');
+      btn.textContent = m.role + (saved ? ' ✦' : '');
+      btn.dataset.idx = idx;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.zd-member-tab').forEach(b => b.classList.remove('zd-tab-active'));
+        btn.classList.add('zd-tab-active');
+        _zdActiveMember = idx;
+        // Reset sign selection
+        _zdSelectedKey = null;
+        document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
+        document.getElementById('zdRevealWrap').style.display = 'none';
+        // If this member already has a fortune, show it
+        const savedFortune = localStorage.getItem(zdStorageKey(guestId, m.key));
+        if (savedFortune) {
+          const data = JSON.parse(savedFortune);
+          zdShowSavedParchment(m, data, ZODIAC);
+        }
+      });
+      tabsEl.appendChild(btn);
+    });
+  }
 
-  const ALL_SIGNS = [
-    'aries','taurus','gemini','cancer','leo','virgo',
-    'libra','scorpio','sagittarius','capricorn','aquarius','pisces'
-  ];
+  // Check if the active member already has a fortune
+  const activeM = _zdMembers[0];
+  const savedActive = localStorage.getItem(zdStorageKey(guestId, activeM.key));
+  if (savedActive) {
+    const data = JSON.parse(savedActive);
+    zdShowSavedParchment(activeM, data, ZODIAC);
+  }
 
-  // Build grid buttons
+  // Build sign grid
+  const ALL_SIGNS = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
   ALL_SIGNS.forEach(key => {
     const zd = ZODIAC[key];
     if (!zd) return;
@@ -415,215 +445,247 @@ function buildGuestFortune(cfg, ZODIAC) {
     btn.className = 'zd-sign-btn';
     btn.dataset.sign = key;
     btn.setAttribute('aria-label', `${zd.fr} – ${zd.ar}`);
-    btn.innerHTML = `
-      <span class="zd-btn-sym">${zd.sym}\uFE0E</span>
-      <span class="zd-btn-name">${zd.fr.slice(0,5)}</span>
-    `;
-    btn.addEventListener('click', () => zdSelectSign(key, zd));
+    btn.innerHTML = `<span class="zd-btn-sym">${zd.sym}\uFE0E</span><span class="zd-btn-name">${zd.fr.slice(0,5)}</span>`;
+    btn.addEventListener('click', () => zdSelectSign(key, zd, guestId));
     grid.appendChild(btn);
   });
 }
 
-function zdUpdateGreeting() {
-  const el = document.getElementById('zdFortuneGreeting');
-  if (!el) return;
-  const input = document.getElementById('zdGuestNameInput');
-  const name  = (input && input.value.trim()) || _resolvedGuestName || '';
-  if (name) {
-    el.textContent = _zdIsFr ? `Message des Étoiles pour ${name}` : `رسالة النجوم إلى ${name}`;
-  } else {
-    el.textContent = _zdIsFr ? 'Message des Étoiles' : 'رسالة النجوم';
-  }
-}
+function zdSelectSign(key, zd, guestId) {
+  // Check if current member already revealed
+  const m = _zdMembers[_zdActiveMember];
+  if (m && localStorage.getItem(zdStorageKey(guestId, m.key))) return; // locked
 
-function zdSelectSign(key, zd) {
   _zdSelectedKey = key;
   _zdSelectedZd  = zd;
-  _zdFortune     = window._zdFORTUNES[key];
 
-  // Highlight active button
   document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
-  const activeBtn = document.querySelector(`.zd-sign-btn[data-sign="${key}"]`);
-  if (activeBtn) activeBtn.classList.add('zd-active');
+  document.querySelector(`.zd-sign-btn[data-sign="${key}"]`)?.classList.add('zd-active');
 
-  // Show reveal button
   const revealWrap = document.getElementById('zdRevealWrap');
   if (revealWrap) revealWrap.style.display = '';
-  const revealBtn = document.getElementById('zdRevealBtn');
-  if (revealBtn) {
-    revealBtn.style.animation = 'none';
-    void revealBtn.offsetWidth;
-    revealBtn.style.animation = '';
-  }
-  // Update reveal button text with sign name
   const revealText = document.querySelector('#zdRevealBtn .zd-reveal-text');
   if (revealText) {
     revealText.textContent = _zdIsFr
-      ? `Révéler mon ${zd.fr.charAt(0) + zd.fr.slice(1).toLowerCase()}`
+      ? `Allumer mon ${zd.fr.charAt(0) + zd.fr.slice(1).toLowerCase()}`
       : `أضيء نجم ${zd.ar}`;
   }
 }
 
 /* Called from HTML onclick */
 function zdRevealMiroir() {
-  if (!_zdSelectedKey) return;
-  const guestName = (document.getElementById('zdGuestNameInput')?.value.trim()) || _resolvedGuestName || '';
+  if (!_zdSelectedKey || !_zdSelectedZd) return;
 
-  // ── 1. Canvas name animation ──
-  zdPlayNameStars(guestName, () => {
-    // ── 2. After animation, show parchment ──
-    zdShowParchment(_zdSelectedKey, _zdSelectedZd, _zdFortune, _zdIsFr, guestName);
+  const m       = _zdMembers[_zdActiveMember];
+  const nameToAnimate = m ? m.name : (_resolvedGuestName || '');
+  const guestId = (typeof _resolvedGuestId !== 'undefined' && _resolvedGuestId) ? _resolvedGuestId : (_resolvedGuestName || '');
+
+  // Disable button
+  const btn = document.getElementById('zdRevealBtn');
+  if (btn) btn.disabled = true;
+
+  zdPlayNameStars(nameToAnimate, () => {
+    // Build fortune
+    const cfg = _zdCfg || {};
+    const gN   = cfg.ga || cfg.gf2 || 'العريس';
+    const bN   = cfg.ba || cfg.bf2 || 'العروسة';
+    const gNFr = cfg.gf2 || cfg.ga || 'le marié';
+    const bNFr = cfg.bf2 || cfg.ba || 'la mariée';
+    const FORTUNES = zdGetFortunes(gN, bN, gNFr, bNFr);
+    const fortune  = FORTUNES[_zdSelectedKey];
+
+    // Save to localStorage
+    const saveData = {
+      signKey:  _zdSelectedKey,
+      sym:      _zdSelectedZd.sym,
+      fr:       _zdSelectedZd.fr,
+      ar:       _zdSelectedZd.ar,
+      msgAr:    fortune.ar,
+      msgFr:    fortune.fr,
+      ts:       Date.now()
+    };
+    if (m) localStorage.setItem(zdStorageKey(guestId, m.key), JSON.stringify(saveData));
+
+    // Mark tab as done
+    const tabBtn = document.querySelector(`.zd-member-tab[data-idx="${_zdActiveMember}"]`);
+    if (tabBtn) { tabBtn.classList.add('zd-tab-done'); tabBtn.textContent = tabBtn.textContent.replace(' ✦','') + ' ✦'; }
+
+    // Show parchment
+    zdAppendParchment(m, saveData, _zdZodiac);
+
+    // Hide sign grid + reveal button
+    document.getElementById('zdRevealWrap').style.display = 'none';
+    document.querySelectorAll('.zd-sign-btn').forEach(b => { b.classList.remove('zd-active'); b.disabled = true; });
+    _zdSelectedKey = null;
+
+    if (btn) btn.disabled = false;
+
+    // Check if all members done
+    const allDone = _zdMembers.every(mem => !!localStorage.getItem(zdStorageKey(guestId, mem.key)));
+    if (allDone) {
+      const notice = document.getElementById('zdLockedNotice');
+      if (notice) notice.style.display = 'flex';
+      document.getElementById('zdSignGrid').style.display = 'none';
+    }
   });
 }
 
-/* Canvas: letters of guest name appear as stars one by one */
+/* Show locked state: hide grid, show all saved parchments */
+function zdShowLockedState(guestId, ZODIAC) {
+  const grid    = document.getElementById('zdSignGrid');
+  const notice  = document.getElementById('zdLockedNotice');
+  const tabs    = document.getElementById('zdMemberTabs');
+  const revWrap = document.getElementById('zdRevealWrap');
+  if (grid)    grid.style.display    = 'none';
+  if (revWrap) revWrap.style.display = 'none';
+  if (notice)  notice.style.display  = 'flex';
+  if (tabs)    tabs.style.display    = 'none';
+
+  _zdMembers.forEach(m => {
+    const raw = localStorage.getItem(zdStorageKey(guestId, m.key));
+    if (!raw) return;
+    try { zdAppendParchment(m, JSON.parse(raw), ZODIAC); } catch(e) {}
+  });
+}
+
+/* Show one saved parchment (for tab click) */
+function zdShowSavedParchment(m, data, ZODIAC) {
+  const existing = document.querySelector(`.zd-parchment-wrap[data-member="${m.key}"]`);
+  if (existing) { existing.scrollIntoView({ behavior:'smooth', block:'nearest' }); return; }
+  zdAppendParchment(m, data, ZODIAC);
+}
+
+/* Append a parchment card to #zdParchments */
+function zdAppendParchment(member, data, ZODIAC) {
+  const container = document.getElementById('zdParchments');
+  if (!container) return;
+  if (container.querySelector(`[data-member="${member?.key}"]`)) return; // already shown
+
+  const seals   = { fire:'🔥', earth:'🌿', air:'💨', water:'💧' };
+  const elMap   = { aries:'fire',leo:'fire',sagittarius:'fire', taurus:'earth',virgo:'earth',capricorn:'earth', gemini:'air',libra:'air',aquarius:'air', cancer:'water',scorpio:'water',pisces:'water' };
+  const sealEmoji = seals[elMap[data.signKey]] || '✦';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'zd-parchment-wrap zd-open';
+  if (member) wrap.dataset.member = member.key;
+
+  const msgMain = _zdIsFr ? data.msgFr : data.msgAr;
+  const msgSub  = _zdIsFr ? data.msgAr : data.msgFr;
+  const memberName = member ? member.name : '';
+
+  wrap.innerHTML = `
+    <div class="zd-parchment">
+      <div class="zd-wax-seal">${sealEmoji}</div>
+      ${memberName ? `<div class="zd-fortune-guest-name">${memberName}</div>` : ''}
+      <div class="zd-fortune-sign">${data.sym}\uFE0E</div>
+      <div class="zd-fortune-sign-name">${data.fr}</div>
+      <div class="zd-parchment-divider"></div>
+      <p class="zd-fortune-msg">${msgMain}</p>
+      <div class="zd-parchment-divider" style="margin-top:14px"></div>
+      <p class="zd-fortune-msg-fr">${msgSub}</p>
+    </div>`;
+
+  container.appendChild(wrap);
+  setTimeout(() => wrap.scrollIntoView({ behavior:'smooth', block:'nearest' }), 150);
+}
+
+/* Canvas: Arabic name RTL, letters from right → left */
 function zdPlayNameStars(name, onComplete) {
   const canvas = document.getElementById('zdSkyCanvas');
   if (!canvas || !name) { onComplete(); return; }
 
   canvas.style.display = 'block';
   const W = canvas.offsetWidth || 340;
-  const H = 80;
+  const H = 90;
   canvas.width  = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  const chars  = [...name];
-  const total  = chars.length;
-  const delay  = 120;  // ms per letter
-  let revealed = [];
+  // For Arabic: render the whole word as a single unit (shaped), letter-by-letter reveal
+  // We render each character in a RTL-shaped word using measureText for correct spacing
+  // Draw entire name first to get correct glyph metrics
+  const FONT  = `bold ${Math.round(H * 0.5)}px 'Scheherazade New', 'Amiri', serif`;
+  ctx.font    = FONT;
+  ctx.direction = 'rtl';
+  const totalW = ctx.measureText(name).width;
+  const chars = [...name]; // Unicode code points
+  const total = chars.length;
+  const delay = 110;
+
+  // Pre-compute x positions (RTL: right edge → left, but canvas is LTR by default)
+  // We'll draw substrings of increasing length, clipped, for the reveal effect
+  let revealCount = 0;
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
-    // Background: faint cream
-    ctx.fillStyle = 'rgba(253,248,238,0)';
-    ctx.fillRect(0, 0, W, H);
+    if (revealCount === 0) return;
 
-    // Letters
-    revealed.forEach(({ ch, x, y, alpha, glow }) => {
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.font = `bold ${Math.round(H * 0.52)}px 'Amiri', serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      // Glow
-      ctx.shadowColor = 'rgba(201,168,76,0.9)';
-      ctx.shadowBlur  = glow;
-      ctx.fillStyle   = '#c9a84c';
-      ctx.fillText(ch, x, y);
-      ctx.restore();
-    });
+    const substr = chars.slice(0, revealCount).join('');
+    ctx.save();
+    ctx.font      = FONT;
+    ctx.direction = 'rtl';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(201,168,76,0.95)';
+    ctx.shadowBlur  = 24;
+    ctx.fillStyle   = '#b8862a';
+    ctx.globalAlpha = 1;
+    // Draw from right side
+    ctx.fillText(substr, W - 12, H / 2);
+    ctx.restore();
   }
 
   function spawnNext(i) {
-    if (i >= total) {
-      // Fade whole canvas out after 900ms
+    if (i > total) {
       setTimeout(() => {
         let a = 1;
         const fade = setInterval(() => {
-          a -= 0.06;
+          a -= 0.05;
           ctx.clearRect(0, 0, W, H);
+          if (a <= 0) { clearInterval(fade); canvas.style.display = 'none'; onComplete(); return; }
+          ctx.save();
           ctx.globalAlpha = Math.max(0, a);
-          revealed.forEach(({ ch, x, y }) => {
-            ctx.font = `bold ${Math.round(H * 0.52)}px 'Amiri', serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(201,168,76,0.6)';
-            ctx.shadowBlur  = 12;
-            ctx.fillStyle   = '#c9a84c';
-            ctx.fillText(ch, x, y);
-          });
-          ctx.globalAlpha = 1;
-          if (a <= 0) {
-            clearInterval(fade);
-            canvas.style.display = 'none';
-            onComplete();
-          }
+          ctx.font      = FONT;
+          ctx.direction = 'rtl';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(201,168,76,0.7)';
+          ctx.shadowBlur  = 14;
+          ctx.fillStyle   = '#b8862a';
+          ctx.fillText(name, W - 12, H / 2);
+          ctx.restore();
         }, 40);
-      }, 900);
+      }, 1000);
       return;
     }
-
-    // Stagger each letter
-    const spacing = W / (total + 1);
-    const obj = {
-      ch:    chars[i],
-      x:     spacing * (i + 1),
-      y:     H / 2,
-      alpha: 0,
-      glow:  30
-    };
-    revealed.push(obj);
-
-    // Animate this letter appearing
-    let t = 0;
-    const appear = setInterval(() => {
-      obj.alpha = Math.min(1, t / 8);
-      obj.glow  = Math.max(6, 30 - t * 3);
-      t++;
-      draw();
-      if (t > 10) {
-        clearInterval(appear);
+    revealCount = i;
+    draw();
+    // Gentle glow pulse on last char
+    let pulse = 0;
+    const glowInterval = setInterval(() => {
+      pulse++;
+      ctx.clearRect(0, 0, W, H);
+      const substr = chars.slice(0, revealCount).join('');
+      ctx.save();
+      ctx.font      = FONT;
+      ctx.direction = 'rtl';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(201,168,76,0.95)';
+      ctx.shadowBlur  = 24 + Math.sin(pulse * 0.5) * 10;
+      ctx.fillStyle   = '#c9a84c';
+      ctx.globalAlpha = 1;
+      ctx.fillText(substr, W - 12, H / 2);
+      ctx.restore();
+      if (pulse >= 6) {
+        clearInterval(glowInterval);
         setTimeout(() => spawnNext(i + 1), delay);
       }
-    }, 25);
+    }, 30);
   }
 
-  spawnNext(0);
+  spawnNext(1);
 }
-
-/* Show the parchment with populated content */
-function zdShowParchment(key, zd, fortune, isFr, guestName) {
-  const seals = { fire: '🔥', earth: '🌿', air: '💨', water: '💧' };
-  const elMap = {
-    aries:'fire', leo:'fire', sagittarius:'fire',
-    taurus:'earth', virgo:'earth', capricorn:'earth',
-    gemini:'air', libra:'air', aquarius:'air',
-    cancer:'water', scorpio:'water', pisces:'water'
-  };
-
-  function setText(id, text) {
-    const e = document.getElementById(id);
-    if (!e) return;
-    e.style.animation = 'none';
-    void e.offsetWidth;
-    e.style.animation = '';
-    e.textContent = text;
-  }
-
-  // Guest name on parchment (starlit header)
-  const guestNameEl = document.getElementById('zdFortuneGuestName');
-  if (guestNameEl) {
-    guestNameEl.textContent = guestName
-      ? (isFr ? `✦ ${guestName} ✦` : `✦ ${guestName} ✦`)
-      : '';
-  }
-
-  setText('zdWaxSeal',        seals[elMap[key]] || '✦');
-  setText('zdFortuneSign',     zd.sym + '\uFE0E');
-  setText('zdFortuneSignName', zd.fr);
-  setText('zdFortuneMsg',      isFr ? fortune.fr : fortune.ar);
-  setText('zdFortuneMsgFr',    isFr ? fortune.ar : fortune.fr);
-
-  // Open / re-open parchment
-  const wrap = document.getElementById('zdParchmentWrap');
-  if (wrap) {
-    if (wrap.classList.contains('zd-open')) {
-      wrap.classList.remove('zd-open');
-      setTimeout(() => {
-        wrap.classList.add('zd-open');
-        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 90);
-    } else {
-      wrap.classList.add('zd-open');
-      setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
-    }
-  }
-}
-
-
-
-
 
 
 function checkRoleView() {
@@ -2560,9 +2622,12 @@ const TRANSLATIONS = {
     souvenir_opt_html_desc: 'ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.',
     zodiac_title: 'البروج الفلكية للعروسين',
     zodiac_subtitle: 'كتبت النجوم لقاءهما منذ الأزل',
-    zd_fortune_title: '✦ فأل النجوم لك أيها الضيف ✦',
-    zd_fortune_sub: 'اختر برجك واكتشف ما رسمته النجوم لك في هذا اليوم المبارك',
+    zd_fortune_title: '✦ مِرآةُ النُّجوم ✦',
+    zd_fortune_sub: 'اختر برجك ليُضيء اسمك في سماء هذه الليلة المباركة',
+    zd_reveal_btn: 'أضيء نجمي',
+    zd_locked: 'نجومكم أُضيئت — رسائل أفراد دعوتكم أدناه',
   },
+
 
   fr: {
     bismillah_apex: '✨',
@@ -2614,9 +2679,12 @@ const TRANSLATIONS = {
     souvenir_opt_html_desc: 'Un fichier HTML autonome complet qui fonctionne hors-ligne.',
     zodiac_title: 'Signes Astrologiques des Mariés',
     zodiac_subtitle: 'Les étoiles ont écrit leur rencontre depuis l\'éternité',
-    zd_fortune_title: '✦ Votre Présage Céleste ✦',
-    zd_fortune_sub: 'Choisissez votre signe et découvrez ce que les étoiles vous réservent ce jour béni',
+    zd_fortune_title: '✦ Le Miroir Céleste ✦',
+    zd_fortune_sub: 'Choisissez votre signe pour illuminer votre nom dans le ciel étoilé',
+    zd_reveal_btn: 'Allumer mon étoile',
+    zd_locked: 'Vos étoiles sont illuminées — retrouvez vos messages célestes ci-dessous',
   }
+
 
 };
 
