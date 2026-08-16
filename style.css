@@ -5803,10 +5803,22 @@ body.lang-ar .animated-bride {
    PETITES ÉTOILES VOYAGEUSES MAGIQUES (Discrètes & Délicates)
 ═══════════════════════════════════════════════════════════ */
 
+#traveling-stars-universe {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: 100000 !important;
+  overflow: hidden !important;
+}
+
 .traveling-star-orb {
-  position: fixed;
-  pointer-events: auto;
+  position: fixed !important;
+  pointer-events: auto !important;
   cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
