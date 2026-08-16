@@ -269,32 +269,56 @@ function applyZodiacSection(cfg) {
     }
   }
 
-  // ─── Generate star particles background ───
+  // ─── Generate enchanted star particles & celestial sparkles ───
   const starsContainer = document.getElementById('zodiacStarsBg');
   if (starsContainer && !starsContainer.dataset.init) {
     starsContainer.dataset.init = '1';
-    for (let i = 0; i < 45; i++) {
+    // 85 golden, silver, diamond & cosmic violet starlight particles
+    for (let i = 0; i < 85; i++) {
       const star = document.createElement('div');
-      const size = (Math.random() * 2.2 + 0.6).toFixed(1);
+      const isDiamond = Math.random() > 0.85;
+      const isSilver  = Math.random() > 0.55;
+      const size = isDiamond ? (Math.random() * 2.8 + 2.0).toFixed(1) : (Math.random() * 2.0 + 0.8).toFixed(1);
+      const color = isDiamond
+        ? '255, 255, 255'
+        : (isSilver ? '220, 235, 255' : (Math.random() > 0.3 ? '245, 205, 120' : '201, 168, 76'));
+      const alpha = (Math.random() * 0.6 + 0.35).toFixed(2);
+      const glowColor = isDiamond ? 'rgba(255,255,255,0.8)' : (isSilver ? 'rgba(180,215,255,0.6)' : 'rgba(245,205,120,0.6)');
+      
+      star.className = isDiamond ? 'zd-star-diamond' : 'zd-star-dot';
       star.style.cssText = [
         'position:absolute',
-        `left:${(Math.random()*100).toFixed(1)}%`,
-        `top:${(Math.random()*100).toFixed(1)}%`,
+        `left:${(Math.random() * 100).toFixed(1)}%`,
+        `top:${(Math.random() * 100).toFixed(1)}%`,
         `width:${size}px`, `height:${size}px`,
         'border-radius:50%',
-        `background:rgba(${Math.random()>0.7?'200,160,255':'201,168,76'},${(Math.random()*0.5+0.2).toFixed(2)})`,
-        `animation:zdStarTwinkle ${(Math.random()*3+2).toFixed(1)}s ${(Math.random()*5).toFixed(1)}s ease-in-out infinite`,
-        `box-shadow:0 0 ${(size*2.5).toFixed(0)}px rgba(201,168,76,0.25)`,
+        `background:rgba(${color}, ${alpha})`,
+        `animation:zdStarTwinkle ${(Math.random() * 3.5 + 2.0).toFixed(1)}s ${(Math.random() * 5).toFixed(1)}s ease-in-out infinite`,
+        `box-shadow:0 0 ${(size * 3.5).toFixed(0)}px ${glowColor}`,
+        'pointer-events:none',
       ].join(';');
       starsContainer.appendChild(star);
     }
+
     if (!document.getElementById('zdKf')) {
       const s = document.createElement('style');
       s.id = 'zdKf';
-      s.textContent = '@keyframes zdStarTwinkle{0%,100%{opacity:0.1;transform:scale(1)}50%{opacity:0.8;transform:scale(1.5)}}';
+      s.textContent = `
+        @keyframes zdStarTwinkle {
+          0%, 100% { opacity: 0.15; transform: scale(0.85); }
+          50% { opacity: 1; transform: scale(1.4); filter: brightness(1.6); }
+        }
+        @keyframes zdShootingStar {
+          0%   { transform: translateX(0) translateY(0) rotate(-35deg) scale(0); opacity: 0; }
+          10%  { opacity: 1; transform: translateX(0) translateY(0) rotate(-35deg) scale(1); }
+          80%  { opacity: 0.8; }
+          100% { transform: translateX(340px) translateY(240px) rotate(-35deg) scale(0.2); opacity: 0; }
+        }
+      `;
       document.head.appendChild(s);
     }
   }
+
 
   // ─── Guest Fortune Parchment ───
   buildGuestFortune(cfg, ZODIAC);

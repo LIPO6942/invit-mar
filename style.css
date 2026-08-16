@@ -3514,18 +3514,80 @@ body.lang-ar .animated-bride {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   PHOTO STACK WIDGET & THEMES SYSTEM
+   PHOTO STACK WIDGET & GLASSMORPHIC THEMES SYSTEM
    ───────────────────────────────────────────────────────────────── */
 
-/* 1. Theme Variables & Scoping */
+/* Transparent Glassmorphic Photo Section Container */
+.photo-glass-section {
+  position: relative;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 50px !important;
+  text-align: center;
+  min-height: auto !important;
+  background: radial-gradient(ellipse at 50% 30%, rgba(255, 255, 255, 0.45) 0%, rgba(253, 248, 238, 0.25) 60%, rgba(245, 237, 224, 0.35) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(201, 168, 76, 0.25);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+.photo-glass-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.12) 0%, rgba(255, 255, 255, 0.08) 45%, transparent 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+  animation: photoGlowPulse 6s ease-in-out infinite;
+}
+@keyframes photoGlowPulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+}
+
+.photo-stack-title-container {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 24px;
+}
+.photo-glass-title {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, #FFE89E 0%, #D4AF37 40%, #8C6A28 85%, #C9A050 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(201, 168, 76, 0.35));
+  margin-bottom: 6px;
+}
+.photo-glass-subtitle {
+  color: var(--brown-mid);
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+}
+.photo-glass-divider {
+  width: 44px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 10px auto 0;
+}
+
+/* 1. Theme Variables & Scoping (Glassmorphic Defaults) */
 .photo-stack-theme {
-  /* Default: "Doré & floral" (floral) */
-  --card-bg: linear-gradient(135deg, #fffdf9 0%, #f7f2e6 100%);
-  --card-border: 1.5px solid #C9A96A;
-  --card-border-inner: 1px solid rgba(201, 169, 106, 0.35);
+  /* Default: "Doré & Frosted Glass" */
+  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(253, 248, 238, 0.52) 100%);
+  --card-border: 1.5px solid rgba(255, 255, 255, 0.85);
+  --card-border-inner: 1px solid rgba(201, 169, 106, 0.4);
   --card-inner-offset: 8px;
-  --card-radius: 12px;
-  --card-shadow: 0 10px 25px rgba(78, 47, 13, 0.12);
+  --card-radius: 16px;
+  --card-shadow: 0 16px 36px rgba(78, 47, 13, 0.14), inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 0 18px rgba(201, 168, 76, 0.15);
   
   --filigree-display: block;
   --filigree-size: 24px;
@@ -3533,13 +3595,13 @@ body.lang-ar .animated-bride {
   --filigree-fill: #C9A96A;
   
   --medallion-display: flex;
-  --medallion-bg: #fffdf9;
+  --medallion-bg: rgba(255, 255, 255, 0.85);
   --medallion-border: 1px solid #C9A96A;
-  --medallion-shadow: 0 2px 6px rgba(78, 47, 13, 0.15);
+  --medallion-shadow: 0 2px 8px rgba(78, 47, 13, 0.15);
   --medallion-color: #C9A96A;
   
   --photo-filter: none;
-  --photo-radius: 6px;
+  --photo-radius: 10px;
   
   --caption-font: 'Dancing Script', 'Amiri', cursive, serif;
   --caption-color: #8c713f;
@@ -3549,6 +3611,7 @@ body.lang-ar .animated-bride {
   
   --grain-opacity: 0;
 }
+
 
 /* Theme 2: "Vintage" — Parchemin chaleureux & dorures */
 .photo-stack-theme[data-theme="vintage"] {
@@ -5030,24 +5093,26 @@ body.lang-ar .animated-bride {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ZODIAC SECTION — Premium Dark "Canva-Style" Design
-═══════════════════════════════════════════════════════ */
+   ZODIAC SECTION — Enchanted Celestial Starry Night & Gold/Silver Luxury
+   ═══════════════════════════════════════════════════════ */
 
-/* Section container */
+/* Section container — Deep enchanted cosmic night sky */
 .zd-section {
-  background: linear-gradient(180deg, var(--cream) 0%, var(--ivory) 60%, #f5ede0 100%) !important;
+  background: radial-gradient(ellipse at 50% 0%, #17203c 0%, #0f162c 45%, #090e1c 100%) !important;
   min-height: auto !important;
-  padding: 56px 16px 60px !important;
+  padding: 60px 16px 65px !important;
   position: relative;
   overflow: hidden;
   display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-top: 1px solid rgba(201,168,76,0.2);
+  border-top: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-bottom: 1.5px solid rgba(212, 175, 55, 0.25);
+  box-shadow: inset 0 10px 40px rgba(0, 0, 0, 0.45);
 }
 
-/* ── Pale star field on cream background ── */
+/* ── Cosmic Starry Background & Nebula Orbs ── */
 .zd-bg-nebula {
   position: absolute;
   inset: 0;
@@ -5057,23 +5122,53 @@ body.lang-ar .animated-bride {
 }
 .zd-stars-field { position: absolute; inset: 0; }
 .zd-nebula-orb  { position: absolute; border-radius: 50%; pointer-events: none; }
+
 .zd-orb-1 {
-  width: 280px; height: 280px;
-  top: -80px; left: -80px;
-  background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%);
-  filter: blur(60px);
+  width: 340px; height: 340px;
+  top: -100px; left: -100px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.14) 0%, rgba(130, 90, 240, 0.08) 50%, transparent 75%);
+  filter: blur(65px);
+  animation: zdOrbFloat 14s ease-in-out infinite alternate;
 }
 .zd-orb-2 {
-  width: 300px; height: 300px;
-  bottom: -100px; right: -100px;
-  background: radial-gradient(circle, rgba(201,168,76,0.06), transparent 70%);
-  filter: blur(70px);
+  width: 360px; height: 360px;
+  bottom: -120px; right: -100px;
+  background: radial-gradient(circle, rgba(90, 160, 255, 0.12) 0%, rgba(212, 175, 55, 0.1) 50%, transparent 75%);
+  filter: blur(75px);
+  animation: zdOrbFloat 18s 2s ease-in-out infinite alternate-reverse;
 }
 .zd-orb-3 {
-  width: 200px; height: 200px;
-  top: 35%; left: 50%; transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 70%);
-  filter: blur(50px);
+  width: 260px; height: 260px;
+  top: 40%; left: 50%; transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(255, 230, 150, 0.08) 0%, rgba(180, 220, 255, 0.06) 50%, transparent 70%);
+  filter: blur(55px);
+}
+@keyframes zdOrbFloat {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 25px) scale(1.12); }
+}
+
+/* ── Dynamic Shooting Stars ── */
+.zd-shooting-star {
+  position: absolute;
+  width: 90px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(212,175,55,0.8) 50%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+}
+.zd-ss-1 {
+  top: 12%; left: 10%;
+  animation: zdShootingStar 7s 1s ease-in-out infinite;
+}
+.zd-ss-2 {
+  top: 38%; left: 35%;
+  animation: zdShootingStar 9s 4.5s ease-in-out infinite;
+}
+.zd-ss-3 {
+  top: 65%; left: 20%;
+  animation: zdShootingStar 8s 2.8s ease-in-out infinite;
 }
 
 /* ── Main content wrapper ── */
@@ -5081,31 +5176,45 @@ body.lang-ar .animated-bride {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   margin: 0 auto;
 }
 
-/* ── Header ── */
+/* ── Header: Gold & Silver Metallic Typography ── */
 .zd-header { text-align: center; margin-bottom: 34px; }
 .zd-hdr-ornament {
-  font-size: 0.62rem;
-  letter-spacing: 10px;
-  color: rgba(201,168,76,0.55);
-  margin-bottom: 14px;
+  font-size: 0.75rem;
+  letter-spacing: 12px;
+  background: linear-gradient(90deg, #D4AF37, #FFFFFF, #D4AF37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.6));
+  margin-bottom: 12px;
 }
+
+/* Title: Liquid Gold Foil Gradient */
 .zd-title {
-  font-family: 'Amiri', serif;
-  font-size: 1.75rem;
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 2.1rem;
   font-weight: 700;
-  color: var(--brown);
-  margin-bottom: 8px;
+  background: linear-gradient(135deg, #FFF6D6 0%, #F5DE88 20%, #D4AF37 45%, #FFFFFF 60%, #C99E32 80%, #F7E5A3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 14px rgba(212, 175, 55, 0.45));
+  margin-bottom: 6px;
   line-height: 1.35;
-}
-.zd-subtitle {
-  font-family: 'Amiri', serif;
-  font-size: 0.88rem;
-  color: var(--brown-mid);
   letter-spacing: 0.5px;
+}
+
+/* Subtitle: Platinum Silver Metallic Gradient */
+.zd-subtitle {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 1.05rem;
+  background: linear-gradient(135deg, #FFFFFF 0%, #E2ECF7 35%, #B8CCE4 70%, #F4F8FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 6px rgba(184, 204, 228, 0.4));
+  letter-spacing: 0.8px;
 }
 
 /* ── Cards row ── */
@@ -5117,19 +5226,22 @@ body.lang-ar .animated-bride {
   margin-bottom: 30px;
 }
 
-/* ── Individual card (parchment style) ── */
+/* ── Individual card (Celestial Frosted Glass with Gold/Silver Edge) ── */
 .zd-card {
   flex: 1;
-  max-width: 158px;
+  max-width: 165px;
   position: relative;
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
-  background: linear-gradient(155deg, #fffef8 0%, #fdf8ee 60%, #f9f2e2 100%);
-  border: 1px solid rgba(201,168,76,0.4);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12) 0%, rgba(20, 28, 56, 0.65) 60%, rgba(10, 16, 36, 0.85) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
   box-shadow:
-    0 6px 28px rgba(74,44,10,0.1),
-    inset 0 1px 0 rgba(255,255,255,0.8),
-    inset 0 -1px 0 rgba(201,168,76,0.1);
+    0 12px 38px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 20px rgba(212, 175, 55, 0.1),
+    0 0 20px rgba(212, 175, 55, 0.18);
   animation: zdCardFadeIn 0.85s cubic-bezier(0.22,0.9,0.32,1) both;
 }
 #zdGroomCard { animation-delay: 0.12s; }
@@ -5140,13 +5252,13 @@ body.lang-ar .animated-bride {
   to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-/* Diagonal shimmer on parchment card */
+/* Diagonal shimmer sweep on celestial card */
 .zd-card-shine {
   position: absolute;
   top: 0; left: -65%;
-  width: 38%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-  transform: skewX(-12deg);
+  width: 45%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), rgba(212, 175, 55, 0.3), transparent);
+  transform: skewX(-16deg);
   animation: zdShineSweep 6s ease-in-out infinite;
   z-index: 3;
   pointer-events: none;
@@ -5165,7 +5277,8 @@ body.lang-ar .animated-bride {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.1;
+  opacity: 0.25;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.5));
   z-index: 0;
 }
 
@@ -5173,28 +5286,32 @@ body.lang-ar .animated-bride {
 .zd-card-body {
   position: relative;
   z-index: 2;
-  padding: 20px 10px 18px;
+  padding: 22px 10px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
 }
 
-/* Role badge */
+/* Role badge: Silver filigree with gold border */
 .zd-role {
-  font-family: 'Amiri', serif;
-  font-size: 0.62rem;
-  color: var(--brown-mid);
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #FFFFFF 0%, #DCE6F5 50%, #B8CCDE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   letter-spacing: 3px;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
 }
 
-/* ── Sigil (zodiac symbol circle) ── */
+/* ── Sigil (zodiac symbol circle) — Dual Gold & Silver Rings ── */
 .zd-sigil-circle {
   position: relative;
-  width: 84px;
-  height: 84px;
+  width: 88px;
+  height: 88px;
   margin: 4px 0 10px;
 }
 
@@ -5203,75 +5320,90 @@ body.lang-ar .animated-bride {
   inset: 0;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 32%,
-    rgba(201,168,76,0.15),
-    rgba(201,168,76,0.05) 70%);
-  border: 1px solid rgba(201,168,76,0.5);
+    rgba(212, 175, 55, 0.25),
+    rgba(15, 22, 45, 0.6) 70%);
+  border: 1.5px solid rgba(212, 175, 55, 0.75);
   box-shadow:
-    0 2px 16px rgba(201,168,76,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.6);
+    0 4px 22px rgba(212, 175, 55, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.75),
+    0 0 16px rgba(180, 215, 255, 0.3);
   animation: zdRingBreath 4s ease-in-out infinite;
 }
 
 .zd-sigil-ring::before {
   content: '';
   position: absolute;
-  inset: 8px;
+  inset: 7px;
   border-radius: 50%;
-  border: 0.5px solid rgba(201,168,76,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 8px rgba(180, 220, 255, 0.35);
   animation: zdRingBreath 4s 1s ease-in-out infinite;
 }
 
 .zd-sigil-ring::after {
   content: '';
   position: absolute;
-  inset: 18px;
+  inset: 16px;
   border-radius: 50%;
-  border: 0.5px dashed rgba(201,168,76,0.15);
-  animation: zdRingRotate 20s linear infinite;
+  border: 1px dashed rgba(212, 175, 55, 0.45);
+  animation: zdRingRotate 22s linear infinite;
 }
 
 @keyframes zdRingBreath {
-  0%,100% { box-shadow: 0 2px 16px rgba(201,168,76,0.15), inset 0 1px 0 rgba(255,255,255,0.6); }
-  50%     { box-shadow: 0 4px 28px rgba(201,168,76,0.32), inset 0 1px 0 rgba(255,255,255,0.6); }
+  0%, 100% {
+    box-shadow: 0 4px 22px rgba(212, 175, 55, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.75);
+  }
+  50% {
+    box-shadow: 0 6px 32px rgba(212, 175, 55, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 0 22px rgba(255, 235, 170, 0.5);
+  }
 }
 @keyframes zdRingRotate { to { transform: rotate(360deg); } }
 
+/* Pure Luminous Gold Sigil Char */
 .zd-sigil-char {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 42px;
   line-height: 1;
-  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', 'Apple Symbols', 'Symbola', serif;
-  -webkit-text-fill-color: var(--gold);
-  color: var(--gold);
-  filter: drop-shadow(0 2px 8px rgba(201,168,76,0.5));
+  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', 'Apple Symbols', serif;
+  background: linear-gradient(135deg, #FFF4D1 0%, #FFD700 40%, #D4AF37 70%, #FFF8E7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 12px rgba(212, 175, 55, 0.85));
   animation: zdSymGlow 3.5s ease-in-out infinite;
 }
 
 @keyframes zdSymGlow {
-  0%,100% { filter: drop-shadow(0 2px 8px rgba(201,168,76,0.5)); }
-  50%     { filter: drop-shadow(0 4px 18px rgba(201,168,76,0.85)); }
+  0%, 100% { filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.75)); }
+  50%      { filter: drop-shadow(0 4px 22px rgba(255, 215, 0, 1)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
 }
 
-/* Sign names */
+/* Sign names: Gold & Silver Dual Typography */
 .zd-sign-fr {
   font-family: 'Playfair Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 3px;
-  color: var(--brown);
+  background: linear-gradient(135deg, #FFF4D1 0%, #D4AF37 50%, #F5DE88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 6px rgba(212, 175, 55, 0.4));
 }
 .zd-sign-ar {
-  font-family: 'Amiri', serif;
-  font-size: 0.85rem;
-  color: var(--brown-mid);
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #FFFFFF 0%, #DDE8F5 50%, #AFC4DB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 5px rgba(175, 196, 219, 0.4));
   margin-top: -2px;
 }
 
-/* Meta (element + dates) */
+/* Meta: Frosted Silver & Gold Pill */
 .zd-meta {
   display: flex;
   flex-direction: column;
@@ -5280,22 +5412,23 @@ body.lang-ar .animated-bride {
   margin-top: 8px;
 }
 .zd-element-pill {
-  font-size: 0.62rem;
-  color: var(--brown-mid);
-  background: rgba(201,168,76,0.12);
-  border: 1px solid rgba(201,168,76,0.3);
+  font-size: 0.64rem;
+  color: #F7E6B8;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
   border-radius: 20px;
   padding: 3px 12px;
   letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 .zd-dates {
   font-family: 'Playfair Display', serif;
-  font-size: 0.55rem;
-  color: rgba(122,74,42,0.5);
+  font-size: 0.58rem;
+  color: rgba(220, 235, 255, 0.7);
   letter-spacing: 0.5px;
 }
 
-/* ── Bridge between cards ── */
+/* ── Bridge between cards: Sparkling Diamond & Gold Gem ── */
 .zd-bridge {
   display: flex;
   flex-direction: column;
@@ -5307,46 +5440,53 @@ body.lang-ar .animated-bride {
 }
 
 .zd-bridge-gem {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: radial-gradient(circle, rgba(201,168,76,0.2), rgba(201,168,76,0.04));
-  border: 1px solid rgba(201,168,76,0.45);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(212, 175, 55, 0.35) 45%, rgba(15, 22, 45, 0.8) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 12px rgba(201,168,76,0.2);
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45), 0 0 14px rgba(255, 255, 255, 0.6);
   animation: zdGemPing 2.6s ease-in-out infinite;
 }
 
 @keyframes zdGemPing {
-  0%,100% { box-shadow: 0 2px 12px rgba(201,168,76,0.2), 0 0 0 0 rgba(201,168,76,0.3); }
-  50%      { box-shadow: 0 2px 12px rgba(201,168,76,0.2), 0 0 0 8px rgba(201,168,76,0); }
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45), 0 0 0 0 rgba(212, 175, 55, 0.5);
+  }
+  50% {
+    box-shadow: 0 6px 26px rgba(255, 215, 0, 0.75), 0 0 0 10px rgba(212, 175, 55, 0);
+  }
 }
 
 .zd-bridge-inner {
-  font-size: 1.1rem;
-  color: var(--gold);
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, #FFFFFF, #FFD700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
   animation: zdGemGlow2 2.6s ease-in-out infinite;
 }
 @keyframes zdGemGlow2 {
-  0%,100% { opacity: 0.7; transform: scale(1); }
-  50%     { opacity: 1;   transform: scale(1.28); }
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.32); }
 }
 
 .zd-bridge-compat {
   font-family: 'Playfair Display', serif;
-  font-size: 0.46rem;
-  color: rgba(122,74,42,0.5);
-  letter-spacing: 2.5px;
+  font-size: 0.5rem;
+  color: rgba(220, 235, 255, 0.65);
+  letter-spacing: 3px;
   writing-mode: vertical-lr;
   text-orientation: mixed;
   transform: rotate(180deg);
   white-space: nowrap;
 }
 
-/* ── Poem footer ── */
+/* ── Poem footer: Gold Calligraphy & Star Lines ── */
 .zd-poem-wrap {
   text-align: center;
   display: flex;
@@ -5355,47 +5495,55 @@ body.lang-ar .animated-bride {
   gap: 14px;
 }
 .zd-poem-line {
-  width: 72px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+  width: 90px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), rgba(212, 175, 55, 0.9), transparent);
 }
 .zd-poem {
-  font-family: 'Amiri', serif;
-  font-size: 1rem;
-  color: var(--brown-mid);
-  line-height: 1.95;
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #FFF7DC 0%, #F3DA80 40%, #FFFFFF 65%, #C99E32 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4));
+  line-height: 2;
   font-style: italic;
-  max-width: 300px;
+  max-width: 320px;
 }
 
-/* ═══════ GUEST FORTUNE PARCHMENT ═══════ */
+/* ═══════ GUEST FORTUNE: CELESTIAL MIROIR DU CIEL ═══════ */
 
 /* Section subtitle */
 .zd-guest-intro {
   text-align: center;
   margin: 36px 0 20px;
-  padding: 16px;
-  border-top: 1px solid rgba(201,168,76,0.2);
+  padding: 18px 12px 10px;
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
 }
 .zd-guest-intro-title {
-  font-family: 'Amiri', serif;
-  font-size: 1rem;
-  color: var(--brown);
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #FFF6D6 0%, #D4AF37 50%, #FFFFFF 75%, #F7E5A3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.45));
   margin-bottom: 4px;
 }
 .zd-guest-intro-sub {
-  font-family: 'Amiri', serif;
-  font-size: 0.78rem;
-  color: var(--brown-mid);
-  opacity: 0.75;
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 0.98rem;
+  color: rgba(220, 235, 255, 0.85);
+  letter-spacing: 0.5px;
 }
 
-/* 12 sign buttons grid */
+/* 12 sign buttons grid: Starry Frosted Glass */
 .zd-sign-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 7px;
-  max-width: 340px;
+  gap: 8px;
+  max-width: 360px;
   margin: 0 auto 24px;
 }
 
@@ -5405,155 +5553,44 @@ body.lang-ar .animated-bride {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  padding: 7px 4px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid rgba(201,168,76,0.3);
+  padding: 8px 4px;
+  border-radius: 14px;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.12) 0%, rgba(20, 28, 56, 0.7) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   cursor: pointer;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(4px);
+  transition: all 0.28s cubic-bezier(0.22, 0.9, 0.32, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 .zd-sign-btn:hover, .zd-sign-btn.zd-active {
-  background: rgba(201,168,76,0.15);
-  border-color: rgba(201,168,76,0.7);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(201,168,76,0.25);
+  background: linear-gradient(155deg, rgba(212, 175, 55, 0.35) 0%, rgba(30, 42, 80, 0.85) 100%);
+  border-color: rgba(255, 230, 150, 0.9);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.45), 0 0 16px rgba(255, 255, 255, 0.4);
 }
 .zd-sign-btn.zd-active { border-width: 1.5px; }
 
 .zd-btn-sym {
-  font-size: 20px;
+  font-size: 22px;
   font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
-  -webkit-text-fill-color: var(--gold);
-  color: var(--gold);
+  background: linear-gradient(135deg, #FFF4D1, #FFD700 50%, #D4AF37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 6px rgba(212, 175, 55, 0.6));
   line-height: 1;
 }
 .zd-btn-name {
-  font-size: 0.45rem;
-  color: var(--brown-mid);
+  font-size: 0.48rem;
+  color: #D8E6F5;
   letter-spacing: 0.5px;
   font-family: 'Playfair Display', serif;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-/* ── Parchment scroll ── */
-.zd-parchment-wrap {
-  max-width: 340px;
-  margin: 0 auto;
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.7s cubic-bezier(0.22, 0.9, 0.32, 1),
-              opacity 0.4s ease;
-  opacity: 0;
-}
-.zd-parchment-wrap.zd-open {
-  max-height: 400px;
-  opacity: 1;
-}
-
-.zd-parchment {
-  position: relative;
-  background: linear-gradient(160deg, #fffef5 0%, #fdf6e3 50%, #faf0d2 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(201,168,76,0.4);
-  box-shadow:
-    0 8px 32px rgba(74,44,10,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    inset 0 0 30px rgba(201,168,76,0.04);
-  padding: 28px 24px 24px;
-  text-align: center;
-  margin-bottom: 8px;
-  /* Ragged top/bottom edges like parchment scroll */
-  clip-path: polygon(
-    0% 3%, 2% 0%, 4% 2%, 6% 0%, 8% 2%, 10% 0%, 12% 2%,
-    14% 0%, 16% 1%, 18% 0%, 20% 2%, 25% 0%, 30% 2%, 35% 0%,
-    40% 1%, 45% 0%, 50% 2%, 55% 0%, 60% 1%, 65% 0%, 70% 2%,
-    75% 0%, 80% 1%, 85% 0%, 90% 2%, 95% 0%, 98% 1%, 100% 0%,
-    100% 97%, 98% 100%, 96% 98%, 94% 100%, 92% 98%, 90% 100%,
-    85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%,
-    55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%,
-    25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 2% 100%, 0% 97%
-  );
-}
-
-/* Wax seal */
-.zd-wax-seal {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 32%, #f5c842, #c9a84c 50%, #8a6010);
-  box-shadow: 0 3px 12px rgba(201,168,76,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
-  margin-bottom: 14px;
-  animation: zdSealAppear 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
-  font-size: 22px;
-}
-@keyframes zdSealAppear {
-  from { transform: scale(0) rotate(-20deg); opacity: 0; }
-  to   { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-/* Fortune guest sign displayed */
-.zd-fortune-sign {
-  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
-  font-size: 2rem;
-  -webkit-text-fill-color: var(--gold);
-  color: var(--gold);
-  line-height: 1;
-  filter: drop-shadow(0 2px 8px rgba(201,168,76,0.4));
-  margin-bottom: 4px;
-}
-.zd-fortune-sign-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.65rem;
-  letter-spacing: 4px;
-  color: var(--brown-mid);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-
-/* Divider line on parchment */
-.zd-parchment-divider {
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), transparent);
-  margin: 0 auto 14px;
-}
-
-/* The fortune message text */
-.zd-fortune-msg {
-  font-family: 'Scheherazade New', 'Amiri', serif;
-  font-size: 1.25rem;
-  color: var(--brown);
-  line-height: 2.1;
-  font-weight: 500;
-  margin: 0 0 12px;
-  text-shadow: 0 0 1px rgba(74,44,10,0.15);
-  animation: zdMsgReveal 0.6s 0.3s ease both;
-}
-@keyframes zdMsgReveal {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* French sub-message */
-.zd-fortune-msg-fr {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.76rem;
-  color: var(--brown-mid);
-  opacity: 0.78;
-  font-style: italic;
-  letter-spacing: 0.6px;
-  line-height: 1.6;
-  margin: 0;
-  animation: zdMsgReveal 0.6s 0.5s ease both;
-}
-
-/* ─── Member Selector Tabs ─── */
+/* ── Member Selector Tabs ── */
 .zd-member-tabs {
   display: flex;
   justify-content: center;
@@ -5563,46 +5600,48 @@ body.lang-ar .animated-bride {
   max-width: 380px;
 }
 .zd-member-tab {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(20, 28, 56, 0.6) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
   border-radius: 20px;
-  padding: 6px 14px;
+  padding: 6px 16px;
   font-family: 'Scheherazade New', 'Amiri', serif;
-  font-size: 0.95rem;
-  color: var(--brown-mid);
+  font-size: 1rem;
+  color: #E2EEFC;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 6px rgba(74, 44, 10, 0.04);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .zd-member-tab:hover {
-  border-color: var(--gold);
-  color: var(--brown);
+  border-color: #FFD700;
+  color: #FFFFFF;
   transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35);
 }
 .zd-member-tab.zd-tab-active {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.08));
-  border-color: var(--gold);
-  color: var(--brown);
-  font-weight: bold;
-  box-shadow: 0 3px 10px rgba(201, 168, 76, 0.2);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.35) 0%, rgba(255, 255, 255, 0.15) 100%);
+  border-color: #FFE68F;
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
 }
 .zd-member-tab.zd-tab-done {
-  border-color: rgba(201, 168, 76, 0.7);
+  border-color: rgba(212, 175, 55, 0.8);
 }
 
-/* ─── Locked State Notice ─── */
+/* ── Locked State Notice ── */
 .zd-locked-notice {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: linear-gradient(135deg, rgba(255, 254, 248, 0.9), rgba(245, 237, 224, 0.9));
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  border-radius: 14px;
-  padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(20, 28, 56, 0.75) 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
+  border-radius: 16px;
+  padding: 14px 20px;
   margin: 10px auto 22px;
-  max-width: 360px;
-  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.12);
+  max-width: 380px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4), 0 0 16px rgba(212, 175, 55, 0.25);
   animation: zdLockedFade 0.6s ease both;
 }
 @keyframes zdLockedFade {
@@ -5701,17 +5740,137 @@ body.lang-ar .animated-bride {
   margin-top: 10px;
 }
 
-/* ─── Guest name on parchment ─── */
+/* ─── Parchment Scroll: Luminous Ivory & Gold ─── */
+.zd-parchment-wrap {
+  max-width: 360px;
+  margin: 0 auto;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.75s cubic-bezier(0.22, 0.9, 0.32, 1),
+              opacity 0.4s ease;
+  opacity: 0;
+}
+.zd-parchment-wrap.zd-open {
+  max-height: 520px;
+  opacity: 1;
+}
+
+.zd-parchment {
+  position: relative;
+  background: linear-gradient(160deg, #FFFDF8 0%, #FAF3E3 50%, #F5E8C8 100%);
+  border-radius: 14px;
+  border: 1.5px solid rgba(212, 175, 55, 0.65);
+  box-shadow:
+    0 12px 38px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 35px rgba(212, 175, 55, 0.08),
+    0 0 20px rgba(212, 175, 55, 0.2);
+  padding: 30px 24px 26px;
+  text-align: center;
+  margin-bottom: 8px;
+  /* Ragged top/bottom edges like parchment scroll */
+  clip-path: polygon(
+    0% 3%, 2% 0%, 4% 2%, 6% 0%, 8% 2%, 10% 0%, 12% 2%,
+    14% 0%, 16% 1%, 18% 0%, 20% 2%, 25% 0%, 30% 2%, 35% 0%,
+    40% 1%, 45% 0%, 50% 2%, 55% 0%, 60% 1%, 65% 0%, 70% 2%,
+    75% 0%, 80% 1%, 85% 0%, 90% 2%, 95% 0%, 98% 1%, 100% 0%,
+    100% 97%, 98% 100%, 96% 98%, 94% 100%, 92% 98%, 90% 100%,
+    85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%,
+    55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%,
+    25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 2% 100%, 0% 97%
+  );
+}
+
+/* Wax seal: Metallic Gold */
+.zd-wax-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #FFE066 0%, #D4AF37 45%, #8C6A28 100%);
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.65), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+  margin-bottom: 12px;
+  animation: zdSealAppear 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+  font-size: 24px;
+}
+@keyframes zdSealAppear {
+  from { transform: scale(0) rotate(-20deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Guest Name on Parchment: Gold Foil */
 .zd-fortune-guest-name {
   font-family: 'Scheherazade New', 'Amiri', serif;
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--gold);
-  text-shadow: 0 0 16px rgba(201,168,76,0.45);
+  background: linear-gradient(135deg, #FFE89E 0%, #D4AF37 40%, #8C6A28 85%, #C9A050 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 6px rgba(212, 175, 55, 0.45));
   letter-spacing: 1px;
   margin-bottom: 8px;
   animation: zdMsgReveal 0.5s ease both;
 }
+
+/* Fortune Guest Sign Displayed */
+.zd-fortune-sign {
+  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, #FFF4D1, #FFD700 50%, #D4AF37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.5));
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.zd-fortune-sign-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.68rem;
+  letter-spacing: 4px;
+  color: var(--brown-mid);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* Divider Line on Parchment */
+.zd-parchment-divider {
+  width: 70px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.65), transparent);
+  margin: 0 auto 14px;
+}
+
+/* The Fortune Message Text */
+.zd-fortune-msg {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  font-size: 1.25rem;
+  color: #3d2510;
+  line-height: 2.1;
+  font-weight: 500;
+  margin: 0 0 12px;
+  text-shadow: 0 0 1px rgba(74, 44, 10, 0.15);
+  animation: zdMsgReveal 0.6s 0.3s ease both;
+}
+@keyframes zdMsgReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* French Sub-message */
+.zd-fortune-msg-fr {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.78rem;
+  color: #634320;
+  opacity: 0.85;
+  font-style: italic;
+  letter-spacing: 0.6px;
+  line-height: 1.6;
+  margin: 0;
+  animation: zdMsgReveal 0.6s 0.5s ease both;
+}
+
 
 
 
