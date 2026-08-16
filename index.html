@@ -926,27 +926,55 @@
               <div class="zd-poem-line"></div>
             </div>
 
-
-          </div><!-- /zd-content -->
-
-          <!-- ══ GUEST FORTUNE — Parchemin Magique ══ -->
+          <!-- ══ MIROIR DU CIEL — Fortune de l'invité ══ -->
           <div class="zd-content" id="zdGuestFortuneSection">
 
             <div class="zd-guest-intro">
-              <div class="zd-guest-intro-title font-amiri" data-tr="zd_fortune_title">✦ فأل النجوم لك أيها الضيف ✦</div>
-              <div class="zd-guest-intro-sub" data-tr="zd_fortune_sub">اختر برجك واكتشف ما رسمته النجوم لك في هذا اليوم المبارك</div>
+              <div class="zd-hdr-ornament" style="margin-bottom:10px">· · ·</div>
+              <div class="zd-guest-intro-title font-amiri" id="zdFortuneGreeting">رسالة النجوم</div>
+              <div class="zd-guest-intro-sub font-amiri" data-tr="zd_fortune_sub">اختر برجك ليُضيء النجوم باسمك في سماء هذه الليلة</div>
+            </div>
+
+            <!-- Name input -->
+            <div class="zd-name-field-wrap">
+              <div class="zd-name-field-label font-amiri" data-tr="zd_name_label">اكتب اسمك</div>
+              <div class="zd-name-input-row">
+                <input type="text" id="zdGuestNameInput"
+                  class="zd-name-input font-amiri"
+                  maxlength="30"
+                  autocomplete="off"
+                  data-placeholder-ar="أدخل اسمك هنا…"
+                  data-placeholder-fr="Votre prénom…"
+                  placeholder="أدخل اسمك هنا…" />
+                <div class="zd-name-input-line"></div>
+              </div>
             </div>
 
             <!-- 12 Sign buttons grid -->
             <div class="zd-sign-grid" id="zdSignGrid"></div>
 
-            <!-- Parchment scroll (hidden until sign selected) -->
+            <!-- Reveal button -->
+            <div class="zd-reveal-wrap" id="zdRevealWrap" style="display:none">
+              <button class="zd-reveal-btn font-amiri" id="zdRevealBtn" onclick="zdRevealMiroir()">
+                <span class="zd-reveal-star">✦</span>
+                <span class="zd-reveal-text" data-tr="zd_reveal_btn">أضيء نجمي</span>
+                <span class="zd-reveal-star">✦</span>
+              </button>
+            </div>
+
+            <!-- Sky canvas for name stars animation -->
+            <canvas class="zd-sky-canvas" id="zdSkyCanvas" aria-hidden="true"></canvas>
+
+            <!-- Parchment scroll (hidden until revealed) -->
             <div class="zd-parchment-wrap" id="zdParchmentWrap">
               <div class="zd-parchment">
                 <!-- Wax seal -->
                 <div class="zd-wax-seal" id="zdWaxSeal">✦</div>
 
-                <!-- Guest's sign -->
+                <!-- Guest's name (starlit) -->
+                <div class="zd-fortune-guest-name font-amiri" id="zdFortuneGuestName"></div>
+
+                <!-- Sign -->
                 <div class="zd-fortune-sign" id="zdFortuneSign">♈</div>
                 <div class="zd-fortune-sign-name" id="zdFortuneSignName">BÉLIER</div>
 
@@ -954,11 +982,16 @@
 
                 <!-- Fortune message -->
                 <p class="zd-fortune-msg font-amiri" id="zdFortuneMsg">...</p>
+                <div class="zd-parchment-divider" style="margin-top:14px"></div>
                 <p class="zd-fortune-msg-fr" id="zdFortuneMsgFr">...</p>
               </div>
             </div>
 
           </div><!-- /zd-content guest fortune -->
+
+
+
+<!-- /zd-content guest fortune -->
 
         </section>
 

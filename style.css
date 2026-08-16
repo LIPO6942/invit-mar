@@ -5551,3 +5551,134 @@ body.lang-ar .animated-bride {
   animation: zdMsgReveal 0.6s 0.5s ease both;
 }
 
+/* ─── Name input field ─── */
+.zd-name-field-wrap {
+  max-width: 280px;
+  margin: 0 auto 22px;
+  text-align: center;
+}
+.zd-name-field-label {
+  font-size: 0.72rem;
+  color: var(--brown-mid);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+.zd-name-input-row { position: relative; }
+.zd-name-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid rgba(201,168,76,0.35);
+  outline: none;
+  font-family: 'Amiri', serif;
+  font-size: 1.1rem;
+  color: var(--brown);
+  text-align: center;
+  padding: 6px 4px 8px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+.zd-name-input:focus {
+  border-color: var(--gold);
+}
+.zd-name-input::placeholder {
+  color: rgba(122,74,42,0.35);
+  font-style: italic;
+}
+.zd-name-input-line {
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: 0; height: 1.5px;
+  background: var(--gold);
+  transition: width 0.4s ease, left 0.4s ease;
+  transform: translateX(-50%);
+}
+.zd-name-input:focus ~ .zd-name-input-line {
+  width: 100%;
+}
+
+/* ─── Reveal button ─── */
+.zd-reveal-wrap {
+  text-align: center;
+  margin: 18px 0;
+}
+.zd-reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.06));
+  border: 1.5px solid rgba(201,168,76,0.5);
+  border-radius: 50px;
+  padding: 13px 28px;
+  font-family: 'Amiri', serif;
+  font-size: 1rem;
+  color: var(--brown);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  animation: zdRevealPulse 2.5s ease-in-out infinite;
+}
+.zd-reveal-btn:hover {
+  background: linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.1));
+  border-color: rgba(201,168,76,0.8);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  transform: translateY(-1px);
+  animation: none;
+}
+.zd-reveal-btn:active { transform: scale(0.97); }
+.zd-reveal-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: translateX(-100%);
+  animation: zdRevealShine 3s ease-in-out infinite;
+}
+@keyframes zdRevealShine {
+  0%,100% { transform: translateX(-100%); }
+  50%     { transform: translateX(100%); }
+}
+@keyframes zdRevealPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.3); }
+  50%     { box-shadow: 0 0 0 8px rgba(201,168,76,0); }
+}
+.zd-reveal-star {
+  font-size: 0.75rem;
+  color: var(--gold);
+  animation: zdRevealStarSpin 4s linear infinite;
+}
+@keyframes zdRevealStarSpin {
+  from { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.4); }
+  to   { transform: rotate(360deg) scale(1); }
+}
+.zd-reveal-text { position: relative; z-index: 1; }
+
+/* ─── Sky canvas ─── */
+.zd-sky-canvas {
+  display: none;
+  width: 100%;
+  max-width: 340px;
+  height: 80px;
+  margin: 10px auto;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(253,248,238,0.6), rgba(249,242,226,0.8));
+  border: 1px solid rgba(201,168,76,0.2);
+  box-shadow: inset 0 2px 8px rgba(74,44,10,0.06);
+}
+
+/* ─── Guest name on parchment ─── */
+.zd-fortune-guest-name {
+  font-family: 'Amiri', serif;
+  font-size: 1.3rem;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(201,168,76,0.4);
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  animation: zdMsgReveal 0.5s ease both;
+}
+
+
