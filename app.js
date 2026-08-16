@@ -527,6 +527,45 @@ function zdSelectSign(key, zd, guestId) {
 
 
 
+// ── Render Couple's Sky of Illuminated Guest Stars ──
+function zdRenderCoupleSky(stars) {
+  const container = document.getElementById('zdCoupleSkyContainer');
+  const countEl = document.getElementById('zdCoupleSkyCount');
+  const starsBox = document.getElementById('zdCoupleSkyStars');
+  if (!container || !starsBox) return;
+
+  const validStars = Array.isArray(stars) ? stars : [];
+  const isCouple = _currentRole === 'groom' || _currentRole === 'bride';
+
+  if (validStars.length === 0) {
+    if (isCouple) {
+      container.style.display = 'block';
+      if (countEl) countEl.textContent = '0 نجوم';
+      starsBox.innerHTML = `<div style="font-size:0.9rem; color:#7899b8; font-style:italic; padding:10px;">في انتظار أول نجمة يضيئها ضيوفكم الليلة 🌟</div>`;
+    } else {
+      container.style.display = 'none';
+    }
+    return;
+  }
+
+  // Show if stars exist or if couple
+  container.style.display = 'block';
+  if (countEl) countEl.textContent = `${validStars.length} نجوم مضاءة ✨`;
+
+  starsBox.innerHTML = validStars.map(s => {
+    const sym = s.sym || '✦';
+    const guest = s.guestName || 'ضيف';
+    const signName = s.ar || s.fr || '';
+    return `
+      <div class="zd-shining-star-card" title="نجمة أضاءها ${guest} (${signName})">
+        <span class="zd-shining-star-sym">${sym}</span>
+        <span class="zd-shining-star-guest">${guest}</span>
+        ${signName ? `<span style="font-size:0.8rem; color:#6a88a4;">(${signName})</span>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
 /* Called from HTML onclick */
 function zdRevealMiroir() {
   if (!_zdSelectedKey || !_zdSelectedZd) return;
@@ -561,6 +600,28 @@ function zdRevealMiroir() {
     };
     if (m) localStorage.setItem(zdStorageKey(guestId, m.key), JSON.stringify(saveData));
 
+    // Send star to Firestore for the couple's sky
+    const params = new URLSearchParams(window.location.search);
+    const invSlug = params.get('inv') || localStorage.getItem('invitLastSlug') || (window._lastLoadedConfig && window._lastLoadedConfig.id);
+    if (invSlug && typeof initFirebase === 'function') {
+      try {
+        initFirebase();
+        const starPayload = {
+          guestName: nameToAnimate || 'ضيفنا العزيز',
+          signKey: _zdSelectedKey,
+          sym: _zdSelectedZd.sym,
+          fr: _zdSelectedZd.fr,
+          ar: _zdSelectedZd.ar,
+          ts: Date.now()
+        };
+        _db.collection('invitations').doc(invSlug).update({
+          zodiacStars: firebase.firestore.FieldValue.arrayUnion(starPayload)
+        }).then(() => {
+          console.log('[Zodiac Star] Sent to couple sky ✨');
+        }).catch(e => console.warn('[Zodiac Star Sync]', e));
+      } catch(e) {}
+    }
+
     // Mark tab as done
     const tabBtn = document.querySelector(`.zd-member-tab[data-idx="${_zdActiveMember}"]`);
     if (tabBtn) { tabBtn.classList.add('zd-tab-done'); tabBtn.textContent = tabBtn.textContent.replace(' ✦','') + ' ✦'; }
@@ -584,6 +645,7 @@ function zdRevealMiroir() {
     }
   });
 }
+
 
 /* Show locked state: hide grid, show all saved parchments */
 function zdShowLockedState(guestId, ZODIAC) {
@@ -3308,6 +3370,12 @@ function watchRsvpCounter() {
     if (_currentRole === 'groom' || _currentRole === 'bride') {
       processWishesForRole(data.wishes);
     }
+
+    // 2. Real-time update for couple's sky of guest stars!
+    if (typeof zdRenderCoupleSky === 'function') {
+      zdRenderCoupleSky(data.zodiacStars || []);
+    }
+
     
     // 2. Sum up RSVPs in real-time!
     const rsvps = data.rsvps || {};

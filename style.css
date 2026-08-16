@@ -5247,14 +5247,16 @@ body.lang-ar .animated-bride {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 42px;
   line-height: 1;
   font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', 'Apple Symbols', serif;
-  -webkit-text-fill-color: var(--gold);
-  color: var(--gold);
-  filter: drop-shadow(0 2px 8px rgba(201, 168, 76, 0.5));
+  background: linear-gradient(135deg, #fff9de 0%, #ffd700 35%, #b8860b 70%, #fff6d6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.75));
   animation: zdSymGlow 3.5s ease-in-out infinite;
 }
+
 
 @keyframes zdSymGlow {
   0%, 100% { filter: drop-shadow(0 2px 8px rgba(201, 168, 76, 0.5)); }
@@ -5316,7 +5318,7 @@ body.lang-ar .animated-bride {
   height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: radial-gradient(circle, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.04));
+  background: radial-gradient(circle, #fbf3d4, #c9a84c);
   border: 1px solid rgba(201, 168, 76, 0.45);
   display: flex;
   align-items: center;
@@ -5332,7 +5334,7 @@ body.lang-ar .animated-bride {
 
 .zd-bridge-inner {
   font-size: 1.1rem;
-  color: var(--gold);
+  color: #fff;
   animation: zdGemGlow2 2.6s ease-in-out infinite;
 }
 @keyframes zdGemGlow2 {
@@ -5413,32 +5415,37 @@ body.lang-ar .animated-bride {
   gap: 3px;
   padding: 8px 3px 7px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(201, 168, 76, 0.4);
+  background: linear-gradient(145deg, #ffffff 0%, #f4f8fb 50%, #e6eef5 100%);
+  border: 1.5px solid rgba(165, 185, 205, 0.7);
   cursor: pointer;
   transition: all 0.25s ease;
   backdrop-filter: blur(4px);
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 2px 8px rgba(74, 44, 10, 0.04);
+  box-shadow: 0 2px 8px rgba(120, 145, 170, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 .zd-sign-btn:hover, .zd-sign-btn.zd-active {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.22) 0%, rgba(255, 255, 255, 0.95) 100%);
-  border-color: rgba(201, 168, 76, 0.85);
+  background: linear-gradient(145deg, #ffffff 0%, #dce8f5 50%, #b8d0e8 100%);
+  border-color: #799bbb;
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(201, 168, 76, 0.3);
+  box-shadow: 0 4px 16px rgba(110, 145, 180, 0.35), inset 0 1px 0 #ffffff;
 }
-.zd-sign-btn.zd-active { border-width: 1.5px; border-color: var(--gold); }
+.zd-sign-btn.zd-active {
+  border-width: 1.5px;
+  border-color: #5b83a8;
+}
 
 .zd-btn-sym {
   font-size: 22px;
   font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
-  color: var(--gold);
+  background: linear-gradient(135deg, #ffffff 0%, #a2b7cb 45%, #637a91 80%, #dbe6f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   line-height: 1;
-  filter: drop-shadow(0 1px 4px rgba(201, 168, 76, 0.4));
+  filter: drop-shadow(0 1px 3px rgba(90, 115, 140, 0.5));
 }
 .zd-btn-name {
   font-size: 0.72rem;
-  color: var(--brown);
+  color: #3b4e63;
   font-family: 'Scheherazade New', 'Amiri', 'Playfair Display', serif;
   font-weight: 600;
   letter-spacing: 0.2px;
@@ -5456,34 +5463,34 @@ body.lang-ar .animated-bride {
   max-width: 380px;
 }
 .zd-member-tab {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+  border: 1px solid rgba(160, 185, 210, 0.55);
   border-radius: 20px;
   padding: 6px 14px;
   font-family: 'Scheherazade New', 'Amiri', serif;
   font-size: 0.95rem;
-  color: var(--brown-mid);
+  color: #4a5d73;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 6px rgba(74, 44, 10, 0.04);
+  box-shadow: 0 2px 6px rgba(120, 145, 170, 0.12);
 }
 .zd-member-tab:hover {
-  border-color: var(--gold);
-  color: var(--brown);
+  border-color: #799bbb;
+  color: #2b3b4f;
   transform: translateY(-1px);
 }
 .zd-member-tab.zd-tab-active {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.08));
-  border-color: var(--gold);
-  color: var(--brown);
+  background: linear-gradient(135deg, #e4edf6 0%, #c4d7e8 100%);
+  border-color: #6a8ea8;
+  color: #1e2c3c;
   font-weight: bold;
-  box-shadow: 0 3px 10px rgba(201, 168, 76, 0.2);
+  box-shadow: 0 3px 10px rgba(110, 140, 170, 0.25);
 }
 .zd-member-tab.zd-tab-done {
-  border-color: rgba(201, 168, 76, 0.7);
+  border-color: #799bbb;
 }
 
-/* ── Active Guest Picker Badge ── */
+/* ── Active Guest Picker Badge (Argent Massif) ── */
 .zd-active-picker-badge {
   display: inline-flex;
   align-items: center;
@@ -5491,13 +5498,13 @@ body.lang-ar .animated-bride {
   gap: 8px;
   margin: 12px auto 6px;
   padding: 8px 18px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(253, 248, 236, 0.95) 100%);
-  border: 1.5px solid rgba(201, 168, 76, 0.6);
+  background: linear-gradient(135deg, #ffffff 0%, #f4f8fc 50%, #e2ecf5 100%);
+  border: 1.5px solid rgba(160, 185, 210, 0.85);
   border-radius: 25px;
   font-family: 'Scheherazade New', 'Amiri', serif;
   font-size: 1.15rem;
-  color: var(--brown);
-  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: #2e3e52;
+  box-shadow: 0 4px 16px rgba(130, 155, 180, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   animation: zdBadgePop 0.4s cubic-bezier(0.22, 0.9, 0.32, 1) both;
 }
 @keyframes zdBadgePop {
