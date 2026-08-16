@@ -569,7 +569,7 @@ function zdSelectSign(key, zd, guestId) {
 
 let _cachedCoupleStars = [];
 
-// ── Render Dynamic Traveling Stars for the Couple (Multi-Star Voyageurs) ──
+// ── Render Dynamic Traveling Stars for the Couple (Petites Étoiles Voyageuses) ──
 function zdRenderCoupleSky(stars) {
   _cachedCoupleStars = Array.isArray(stars) ? stars : [];
   const universe = document.getElementById('traveling-stars-universe');
@@ -582,29 +582,23 @@ function zdRenderCoupleSky(stars) {
     return;
   }
 
-  // Generate a traveling interactive star for each guest fortune
+  // Generate simple delicate shining stars wandering across the entire invitation
   universe.innerHTML = _cachedCoupleStars.map((s, idx) => {
-    const sym = s.sym || '✦';
-    const guest = s.guestName || 'ضيف';
-    const flightNum = (idx % 6) + 1; // flights 1 to 6
-    const duration = 24 + (idx % 5) * 5; // 24s to 44s smooth flight
-    const delay = -(idx * 5.8) % duration; // staggered initial position
+    const flightNum = (idx % 8) + 1; // flights 1 to 8
+    const duration = 22 + (idx % 6) * 4; // 22s to 42s smooth wandering
+    const delay = -(idx * 4.7) % duration; // staggered starting points
     
     return `
       <div class="traveling-star-orb" 
-           style="animation: starFlight${flightNum} ${duration}s ease-in-out infinite ${delay}s;" 
+           style="animation-name: starFlight${flightNum}; animation-duration: ${duration}s; animation-delay: ${delay}s;" 
            onclick="openCoupleSingleStarModal(${idx})" 
-           title="نجمة أضاءها ${guest}">
-        <div class="traveling-star-tail"></div>
-        <div class="traveling-star-body">
-          <span class="star-sparkle-top">✦</span>
-          <span class="star-sym-badge">${sym}</span>
-        </div>
-        <div class="traveling-star-label">✨ ${guest}</div>
+           title="✨ نجمة مضاءة — انقر للعرض">
+        <span class="traveling-star-sparkle">✦</span>
       </div>
     `;
   }).join('');
 }
+
 
 window.openCoupleSingleStarModal = function(idx) {
   const s = _cachedCoupleStars[idx];

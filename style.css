@@ -5800,151 +5800,119 @@ body.lang-ar .animated-bride {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ÉTOILES VOYAGEUSES DES MARIÉS (Dynamic Traveling Stars)
+   PETITES ÉTOILES VOYAGEUSES MAGIQUES (Discrètes & Délicates)
 ═══════════════════════════════════════════════════════════ */
 
 .traveling-star-orb {
   position: fixed;
   pointer-events: auto;
   cursor: pointer;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  z-index: 10000;
-  will-change: transform;
-}
-.traveling-star-orb:hover {
-  animation-play-state: paused !important;
-  transform: scale(1.3) !important;
-  z-index: 10002;
-}
-
-.traveling-star-body {
-  position: relative;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fff7e6 30%, #ffd700 70%, #b8860b 100%);
-  border: 2px solid #ffffff;
-  box-shadow:
-    0 0 20px rgba(255, 215, 0, 0.9),
-    0 0 45px rgba(255, 190, 40, 0.6),
-    inset 0 2px 4px rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: starCorePulse 2.2s ease-in-out infinite alternate;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fff7d6 30%, #ffd700 70%, #b8860b 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.9),
+    0 0 25px rgba(255, 190, 40, 0.65),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 10000;
+  will-change: top, left, transform;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
-@keyframes starCorePulse {
-  0%   { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)) brightness(1); }
-  100% { filter: drop-shadow(0 0 28px rgba(255, 230, 80, 1)) brightness(1.35); }
+.traveling-star-orb:hover, .traveling-star-orb:active {
+  transform: scale(1.6) !important;
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 1),
+    0 0 40px rgba(255, 230, 80, 0.9);
+  animation-play-state: paused !important;
+  z-index: 10002;
 }
 
-.traveling-star-tail {
-  position: absolute;
-  width: 70px;
-  height: 3px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 215, 0, 0.7), rgba(255, 255, 255, 0));
-  filter: blur(1.5px);
-  transform: rotate(-35deg) translate(-25px, 20px);
+.traveling-star-sparkle {
+  font-size: 13px;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 0 6px #ffd700;
+  animation: starSparkleSpin 2.5s linear infinite;
   pointer-events: none;
-  animation: starTailGlow 2s ease-in-out infinite;
-}
-@keyframes starTailGlow {
-  0%, 100% { opacity: 0.4; transform: rotate(-35deg) translate(-25px, 20px) scaleX(0.8); }
-  50%      { opacity: 1;   transform: rotate(-35deg) translate(-25px, 20px) scaleX(1.4); }
-}
-
-.star-sparkle-top {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  font-size: 15px;
-  color: #ffd700;
-  text-shadow: 0 0 8px #ffffff;
-  animation: starSparkleSpin 3s linear infinite;
 }
 @keyframes starSparkleSpin {
   from { transform: rotate(0deg) scale(0.9); }
-  50%  { transform: rotate(180deg) scale(1.35); }
+  50%  { transform: rotate(180deg) scale(1.25); }
   to   { transform: rotate(360deg) scale(0.9); }
 }
 
-.star-sym-badge {
-  font-size: 21px;
-  line-height: 1;
-  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
-  color: #3b2200;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-.traveling-star-label {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid rgba(201, 168, 76, 0.7);
-  border-radius: 14px;
-  padding: 2px 9px;
-  font-family: 'Scheherazade New', 'Amiri', serif;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #2b1800;
-  white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  pointer-events: none;
-  letter-spacing: 0.3px;
-}
-
-/* ── 6 Smooth Panoramic Flying Trajectories Across Full Screen ── */
+/* ── 8 Smooth Panoramic Flying Trajectories Across Full Screen ── */
 @keyframes starFlight1 {
-  0%   { top: 12vh; left: 6vw;   transform: scale(1); }
-  25%  { top: 40vh; left: 75vw;  transform: scale(1.1); }
-  50%  { top: 78vh; left: 45vw;  transform: scale(0.95); }
-  75%  { top: 86vh; left: 82vw;  transform: scale(1.12); }
-  100% { top: 12vh; left: 6vw;   transform: scale(1); }
+  0%   { top: 12vh; left: 8vw;   }
+  25%  { top: 38vh; left: 78vw;  }
+  50%  { top: 82vh; left: 45vw;  }
+  75%  { top: 60vh; left: 15vw;  }
+  100% { top: 12vh; left: 8vw;   }
 }
 
 @keyframes starFlight2 {
-  0%   { top: 82vh; left: 85vw; transform: scale(1.05); }
-  30%  { top: 45vh; left: 12vw; transform: scale(0.92); }
-  60%  { top: 18vh; left: 68vw; transform: scale(1.15); }
-  85%  { top: 88vh; left: 22vw; transform: scale(1); }
-  100% { top: 82vh; left: 85vw; transform: scale(1.05); }
+  0%   { top: 78vh; left: 85vw; }
+  28%  { top: 25vh; left: 65vw; }
+  55%  { top: 15vh; left: 15vw; }
+  80%  { top: 65vh; left: 25vw; }
+  100% { top: 78vh; left: 85vw; }
 }
 
 @keyframes starFlight3 {
-  0%   { top: 68vh; left: 10vw; transform: scale(0.95); }
-  35%  { top: 22vh; left: 78vw; transform: scale(1.15); }
-  70%  { top: 15vh; left: 28vw; transform: scale(1.05); }
-  90%  { top: 60vh; left: 84vw; transform: scale(0.9); }
-  100% { top: 68vh; left: 10vw; transform: scale(0.95); }
+  0%   { top: 65vh; left: 12vw; }
+  30%  { top: 85vh; left: 75vw; }
+  60%  { top: 22vh; left: 82vw; }
+  85%  { top: 18vh; left: 35vw; }
+  100% { top: 65vh; left: 12vw; }
 }
 
 @keyframes starFlight4 {
-  0%   { top: 75vh; left: 80vw; transform: scale(1.1); }
-  25%  { top: 85vh; left: 18vw; transform: scale(0.95); }
-  55%  { top: 32vh; left: 78vw; transform: scale(1.15); }
-  80%  { top: 20vh; left: 20vw; transform: scale(1); }
-  100% { top: 75vh; left: 80vw; transform: scale(1.1); }
+  0%   { top: 20vh; left: 75vw; }
+  30%  { top: 82vh; left: 20vw; }
+  60%  { top: 48vh; left: 82vw; }
+  85%  { top: 15vh; left: 45vw; }
+  100% { top: 20vh; left: 75vw; }
 }
 
 @keyframes starFlight5 {
-  0%   { top: 86vh; left: 45vw; transform: scale(1); }
-  30%  { top: 42vh; left: 86vw; transform: scale(1.15); }
-  65%  { top: 22vh; left: 12vw; transform: scale(0.95); }
-  85%  { top: 16vh; left: 52vw; transform: scale(1.1); }
-  100% { top: 86vh; left: 45vw; transform: scale(1); }
+  0%   { top: 88vh; left: 50vw; }
+  30%  { top: 45vh; left: 85vw; }
+  65%  { top: 16vh; left: 18vw; }
+  85%  { top: 52vh; left: 10vw; }
+  100% { top: 88vh; left: 50vw; }
 }
 
 @keyframes starFlight6 {
-  0%   { top: 15vh; left: 52vw; transform: scale(1.05); }
-  30%  { top: 58vh; left: 8vw;  transform: scale(1.15); }
-  65%  { top: 65vh; left: 82vw; transform: scale(0.92); }
-  85%  { top: 88vh; left: 38vw; transform: scale(1.1); }
-  100% { top: 15vh; left: 52vw; transform: scale(1.05); }
+  0%   { top: 18vh; left: 48vw; }
+  25%  { top: 62vh; left: 10vw; }
+  60%  { top: 75vh; left: 80vw; }
+  85%  { top: 35vh; left: 40vw; }
+  100% { top: 18vh; left: 48vw; }
 }
+
+@keyframes starFlight7 {
+  0%   { top: 35vh; left: 15vw; }
+  35%  { top: 15vh; left: 70vw; }
+  70%  { top: 80vh; left: 60vw; }
+  100% { top: 35vh; left: 15vw; }
+}
+
+@keyframes starFlight8 {
+  0%   { top: 70vh; left: 70vw; }
+  35%  { top: 85vh; left: 15vw; }
+  70%  { top: 25vh; left: 20vw; }
+  100% { top: 70vh; left: 70vw; }
+}
+
 
 
 
