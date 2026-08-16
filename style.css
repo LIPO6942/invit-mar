@@ -5035,7 +5035,7 @@ body.lang-ar .animated-bride {
 
 /* Section container */
 .zd-section {
-  background: linear-gradient(170deg, #090718 0%, #0f0c26 45%, #080615 100%) !important;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--ivory) 60%, #f5ede0 100%) !important;
   min-height: auto !important;
   padding: 56px 16px 60px !important;
   position: relative;
@@ -5044,9 +5044,10 @@ body.lang-ar .animated-bride {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  border-top: 1px solid rgba(201,168,76,0.2);
 }
 
-/* ── Background nebula ── */
+/* ── Pale star field on cream background ── */
 .zd-bg-nebula {
   position: absolute;
   inset: 0;
@@ -5057,21 +5058,21 @@ body.lang-ar .animated-bride {
 .zd-stars-field { position: absolute; inset: 0; }
 .zd-nebula-orb  { position: absolute; border-radius: 50%; pointer-events: none; }
 .zd-orb-1 {
-  width: 240px; height: 240px;
-  top: -70px; left: -70px;
-  background: radial-gradient(circle, rgba(201,168,76,0.22), transparent 70%);
-  filter: blur(55px);
+  width: 280px; height: 280px;
+  top: -80px; left: -80px;
+  background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%);
+  filter: blur(60px);
 }
 .zd-orb-2 {
-  width: 280px; height: 280px;
-  bottom: -90px; right: -90px;
-  background: radial-gradient(circle, rgba(72,35,130,0.25), transparent 70%);
-  filter: blur(75px);
+  width: 300px; height: 300px;
+  bottom: -100px; right: -100px;
+  background: radial-gradient(circle, rgba(201,168,76,0.06), transparent 70%);
+  filter: blur(70px);
 }
 .zd-orb-3 {
   width: 200px; height: 200px;
   top: 35%; left: 50%; transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(201,168,76,0.07), transparent 70%);
+  background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 70%);
   filter: blur(50px);
 }
 
@@ -5089,23 +5090,21 @@ body.lang-ar .animated-bride {
 .zd-hdr-ornament {
   font-size: 0.62rem;
   letter-spacing: 10px;
-  color: rgba(201,168,76,0.4);
+  color: rgba(201,168,76,0.55);
   margin-bottom: 14px;
 }
 .zd-title {
+  font-family: 'Amiri', serif;
   font-size: 1.75rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #fffbe0 0%, #f5c842 40%, #c9a84c 70%, #fde68a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--brown);
   margin-bottom: 8px;
   line-height: 1.35;
 }
 .zd-subtitle {
   font-family: 'Amiri', serif;
-  font-size: 0.86rem;
-  color: rgba(200,175,120,0.5);
+  font-size: 0.88rem;
+  color: var(--brown-mid);
   letter-spacing: 0.5px;
 }
 
@@ -5118,18 +5117,19 @@ body.lang-ar .animated-bride {
   margin-bottom: 30px;
 }
 
-/* ── Individual card ── */
+/* ── Individual card (parchment style) ── */
 .zd-card {
   flex: 1;
   max-width: 158px;
   position: relative;
-  border-radius: 22px;
+  border-radius: 18px;
   overflow: hidden;
-  background: linear-gradient(155deg, rgba(30,22,60,0.96) 0%, rgba(12,9,30,0.98) 100%);
-  border: 1px solid rgba(201,168,76,0.28);
+  background: linear-gradient(155deg, #fffef8 0%, #fdf8ee 60%, #f9f2e2 100%);
+  border: 1px solid rgba(201,168,76,0.4);
   box-shadow:
-    0 14px 45px rgba(0,0,0,0.72),
-    inset 0 1px 0 rgba(255,255,255,0.04);
+    0 6px 28px rgba(74,44,10,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(201,168,76,0.1);
   animation: zdCardFadeIn 0.85s cubic-bezier(0.22,0.9,0.32,1) both;
 }
 #zdGroomCard { animation-delay: 0.12s; }
@@ -5140,19 +5140,19 @@ body.lang-ar .animated-bride {
   to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-/* Diagonal shine sweep */
+/* Diagonal shimmer on parchment card */
 .zd-card-shine {
   position: absolute;
   top: 0; left: -65%;
   width: 38%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.038), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
   transform: skewX(-12deg);
-  animation: zdShineSweep 5.5s ease-in-out infinite;
+  animation: zdShineSweep 6s ease-in-out infinite;
   z-index: 3;
   pointer-events: none;
 }
 #zdGroomCard .zd-card-shine { animation-delay: 0s; }
-#zdBrideCard .zd-card-shine { animation-delay: 2.75s; }
+#zdBrideCard .zd-card-shine { animation-delay: 3s; }
 
 @keyframes zdShineSweep {
   0%, 100% { left: -65%; }
@@ -5165,7 +5165,7 @@ body.lang-ar .animated-bride {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.14;
+  opacity: 0.1;
   z-index: 0;
 }
 
@@ -5183,8 +5183,8 @@ body.lang-ar .animated-bride {
 /* Role badge */
 .zd-role {
   font-family: 'Amiri', serif;
-  font-size: 0.6rem;
-  color: rgba(201,168,76,0.6);
+  font-size: 0.62rem;
+  color: var(--brown-mid);
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -5203,12 +5203,12 @@ body.lang-ar .animated-bride {
   inset: 0;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 32%,
-    rgba(201,168,76,0.14),
-    rgba(201,168,76,0.04) 70%);
-  border: 1px solid rgba(201,168,76,0.4);
+    rgba(201,168,76,0.15),
+    rgba(201,168,76,0.05) 70%);
+  border: 1px solid rgba(201,168,76,0.5);
   box-shadow:
-    0 0 24px rgba(201,168,76,0.14),
-    inset 0 0 20px rgba(201,168,76,0.06);
+    0 2px 16px rgba(201,168,76,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.6);
   animation: zdRingBreath 4s ease-in-out infinite;
 }
 
@@ -5217,7 +5217,7 @@ body.lang-ar .animated-bride {
   position: absolute;
   inset: 8px;
   border-radius: 50%;
-  border: 0.5px solid rgba(201,168,76,0.2);
+  border: 0.5px solid rgba(201,168,76,0.25);
   animation: zdRingBreath 4s 1s ease-in-out infinite;
 }
 
@@ -5226,21 +5226,15 @@ body.lang-ar .animated-bride {
   position: absolute;
   inset: 18px;
   border-radius: 50%;
-  border: 0.5px dashed rgba(201,168,76,0.12);
+  border: 0.5px dashed rgba(201,168,76,0.15);
   animation: zdRingRotate 20s linear infinite;
 }
 
 @keyframes zdRingBreath {
-  0%,100% {
-    box-shadow: 0 0 24px rgba(201,168,76,0.14), inset 0 0 20px rgba(201,168,76,0.06);
-  }
-  50% {
-    box-shadow: 0 0 38px rgba(201,168,76,0.3), inset 0 0 26px rgba(201,168,76,0.13);
-  }
+  0%,100% { box-shadow: 0 2px 16px rgba(201,168,76,0.15), inset 0 1px 0 rgba(255,255,255,0.6); }
+  50%     { box-shadow: 0 4px 28px rgba(201,168,76,0.32), inset 0 1px 0 rgba(255,255,255,0.6); }
 }
-@keyframes zdRingRotate {
-  to { transform: rotate(360deg); }
-}
+@keyframes zdRingRotate { to { transform: rotate(360deg); } }
 
 .zd-sigil-char {
   position: absolute;
@@ -5250,32 +5244,30 @@ body.lang-ar .animated-bride {
   justify-content: center;
   font-size: 40px;
   line-height: 1;
-  /* Force text (non-emoji) rendering */
   font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', 'Apple Symbols', 'Symbola', serif;
-  -webkit-text-fill-color: #c9a84c;
-  color: #c9a84c;
-  filter: drop-shadow(0 0 14px rgba(201,168,76,0.85));
+  -webkit-text-fill-color: var(--gold);
+  color: var(--gold);
+  filter: drop-shadow(0 2px 8px rgba(201,168,76,0.5));
   animation: zdSymGlow 3.5s ease-in-out infinite;
 }
 
 @keyframes zdSymGlow {
-  0%,100% { filter: drop-shadow(0 0 14px rgba(201,168,76,0.85)); }
-  50%     { filter: drop-shadow(0 0 28px rgba(201,168,76,1)) drop-shadow(0 0 45px rgba(255,220,100,0.45)); }
+  0%,100% { filter: drop-shadow(0 2px 8px rgba(201,168,76,0.5)); }
+  50%     { filter: drop-shadow(0 4px 18px rgba(201,168,76,0.85)); }
 }
 
 /* Sign names */
 .zd-sign-fr {
   font-family: 'Playfair Display', serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 3px;
-  color: #dfc870;
-  text-shadow: 0 0 28px rgba(201,168,76,0.38);
+  color: var(--brown);
 }
 .zd-sign-ar {
   font-family: 'Amiri', serif;
   font-size: 0.85rem;
-  color: rgba(200,175,120,0.52);
+  color: var(--brown-mid);
   margin-top: -2px;
 }
 
@@ -5289,9 +5281,9 @@ body.lang-ar .animated-bride {
 }
 .zd-element-pill {
   font-size: 0.62rem;
-  color: rgba(201,168,76,0.88);
-  background: rgba(201,168,76,0.09);
-  border: 1px solid rgba(201,168,76,0.22);
+  color: var(--brown-mid);
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.3);
   border-radius: 20px;
   padding: 3px 12px;
   letter-spacing: 1px;
@@ -5299,7 +5291,7 @@ body.lang-ar .animated-bride {
 .zd-dates {
   font-family: 'Playfair Display', serif;
   font-size: 0.55rem;
-  color: rgba(180,155,90,0.42);
+  color: rgba(122,74,42,0.5);
   letter-spacing: 0.5px;
 }
 
@@ -5320,32 +5312,33 @@ body.lang-ar .animated-bride {
   border-radius: 50%;
   flex-shrink: 0;
   background: radial-gradient(circle, rgba(201,168,76,0.2), rgba(201,168,76,0.04));
-  border: 1px solid rgba(201,168,76,0.4);
+  border: 1px solid rgba(201,168,76,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 12px rgba(201,168,76,0.2);
   animation: zdGemPing 2.6s ease-in-out infinite;
 }
 
 @keyframes zdGemPing {
-  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.38); }
-  50%      { box-shadow: 0 0 0 9px rgba(201,168,76,0); }
+  0%,100% { box-shadow: 0 2px 12px rgba(201,168,76,0.2), 0 0 0 0 rgba(201,168,76,0.3); }
+  50%      { box-shadow: 0 2px 12px rgba(201,168,76,0.2), 0 0 0 8px rgba(201,168,76,0); }
 }
 
 .zd-bridge-inner {
   font-size: 1.1rem;
-  color: #c9a84c;
+  color: var(--gold);
   animation: zdGemGlow2 2.6s ease-in-out infinite;
 }
 @keyframes zdGemGlow2 {
-  0%,100% { opacity: 0.72; transform: scale(1);    text-shadow: 0 0 10px rgba(201,168,76,0.5); }
-  50%     { opacity: 1;    transform: scale(1.28); text-shadow: 0 0 22px rgba(201,168,76,1); }
+  0%,100% { opacity: 0.7; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.28); }
 }
 
 .zd-bridge-compat {
   font-family: 'Playfair Display', serif;
   font-size: 0.46rem;
-  color: rgba(201,168,76,0.42);
+  color: rgba(122,74,42,0.5);
   letter-spacing: 2.5px;
   writing-mode: vertical-lr;
   text-orientation: mixed;
@@ -5364,13 +5357,197 @@ body.lang-ar .animated-bride {
 .zd-poem-line {
   width: 72px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.38), transparent);
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
 }
 .zd-poem {
   font-family: 'Amiri', serif;
   font-size: 1rem;
-  color: rgba(200,175,120,0.68);
+  color: var(--brown-mid);
   line-height: 1.95;
   font-style: italic;
   max-width: 300px;
 }
+
+/* ═══════ GUEST FORTUNE PARCHMENT ═══════ */
+
+/* Section subtitle */
+.zd-guest-intro {
+  text-align: center;
+  margin: 36px 0 20px;
+  padding: 16px;
+  border-top: 1px solid rgba(201,168,76,0.2);
+}
+.zd-guest-intro-title {
+  font-family: 'Amiri', serif;
+  font-size: 1rem;
+  color: var(--brown);
+  margin-bottom: 4px;
+}
+.zd-guest-intro-sub {
+  font-family: 'Amiri', serif;
+  font-size: 0.78rem;
+  color: var(--brown-mid);
+  opacity: 0.75;
+}
+
+/* 12 sign buttons grid */
+.zd-sign-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 7px;
+  max-width: 340px;
+  margin: 0 auto 24px;
+}
+
+.zd-sign-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 7px 4px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(201,168,76,0.3);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent;
+}
+.zd-sign-btn:hover, .zd-sign-btn.zd-active {
+  background: rgba(201,168,76,0.15);
+  border-color: rgba(201,168,76,0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(201,168,76,0.25);
+}
+.zd-sign-btn.zd-active { border-width: 1.5px; }
+
+.zd-btn-sym {
+  font-size: 20px;
+  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
+  -webkit-text-fill-color: var(--gold);
+  color: var(--gold);
+  line-height: 1;
+}
+.zd-btn-name {
+  font-size: 0.45rem;
+  color: var(--brown-mid);
+  letter-spacing: 0.5px;
+  font-family: 'Playfair Display', serif;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── Parchment scroll ── */
+.zd-parchment-wrap {
+  max-width: 340px;
+  margin: 0 auto;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.7s cubic-bezier(0.22, 0.9, 0.32, 1),
+              opacity 0.4s ease;
+  opacity: 0;
+}
+.zd-parchment-wrap.zd-open {
+  max-height: 400px;
+  opacity: 1;
+}
+
+.zd-parchment {
+  position: relative;
+  background: linear-gradient(160deg, #fffef5 0%, #fdf6e3 50%, #faf0d2 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(201,168,76,0.4);
+  box-shadow:
+    0 8px 32px rgba(74,44,10,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 0 30px rgba(201,168,76,0.04);
+  padding: 28px 24px 24px;
+  text-align: center;
+  margin-bottom: 8px;
+  /* Ragged top/bottom edges like parchment scroll */
+  clip-path: polygon(
+    0% 3%, 2% 0%, 4% 2%, 6% 0%, 8% 2%, 10% 0%, 12% 2%,
+    14% 0%, 16% 1%, 18% 0%, 20% 2%, 25% 0%, 30% 2%, 35% 0%,
+    40% 1%, 45% 0%, 50% 2%, 55% 0%, 60% 1%, 65% 0%, 70% 2%,
+    75% 0%, 80% 1%, 85% 0%, 90% 2%, 95% 0%, 98% 1%, 100% 0%,
+    100% 97%, 98% 100%, 96% 98%, 94% 100%, 92% 98%, 90% 100%,
+    85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%,
+    55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%,
+    25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 2% 100%, 0% 97%
+  );
+}
+
+/* Wax seal */
+.zd-wax-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #f5c842, #c9a84c 50%, #8a6010);
+  box-shadow: 0 3px 12px rgba(201,168,76,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+  margin-bottom: 14px;
+  animation: zdSealAppear 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+  font-size: 22px;
+}
+@keyframes zdSealAppear {
+  from { transform: scale(0) rotate(-20deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Fortune guest sign displayed */
+.zd-fortune-sign {
+  font-family: 'Noto Sans Symbols 2', 'Segoe UI Symbol', serif;
+  font-size: 2rem;
+  -webkit-text-fill-color: var(--gold);
+  color: var(--gold);
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(201,168,76,0.4));
+  margin-bottom: 4px;
+}
+.zd-fortune-sign-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.65rem;
+  letter-spacing: 4px;
+  color: var(--brown-mid);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* Divider line on parchment */
+.zd-parchment-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), transparent);
+  margin: 0 auto 14px;
+}
+
+/* The fortune message text */
+.zd-fortune-msg {
+  font-family: 'Amiri', serif;
+  font-size: 1.05rem;
+  color: var(--brown);
+  line-height: 2;
+  font-style: italic;
+  margin: 0 0 12px;
+  animation: zdMsgReveal 0.6s 0.3s ease both;
+}
+@keyframes zdMsgReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* French sub-message */
+.zd-fortune-msg-fr {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.7rem;
+  color: var(--brown-mid);
+  opacity: 0.7;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  margin: 0;
+  animation: zdMsgReveal 0.6s 0.5s ease both;
+}
+

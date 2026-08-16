@@ -295,7 +295,118 @@ function applyZodiacSection(cfg) {
       document.head.appendChild(s);
     }
   }
+
+  // ─── Guest Fortune Parchment ───
+  buildGuestFortune(cfg, ZODIAC);
 }
+
+/* ─────────────────────────────────────────────────────────
+   GUEST FORTUNE PARCHMENT — Interactive sign selection
+───────────────────────────────────────────────────────── */
+function buildGuestFortune(cfg, ZODIAC) {
+  const grid = document.getElementById('zdSignGrid');
+  if (!grid || grid.dataset.init) return;
+  grid.dataset.init = '1';
+
+  const isFr = cfg.la === 'fr';
+
+  // ─── Fortune messages per sign (bilingual) ───
+  const FORTUNES = {
+    aries:       { ar: 'بقوة الحمل وجرأته، يُرسم طريقك نحو السعادة في هذا اليوم المبارك 🌟', fr: 'L\'ardeur du Bélier illumine votre chemin en ce jour béni ✨' },
+    taurus:      { ar: 'ثبات الثور ووفاؤه يحملان لك بركات الفرح والسلام الدائم 🌿', fr: 'La fidélité du Taureau vous apporte paix et joie durables 🌿' },
+    gemini:      { ar: 'خفة الجوزاء وذكاؤها يجعلانك مصدر البهجة في كل مكان تحلّ 💫', fr: 'La légèreté des Gémeaux fait de vous une source de joie partout 💫' },
+    cancer:      { ar: 'حنان السرطان وعمقه يُفيضان القلوب بالمحبة والدفء اليوم 🤍', fr: 'La tendresse du Cancer emplit les cœurs de chaleur et d\'amour 🤍' },
+    leo:         { ar: 'كرم الأسد ومهابته يضيئان هذا الاحتفال بنور لا يُضاهى 👑', fr: 'La générosité du Lion illumine cette fête d\'une lumière royale 👑' },
+    virgo:       { ar: 'لطف العذراء ونقاؤها يُزيّنان حضورك بأجمل الصفات 🌸', fr: 'La grâce de la Vierge embellit votre présence de ses plus beaux attributs 🌸' },
+    libra:       { ar: 'توازن الميزان وأناقته يُضفيان على حضورك رونقاً وبهاءً رائعاً ⚖️', fr: 'L\'élégance de la Balance pare votre présence d\'un éclat remarquable ⚖️' },
+    scorpio:     { ar: 'وفاء العقرب وعمق روحه يجعلان من حضورك نعمة على من حولك 🖤', fr: 'La loyauté du Scorpion fait de votre présence une bénédiction 🖤' },
+    sagittarius: { ar: 'حرية القوس وتفاؤله الرائع يحملان إليك بشائر الخير والسعادة 🏹', fr: 'L\'optimisme du Sagittaire vous porte de belles nouvelles de bonheur 🏹' },
+    capricorn:   { ar: 'صبر الجدي وعزيمته يُبشّران بمستقبل مشرق ومليء بالعطاء 🌙', fr: 'La persévérance du Capricorne annonce un avenir brillant et généreux 🌙' },
+    aquarius:    { ar: 'إبداع الدلو ورحابة أفقه يجعلانك شمعة تضيء دروب الآخرين 🌊', fr: 'La créativité du Verseau fait de vous une lumière qui guide les autres 🌊' },
+    pisces:      { ar: 'حساسية الحوت ورومانسيته العميقة يُوسّعان قلبك ليحتضن العالم 🐟', fr: 'La sensibilité des Poissons ouvre votre cœur à embrasser le monde entier 🐟' },
+  };
+
+  const ALL_SIGNS = [
+    'aries','taurus','gemini','cancer','leo','virgo',
+    'libra','scorpio','sagittarius','capricorn','aquarius','pisces'
+  ];
+
+  // Build grid buttons
+  ALL_SIGNS.forEach(key => {
+    const zd = ZODIAC[key];
+    if (!zd) return;
+    const btn = document.createElement('button');
+    btn.className = 'zd-sign-btn';
+    btn.dataset.sign = key;
+    btn.setAttribute('aria-label', `${zd.fr} – ${zd.ar}`);
+    btn.innerHTML = `
+      <span class="zd-btn-sym">${zd.sym}\uFE0E</span>
+      <span class="zd-btn-name">${zd.fr.slice(0,5)}</span>
+    `;
+    btn.addEventListener('click', () => showGuestFortune(key, zd, FORTUNES[key], isFr));
+    grid.appendChild(btn);
+  });
+}
+
+function showGuestFortune(key, zd, fortune, isFr) {
+  // Highlight active button
+  document.querySelectorAll('.zd-sign-btn').forEach(b => b.classList.remove('zd-active'));
+  const activeBtn = document.querySelector(`.zd-sign-btn[data-sign="${key}"]`);
+  if (activeBtn) activeBtn.classList.add('zd-active');
+
+  // Update parchment content
+  const signEl    = document.getElementById('zdFortuneSign');
+  const nameEl    = document.getElementById('zdFortuneSignName');
+  const msgEl     = document.getElementById('zdFortuneMsg');
+  const msgFrEl   = document.getElementById('zdFortuneMsgFr');
+  const sealEl    = document.getElementById('zdWaxSeal');
+
+  if (signEl)  { signEl.textContent  = zd.sym + '\uFE0E'; }
+  if (nameEl)  { nameEl.textContent  = zd.fr; }
+  if (msgEl)   {
+    // Remove and re-add to retrigger animation
+    msgEl.style.animation = 'none';
+    void msgEl.offsetWidth;
+    msgEl.style.animation = '';
+    msgEl.textContent = isFr ? fortune.fr : fortune.ar;
+  }
+  if (msgFrEl) {
+    msgFrEl.style.animation = 'none';
+    void msgFrEl.offsetWidth;
+    msgFrEl.style.animation = '';
+    msgFrEl.textContent = isFr ? fortune.ar : fortune.fr;
+  }
+
+  // Wax seal element emoji based on sign
+  const seals = { fire: '🔥', earth: '🌿', air: '💨', water: '💧' };
+  const elMap = {
+    aries:'fire', leo:'fire', sagittarius:'fire',
+    taurus:'earth', virgo:'earth', capricorn:'earth',
+    gemini:'air', libra:'air', aquarius:'air',
+    cancer:'water', scorpio:'water', pisces:'water'
+  };
+  if (sealEl) {
+    sealEl.style.animation = 'none';
+    void sealEl.offsetWidth;
+    sealEl.style.animation = '';
+    sealEl.textContent = seals[elMap[key]] || '✦';
+  }
+
+  // Open the parchment (CSS transition)
+  const wrap = document.getElementById('zdParchmentWrap');
+  if (wrap) {
+    // Close first if already open (to retrigger animation)
+    if (wrap.classList.contains('zd-open')) {
+      wrap.classList.remove('zd-open');
+      setTimeout(() => wrap.classList.add('zd-open'), 80);
+    } else {
+      wrap.classList.add('zd-open');
+      // Smooth scroll to it
+      setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+    }
+  }
+}
+
 
 
 function checkRoleView() {
@@ -2232,7 +2343,10 @@ const TRANSLATIONS = {
     souvenir_opt_html_desc: 'ملف HTML ثابت وكامل يعمل بدون انترنت ويعرض الدعوة مع المغلف والأسماء.',
     zodiac_title: 'البروج الفلكية للعروسين',
     zodiac_subtitle: 'كتبت النجوم لقاءهما منذ الأزل',
+    zd_fortune_title: '✦ فأل النجوم لك أيها الضيف ✦',
+    zd_fortune_sub: 'اختر برجك واكتشف ما رسمته النجوم لك في هذا اليوم المبارك',
   },
+
   fr: {
     bismillah_apex: '✨',
     basmala: 'Que Dieu les bénisse, les comble de bonheur et les réunisse.',
@@ -2283,7 +2397,10 @@ const TRANSLATIONS = {
     souvenir_opt_html_desc: 'Un fichier HTML autonome complet qui fonctionne hors-ligne.',
     zodiac_title: 'Signes Astrologiques des Mariés',
     zodiac_subtitle: 'Les étoiles ont écrit leur rencontre depuis l\'éternité',
+    zd_fortune_title: '✦ Votre Présage Céleste ✦',
+    zd_fortune_sub: 'Choisissez votre signe et découvrez ce que les étoiles vous réservent ce jour béni',
   }
+
 };
 
 /* ────────────────────────────────────────────────
