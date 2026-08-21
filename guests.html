@@ -212,6 +212,7 @@ const FORMULAS=[
   {value:'ar_friend_m',        label:'إلى عْشيري ...',            badge:'b-afm', emoji:'🤝'},
   {value:'ar_friend_f',        label:'إلى عْشيرتي ...',           badge:'b-aff', emoji:'👩‍🤝‍👩'},
   {value:'fr_couple',          label:'M. et Mme ...',            badge:'b-frc', emoji:'💑'},
+  {value:'fr_couple_children', label:'M. et Mme ... et leurs enfants', badge:'b-frcc',emoji:'👨‍👩‍👦‍👦'},
   {value:'fr_man',             label:'Monsieur ...',              badge:'b-frm', emoji:'🤵'},
   {value:'fr_woman',           label:'Madame ...',                badge:'b-frw', emoji:'👰'},
   {value:'fr_friend_m',        label:'Pour mon Ami ...',          badge:'b-ffm', emoji:'👨‍🤝‍👨'},
@@ -226,6 +227,7 @@ function formatLabel(name,type){
     case'ar_friend_m':        return`إلى عْشيري ${name}`;
     case'ar_friend_f':        return`إلى عْشيرتي ${name}`;
     case'fr_couple':          return`Monsieur et Madame ${name}`;
+    case'fr_couple_children': return`Monsieur et Madame ${name} et leurs enfants`;
     case'fr_man':             return`Monsieur ${name}`;
     case'fr_woman':           return`Madame ${name}`;
     case'fr_friend_m':        return`Pour mon Ami ${name}`;

@@ -338,14 +338,14 @@ function zdGetMembers(name, type, isFr) {
   members.push({ name: n, role: primaryLabel, key: 'primary' });
 
   // Spouse?
-  if (type === 'ar_couple' || type === 'ar_couple_children' || type === 'fr_couple') {
+  if (type === 'ar_couple' || type === 'ar_couple_children' || type === 'fr_couple' || type === 'fr_couple_children') {
     const spouseRole = isFr ? 'Conjoint·e' : 'القرين / القرينة';
     const spouseName = isFr ? `Conjoint(e) de ${n}` : (n.includes('حرم') ? n : `حرم ${n}`);
     members.push({ name: spouseName, role: spouseRole, key: 'spouse' });
   }
   // Children?
-  if (type === 'ar_couple_children') {
-    const kidRole = 'الأبناء';
+  if (type === 'ar_couple_children' || type === 'fr_couple_children') {
+    const kidRole = isFr ? 'Les Enfants' : 'الأبناء';
     const kidName = isFr ? `Enfants de ${n}` : `أبناء ${n}`;
     members.push({ name: kidName, role: kidRole, key: 'children' });
   }
@@ -1256,6 +1256,7 @@ function _getGuestFormattedName(isFr) {
   if (isFr) {
     switch (guestType) {
       case 'fr_couple':          return `Monsieur & Madame ${guestName}`;
+      case 'fr_couple_children': return `Monsieur & Madame ${guestName} et leurs enfants`;
       case 'fr_man':             return `Monsieur ${guestName}`;
       case 'fr_woman':           return `Madame ${guestName}`;
       case 'fr_friend_m':        return `Cher Ami ${guestName}`;
@@ -2310,24 +2311,254 @@ function init3DTilt() {
 /* ────────────────────────────────────────────────
    GUESTBOOK / WISHES SYSTEM
    ──────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────
+   VOICE RECORDING SYSTEM FOR GUESTBOOK
+──────────────────────────────────────────────── */
+let _mediaRecorder = null;
+let _audioChunks = [];
+let _recordingTimerInterval = null;
+let _recordingSeconds = 0;
+window._recordedVoiceBlob = null;
+window._recordedVoiceDataUrl = null;
+window._recordedVoiceDuration = 0;
+
+async function startVoiceRecording() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert(_currentLang === 'fr' ? "L'enregistrement audio n'est pas supporté par votre navigateur." : "المتصفح لا يدعم التسجيل الصوتي المباشر.");
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    _audioChunks = [];
+    
+    let options = {};
+    if (typeof MediaRecorder !== 'undefined' && typeof MediaRecorder.isTypeSupported === 'function') {
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        options = { mimeType: 'audio/webm;codecs=opus' };
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options = { mimeType: 'audio/mp4' };
+      } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+        options = { mimeType: 'audio/ogg;codecs=opus' };
+      }
+    }
+
+    _mediaRecorder = new MediaRecorder(stream, options);
+
+    _mediaRecorder.ondataavailable = function(e) {
+      if (e.data && e.data.size > 0) {
+        _audioChunks.push(e.data);
+      }
+    };
+
+    _mediaRecorder.onstop = function() {
+      stream.getTracks().forEach(track => track.stop());
+
+      const mimeType = _mediaRecorder.mimeType || 'audio/webm';
+      const audioBlob = new Blob(_audioChunks, { type: mimeType });
+      window._recordedVoiceBlob = audioBlob;
+      window._recordedVoiceDuration = _recordingSeconds;
+
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        window._recordedVoiceDataUrl = reader.result;
+        _showVoicePreviewUI(reader.result, _recordingSeconds);
+      };
+      reader.readAsDataURL(audioBlob);
+    };
+
+    _mediaRecorder.start(250);
+    _recordingSeconds = 0;
+
+    const idleEl = document.getElementById('gb-voice-idle');
+    const recEl  = document.getElementById('gb-voice-recording');
+    const prevEl = document.getElementById('gb-voice-preview');
+    if (idleEl) idleEl.style.display = 'none';
+    if (prevEl) prevEl.style.display = 'none';
+    if (recEl)  recEl.style.display = 'flex';
+
+    const timerEl = document.getElementById('gb-recording-timer');
+    if (timerEl) timerEl.textContent = '00:00 / 01:00';
+
+    clearInterval(_recordingTimerInterval);
+    _recordingTimerInterval = setInterval(() => {
+      _recordingSeconds++;
+      const mins = String(Math.floor(_recordingSeconds / 60)).padStart(2, '0');
+      const secs = String(_recordingSeconds % 60).padStart(2, '0');
+      if (timerEl) timerEl.textContent = `${mins}:${secs} / 01:00`;
+
+      if (_recordingSeconds >= 60) {
+        stopVoiceRecording();
+      }
+    }, 1000);
+
+  } catch (err) {
+    console.error('Error accessing microphone:', err);
+    alert(_currentLang === 'fr' 
+      ? "Impossible d'accéder au microphone. Veuillez autoriser l'accès au micro dans votre navigateur." 
+      : "تعذر الوصول إلى الميكروفون. يرجى السماح بصلاحية الميكروفون في المتصفح.");
+  }
+}
+
+function stopVoiceRecording() {
+  clearInterval(_recordingTimerInterval);
+  if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
+    _mediaRecorder.stop();
+  }
+  const recEl = document.getElementById('gb-voice-recording');
+  if (recEl) recEl.style.display = 'none';
+}
+
+function _showVoicePreviewUI(dataUrl, durationSec) {
+  const previewContainer = document.getElementById('gb-voice-preview');
+  const durationEl = document.getElementById('gb-preview-duration');
+  const audioEl = document.getElementById('gb-preview-audio');
+  
+  if (audioEl) {
+    audioEl.src = dataUrl;
+    audioEl.onended = () => {
+      const playBtn = document.getElementById('gb-preview-play-btn');
+      if (playBtn) playBtn.textContent = '▶️';
+      previewContainer?.classList.remove('playing');
+    };
+    audioEl.onpause = () => {
+      const playBtn = document.getElementById('gb-preview-play-btn');
+      if (playBtn) playBtn.textContent = '▶️';
+      previewContainer?.classList.remove('playing');
+    };
+  }
+
+  const mins = String(Math.floor(durationSec / 60)).padStart(2, '0');
+  const secs = String(durationSec % 60).padStart(2, '0');
+  if (durationEl) durationEl.textContent = `${mins}:${secs}`;
+
+  const idleEl = document.getElementById('gb-voice-idle');
+  const recEl  = document.getElementById('gb-voice-recording');
+  if (idleEl) idleEl.style.display = 'none';
+  if (recEl)  recEl.style.display = 'none';
+  if (previewContainer) previewContainer.style.display = 'flex';
+}
+
+function toggleVoicePreview() {
+  const audioEl = document.getElementById('gb-preview-audio');
+  const playBtn = document.getElementById('gb-preview-play-btn');
+  const previewContainer = document.getElementById('gb-voice-preview');
+  if (!audioEl) return;
+
+  if (audioEl.paused) {
+    audioEl.play().catch(e => console.warn('Preview play error:', e));
+    if (playBtn) playBtn.textContent = '⏸️';
+    if (previewContainer) previewContainer.classList.add('playing');
+  } else {
+    audioEl.pause();
+    if (playBtn) playBtn.textContent = '▶️';
+    if (previewContainer) previewContainer.classList.remove('playing');
+  }
+}
+
+function deleteVoiceRecording() {
+  clearInterval(_recordingTimerInterval);
+  if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
+    try { _mediaRecorder.stop(); } catch(e) {}
+  }
+  const audioEl = document.getElementById('gb-preview-audio');
+  if (audioEl) {
+    audioEl.pause();
+    audioEl.src = '';
+  }
+  window._recordedVoiceBlob = null;
+  window._recordedVoiceDataUrl = null;
+  window._recordedVoiceDuration = 0;
+
+  const idleEl = document.getElementById('gb-voice-idle');
+  const recEl  = document.getElementById('gb-voice-recording');
+  const prevEl = document.getElementById('gb-voice-preview');
+  if (recEl)  recEl.style.display = 'none';
+  if (prevEl) prevEl.style.display = 'none';
+  if (idleEl) idleEl.style.display = 'flex';
+
+  const playBtn = document.getElementById('gb-preview-play-btn');
+  if (playBtn) playBtn.textContent = '▶️';
+}
+
+function toggleWishAudio(idx, btn) {
+  const audioEl = document.getElementById(`wish-audio-elem-${idx}`);
+  if (!audioEl) return;
+
+  document.querySelectorAll('audio[id^="wish-audio-elem-"]').forEach(a => {
+    if (a !== audioEl && !a.paused) {
+      a.pause();
+      a.currentTime = 0;
+      const otherId = a.id.replace('wish-audio-elem-', '');
+      const otherBtn = document.getElementById(`wish-play-btn-${otherId}`);
+      if (otherBtn) {
+        const icon = otherBtn.querySelector('.wish-play-icon');
+        if (icon) icon.textContent = '▶️';
+      }
+      otherBtn?.closest('.wish-voice-card')?.classList.remove('playing');
+    }
+  });
+
+  const iconEl = btn.querySelector('.wish-play-icon');
+  const card = btn.closest('.wish-voice-card');
+
+  if (audioEl.paused) {
+    audioEl.play().then(() => {
+      if (iconEl) iconEl.textContent = '⏸️';
+      if (card) card.classList.add('playing');
+    }).catch(err => {
+      console.error('Audio play error:', err);
+    });
+  } else {
+    audioEl.pause();
+    if (iconEl) iconEl.textContent = '▶️';
+    if (card) card.classList.remove('playing');
+  }
+}
+
+function onWishAudioEnded(idx) {
+  const btn = document.getElementById(`wish-play-btn-${idx}`);
+  if (btn) {
+    const iconEl = btn.querySelector('.wish-play-icon');
+    if (iconEl) iconEl.textContent = '▶️';
+    btn.closest('.wish-voice-card')?.classList.remove('playing');
+  }
+}
+
+function onWishAudioPaused(idx) {
+  const btn = document.getElementById(`wish-play-btn-${idx}`);
+  if (btn) {
+    const iconEl = btn.querySelector('.wish-play-icon');
+    if (iconEl) iconEl.textContent = '▶️';
+    btn.closest('.wish-voice-card')?.classList.remove('playing');
+  }
+}
+
+/* ────────────────────────────────────────────────
+   GUESTBOOK / WISHES SYSTEM
+   ──────────────────────────────────────────────── */
 window.submitWish = function() {
   const nameInput = document.getElementById('gb-name');
   const messageInput = document.getElementById('gb-message');
   const recipientSelect = document.getElementById('gb-recipient');
   const rsvpSelect = document.getElementById('gb-rsvp');
-  if (!nameInput || !messageInput) return;
+  if (!nameInput) return;
 
   const name = nameInput.value.trim();
-  const msg = messageInput.value.trim();
+  const msg = messageInput ? messageInput.value.trim() : '';
   const recipient = recipientSelect ? recipientSelect.value : 'both';
+  const voiceDataUrl = window._recordedVoiceDataUrl || null;
+  const voiceDuration = window._recordedVoiceDuration || 0;
   
   if (rsvpSelect && rsvpSelect.value === "") {
     alert(_currentLang === 'fr' ? 'Veuillez sélectionner votre réponse RSVP 🌹' : 'الرجاء تحديد تأكيد الحضور الخاص بك 🌹');
     return;
   }
   
-  if (!name || !msg) {
-    alert(_currentLang === 'fr' ? 'Veuillez saisir votre nom et valider votre choix 🌹' : 'الرجاء كتابة الاسم وتأكيد الحضور 🌹');
+  if (!name || (!msg && !voiceDataUrl)) {
+    alert(_currentLang === 'fr' 
+      ? 'Veuillez saisir votre nom et écrire ou enregistrer un message pour les mariés 🌹' 
+      : 'الرجاء كتابة الاسم وتسجيل أو كتابة التهنئة للعروسين 🌹');
     return;
   }
 
@@ -2340,15 +2571,29 @@ window.submitWish = function() {
     }
   }
   const isConfirmed = rsvpVal !== '' && rsvpVal !== 'sorry_0';
+  const defaultMsg = voiceDataUrl ? (_currentLang === 'fr' ? '🎙️ Message vocal' : '🎙️ رسالة صوتية خاصة') : '';
+  const finalMsg = msg || defaultMsg;
 
   const params = new URLSearchParams(window.location.search);
   const invSlug = params.get('inv');
 
+  const newWishItem = {
+    name: name,
+    message: finalMsg,
+    target: recipient,
+    timestamp: new Date().toISOString()
+  };
+  if (voiceDataUrl) {
+    newWishItem.audioUrl = voiceDataUrl;
+    newWishItem.audioDuration = voiceDuration;
+  }
+
   if (!invSlug) {
     // Local preview fallback
     nameInput.value = '';
-    messageInput.value = '';
+    if (messageInput) messageInput.value = '';
     if (rsvpSelect) rsvpSelect.value = '';
+    deleteVoiceRecording();
     alert(_currentLang === 'fr' ? 'Votre réponse a été enregistrée ✨' : 'تم إرسال ردك بنجاح ✨');
     return;
   }
@@ -2359,12 +2604,7 @@ window.submitWish = function() {
   const guestKey = gidRaw || ('anon_' + Math.random().toString(36).substr(2, 9));
 
   const updateData = {
-    wishes: firebase.firestore.FieldValue.arrayUnion({
-      name: name,
-      message: msg,
-      target: recipient,
-      timestamp: new Date().toISOString()
-    })
+    wishes: firebase.firestore.FieldValue.arrayUnion(newWishItem)
   };
 
   updateData["rsvps." + guestKey] = {
@@ -2381,24 +2621,23 @@ window.submitWish = function() {
   _db.collection('invitations').doc(invSlug).update(updateData)
   .then(() => {
     nameInput.value = '';
-    messageInput.value = '';
+    if (messageInput) messageInput.value = '';
     if (rsvpSelect) rsvpSelect.value = '';
-    alert(_currentLang === 'fr' ? 'Merci ! Votre réponse a été transmise aux mariés ✨' : 'شكراً لك! تم إرسال ردك وتأكيد حضورك للعروسين ✨');
+    deleteVoiceRecording();
+    alert(_currentLang === 'fr' ? 'Merci ! Votre message et confirmation ont été transmis aux mariés ✨' : 'شكراً لك! تم إرسال ردك وتهنئتك للعروسين بنجاح ✨');
     
     // Add real-time update to _roleWishes if this wish matches the current role view
-    const newWish = { name, message: msg, target: recipient, timestamp: new Date().toISOString() };
     if (_currentRole === 'groom' && (recipient === 'groom' || recipient === 'both')) {
-      _roleWishes.unshift(newWish);
+      _roleWishes.unshift(newWishItem);
     } else if (_currentRole === 'bride' && (recipient === 'bride' || recipient === 'both')) {
-      _roleWishes.unshift(newWish);
+      _roleWishes.unshift(newWishItem);
     }
     const badge = document.getElementById('mailbox-badge');
     if (badge) badge.textContent = _roleWishes.length;
   })
-
   .catch(err => {
     console.error('Failed to submit wish:', err);
-    alert('عذراً، حدث خطأ أثناء إرسال التهنئة. الرجاء المحاولة مرة أخرى.');
+    alert(_currentLang === 'fr' ? "Erreur lors de l'envoi. Veuillez réessayer." : 'عذراً، حدث خطأ أثناء إرسال التهنئة. الرجاء المحاولة مرة أخرى.');
   });
 };
 
@@ -2409,26 +2648,56 @@ window.openWishesWall = function() {
   if (!overlay || !listEl) return;
 
   overlay.style.display = 'flex';
+  const isFr = _currentLang === 'fr';
   
   if (titleEl) {
-    titleEl.textContent = _currentRole === 'groom' ? 'صندوق تهاني العريس 🤵' : 'صندوق تهاني العروسة 👰';
+    titleEl.textContent = _currentRole === 'groom' 
+      ? (isFr ? 'Boîte aux Lettres du Marié 🤵' : 'صندوق تهاني العريس 🤵')
+      : (isFr ? 'Boîte aux Lettres de la Mariée 👰' : 'صندوق تهاني العروسة 👰');
   }
 
   if (_roleWishes.length === 0) {
-    listEl.innerHTML = `<div style="text-align:center;color:var(--brown-light);padding:40px;font-style:italic">لا توجد رسائل موجهة لك بعد 💌</div>`;
+    listEl.innerHTML = `<div style="text-align:center;color:var(--brown-light);padding:40px;font-style:italic">${isFr ? 'Aucun message reçu pour le moment 💌' : 'لا توجد رسائل موجهة لك بعد 💌'}</div>`;
     return;
   }
 
-  listEl.innerHTML = _roleWishes.map(w => {
-    const targetLabel = w.target === 'groom' ? '🤵 خاص بالعريس' : w.target === 'bride' ? '👰 خاص بالعروسة' : '💑 للعروسين';
-    const dateStr = w.timestamp ? new Date(w.timestamp).toLocaleString('ar-TN') : '';
+  listEl.innerHTML = _roleWishes.map((w, idx) => {
+    const targetLabel = w.target === 'groom' 
+      ? (isFr ? '🤵 Pour le Marié' : '🤵 خاص بالعريس')
+      : w.target === 'bride'
+        ? (isFr ? '👰 Pour la Mariée' : '👰 خاص بالعروسة')
+        : (isFr ? '💑 Pour les Mariés' : '💑 للعروسين');
+    const dateStr = w.timestamp ? new Date(w.timestamp).toLocaleString(isFr ? 'fr-FR' : 'ar-TN') : '';
+
+    let audioPlayerHtml = '';
+    if (w.audioUrl) {
+      const durText = w.audioDuration ? Math.round(w.audioDuration) + 's' : (isFr ? 'Vocal' : 'تسجيل صوتي');
+      audioPlayerHtml = `
+        <div class="wish-voice-card">
+          <button class="wish-audio-play-btn" onclick="toggleWishAudio(${idx}, this)" id="wish-play-btn-${idx}" title="${isFr ? 'Écouter' : 'تشغيل'}">
+            <span class="wish-play-icon">▶️</span>
+          </button>
+          <div class="wish-audio-track">
+            <div class="wish-audio-wave">
+              <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
+            </div>
+            <span class="wish-audio-dur">🎙️ ${durText}</span>
+          </div>
+          <audio id="wish-audio-elem-${idx}" src="${w.audioUrl}" onended="onWishAudioEnded(${idx})" onpause="onWishAudioPaused(${idx})"></audio>
+        </div>
+      `;
+    }
+
+    const showText = w.message && !w.message.startsWith('🎙️');
+
     return `
       <div class="wishes-wall-card">
         <div class="wishes-wall-guest">
           <span>👤 ${w.name}</span>
           <span style="font-size:0.7rem;background:rgba(201,168,76,0.15);color:var(--brown);padding:2px 8px;border-radius:10px">${targetLabel}</span>
         </div>
-        <div class="wishes-wall-msg">"${w.message}"</div>
+        ${showText ? `<div class="wishes-wall-msg">"${w.message}"</div>` : ''}
+        ${audioPlayerHtml}
         <div class="wishes-wall-date">📅 ${dateStr}</div>
       </div>
     `;
@@ -2438,6 +2707,12 @@ window.openWishesWall = function() {
 window.closeWishesWall = function() {
   const overlay = document.getElementById('wishes-wall-overlay');
   if (overlay) overlay.style.display = 'none';
+  // Pause any playing audios
+  document.querySelectorAll('audio[id^="wish-audio-elem-"]').forEach(a => {
+    if (!a.paused) {
+      a.pause();
+    }
+  });
 };
 
 let allWishes = [];
@@ -2869,6 +3144,10 @@ const TRANSLATIONS = {
     guestbook_subtitle: 'شاركونا فرحتنا بكلمة طيبة للعروسين',
     gb_name_placeholder: 'اسمك الكريم',
     gb_rsvp_label: '🗳️ تأكيد الحضور (RSVP) :',
+    gb_voice_title: '🎙️ أو أرسل تهنئة صوتية للعروسين :',
+    gb_voice_btn: 'اضغط لتسجيل رسالة صوتية',
+    gb_voice_stop: 'إيقاف وحفظ',
+    gb_voice_ready: '🎵 رسالة صوتية جاهزة',
     gb_msg_placeholder: 'أكتب تهنئتك هنا...',
     gb_submit: 'إرسال التهنئة ✨',
     gb_sug_label: '💡 اقتراحات جاهزة للتهنئة:',
@@ -2926,6 +3205,10 @@ const TRANSLATIONS = {
     guestbook_subtitle: 'Laissez un message de félicitations aux mariés',
     gb_name_placeholder: 'Votre Nom',
     gb_rsvp_label: '🗳️ Confirmation de présence (RSVP) :',
+    gb_voice_title: '🎙️ Ou enregistrez un message vocal :',
+    gb_voice_btn: 'Appuyer pour enregistrer un message vocal',
+    gb_voice_stop: 'Arrêter et valider',
+    gb_voice_ready: '🎵 Message vocal prêt',
     gb_msg_placeholder: 'Écrivez votre message ici...',
     gb_submit: 'Envoyer les félicitations ✨',
     gb_sug_label: '💡 Formules de vœux suggérées :',
@@ -2986,11 +3269,19 @@ function _applyGuestBanner(guestName, guestType) {
     case 'ar_friend_m':        title = 'إلى عْشيري'; name = guestName; break;
     case 'ar_friend_f':        title = 'إلى عْشيرتي'; name = guestName; break;
     case 'fr_couple':          title = 'Monsieur & Madame'; name = guestName; isLtr = true; break;
+    case 'fr_couple_children': title = 'Monsieur & Madame'; name = `${guestName} et leurs enfants`; isLtr = true; break;
     case 'fr_man':             title = 'Monsieur'; name = guestName; isLtr = true; break;
     case 'fr_woman':           title = 'Madame'; name = guestName; isLtr = true; break;
     case 'fr_friend_m':        title = 'Pour mon Ami'; name = guestName; isLtr = true; break;
     case 'fr_friend_f':        title = 'Pour mon amie'; name = guestName; isLtr = true; break;
-    default:                   title = 'إلى السيد'; name = `${guestName} وحرمه`;
+    default: {
+      const isDocFr = document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr');
+      if (isDocFr || (guestType && guestType.startsWith('fr_'))) {
+        title = 'Monsieur & Madame'; name = guestName; isLtr = true;
+      } else {
+        title = 'إلى السيد'; name = `${guestName} وحرمه`;
+      }
+    }
   }
 
   const banner  = document.getElementById('guestNameBanner');
@@ -3135,6 +3426,7 @@ function _updatePersonalizedInviteDesc() {
     case 'ar_friend_m':        title = 'إلى عْشيري'; name = guestName; break;
     case 'ar_friend_f':        title = 'إلى عْشيرتي'; name = guestName; break;
     case 'fr_couple':          title = 'Monsieur & Madame'; name = guestName; break;
+    case 'fr_couple_children': title = 'Monsieur & Madame'; name = `${guestName} et leurs enfants`; break;
     case 'fr_man':             title = 'Monsieur'; name = guestName; break;
     case 'fr_woman':           title = 'Madame'; name = guestName; break;
     case 'fr_friend_m':        title = 'Pour mon Ami'; name = guestName; break;
@@ -5123,6 +5415,73 @@ function openWeddingSwitcherModal() {
 
 
 
+const PWA_GUEST_FORMULAS = [
+  { value: 'ar_couple',          lang: 'ar', label: 'إلى السيد ... وحرمه',           emoji: '👨‍👩‍👧' },
+  { value: 'ar_couple_children', lang: 'ar', label: 'إلى السيد ... وحرمه وأبنائه',  emoji: '👨‍👩‍👦‍👦' },
+  { value: 'ar_man',             lang: 'ar', label: 'إلى السيد ...',                emoji: '👔' },
+  { value: 'ar_woman',           lang: 'ar', label: 'إلى السيدة ...',               emoji: '👗' },
+  { value: 'ar_friend_m',        lang: 'ar', label: 'إلى عْشيري ...',              emoji: '🤝' },
+  { value: 'ar_friend_f',        lang: 'ar', label: 'إلى عْشيرتي ...',             emoji: '👩‍🤝‍👩' },
+  { value: 'fr_couple',          lang: 'fr', label: 'Monsieur & Madame ...',        emoji: '💑' },
+  { value: 'fr_couple_children', lang: 'fr', label: 'M. et Mme ... et leurs enfants',emoji: '👨‍👩‍👦‍👦' },
+  { value: 'fr_man',             lang: 'fr', label: 'Monsieur ...',                 emoji: '🤵' },
+  { value: 'fr_woman',           lang: 'fr', label: 'Madame ...',                   emoji: '👰' },
+  { value: 'fr_friend_m',        lang: 'fr', label: 'Pour mon Ami ...',             emoji: '👨‍🤝‍👨' },
+  { value: 'fr_friend_f',        lang: 'fr', label: 'Pour mon amie ...',            emoji: '👩‍🤝‍👩' },
+];
+
+function _getWeddingLangForPwa() {
+  const cfgLang = (window._lastLoadedConfig && window._lastLoadedConfig.la) ? String(window._lastLoadedConfig.la).toLowerCase() : null;
+  if (cfgLang === 'fr' || cfgLang === 'ar') return cfgLang;
+  if (document.documentElement.lang === 'fr' || document.body.classList.contains('lang-fr')) return 'fr';
+  return 'ar';
+}
+
+function _populatePwaGuestTypeSelect(weddingLang, selectedVal) {
+  const typeSelect = document.getElementById('pwaCustomGuestTypeSelect');
+  if (!typeSelect) return;
+  const langFormulas = PWA_GUEST_FORMULAS.filter(f => f.lang === weddingLang);
+  const defaultVal = weddingLang === 'fr' ? 'fr_couple' : 'ar_couple';
+  const activeVal = selectedVal || sessionStorage.getItem('pwa_override_type') || defaultVal;
+  const finalVal = langFormulas.some(f => f.value === activeVal) ? activeVal : defaultVal;
+
+  typeSelect.innerHTML = langFormulas.map(f => `
+    <option value="${f.value}" ${f.value === finalVal ? 'selected' : ''}>${f.emoji} ${f.label}</option>
+  `).join('');
+}
+
+function _updatePwaModalI18n(weddingLang) {
+  const isFr = weddingLang === 'fr';
+  const modal = document.getElementById('pwaGuestSwitcherModal');
+  if (!modal) return;
+  const card = modal.querySelector('.pwa-modal-card');
+  if (card) {
+    card.dir = isFr ? 'ltr' : 'rtl';
+    card.style.textAlign = isFr ? 'left' : 'right';
+  }
+
+  const titleEl = document.getElementById('pwaGuestSwitcherTitle');
+  if (titleEl) titleEl.textContent = isFr ? 'Liste des Invités du Mariage' : 'قائمة ضيوف هذا الزفاف الحقيقيين';
+
+  const subEl = document.getElementById('pwaGuestSwitcherSubtitle');
+  if (subEl) subEl.textContent = isFr ? 'Choisissez un invité pour voir son invitation personnalisée ou ajoutez-en un nouveau' : 'اختر ضيفاً لمشاهدة دعوته الخاصة أو أدخل ضيفاً جديداً';
+
+  const labelEl = document.getElementById('pwaCustomGuestLabel');
+  if (labelEl) labelEl.textContent = isFr ? '✨ Ajouter ou tester un invité :' : '✨ إضافة أو تجربة ضيف جديد :';
+
+  const inputEl = document.getElementById('pwaCustomGuestInput');
+  if (inputEl) inputEl.placeholder = isFr ? 'Ex: M. Jean Dupont' : 'مثال: فريد الدريدي';
+
+  const submitBtn = document.getElementById('pwaCustomGuestSubmitBtn');
+  if (submitBtn) submitBtn.textContent = isFr ? 'Afficher ➜' : 'عرض ➜';
+
+  const savedLabel = document.getElementById('pwaSavedGuestsLabel');
+  if (savedLabel) savedLabel.textContent = isFr ? '👥 Invités enregistrés dans la base :' : '👥 الضيوف المسجلون في قاعدة بيانات الزفاف :';
+
+  const closeBtn = document.getElementById('pwaGuestSwitcherCloseBtn');
+  if (closeBtn) closeBtn.textContent = isFr ? 'Fermer' : 'إغلاق';
+}
+
 function openPwaGuestSwitcher() {
   const modal = document.getElementById('pwaGuestSwitcherModal');
   if (!modal) return;
@@ -5131,7 +5490,11 @@ function openPwaGuestSwitcher() {
   const container = document.getElementById('pwaSavedGuestsList');
   if (!container) return;
 
-  container.innerHTML = `<div style="text-align:center; padding:15px; color:#8a6010; font-family:'Amiri',serif;">⏳ جاري تحميل قائمة ضيوف هذا الزفاف الحقيقيين...</div>`;
+  let currentWeddingLang = _getWeddingLangForPwa();
+  _updatePwaModalI18n(currentWeddingLang);
+  _populatePwaGuestTypeSelect(currentWeddingLang);
+
+  container.innerHTML = `<div style="text-align:center; padding:15px; color:#8a6010; font-family:'Amiri',serif;">${currentWeddingLang === 'fr' ? '⏳ Chargement de la liste des invités...' : '⏳ جاري تحميل قائمة ضيوف هذا الزفاف الحقيقيين...'}</div>`;
 
   initFirebase();
   const params = new URLSearchParams(window.location.search);
@@ -5144,11 +5507,24 @@ function openPwaGuestSwitcher() {
       if (doc.exists) {
         const data = doc.data() || {};
         guestPhotosMap = data.config?.features?.guestPhotos || {};
+
+        if (data.config?.la) {
+          const docLang = String(data.config.la).toLowerCase();
+          if (docLang === 'fr' || docLang === 'ar') {
+            currentWeddingLang = docLang;
+            _updatePwaModalI18n(currentWeddingLang);
+            _populatePwaGuestTypeSelect(currentWeddingLang);
+          }
+        }
+
+        const isFr = currentWeddingLang === 'fr';
+        const defaultType = isFr ? 'fr_couple' : 'ar_couple';
+
         // 1. Read guests array from Firebase Firestore (created in admin/guests.html)
         if (Array.isArray(data.guests) && data.guests.length > 0) {
           data.guests.forEach(g => {
             if (g && g.name) {
-              realGuests.push({ name: g.name, type: g.type || 'ar_couple', id: g.id });
+              realGuests.push({ name: g.name, type: g.type || defaultType, id: g.id });
             }
           });
         }
@@ -5157,16 +5533,21 @@ function openPwaGuestSwitcher() {
           Object.keys(data.rsvps).forEach(key => {
             const r = data.rsvps[key];
             if (r && r.name && r.name !== 'عام' && !realGuests.some(g => g.name === r.name)) {
-              realGuests.push({ name: r.name, type: 'ar_couple', id: key });
+              realGuests.push({ name: r.name, type: defaultType, id: key });
             }
           });
         }
       }
 
+      const isFr = currentWeddingLang === 'fr';
+      const defaultType = isFr ? 'fr_couple' : 'ar_couple';
+
       if (realGuests.length === 0) {
         container.innerHTML = `
           <div style="text-align:center; padding:14px; color:#704706; font-family:'Amiri',serif; font-size:0.92rem; background:rgba(201,168,76,0.1); border-radius:10px; border:1px solid rgba(201,168,76,0.3);">
-            ℹ️ لا يوجد ضيوف مضافين بعد في هذا الزفاف.<br>يمكنك كتابة اسم ضيف جديد أعلاه وتطبيقه مباشرة!
+            ${isFr 
+              ? 'ℹ️ Aucun invité enregistré dans ce mariage.<br>Vous pouvez saisir un invité ci-dessus pour afficher son invitation personnalisée !'
+              : 'ℹ️ لا يوجد ضيوف مضافين بعد في هذا الزفاف.<br>يمكنك كتابة اسم ضيف جديد واختيار صفته أعلاه وتطبيقه مباشرة!'}
           </div>
         `;
         return;
@@ -5190,26 +5571,33 @@ function openPwaGuestSwitcher() {
 
       container.innerHTML = realGuests.map(g => {
         const safeName = (g.name || '').replace(/'/g, "\\'");
-        const safeType = (g.type || 'ar_couple').replace(/'/g, "\\'");
+        const safeType = (g.type || defaultType).replace(/'/g, "\\'");
         const safeId   = (g.id || '').replace(/'/g, "\\'");
         const pCount   = _getPhotosCount(g);
         const photoBadge = pCount > 0
-          ? `<span style="display:inline-flex; align-items:center; gap:3px; font-size:0.75rem; background:rgba(39,174,96,0.15); color:#27ae60; border:1px solid rgba(39,174,96,0.4); padding:2px 8px; border-radius:10px; margin-right:6px; font-weight:normal;" title="يحتوي على ${pCount} صور خاصة">📸 <b style="font-size:0.7rem">${pCount} صور</b></span>`
+          ? `<span style="display:inline-flex; align-items:center; gap:3px; font-size:0.75rem; background:rgba(39,174,96,0.15); color:#27ae60; border:1px solid rgba(39,174,96,0.4); padding:2px 8px; border-radius:10px; margin-inline-start:6px; font-weight:normal;" title="${isFr ? 'Contient ' + pCount + ' photos personnelles' : 'يحتوي على ' + pCount + ' صور خاصة'}">📸 <b style="font-size:0.7rem">${pCount} ${isFr ? 'photos' : 'صور'}</b></span>`
+          : '';
+
+        const formula = PWA_GUEST_FORMULAS.find(f => f.value === g.type) || PWA_GUEST_FORMULAS.find(f => f.value === safeType);
+        const typeLabel = formula ? `${formula.emoji} ${formula.label.replace('...', '').trim()}` : '';
+        const typeBadge = typeLabel
+          ? `<span style="display:inline-flex; align-items:center; gap:2px; font-size:0.72rem; color:#8a6010; background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.35); padding:1px 6px; border-radius:6px; margin-inline-start:4px; font-weight:normal;">${typeLabel}</span>`
           : '';
 
         return `
-        <button onclick="applyPwaGuest('${safeName}', '${safeType}', '${safeId}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1px solid rgba(201,168,76,0.4); border-radius:10px; font-family:'Amiri',serif; font-size:0.98rem; color:#2b1800; font-weight:bold; cursor:pointer; text-align:right;">
-          <span style="display:flex; align-items:center; gap:6px;">
+        <button onclick="applyPwaGuest('${safeName}', '${safeType}', '${safeId}')" style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:10px 14px; background:linear-gradient(135deg, #fffdf5 0%, #f7ebd0 100%); border:1px solid rgba(201,168,76,0.4); border-radius:10px; font-family:'Amiri',serif; font-size:0.96rem; color:#2b1800; font-weight:bold; cursor:pointer; text-align:${isFr ? 'left' : 'right'}; box-shadow:0 2px 5px rgba(0,0,0,0.15);">
+          <span style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <span>👤 ${g.name}</span>
+            ${typeBadge}
             ${photoBadge}
           </span>
-          <span style="font-size:0.8rem; color:#8a6010; background:rgba(201,168,76,0.2); padding:3px 8px; border-radius:6px; flex-shrink:0;">عرض الدعوة ➜</span>
+          <span style="font-size:0.8rem; color:#8a6010; background:rgba(201,168,76,0.2); padding:3px 8px; border-radius:6px; flex-shrink:0;">${isFr ? 'Voir ➜' : 'عرض الدعوة ➜'}</span>
         </button>
       `;}).join('');
     })
     .catch(err => {
       console.error('[PWA Switcher] Failed to load real guests:', err);
-      container.innerHTML = `<div style="text-align:center; padding:10px; color:#a00;">❌ حدث خطأ أثناء تحميل قائمة الضيوف</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:10px; color:#a00;">❌ ${currentWeddingLang === 'fr' ? 'Erreur lors du chargement de la liste des invités' : 'حدث خطأ أثناء تحميل قائمة الضيوف'}</div>`;
     });
 }
 
@@ -5224,7 +5612,11 @@ function handleEnvelopeNamesDblClick(e) {
 function applyPwaGuestFromInput() {
   const input = document.getElementById('pwaCustomGuestInput');
   if (!input || !input.value.trim()) return;
-  applyPwaGuest(input.value.trim(), 'ar_couple', '');
+  const weddingLang = _getWeddingLangForPwa();
+  const defaultType = weddingLang === 'fr' ? 'fr_couple' : 'ar_couple';
+  const typeSelect = document.getElementById('pwaCustomGuestTypeSelect');
+  const guestType = (typeSelect && typeSelect.value) ? typeSelect.value : defaultType;
+  applyPwaGuest(input.value.trim(), guestType, '');
 }
 
 function applyPwaGuest(guestName, guestType = 'ar_couple', guestId = '') {

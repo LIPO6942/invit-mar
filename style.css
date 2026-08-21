@@ -2728,6 +2728,262 @@ body.env-open .music-btn {
   padding-left: 32px !important;
 }
 
+/* ── GUESTBOOK VOICE RECORDING COMPONENT ── */
+.gb-voice-container {
+  margin: 12px 0;
+  padding: 12px;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1.5px dashed rgba(201, 168, 76, 0.45);
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.gb-voice-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--brown-mid, #4a2c0a);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.gb-voice-idle {
+  display: flex;
+  justify-content: center;
+}
+.gb-voice-record-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #c9a84c, #9d7b27);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(201, 168, 76, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.gb-voice-record-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(201, 168, 76, 0.5);
+}
+.gb-voice-record-btn:active {
+  transform: scale(0.96);
+}
+.gb-mic-icon {
+  font-size: 1.1rem;
+}
+
+/* Recording Active State */
+.gb-voice-recording {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  border-radius: 10px;
+  padding: 8px 12px;
+  gap: 8px;
+}
+.gb-recording-pulse {
+  width: 12px;
+  height: 12px;
+  background: #e74c3c;
+  border-radius: 50%;
+  animation: pulseRecording 1.2s ease-in-out infinite;
+}
+@keyframes pulseRecording {
+  0% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(231,76,60,0.7); }
+  70% { transform: scale(1.2); opacity: 0.8; box-shadow: 0 0 0 8px rgba(231,76,60,0); }
+  100% { transform: scale(0.9); opacity: 1; box-shadow: 0 0 0 0 rgba(231,76,60,0); }
+}
+.gb-recording-status {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #c0392b;
+}
+.gb-recording-timer {
+  font-family: monospace;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #c0392b;
+}
+.gb-voice-stop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.gb-voice-stop-btn:active {
+  transform: scale(0.95);
+}
+
+/* Recorded Preview State */
+.gb-voice-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(39, 174, 96, 0.08);
+  border: 1px solid rgba(39, 174, 96, 0.35);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.gb-preview-play-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+  transition: transform 0.15s;
+}
+.gb-preview-play-btn:active {
+  transform: scale(0.92);
+}
+.gb-preview-info {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+body.lang-fr .gb-preview-info {
+  text-align: left;
+}
+.gb-preview-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #27ae60;
+}
+.gb-preview-waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 14px;
+}
+.wave-bar {
+  display: inline-block;
+  width: 3px;
+  height: 6px;
+  background: #c9a84c;
+  border-radius: 2px;
+  transition: height 0.2s ease;
+}
+.gb-voice-preview.playing .wave-bar:nth-child(1) { animation: wavePulse 0.6s ease infinite 0.1s; }
+.gb-voice-preview.playing .wave-bar:nth-child(2) { animation: wavePulse 0.6s ease infinite 0.3s; }
+.gb-voice-preview.playing .wave-bar:nth-child(3) { animation: wavePulse 0.6s ease infinite 0.2s; }
+.gb-voice-preview.playing .wave-bar:nth-child(4) { animation: wavePulse 0.6s ease infinite 0.4s; }
+.gb-voice-preview.playing .wave-bar:nth-child(5) { animation: wavePulse 0.6s ease infinite 0.15s; }
+
+@keyframes wavePulse {
+  0%, 100% { height: 4px; }
+  50% { height: 14px; background: #27ae60; }
+}
+
+.gb-preview-duration {
+  font-size: 0.72rem;
+  color: var(--brown-mid, #4a2c0a);
+  font-family: monospace;
+}
+.gb-preview-delete-btn {
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.gb-preview-delete-btn:hover {
+  background: rgba(231, 76, 60, 0.2);
+}
+
+/* ── MAILBOX VOICE CARD ── */
+.wish-voice-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.12), rgba(201, 168, 76, 0.04));
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 10px;
+}
+.wish-audio-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold, #c9a84c);
+  background: linear-gradient(135deg, #c9a84c, #8a6010);
+  color: white;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s;
+}
+.wish-audio-play-btn:active {
+  transform: scale(0.92);
+}
+.wish-audio-track {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.wish-audio-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 16px;
+}
+.wish-voice-card.playing .wish-audio-wave .wave-bar:nth-child(1) { animation: wavePulse 0.5s ease infinite 0.1s; }
+.wish-voice-card.playing .wish-audio-wave .wave-bar:nth-child(2) { animation: wavePulse 0.5s ease infinite 0.25s; }
+.wish-voice-card.playing .wish-audio-wave .wave-bar:nth-child(3) { animation: wavePulse 0.5s ease infinite 0.15s; }
+.wish-voice-card.playing .wish-audio-wave .wave-bar:nth-child(4) { animation: wavePulse 0.5s ease infinite 0.35s; }
+.wish-voice-card.playing .wish-audio-wave .wave-bar:nth-child(5) { animation: wavePulse 0.5s ease infinite 0.2s; }
+.wish-voice-card.playing .wish-audio-wave .wave-bar:nth-child(6) { animation: wavePulse 0.5s ease infinite 0.3s; }
+
+.wish-audio-dur {
+  font-size: 0.72rem;
+  color: var(--brown-mid, #4a2c0a);
+  background: rgba(201, 168, 76, 0.15);
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-weight: 700;
+}
+
 /* ── COUPLE NAMES HIGH LEGIBILITY GOLD & ANIMATION ── */
 .animated-names {
   display: flex;
