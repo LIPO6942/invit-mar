@@ -1816,6 +1816,18 @@ window.openEnvelopeNow = function() {
   // 1. Play realistic wax crack & paper rustle sound immediately + haptic
   playRealisticWaxAndPaperSound();
 
+  // Déclencher la lecture de la vidéo d'arrière-plan dès le clic utilisateur
+  const heroVid = document.getElementById('heroVideo');
+  if (heroVid && heroVid.style.display !== 'none') {
+    heroVid.muted = true;
+    const playPromise = heroVid.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.log('Video autoplay handled:', err);
+      });
+    }
+  }
+
   // 2. Spawn golden wax fracture sparks from the seal
   const seal = document.getElementById('seal');
   if (seal) {
@@ -2930,16 +2942,48 @@ function applyEnvelopeDesign(cfg) {
 
 
 
-  // ── Hall Photo Background (hp) ──
-  const hallPhoto = cfg.hp || 'luxury_wedding_hall';
+  // ── Hall Photo / Video Background (hp) ──
+  const hallChoice = cfg.hp || 'video_hall_1';
   const heroBg = document.querySelector('.hero-bg-parallax');
-  if (heroBg) {
-    heroBg.style.backgroundImage = `url('assets/${hallPhoto}.png')`;
-    if (hallPhoto === 'hall_bridal_entrance') {
-      heroBg.classList.add('bg-bridal-entrance');
+  const heroVideo = document.getElementById('heroVideo');
+  const heroVideoSource = document.getElementById('heroVideoSource');
+
+  const VIDEO_SOURCES = {
+    'video_hall_1': 'assets/34c51dd40d9e70c7a787400921621ff1_720w.mp4',
+    'video_hall_2': 'assets/9074d9334699f8632610f161d3d1912c_720w.mp4'
+  };
+
+  if (heroVideo && heroVideoSource) {
+    if (hallChoice === 'video_hall_2' || (typeof hallChoice === 'string' && hallChoice.includes('9074d9334699f8632610f161d3d1912c'))) {
+      heroVideo.style.display = 'block';
+      if (heroBg) heroBg.classList.remove('has-static-bg');
+      if (!heroVideoSource.src.includes('9074d9334699f8632610f161d3d1912c')) {
+        heroVideoSource.src = VIDEO_SOURCES['video_hall_2'];
+        heroVideo.load();
+      }
+    } else if (hallChoice === 'video_hall_1' || hallChoice === 'luxury_wedding_hall' || (typeof hallChoice === 'string' && !hallChoice.startsWith('hall_'))) {
+      // Option C: Vidéo 1 par défaut
+      heroVideo.style.display = 'block';
+      if (heroBg) heroBg.classList.remove('has-static-bg');
+      if (!heroVideoSource.src.includes('34c51dd40d9e70c7a787400921621ff1')) {
+        heroVideoSource.src = VIDEO_SOURCES['video_hall_1'];
+        heroVideo.load();
+      }
     } else {
-      heroBg.classList.remove('bg-bridal-entrance');
+      // Photo statique sélectionnée (hall_royal, hall_classic, etc.)
+      heroVideo.style.display = 'none';
+      if (heroBg) {
+        heroBg.classList.add('has-static-bg');
+        heroBg.style.backgroundImage = `url('assets/${hallChoice}.png')`;
+        if (hallChoice === 'hall_bridal_entrance') {
+          heroBg.classList.add('bg-bridal-entrance');
+        } else {
+          heroBg.classList.remove('bg-bridal-entrance');
+        }
+      }
     }
+  } else if (heroBg) {
+    heroBg.style.backgroundImage = `url('assets/${hallChoice}.png')`;
   }
 
   // ── Closing Photo (cp): which hall image shows in closing section ──

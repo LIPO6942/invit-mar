@@ -394,23 +394,38 @@
       </div>
 
       <div class="card">
-        <div class="card-title">📸 خلفية قاعة الأفراح (Image de la salle de fête)</div>
+        <div class="card-title">🎥 خلفية قاعة الأفراح (Vidéo ou Image de la salle)</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px">اختر الفيديو السينمائي الفاخر أو الصورة لخلفية قاعة الأفراح عند فتح الدعوة</div>
         <div class="photo-selector" style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
-          <div class="photo-card selected" data-photo="luxury_wedding_hall" onclick="selectHallPhoto('luxury_wedding_hall')">
+          <div class="photo-card selected" data-photo="video_hall_1" onclick="selectHallPhoto('video_hall_1')">
+            <div style="position:relative; width:100%; height:75px; overflow:hidden; border-radius:8px; background:#000;">
+              <video src="assets/34c51dd40d9e70c7a787400921621ff1_720w.mp4" muted loop playsinline autoplay style="width:100%; height:100%; object-fit:cover; pointer-events:none;"></video>
+              <div style="position:absolute; top:4px; right:4px; background:rgba(201,168,76,0.95); color:#000; font-size:0.58rem; font-weight:bold; padding:2px 5px; border-radius:4px;">▶ فيديو 1</div>
+            </div>
+            <div class="photo-card-label">🎥 فيديو القاعة 1 (افتراضي)</div>
+          </div>
+          <div class="photo-card" data-photo="video_hall_2" onclick="selectHallPhoto('video_hall_2')">
+            <div style="position:relative; width:100%; height:75px; overflow:hidden; border-radius:8px; background:#000;">
+              <video src="assets/9074d9334699f8632610f161d3d1912c_720w.mp4" muted loop playsinline autoplay style="width:100%; height:100%; object-fit:cover; pointer-events:none;"></video>
+              <div style="position:absolute; top:4px; right:4px; background:rgba(201,168,76,0.95); color:#000; font-size:0.58rem; font-weight:bold; padding:2px 5px; border-radius:4px;">▶ فيديو 2</div>
+            </div>
+            <div class="photo-card-label">🎥 فيديو القاعة 2</div>
+          </div>
+          <div class="photo-card" data-photo="luxury_wedding_hall" onclick="selectHallPhoto('luxury_wedding_hall')">
             <img src="assets/luxury_wedding_hall.png" alt="Luxury Hall">
-            <div class="photo-card-label">قاعة فاخرة (Option 1)</div>
+            <div class="photo-card-label">قاعة فاخرة (صورة)</div>
           </div>
           <div class="photo-card" data-photo="hall_royal" onclick="selectHallPhoto('hall_royal')">
             <img src="assets/hall_royal.png" alt="Royal Entrance">
-            <div class="photo-card-label">مدخل ملكي (Option 2)</div>
+            <div class="photo-card-label">مدخل ملكي (صورة)</div>
           </div>
           <div class="photo-card" data-photo="hall_classic" onclick="selectHallPhoto('hall_classic')">
             <img src="assets/hall_classic.png" alt="Classic Entrance">
-            <div class="photo-card-label">مدخل كلاسيكي (Option 3)</div>
+            <div class="photo-card-label">مدخل كلاسيكي (صورة)</div>
           </div>
           <div class="photo-card" data-photo="hall_bridal_entrance" onclick="selectHallPhoto('hall_bridal_entrance')">
             <img src="assets/hall_bridal_entrance.png" alt="Bridal Entrance">
-            <div class="photo-card-label">دخول العروسين (Option 4)</div>
+            <div class="photo-card-label">دخول العروسين (صورة)</div>
           </div>
         </div>
       </div>
@@ -982,7 +997,7 @@ function selectTheme(name) {
 }
 
 /* ── Hall Photo Selector ── */
-window._selectedHallPhoto    = 'luxury_wedding_hall';
+window._selectedHallPhoto    = 'video_hall_1';
 window._selectedClosingPhoto = 'wedding_hall_board';
 
 function selectHallPhoto(name, doSave = true) {
@@ -1321,7 +1336,7 @@ function buildConfig() {
     es: val('envSeal'),      // envelope seal
     si: val('envSealInitials'), // seal initials
     archStyle: val('archStyle') || 'royal_dome', // arch glass style
-    hp: window._selectedHallPhoto   || 'luxury_wedding_hall', // hall photo background
+    hp: window._selectedHallPhoto   || 'video_hall_1', // hall video/photo background
     cp: window._selectedClosingPhoto || 'wedding_hall_board',  // closing section photo
     la: val('invLanguage'),  // invitation language
     ga: val('groomAr'),
@@ -1445,9 +1460,9 @@ function applyConfigToFields(c) {
     initialsField.style.display = (c.es === 'monogram') ? 'flex' : 'none';
   }
   
-  // Apply hall photo
+  // Apply hall photo / video
   if (c.hp) selectHallPhoto(c.hp, false);
-  else selectHallPhoto('luxury_wedding_hall', false);
+  else selectHallPhoto('video_hall_1', false);
 
   // Apply closing photo
   if (c.cp) selectClosingPhoto(c.cp, false);
