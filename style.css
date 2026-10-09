@@ -2511,6 +2511,141 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   MODE CINÉMATIQUE : ÉCRITURE CALLIGRAPHIQUE VIVANTE PROGRESSIVE
+   (Chaque texte se trace lentement de droite à gauche comme avec
+   une plume d'or liquide au moment exact de son apparition)
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Emblème Bismillah calligraphique tracé lentement */
+body.cinematic-writing .invitation.opening .arch-bismillah-emblem,
+body.cinematic-writing .invitation.open .arch-bismillah-emblem {
+  animation: arabicLiveCalligraphy 2.2s cubic-bezier(0.25, 1, 0.45, 1) both var(--delay-bismillah, 2.0s) !important;
+  will-change: clip-path, filter, opacity;
+}
+
+/* 2. Verset de bénédiction coranique ("بارك الله لهما...") */
+body.cinematic-writing .invitation.opening .basmala,
+body.cinematic-writing .invitation.open .basmala {
+  display: inline-block;
+  width: 100%;
+  animation: arabicLiveCalligraphy 2.0s cubic-bezier(0.25, 1, 0.45, 1) both var(--delay-blessing, 4.2s) !important;
+  will-change: clip-path, filter, opacity;
+}
+
+/* 3. Titre "تتشرف عائلتا" */
+body.cinematic-writing .invitation.opening .families-main-title,
+body.cinematic-writing .invitation.open .families-main-title {
+  display: inline-block;
+  animation: arabicLiveCalligraphy 1.5s cubic-bezier(0.25, 1, 0.45, 1) both var(--delay-fam-title, 6.2s) !important;
+  will-change: clip-path, filter, opacity;
+}
+
+/* 4. Blocs des familles (famille du marié puis famille de la mariée) */
+body.cinematic-writing .invitation.opening .families-row,
+body.cinematic-writing .invitation.open .families-row {
+  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-families, 7.2s) !important;
+}
+
+body.cinematic-writing .invitation.opening .families-row .family-block:first-child,
+body.cinematic-writing .invitation.open .families-row .family-block:first-child {
+  animation: arabicLiveCalligraphy 1.8s cubic-bezier(0.25, 1, 0.45, 1) both var(--delay-families, 7.2s) !important;
+}
+
+body.cinematic-writing .invitation.opening .families-row .and-symbol,
+body.cinematic-writing .invitation.open .families-row .and-symbol {
+  animation: archItemScaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both calc(var(--delay-families, 7.2s) + 0.8s) !important;
+}
+
+body.cinematic-writing .invitation.opening .families-row .family-block:last-child,
+body.cinematic-writing .invitation.open .families-row .family-block:last-child {
+  animation: arabicLiveCalligraphy 1.8s cubic-bezier(0.25, 1, 0.45, 1) both calc(var(--delay-families, 7.2s) + 0.9s) !important;
+}
+
+/* 5. Phrase d'invitation ("بدعوتكم لحضور...") */
+body.cinematic-writing .invitation.opening .p1-invite-text:not(.families-main-title),
+body.cinematic-writing .invitation.open .p1-invite-text:not(.families-main-title) {
+  display: inline-block;
+  animation: arabicLiveCalligraphy 1.6s cubic-bezier(0.25, 1, 0.45, 1) both var(--delay-invite-text, 8.8s) !important;
+  will-change: clip-path, filter, opacity;
+}
+
+/* 6. Noms des Mariés (Le marié se trace, puis le &, puis la mariée) */
+body.cinematic-writing .invitation.opening .names-main,
+body.cinematic-writing .invitation.open .names-main {
+  animation: archItemFadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-names, 10.0s) !important;
+}
+
+body.cinematic-writing .invitation.opening .groom-name,
+body.cinematic-writing .invitation.open .groom-name {
+  display: inline-block;
+  animation: arabicLiveCalligraphy 2.0s cubic-bezier(0.25, 1, 0.45, 1) both var(--delay-names, 10.0s) !important;
+  will-change: clip-path, filter, opacity;
+}
+
+body.cinematic-writing .invitation.opening .names-divider,
+body.cinematic-writing .invitation.open .names-divider {
+  display: inline-block;
+  animation: archItemScaleUp 0.7s cubic-bezier(0.25, 1, 0.45, 1) both calc(var(--delay-names, 10.0s) + 1.0s) !important;
+}
+
+body.cinematic-writing .invitation.opening .bride-name,
+body.cinematic-writing .invitation.open .bride-name {
+  display: inline-block;
+  animation: arabicLiveCalligraphy 2.0s cubic-bezier(0.25, 1, 0.45, 1) both calc(var(--delay-names, 10.0s) + 1.3s) !important;
+  will-change: clip-path, filter, opacity;
+}
+
+/* ── Keyframes écriture arabe (de droite à gauche) ── */
+@keyframes arabicLiveCalligraphy {
+  0% {
+    clip-path: inset(-15px 0 -15px 100%);
+    opacity: 0;
+    filter: drop-shadow(0 0 18px rgba(255, 235, 130, 0.95)) brightness(1.25);
+  }
+  8% {
+    opacity: 1;
+  }
+  75% {
+    filter: drop-shadow(0 0 14px rgba(255, 220, 100, 0.85)) brightness(1.12);
+  }
+  100% {
+    clip-path: inset(-15px 0 -15px 0%);
+    opacity: 1;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(201, 168, 76, 0.4));
+  }
+}
+
+/* ── Keyframes écriture française (de gauche à droite en mode français) ── */
+body.lang-fr.cinematic-writing .invitation.opening .arch-bismillah-emblem,
+body.lang-fr.cinematic-writing .invitation.opening .basmala,
+body.lang-fr.cinematic-writing .invitation.opening .families-main-title,
+body.lang-fr.cinematic-writing .invitation.opening .family-block,
+body.lang-fr.cinematic-writing .invitation.opening .p1-invite-text,
+body.lang-fr.cinematic-writing .invitation.opening .groom-name,
+body.lang-fr.cinematic-writing .invitation.opening .bride-name {
+  animation-name: frenchLiveCalligraphy !important;
+}
+
+@keyframes frenchLiveCalligraphy {
+  0% {
+    clip-path: inset(-15px 100% -15px 0);
+    opacity: 0;
+    filter: drop-shadow(0 0 18px rgba(255, 235, 130, 0.95)) brightness(1.25);
+  }
+  8% {
+    opacity: 1;
+  }
+  75% {
+    filter: drop-shadow(0 0 14px rgba(255, 220, 100, 0.85)) brightness(1.12);
+  }
+  100% {
+    clip-path: inset(-15px 0 -15px 0);
+    opacity: 1;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(201, 168, 76, 0.4));
+  }
+}
+
 /* Groom and Bride Majestic Glowing Text */
 .groom-name, .bride-name {
   font-size: clamp(2.9rem, 11.5vw, 4.4rem) !important;

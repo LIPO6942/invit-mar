@@ -2953,7 +2953,8 @@ function applyEnvelopeDesign(cfg) {
 
   const VIDEO_SOURCES = {
     'video_hall_1': 'assets/34c51dd40d9e70c7a787400921621ff1_720w.mp4',
-    'video_hall_2': 'assets/9074d9334699f8632610f161d3d1912c_720w.mp4'
+    'video_hall_2': 'assets/9074d9334699f8632610f161d3d1912c_720w.mp4',
+    'wedding_template': 'assets/wedding_template.mp4'
   };
 
   if (heroVideo && heroVideoSource) {
@@ -2962,6 +2963,13 @@ function applyEnvelopeDesign(cfg) {
       if (heroBg) heroBg.classList.remove('has-static-bg');
       if (!heroVideoSource.src.includes('9074d9334699f8632610f161d3d1912c')) {
         heroVideoSource.src = VIDEO_SOURCES['video_hall_2'];
+        heroVideo.load();
+      }
+    } else if (hallChoice === 'wedding_template' || (typeof hallChoice === 'string' && hallChoice.includes('wedding_template'))) {
+      heroVideo.style.display = 'block';
+      if (heroBg) heroBg.classList.remove('has-static-bg');
+      if (!heroVideoSource.src.includes('wedding_template')) {
+        heroVideoSource.src = VIDEO_SOURCES['wedding_template'];
         heroVideo.load();
       }
     } else if (hallChoice === 'video_hall_1' || hallChoice === 'luxury_wedding_hall' || (typeof hallChoice === 'string' && !hallChoice.startsWith('hall_'))) {
@@ -3038,6 +3046,14 @@ function applyEnvelopeDesign(cfg) {
   rootEl.style.setProperty('--delay-shimmer',     `${getDelay('at_shim', 3.1)}s`);
   rootEl.style.setProperty('--delay-ecg',         `${getDelay('at_ecg', 3.3)}s`);
   rootEl.style.setProperty('--delay-scroll-hint', `${getDelay('at_hint', 3.8)}s`);
+
+  // ── Cinematic Calligraphic Writing Mode ──
+  const isCinematic = cfg.cm === 'cinematic' || (cfg.at_arch && parseFloat(cfg.at_arch) >= 1.0 && cfg.at_names && parseFloat(cfg.at_names) >= 4.0);
+  if (isCinematic) {
+    document.body.classList.add('cinematic-writing');
+  } else {
+    document.body.classList.remove('cinematic-writing');
+  }
 
   // ── Closing Photo (cp): which hall image shows in closing section ──
   const closingImg = document.querySelector('.closing-easel-photo');

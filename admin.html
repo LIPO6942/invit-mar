@@ -411,6 +411,13 @@
             </div>
             <div class="photo-card-label">🎥 فيديو القاعة 2</div>
           </div>
+          <div class="photo-card" data-photo="wedding_template" onclick="selectHallPhoto('wedding_template')">
+            <div style="position:relative; width:100%; height:75px; overflow:hidden; border-radius:8px; background:#000;">
+              <video src="assets/wedding_template.mp4" muted loop playsinline autoplay style="width:100%; height:100%; object-fit:cover; pointer-events:none;"></video>
+              <div style="position:absolute; top:4px; right:4px; background:rgba(201,168,76,0.95); color:#000; font-size:0.58rem; font-weight:bold; padding:2px 5px; border-radius:4px;">▶ فيديو 3</div>
+            </div>
+            <div class="photo-card-label">🎥 فيديو القالب 3</div>
+          </div>
           <div class="photo-card" data-photo="luxury_wedding_hall" onclick="selectHallPhoto('luxury_wedding_hall')">
             <img src="assets/luxury_wedding_hall.png" alt="Luxury Hall">
             <div class="photo-card-label">قاعة فاخرة (صورة)</div>
@@ -456,10 +463,13 @@
         <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px">تحكم في اللحظة الزمنية الدقيقة (بالثواني) لظهور كل عنصر من مكونات الدعوة فوق الفيديو بعد فتح الظرف</div>
 
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
-          <button type="button" class="btn btn-secondary" onclick="applyAnimPreset('default')" style="font-size:0.75rem; padding:6px 12px;">✨ عادي (الموصى به)</button>
-          <button type="button" class="btn btn-secondary" onclick="applyAnimPreset('fast')" style="font-size:0.75rem; padding:6px 12px;">⚡ سريع ومباشر</button>
-          <button type="button" class="btn btn-secondary" onclick="applyAnimPreset('cinematic')" style="font-size:0.75rem; padding:6px 12px;">🎬 سينمائي متأني</button>
+          <button type="button" id="btnPresetDefault" class="btn btn-secondary preset-btn" onclick="applyAnimPreset('default')" style="font-size:0.75rem; padding:6px 12px;">✨ عادي (الموصى به)</button>
+          <button type="button" id="btnPresetFast" class="btn btn-secondary preset-btn" onclick="applyAnimPreset('fast')" style="font-size:0.75rem; padding:6px 12px;">⚡ سريع ومباشر</button>
+          <button type="button" id="btnPresetCinematic" class="btn btn-secondary preset-btn" onclick="applyAnimPreset('cinematic')" style="font-size:0.75rem; padding:6px 12px;">🎬 سينمائي متأني (مع كتابة حية بطيئة)</button>
           <button type="button" class="btn btn-secondary" onclick="resetAnimTimings()" style="font-size:0.75rem; padding:6px 12px; margin-right:auto;">🔄 استعادة الافتراضي</button>
+        </div>
+        <div id="cinematicHintNotice" style="display:none; padding:10px 14px; margin-bottom:14px; background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.35); border-radius:8px; font-size:0.75rem; color:#f6e05e;">
+          ✍️ <strong>الوضع السينمائي مفعل :</strong> تظهر النصوص وكأنها تُكتب بالريشة وبخط ذهبي حي متأني سطراً بعد سطر فوق فيديو القاعة!
         </div>
 
         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:10px;">
@@ -1152,6 +1162,35 @@ function selectClosingPhoto(name, doSave = true) {
 }
 
 /* ── Video Loop & Cascade Animation Helpers ── */
+window._selectedAnimMode = 'default';
+
+function selectCascadeMode(mode, doSave = true) {
+  window._selectedAnimMode = mode;
+  ['Default', 'Fast', 'Cinematic'].forEach(m => {
+    const btn = document.getElementById('btnPreset' + m);
+    if (btn) {
+      if (m.toLowerCase() === mode.toLowerCase()) {
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-secondary');
+        btn.style.borderColor = 'var(--gold)';
+        btn.style.boxShadow = '0 0 10px rgba(201,168,76,0.45)';
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-secondary');
+        btn.style.borderColor = '';
+        btn.style.boxShadow = '';
+      }
+    }
+  });
+
+  const notice = document.getElementById('cinematicHintNotice');
+  if (notice) {
+    notice.style.display = (mode === 'cinematic') ? 'block' : 'none';
+  }
+
+  if (doSave) saveAll();
+}
+
 function applyAnimPreset(mode) {
   const presets = {
     fast: {
@@ -1163,8 +1202,8 @@ function applyAnimPreset(mode) {
       fam_t: 2.1, fam: 2.3, inv: 2.6, names: 2.8, shim: 3.1, ecg: 3.3, hint: 3.8
     },
     cinematic: {
-      arch: 1.2, inf: 1.6, bism: 2.0, stars: 2.3, bless: 2.6, div: 2.9,
-      fam_t: 3.2, fam: 3.6, inv: 4.0, names: 4.4, shim: 4.8, ecg: 5.1, hint: 5.8
+      arch: 1.0, inf: 1.5, bism: 2.0, stars: 3.8, bless: 4.2, div: 5.8,
+      fam_t: 6.2, fam: 7.2, inv: 8.8, names: 10.0, shim: 12.8, ecg: 13.4, hint: 15.5
     }
   };
   const p = presets[mode] || presets.default;
@@ -1181,8 +1220,8 @@ function applyAnimPreset(mode) {
   set('animDelayShimmer', p.shim);
   set('animDelayEcg', p.ecg);
   set('animDelayScrollHint', p.hint);
-  saveAll();
-  showToast(`⚡ تم تطبيق نمط: ${mode === 'fast' ? 'سريع' : mode === 'cinematic' ? 'سينمائي' : 'عادي'}`);
+  selectCascadeMode(mode, true);
+  showToast(`⚡ تم تطبيق نمط: ${mode === 'fast' ? 'سريع' : mode === 'cinematic' ? 'سينمائي مع كتابة حية' : 'عادي'}`);
 }
 
 function resetAnimTimings() {
@@ -1541,6 +1580,7 @@ function buildConfig() {
     at_shim: parseFloat(val('animDelayShimmer') || '3.1'),
     at_ecg: parseFloat(val('animDelayEcg') || '3.3'),
     at_hint: parseFloat(val('animDelayScrollHint') || '3.8'),
+    cm: window._selectedAnimMode || 'default', // cascade mode ('default' | 'fast' | 'cinematic')
     cp: window._selectedClosingPhoto || 'wedding_hall_board',  // closing section photo
     la: val('invLanguage'),  // invitation language
     ga: val('groomAr'),
@@ -1686,6 +1726,7 @@ function applyConfigToFields(c) {
   set('animDelayShimmer',    c.at_shim != null ? c.at_shim : 3.1);
   set('animDelayEcg',        c.at_ecg  != null ? c.at_ecg  : 3.3);
   set('animDelayScrollHint', c.at_hint != null ? c.at_hint : 3.8);
+  selectCascadeMode(c.cm || (c.at_arch >= 1.0 && c.at_names >= 4.0 ? 'cinematic' : 'default'), false);
 
   // Apply closing photo
   if (c.cp) selectClosingPhoto(c.cp, false);
