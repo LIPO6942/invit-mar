@@ -431,6 +431,133 @@
       </div>
 
       <div class="card">
+        <div class="card-title">⏱️ توقيت حلقة الفيديو (Boucle & Diffusion de la Vidéo)</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px">حدد بدقة من أي ثانية إلى أي ثانية يتم تشغيل الفيديو ثم إعادة تشغيله تلقائياً في حلقة مستمرة</div>
+        <div class="form-row" style="grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="field">
+            <label>▶ نقطة بداية الفيديو (بالثواني)</label>
+            <input type="number" id="videoStartTime" min="0" step="0.1" value="0" placeholder="0 (بداية الفيديو)" onchange="saveAll()">
+            <span style="font-size:0.68rem;color:var(--text-muted)">الثانية التي يبدأ منها التشغيل (مثال: 0 أو 1.5)</span>
+          </div>
+          <div class="field">
+            <label>🔁 نقطة إعادة التشغيل (بالثواني)</label>
+            <input type="number" id="videoEndTime" min="0" step="0.1" value="0" placeholder="0 (حتى نهاية الفيديو)" onchange="saveAll()">
+            <span style="font-size:0.68rem;color:var(--text-muted)">الثانية التي يعيد عندها الفيديو التشغيل (0 = تشغيل حتى نهاية الفيديو)</span>
+          </div>
+        </div>
+        <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+          <button type="button" class="btn btn-secondary" onclick="testVideoLoop()" style="font-size:0.75rem; padding:6px 14px;">▶ اختبار تشغيل المقطع</button>
+          <span id="videoLoopStatus" style="font-size:0.72rem; color:var(--gold)"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏳ توقيت ظهور العناصر تدريجياً على الفيديو (Cascade des Composants)</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:12px">تحكم في اللحظة الزمنية الدقيقة (بالثواني) لظهور كل عنصر من مكونات الدعوة فوق الفيديو بعد فتح الظرف</div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+          <button type="button" class="btn btn-secondary" onclick="applyAnimPreset('default')" style="font-size:0.75rem; padding:6px 12px;">✨ عادي (الموصى به)</button>
+          <button type="button" class="btn btn-secondary" onclick="applyAnimPreset('fast')" style="font-size:0.75rem; padding:6px 12px;">⚡ سريع ومباشر</button>
+          <button type="button" class="btn btn-secondary" onclick="applyAnimPreset('cinematic')" style="font-size:0.75rem; padding:6px 12px;">🎬 سينمائي متأني</button>
+          <button type="button" class="btn btn-secondary" onclick="resetAnimTimings()" style="font-size:0.75rem; padding:6px 12px; margin-right:auto;">🔄 استعادة الافتراضي</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:10px;">
+          <div class="field">
+            <label style="font-size:0.78rem;">🏛️ 1. القوس والاطار</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayArch" min="0" step="0.1" value="0.8" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">∞ 2. رمز المالانهاية</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayInfinity" min="0" step="0.1" value="1.1" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">﷽ 3. البسملة الشريفة</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayBismillah" min="0" step="0.1" value="1.3" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">✦ 4. نجوم وتاج البسملة</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayStars" min="0" step="0.1" value="1.5" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">📖 5. آية البركة</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayBlessing" min="0" step="0.1" value="1.7" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">✦✦✦ 6. الفاصل الزخرفي</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayDivider" min="0" step="0.1" value="1.9" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">📜 7. عبارة (تتشرف عائلتا)</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayFamTitle" min="0" step="0.1" value="2.1" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">👨‍👩‍👧 8. أسماء العائلات</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayFamilies" min="0" step="0.1" value="2.3" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">💌 9. عبارة (بدعوتكم لحضور...)</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayInviteText" min="0" step="0.1" value="2.6" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">👑 10. أسماء العروسين</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayNames" min="0" step="0.1" value="2.8" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">🌟 11. خط البريق الذهبي</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayShimmer" min="0" step="0.1" value="3.1" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">💓 12. نبض القلب ورسم ECG</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayEcg" min="0" step="0.1" value="3.3" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+          <div class="field">
+            <label style="font-size:0.78rem;">⬇️ 13. سهم التمرير لأسفل</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="number" id="animDelayScrollHint" min="0" step="0.1" value="3.8" onchange="saveAll()">
+              <span style="font-size:0.75rem; color:var(--text-muted)">ث</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-title">🖼️ صورة قسم الختام (Photo de fermeture)</div>
         <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:10px">تظهر هذه الصورة في القسم الأخير من الدعوة مع أسماء العروسين على اللوحة</div>
         <div class="photo-selector" style="display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;">
@@ -1024,6 +1151,68 @@ function selectClosingPhoto(name, doSave = true) {
   if (doSave) saveAll();
 }
 
+/* ── Video Loop & Cascade Animation Helpers ── */
+function applyAnimPreset(mode) {
+  const presets = {
+    fast: {
+      arch: 0.4, inf: 0.6, bism: 0.8, stars: 0.9, bless: 1.0, div: 1.1,
+      fam_t: 1.2, fam: 1.4, inv: 1.6, names: 1.7, shim: 1.9, ecg: 2.0, hint: 2.3
+    },
+    default: {
+      arch: 0.8, inf: 1.1, bism: 1.3, stars: 1.5, bless: 1.7, div: 1.9,
+      fam_t: 2.1, fam: 2.3, inv: 2.6, names: 2.8, shim: 3.1, ecg: 3.3, hint: 3.8
+    },
+    cinematic: {
+      arch: 1.2, inf: 1.6, bism: 2.0, stars: 2.3, bless: 2.6, div: 2.9,
+      fam_t: 3.2, fam: 3.6, inv: 4.0, names: 4.4, shim: 4.8, ecg: 5.1, hint: 5.8
+    }
+  };
+  const p = presets[mode] || presets.default;
+  set('animDelayArch', p.arch);
+  set('animDelayInfinity', p.inf);
+  set('animDelayBismillah', p.bism);
+  set('animDelayStars', p.stars);
+  set('animDelayBlessing', p.bless);
+  set('animDelayDivider', p.div);
+  set('animDelayFamTitle', p.fam_t);
+  set('animDelayFamilies', p.fam);
+  set('animDelayInviteText', p.inv);
+  set('animDelayNames', p.names);
+  set('animDelayShimmer', p.shim);
+  set('animDelayEcg', p.ecg);
+  set('animDelayScrollHint', p.hint);
+  saveAll();
+  showToast(`⚡ تم تطبيق نمط: ${mode === 'fast' ? 'سريع' : mode === 'cinematic' ? 'سينمائي' : 'عادي'}`);
+}
+
+function resetAnimTimings() {
+  applyAnimPreset('default');
+}
+
+function testVideoLoop() {
+  const start = parseFloat(val('videoStartTime') || '0');
+  const end = parseFloat(val('videoEndTime') || '0');
+  const selectedCard = document.querySelector('.photo-card.selected video');
+  const status = document.getElementById('videoLoopStatus');
+  if (selectedCard) {
+    selectedCard.currentTime = start;
+    selectedCard.play().catch(() => {});
+    if (status) status.textContent = `▶ جاري التشغيل من ${start}ث ${end > 0 ? 'إلى ' + end + 'ث' : 'حتى النهاية'}...`;
+    
+    if (window._testLoopInterval) clearInterval(window._testLoopInterval);
+    if (end > 0) {
+      window._testLoopInterval = setInterval(() => {
+        if (selectedCard.currentTime >= end) {
+          selectedCard.currentTime = start;
+          selectedCard.play().catch(() => {});
+        }
+      }, 100);
+    }
+  } else {
+    if (status) status.textContent = '⚠️ الرجاء اختيار بطاقة فيديو في الأعلى للاختبار';
+  }
+}
+
 /* ── Music selector ── */
 window._selectedMusic = 'wedding_march';
 let _previewAudio = null;
@@ -1337,6 +1526,21 @@ function buildConfig() {
     si: val('envSealInitials'), // seal initials
     archStyle: val('archStyle') || 'royal_dome', // arch glass style
     hp: window._selectedHallPhoto   || 'video_hall_1', // hall video/photo background
+    vst: parseFloat(val('videoStartTime') || '0'), // video start time in seconds
+    ved: parseFloat(val('videoEndTime') || '0'),   // video end loop time in seconds
+    at_arch: parseFloat(val('animDelayArch') || '0.8'),
+    at_inf: parseFloat(val('animDelayInfinity') || '1.1'),
+    at_bism: parseFloat(val('animDelayBismillah') || '1.3'),
+    at_stars: parseFloat(val('animDelayStars') || '1.5'),
+    at_bless: parseFloat(val('animDelayBlessing') || '1.7'),
+    at_div: parseFloat(val('animDelayDivider') || '1.9'),
+    at_fam_t: parseFloat(val('animDelayFamTitle') || '2.1'),
+    at_fam: parseFloat(val('animDelayFamilies') || '2.3'),
+    at_inv: parseFloat(val('animDelayInviteText') || '2.6'),
+    at_names: parseFloat(val('animDelayNames') || '2.8'),
+    at_shim: parseFloat(val('animDelayShimmer') || '3.1'),
+    at_ecg: parseFloat(val('animDelayEcg') || '3.3'),
+    at_hint: parseFloat(val('animDelayScrollHint') || '3.8'),
     cp: window._selectedClosingPhoto || 'wedding_hall_board',  // closing section photo
     la: val('invLanguage'),  // invitation language
     ga: val('groomAr'),
@@ -1463,6 +1667,25 @@ function applyConfigToFields(c) {
   // Apply hall photo / video
   if (c.hp) selectHallPhoto(c.hp, false);
   else selectHallPhoto('video_hall_1', false);
+
+  // Apply video loop timings
+  set('videoStartTime', c.vst != null ? c.vst : 0);
+  set('videoEndTime',   c.ved != null ? c.ved : 0);
+
+  // Apply component cascade timings
+  set('animDelayArch',       c.at_arch != null ? c.at_arch : 0.8);
+  set('animDelayInfinity',   c.at_inf  != null ? c.at_inf  : 1.1);
+  set('animDelayBismillah',  c.at_bism != null ? c.at_bism : 1.3);
+  set('animDelayStars',      c.at_stars!= null ? c.at_stars: 1.5);
+  set('animDelayBlessing',   c.at_bless!= null ? c.at_bless: 1.7);
+  set('animDelayDivider',    c.at_div  != null ? c.at_div  : 1.9);
+  set('animDelayFamTitle',   c.at_fam_t!= null ? c.at_fam_t: 2.1);
+  set('animDelayFamilies',   c.at_fam  != null ? c.at_fam  : 2.3);
+  set('animDelayInviteText', c.at_inv  != null ? c.at_inv  : 2.6);
+  set('animDelayNames',      c.at_names!= null ? c.at_names: 2.8);
+  set('animDelayShimmer',    c.at_shim != null ? c.at_shim : 3.1);
+  set('animDelayEcg',        c.at_ecg  != null ? c.at_ecg  : 3.3);
+  set('animDelayScrollHint', c.at_hint != null ? c.at_hint : 3.8);
 
   // Apply closing photo
   if (c.cp) selectClosingPhoto(c.cp, false);

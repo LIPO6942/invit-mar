@@ -1820,6 +1820,9 @@ window.openEnvelopeNow = function() {
   const heroVid = document.getElementById('heroVideo');
   if (heroVid && heroVid.style.display !== 'none') {
     heroVid.muted = true;
+    if (heroVid._vStart && heroVid._vStart > 0) {
+      try { heroVid.currentTime = heroVid._vStart; } catch (e) {}
+    }
     const playPromise = heroVid.play();
     if (playPromise !== undefined) {
       playPromise.catch(err => {
@@ -2985,6 +2988,56 @@ function applyEnvelopeDesign(cfg) {
   } else if (heroBg) {
     heroBg.style.backgroundImage = `url('assets/${hallChoice}.png')`;
   }
+
+  // ── Video Loop Range (vst & ved) ──
+  const vStart = parseFloat(cfg.vst) || 0;
+  const vEnd   = parseFloat(cfg.ved) || 0;
+  if (heroVideo) {
+    heroVideo._vStart = vStart;
+    heroVideo._vEnd   = vEnd;
+    if (vStart > 0) {
+      try { heroVideo.currentTime = vStart; } catch (e) {}
+    }
+    if (!heroVideo._loopListenerAttached) {
+      heroVideo.addEventListener('timeupdate', function() {
+        const start = heroVideo._vStart || 0;
+        const end   = heroVideo._vEnd || 0;
+        if (end > 0 && heroVideo.currentTime >= end) {
+          heroVideo.currentTime = start;
+          heroVideo.play().catch(() => {});
+        }
+      });
+      heroVideo.addEventListener('ended', function() {
+        const start = heroVideo._vStart || 0;
+        heroVideo.currentTime = start;
+        heroVideo.play().catch(() => {});
+      });
+      heroVideo._loopListenerAttached = true;
+    }
+  }
+
+  // ── Apply custom cascade animation timings to CSS variables ──
+  const rootEl = document.documentElement;
+  const getDelay = (key, fallback) => {
+    if (cfg[key] !== undefined && cfg[key] !== null && cfg[key] !== '') {
+      return parseFloat(cfg[key]);
+    }
+    return fallback;
+  };
+
+  rootEl.style.setProperty('--delay-arch',        `${getDelay('at_arch', 0.8)}s`);
+  rootEl.style.setProperty('--delay-infinity',    `${getDelay('at_inf', 1.1)}s`);
+  rootEl.style.setProperty('--delay-bismillah',   `${getDelay('at_bism', 1.3)}s`);
+  rootEl.style.setProperty('--delay-stars',       `${getDelay('at_stars', 1.5)}s`);
+  rootEl.style.setProperty('--delay-blessing',    `${getDelay('at_bless', 1.7)}s`);
+  rootEl.style.setProperty('--delay-divider',     `${getDelay('at_div', 1.9)}s`);
+  rootEl.style.setProperty('--delay-fam-title',   `${getDelay('at_fam_t', 2.1)}s`);
+  rootEl.style.setProperty('--delay-families',    `${getDelay('at_fam', 2.3)}s`);
+  rootEl.style.setProperty('--delay-invite-text', `${getDelay('at_inv', 2.6)}s`);
+  rootEl.style.setProperty('--delay-names',       `${getDelay('at_names', 2.8)}s`);
+  rootEl.style.setProperty('--delay-shimmer',     `${getDelay('at_shim', 3.1)}s`);
+  rootEl.style.setProperty('--delay-ecg',         `${getDelay('at_ecg', 3.3)}s`);
+  rootEl.style.setProperty('--delay-scroll-hint', `${getDelay('at_hint', 3.8)}s`);
 
   // ── Closing Photo (cp): which hall image shows in closing section ──
   const closingImg = document.querySelector('.closing-easel-photo');

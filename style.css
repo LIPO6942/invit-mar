@@ -2369,63 +2369,63 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
   pointer-events: none;
 }
 
-/* 0. Le Cadre / Arche de verre dorée (t = 0.8s) */
+/* 0. Le Cadre / Arche de verre dorée (défaut: 0.8s) */
 .invitation.opening #introOverlay,
 .invitation.open #introOverlay {
   animation:
-    hallArchEntrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) both 0.8s,
-    archBorderGlow 4s ease-in-out infinite 1.8s !important;
+    hallArchEntrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-arch, 0.8s),
+    archBorderGlow 4s ease-in-out infinite calc(var(--delay-arch, 0.8s) + 1.0s) !important;
 }
 
-/* 1. Symbole Infini (t = 1.1s) */
+/* 1. Symbole Infini (défaut: 1.1s) */
 .invitation.opening #archInfinityWrap,
 .invitation.open #archInfinityWrap {
-  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both 1.1s !important;
+  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-infinity, 1.1s) !important;
 }
 
-/* 2. Emblème Bismillah (t = 1.3s) */
+/* 2. Emblème Bismillah (défaut: 1.3s) */
 .invitation.opening .arch-bismillah-emblem,
 .invitation.open .arch-bismillah-emblem {
-  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both 1.3s !important;
+  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-bismillah, 1.3s) !important;
 }
 
-/* 3. Étoiles & Couronne (t = 1.5s) */
+/* 3. Étoiles & Couronne (défaut: 1.5s) */
 .invitation.opening .arch-crown-stars,
 .invitation.open .arch-crown-stars {
-  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both 1.5s !important;
+  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-stars, 1.5s) !important;
 }
 
-/* 4. Bénédiction coranique (t = 1.7s) */
+/* 4. Bénédiction coranique (défaut: 1.7s) */
 .invitation.opening .basmala,
 .invitation.open .basmala {
-  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both 1.7s !important;
+  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-blessing, 1.7s) !important;
 }
 
-/* 5. Séparateur ornemental (t = 1.9s) */
+/* 5. Séparateur ornemental (défaut: 1.9s) */
 .invitation.opening .divider-ornament,
 .invitation.open .divider-ornament {
-  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both 1.9s !important;
+  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-divider, 1.9s) !important;
 }
 
-/* 6. Titre des familles (t = 2.1s) */
+/* 6. Titre des familles (défaut: 2.1s) */
 .invitation.opening .families-main-title,
 .invitation.open .families-main-title {
-  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both 2.1s !important;
+  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-fam-title, 2.1s) !important;
 }
 
-/* 7. Noms des familles (t = 2.3s) */
+/* 7. Noms des familles (défaut: 2.3s) */
 .invitation.opening .families-row,
 .invitation.open .families-row {
-  animation: archItemScaleUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both 2.3s !important;
+  animation: archItemScaleUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-families, 2.3s) !important;
 }
 
-/* 8. Phrase d'invitation (t = 2.6s) */
+/* 8. Phrase d'invitation (défaut: 2.6s) */
 .invitation.opening .p1-invite-text:not(.families-main-title),
 .invitation.open .p1-invite-text:not(.families-main-title) {
-  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both 2.6s !important;
+  animation: archItemFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-invite-text, 2.6s) !important;
 }
 
-/* 9. Noms des Mariés (t = 2.8s) */
+/* 9. Noms des Mariés (défaut: 2.8s) */
 .names-main {
   display: flex;
   align-items: center;
@@ -2438,27 +2438,27 @@ body.lang-fr .timeline-item:nth-child(even) .tl-right-cell {
 
 .invitation.opening .names-main,
 .invitation.open .names-main {
-  animation: coupleNamesEntrance 1.1s cubic-bezier(0.16, 1, 0.3, 1) both 2.8s !important;
+  animation: coupleNamesEntrance 1.1s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-names, 2.8s) !important;
 }
 
-/* 10. Ligne scintillante (t = 3.1s) */
+/* 10. Ligne scintillante (défaut: 3.1s) */
 .invitation.opening .shimmer-line,
 .invitation.open .shimmer-line {
   animation:
-    shimmerLineReveal 0.9s ease-out both 3.1s,
-    shimmerFlow 3s ease-in-out infinite 4.0s !important;
+    shimmerLineReveal 0.9s ease-out both var(--delay-shimmer, 3.1s),
+    shimmerFlow 3s ease-in-out infinite calc(var(--delay-shimmer, 3.1s) + 0.9s) !important;
 }
 
-/* 11. ECG Tracé cardiaque & Cœur (t = 3.3s) */
+/* 11. ECG Tracé cardiaque & Cœur (défaut: 3.3s) */
 .invitation.opening #ecgHeartContainer,
 .invitation.open #ecgHeartContainer {
-  animation: archItemFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both 3.3s !important;
+  animation: archItemFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-ecg, 3.3s) !important;
 }
 
-/* 12. Flèche d'invitation au défilement (t = 3.8s) */
+/* 12. Flèche d'invitation au défilement (défaut: 3.8s) */
 .invitation.opening .scroll-hint,
 .invitation.open .scroll-hint {
-  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both 3.8s !important;
+  animation: archItemFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both var(--delay-scroll-hint, 3.8s) !important;
 }
 
 @keyframes hallArchEntrance {
