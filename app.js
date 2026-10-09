@@ -3024,8 +3024,25 @@ function applyEnvelopeDesign(cfg) {
     }
   }
 
-  // ── Apply custom cascade animation timings to CSS variables ──
+  // ── Video Visual Appearance (Blur, Brightness, Darkness Overlay) ──
   const rootEl = document.documentElement;
+  const videoBlur = (cfg.vb != null && cfg.vb !== '') ? parseFloat(cfg.vb) : 0;
+  const videoDarkness = (cfg.vd != null && cfg.vd !== '') ? (parseFloat(cfg.vd) / 100) : 0.20;
+  const videoBrightness = (cfg.vbr != null && cfg.vbr !== '') ? (parseFloat(cfg.vbr) / 100) : 1.05;
+
+  rootEl.style.setProperty('--hero-video-blur', `${videoBlur}px`);
+  rootEl.style.setProperty('--hero-video-darkness', `${videoDarkness}`);
+  rootEl.style.setProperty('--hero-video-brightness', `${videoBrightness}`);
+
+  // Prevent double-darkening from #intro::after when video is playing
+  const isVideoHall = hallChoice.startsWith('video_') || hallChoice.includes('wedding_template') || (typeof hallChoice === 'string' && hallChoice.includes('.mp4'));
+  if (isVideoHall) {
+    rootEl.style.setProperty('--hero-intro-overlay-opacity', '0');
+  } else {
+    rootEl.style.setProperty('--hero-intro-overlay-opacity', '0.20');
+  }
+
+  // ── Apply custom cascade animation timings to CSS variables ──
   const getDelay = (key, fallback) => {
     if (cfg[key] !== undefined && cfg[key] !== null && cfg[key] !== '') {
       return parseFloat(cfg[key]);
